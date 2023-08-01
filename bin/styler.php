@@ -5,7 +5,7 @@ $file = $argv[1];
 exec("php -l $file", $output, $return);
 
 if ($return !== 0) {
-    echo implode($output, PHP_EOL) . PHP_EOL;
+    echo implode(PHP_EOL, $output) . PHP_EOL;
     exit($return);
 }
 
