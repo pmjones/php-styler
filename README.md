@@ -58,7 +58,7 @@ PHP-Styler will **completely reformat** the code it is given. If you like, think
 >
 > McCoy: Its new matrix? Do you have any idea what you're saying?
 >
-> Spock: I was not attempting to evaulate its moral implications.
+> Spock: I was not attempting to evaulate its [aesthetic] implications.
 
 However, the default styling is basically reasonable, and can be customized with little effort.
 
