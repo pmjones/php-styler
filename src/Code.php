@@ -62,12 +62,6 @@ class Code extends ArrayObject
                 static::SPLIT_RULE_PARAMS,
                 static::SPLIT_RULE_ARRAY,
                 static::SPLIT_RULE_CONDITIONS,
-                static::SPLIT_RULE_FLUENT,
-            ],
-            [
-                static::SPLIT_RULE_PARAMS,
-                static::SPLIT_RULE_ARRAY,
-                static::SPLIT_RULE_CONDITIONS,
                 static::SPLIT_RULE_ARGS,
             ],
             [
@@ -75,7 +69,13 @@ class Code extends ArrayObject
                 static::SPLIT_RULE_ARRAY,
                 static::SPLIT_RULE_CONDITIONS,
                 static::SPLIT_RULE_FLUENT,
+            ],
+            [
+                static::SPLIT_RULE_PARAMS,
+                static::SPLIT_RULE_ARRAY,
+                static::SPLIT_RULE_CONDITIONS,
                 static::SPLIT_RULE_ARGS,
+                static::SPLIT_RULE_FLUENT,
             ],
         ];
         $this->splitRuleSet = [];
@@ -131,6 +131,15 @@ class Code extends ArrayObject
     {
         $this->file = rtrim($this->file);
         $this->lines = rtrim($this->lines) . $this->eol . $this->indent;
+    }
+
+    protected function cuddleParen() : void
+    {
+        $trimmed = rtrim($this->lines);
+
+        if (str_ends_with($trimmed, ')')) {
+            $this->lines = $trimmed . ' ';
+        }
     }
 
     protected function indent() : void
