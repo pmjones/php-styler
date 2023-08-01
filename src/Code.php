@@ -136,8 +136,10 @@ class Code extends ArrayObject
     protected function cuddleParen() : void
     {
         $trimmed = rtrim($this->lines);
+        $lines = explode($this->eol, $trimmed);
+        $last = end($lines);
 
-        if (str_ends_with($trimmed, ')')) {
+        if (trim($last) === ')') {
             $this->lines = $trimmed . ' ';
         }
     }

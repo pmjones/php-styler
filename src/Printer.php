@@ -1012,11 +1012,15 @@ class Printer
         $this->list[] = 'namespace\\' . $this->name($node);
     }
 
+    protected function pNullableType(Node\NullableType $node) {
+        $this->list[] = '?' . $this->type($node);
+    }
+
     protected function pNewAnonymous(Stmt\Class_ $node, array $args)
     {
         $this->pAttributeGroups($node);
         $this->pModifiers($node);
-        $this->list[] = new P\Class_(null);
+        $this->list[] = new P\Class_(null, null);
         $this->list[] = new P\Args(count($args));
         $this->pSeparate('arg', $args);
         $this->list[] = new P\ArgsEnd(count($args));
@@ -1284,8 +1288,7 @@ class Printer
     protected function pStmt_Class(Stmt\Class_ $node) : void
     {
         $this->pAttributeGroups($node);
-        $this->pModifiers($node);
-        $this->list[] = new P\Class_($this->name($node->name));
+        $this->list[] = new P\Class_($node->flags, $this->name($node->name));
         $this->pExtends($node);
         $this->pImplements($node);
         $this->pBody('class');
@@ -1305,8 +1308,7 @@ class Printer
     protected function pStmt_ClassMethod(Stmt\ClassMethod $node) : void
     {
         $this->pAttributeGroups($node);
-        $this->pModifiers($node);
-        $this->list[] = new P\Function_();
+        $this->list[] = new P\Function_($node->flags);
         $this->pByRef($node);
         $this->p($node->name);
         $this->pParams($node);
@@ -1448,7 +1450,7 @@ class Printer
     protected function pStmt_Function(Stmt\Function_ $node) : void
     {
         $this->pAttributeGroups($node);
-        $this->list[] = new P\Function_();
+        $this->list[] = new P\Function_(null);
         $this->pByRef($node);
         $this->p($node->name);
         $this->pParams($node);

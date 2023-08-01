@@ -133,7 +133,7 @@ class Styler
         $this->code[] = ['split', $strategy, $type, ...$args];
     }
 
-    protected function modifiers(int $flags) : string
+    protected function modifiers(?int $flags) : string
     {
         return ''
             . ($flags & Stmt\Class_::MODIFIER_FINAL ? 'final ' : '')
@@ -278,7 +278,13 @@ class Styler
 
     protected function sClass(P\Class_ $p) : void
     {
-        $this->code[] = 'class' . ($p->name ? ' ' . $p->name : '');
+        if ($p->name) {
+            $this->maybeNewline($p);
+        };
+
+        $this->code[] = $this->modifiers($p->flags)
+            . 'class'
+            . ($p->name ? ' ' . $p->name : '');
     }
 
     protected function sClassBody(P\Body $p) : void
@@ -396,6 +402,7 @@ class Styler
     public function sDeclareBodyEmpty(P\BodyEmpty $p) : void
     {
         $this->code[] = ';';
+        $this->newline();
         $this->done();
     }
 
@@ -539,7 +546,7 @@ class Styler
 
     protected function sFunction(P\Function_ $p) : void
     {
-        $this->code[] = 'function ' ;
+        $this->code[] = $this->modifiers($p->flags) . 'function ' ;
     }
 
     protected function sFunctionBodyEmpty(P\BodyEmpty $p) : void
@@ -552,6 +559,7 @@ class Styler
     protected function sFunctionBody(P\Body $p) : void
     {
         $this->newline();
+        $this->code[] = ['cuddleParen'];
         $this->code[] = '{';
         $this->indent();
         $this->done();
@@ -786,6 +794,7 @@ class Styler
     protected function sNamespaceBodyEmpty(P\BodyEmpty $p) : void
     {
         $this->code[] = ';';
+        $this->newline();
         $this->done();
     }
 
