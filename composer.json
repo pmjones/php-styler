@@ -1,0 +1,24 @@
+{
+    "name": "pmjones/php-styler",
+    "autoload": {
+        "psr-4" : {
+            "PhpStyler\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4" : {
+            "PhpStyler\\": "tests/"
+        }
+    },
+    "require": {
+        "nikic/php-parser": "^4.0"
+    },
+    "require-dev": {
+        "pds/skeleton": "^1.0",
+        "phpunit/phpunit": "^10.0"
+    },
+    "scripts": {
+        "test": "./vendor/bin/phpunit",
+        "test-coverage": "./vendor/bin/phpunit --coverage-html=./tmp/unit"
+    }
+}
