@@ -77,7 +77,7 @@ class Styler
         Expr\YieldFrom::class => 'yield from',
     ];
 
-   public function __construct(
+    public function __construct(
         protected string $eol = "\n",
         protected int $maxlen = 80
     ) {
