@@ -29,7 +29,7 @@ PHP-Styler is **not appropriate** for PHP-based templates, as it does not use th
 Use `composer` to add PHP-Styler as a dev reequirement:
 
 ```
-composer require --dev pmjones/php-styler
+composer require --dev pmjones/php-styler 0.x-dev
 ```
 
 Then issue `php bin/styler.php` with the path to a source PHP file:
