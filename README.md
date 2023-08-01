@@ -29,7 +29,7 @@ PHP-Styler is **not appropriate** for PHP-based templates, as it does not use th
 Use `composer` to add PHP-Styler as a dev requirement:
 
 ```
-composer require --dev pmjones/php-styler
+composer require --dev pmjones/php-styler 0.x-dev
 ```
 
 Then issue `php bin/styler.php` with the path to a source PHP file:
@@ -58,7 +58,7 @@ PHP-Styler will **completely reformat** the code it is given. If you like, think
 >
 > McCoy: Its new matrix? Do you have any idea what you're saying?
 >
-> Spock: I was not attempting to evaulate its moral implications.
+> Spock: I was not attempting to evaulate its [aesthetic] implications.
 
 However, the default styling is basically reasonable, and can be customized with little effort.
 
