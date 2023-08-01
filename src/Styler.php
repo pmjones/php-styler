@@ -446,6 +446,7 @@ class Styler
 
     protected function sEnum(P\Enum_ $p) : void
     {
+        $this->maybeNewline($p);
         $this->code[] = 'enum ' . $p->name;
     }
 
@@ -698,6 +699,7 @@ class Styler
 
     protected function sInterface(P\Interface_ $p) : void
     {
+        $this->maybeNewline($p);
         $this->code[] = 'interface ' . $p->name;
     }
 
@@ -1020,6 +1022,7 @@ class Styler
 
     protected function sTrait(P\Trait_ $p) : void
     {
+        $this->maybeNewline($p);
         $this->code[] = 'trait ' . $p->name;
     }
 

@@ -1014,7 +1014,8 @@ class Printer
         $this->list[] = 'namespace\\' . $this->name($node);
     }
 
-    protected function pNullableType(Node\NullableType $node) {
+    protected function pNullableType(Node\NullableType $node) : void
+    {
         $this->list[] = '?' . $this->type($node);
     }
 
