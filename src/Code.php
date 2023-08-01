@@ -47,55 +47,25 @@ class Code extends ArrayObject
     public function done() : void
     {
         $oldIndent = $this->indent;
-        $splitRuleSets = [
-            [
-                static::SPLIT_RULE_PARAMS,
-            ],
-            [
-                static::SPLIT_RULE_PARAMS,
-                static::SPLIT_RULE_ARRAY,
-            ],
-            [
-                static::SPLIT_RULE_PARAMS,
-                static::SPLIT_RULE_ARRAY,
-                static::SPLIT_RULE_CONCAT,
-            ],
-            [
-                static::SPLIT_RULE_PARAMS,
-                static::SPLIT_RULE_ARRAY,
-                static::SPLIT_RULE_CONCAT,
-                static::SPLIT_RULE_CONDITIONS,
-            ],
-            [
-                static::SPLIT_RULE_PARAMS,
-                static::SPLIT_RULE_ARRAY,
-                static::SPLIT_RULE_CONCAT,
-                static::SPLIT_RULE_CONDITIONS,
-                static::SPLIT_RULE_ARGS,
-            ],
-            [
-                static::SPLIT_RULE_PARAMS,
-                static::SPLIT_RULE_ARRAY,
-                static::SPLIT_RULE_CONCAT,
-                static::SPLIT_RULE_CONDITIONS,
-                static::SPLIT_RULE_FLUENT,
-            ],
-            [
-                static::SPLIT_RULE_PARAMS,
-                static::SPLIT_RULE_ARRAY,
-                static::SPLIT_RULE_CONCAT,
-                static::SPLIT_RULE_CONDITIONS,
-                static::SPLIT_RULE_ARGS,
-                static::SPLIT_RULE_FLUENT,
-            ],
+        $splitRules = [
+            static::SPLIT_RULE_PARAMS,
+            static::SPLIT_RULE_ARRAY . "_1",
+            static::SPLIT_RULE_ARRAY . "_2",
+            static::SPLIT_RULE_ARRAY . "_3",
+            static::SPLIT_RULE_ARRAY . "_4",
+            static::SPLIT_RULE_ARRAY . "_5",
+            static::SPLIT_RULE_CONCAT,
+            static::SPLIT_RULE_CONDITIONS,
+            static::SPLIT_RULE_ARGS,
+            static::SPLIT_RULE_FLUENT,
         ];
         $this->splitRuleSet = [];
         $this->setLines();
         $this->multiline = true;
 
-        while ($this->atLeastOneLineTooLong() && $splitRuleSets) {
+        while ($this->atLeastOneLineTooLong() && $splitRules) {
             $this->indent = $oldIndent;
-            $this->splitRuleSet = array_shift($splitRuleSets);
+            $this->splitRuleSet[] = array_shift($splitRules);
             $this->setLines();
         }
 
@@ -162,7 +132,6 @@ class Code extends ArrayObject
 
     protected function outdent() : void
     {
-        assert($this->indent !== '');
         $this->indent = substr($this->indent, 0, -4);
     }
 

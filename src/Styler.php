@@ -13,6 +13,8 @@ use PhpStyler\Printable\Printable;
 
 class Styler
 {
+    protected $arrayLevel = 0;
+
     protected bool $atFirstInBody = false;
 
     protected Code $code;
@@ -90,6 +92,7 @@ class Styler
         }
 
         $this->atFirstInBody = true;
+        $this->arrayLevel = 0;
         $this->hadComment = false;
         $this->code = new Code($this->eol, $this->maxlen);
 
@@ -207,26 +210,29 @@ class Styler
 
     protected function sArray(P\Array_ $p) : void
     {
+        $this->arrayLevel ++;
+
         $this->code[] = '[';
 
         if ($p->count) {
-            $this->split(Code::SPLIT_RULE_ARRAY);
+            $this->split(Code::SPLIT_RULE_ARRAY . "_{$this->arrayLevel}");
         }
     }
 
     protected function sArraySeparator(P\Separator $p) : void
     {
         $this->code[] = ', ';
-        $this->split(Code::SPLIT_RULE_ARRAY, 'mid', ',');
+        $this->split(Code::SPLIT_RULE_ARRAY . "_{$this->arrayLevel}", 'mid', ',');
     }
 
     protected function sArrayEnd(P\ArrayEnd $p) : void
     {
         if ($p->count) {
-            $this->split(Code::SPLIT_RULE_ARRAY, 'end', ',');
+            $this->split(Code::SPLIT_RULE_ARRAY . "_{$this->arrayLevel}", 'end', ',');
         }
 
         $this->code[] = ']';
+        $this->arrayLevel --;
     }
 
     protected function sArrowFunction(P\ArrowFunction $p) : void
@@ -887,9 +893,17 @@ class Styler
     {
         $this->code[] = $this->operator[$p->class];
 
-        if ($p->class !== Expr\ErrorSuppress::class) {
-            $this->code[] = ' ';
+        if (
+            $p->class === Expr\ErrorSuppress::class
+            || $p->class === Expr\UnaryMinus::class
+            || $p->class === Expr\UnaryPlus::class
+        ) {
+            // no space
+            return;
         }
+
+        // space after all other prefix ops
+        $this->code[] = ' ';
     }
 
     protected function sPropertyEnd(P\End $end) : void

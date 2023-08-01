@@ -17,8 +17,8 @@ use PhpParser\Node\Scalar;
 use PhpParser\Node\Scalar\MagicConst;
 use PhpParser\Node\Stmt;
 use PhpParser\PrettyPrinterAbstract;
-use SplObjectStorage;
 use PhpStyler\Printable as P;
+use SplObjectStorage;
 
 class Printer
 {
