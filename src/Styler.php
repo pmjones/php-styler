@@ -652,6 +652,10 @@ class Styler
         $this->code[] = ' implements ';
     }
 
+    protected function sInfix(P\Infix $p) : void
+    {
+    }
+
     protected function sInfixOp(P\InfixOp $p) : void
     {
         $this->code[] = ' ';
@@ -663,10 +667,21 @@ class Styler
             $this->split(Code::SPLIT_RULE_CONDITIONS, 'mid');
         }
 
+        if ($p->class === BinaryOp\Coalesce::class) {
+            $this->split(Code::SPLIT_RULE_CONDITIONS, 'cuddle');
+        }
+
         $this->code[] = $this->operator[$p->class];
 
         if ($p->class !== Expr\AssignRef::class) {
             $this->code[] = ' ';
+        }
+    }
+
+    protected function sInfixEnd(P\InfixEnd $p) : void
+    {
+        if ($p->class === BinaryOp\Coalesce::class) {
+            $this->split(Code::SPLIT_RULE_CONDITIONS, 'endCuddle');
         }
     }
 

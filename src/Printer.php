@@ -972,9 +972,11 @@ class Printer
     protected function pInfixOp(string $class, Node $leftNode, Node $rightNode) : void
     {
         list($precedence, $associativity) = $this->precedenceMap[$class];
+        $this->list[] = new P\Infix($class);
         $this->pPrec($leftNode, $precedence, $associativity, -1);
         $this->list[] = new P\InfixOp($class);
         $this->pPrec($rightNode, $precedence, $associativity, 1);
+        $this->list[] = new P\InfixEnd($class);
     }
 
     protected function pMatchArm(Node\MatchArm $node) : void
