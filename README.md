@@ -26,7 +26,7 @@ PHP-Styler is **not appropriate** for PHP-based templates, as it does not use th
 
 ## Using PHP-Styler
 
-Use `composer` to add PHP-Styler as a dev reequirement:
+Use `composer` to add PHP-Styler as a dev requirement:
 
 ```
 composer require --dev pmjones/php-styler
