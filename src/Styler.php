@@ -665,11 +665,14 @@ class Styler
             $p->class === BinaryOp\BooleanAnd::class
             || $p->class === BinaryOp\BooleanOr::class
         ) {
-            $this->split(Code::SPLIT_RULE_CONDITIONS, 'mid');
+            $this->split(Code::SPLIT_RULE_CONCAT, 'mid');
         }
 
-        if ($p->class === BinaryOp\Coalesce::class) {
-            $this->split(Code::SPLIT_RULE_CONDITIONS, 'cuddle');
+        if (
+            $p->class === BinaryOp\Coalesce::class
+            || $p->class === BinaryOp\Concat::class
+        ) {
+            $this->split(Code::SPLIT_RULE_CONCAT, 'cuddle');
         }
 
         $this->code[] = $this->operator[$p->class];
@@ -681,8 +684,11 @@ class Styler
 
     protected function sInfixEnd(P\InfixEnd $p) : void
     {
-        if ($p->class === BinaryOp\Coalesce::class) {
-            $this->split(Code::SPLIT_RULE_CONDITIONS, 'endCuddle');
+        if (
+            $p->class === BinaryOp\Coalesce::class
+            || $p->class === BinaryOp\Concat::class
+        ) {
+            $this->split(Code::SPLIT_RULE_CONCAT, 'endCuddle');
         }
     }
 

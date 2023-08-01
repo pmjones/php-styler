@@ -14,6 +14,8 @@ class Code extends ArrayObject
 
     public const SPLIT_RULE_ARRAY = 'SPLIT_RULE_ARRAY';
 
+    public const SPLIT_RULE_CONCAT = 'SPLIT_RULE_CONCAT';
+
     public const SPLIT_RULE_CONDITIONS = 'SPLIT_RULE_CONDITIONS';
 
     public const SPLIT_RULE_FLUENT = 'SPLIT_RULE_FLUENT';
@@ -56,23 +58,32 @@ class Code extends ArrayObject
             [
                 static::SPLIT_RULE_PARAMS,
                 static::SPLIT_RULE_ARRAY,
+                static::SPLIT_RULE_CONCAT,
+            ],
+            [
+                static::SPLIT_RULE_PARAMS,
+                static::SPLIT_RULE_ARRAY,
+                static::SPLIT_RULE_CONCAT,
                 static::SPLIT_RULE_CONDITIONS,
             ],
             [
                 static::SPLIT_RULE_PARAMS,
                 static::SPLIT_RULE_ARRAY,
+                static::SPLIT_RULE_CONCAT,
                 static::SPLIT_RULE_CONDITIONS,
                 static::SPLIT_RULE_ARGS,
             ],
             [
                 static::SPLIT_RULE_PARAMS,
                 static::SPLIT_RULE_ARRAY,
+                static::SPLIT_RULE_CONCAT,
                 static::SPLIT_RULE_CONDITIONS,
                 static::SPLIT_RULE_FLUENT,
             ],
             [
                 static::SPLIT_RULE_PARAMS,
                 static::SPLIT_RULE_ARRAY,
+                static::SPLIT_RULE_CONCAT,
                 static::SPLIT_RULE_CONDITIONS,
                 static::SPLIT_RULE_ARGS,
                 static::SPLIT_RULE_FLUENT,
