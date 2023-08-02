@@ -49,14 +49,20 @@ class Code extends ArrayObject
         $oldIndent = $this->indent;
         $splitRules = [
             static::SPLIT_RULE_PARAMS,
+            static::SPLIT_RULE_ARRAY . "_0",
             static::SPLIT_RULE_ARRAY . "_1",
             static::SPLIT_RULE_ARRAY . "_2",
             static::SPLIT_RULE_ARRAY . "_3",
             static::SPLIT_RULE_ARRAY . "_4",
             static::SPLIT_RULE_ARRAY . "_5",
+            static::SPLIT_RULE_CONDITIONS, // put ternaries after args?
             static::SPLIT_RULE_CONCAT,
-            static::SPLIT_RULE_CONDITIONS,
-            static::SPLIT_RULE_ARGS,
+            static::SPLIT_RULE_ARGS . "_0",
+            static::SPLIT_RULE_ARGS . "_1",
+            static::SPLIT_RULE_ARGS . "_2",
+            static::SPLIT_RULE_ARGS . "_3",
+            static::SPLIT_RULE_ARGS . "_4",
+            static::SPLIT_RULE_ARGS . "_5",
             static::SPLIT_RULE_FLUENT,
         ];
         $this->splitRuleSet = [];

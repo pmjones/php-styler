@@ -15,6 +15,8 @@ class Styler
 {
     protected $arrayLevel = 0;
 
+    protected $argsLevel = 0;
+
     protected bool $atFirstInBody = false;
 
     protected Code $code;
@@ -92,6 +94,7 @@ class Styler
         }
 
         $this->atFirstInBody = true;
+        $this->argsLevel = 0;
         $this->arrayLevel = 0;
         $this->hadComment = false;
         $this->code = new Code($this->eol, $this->maxlen);
@@ -186,32 +189,33 @@ class Styler
 
     protected function sArgs(P\Args $p) : void
     {
+        $this->argsLevel ++;
         $this->code[] = '(';
 
         if ($p->count) {
-            $this->split(Code::SPLIT_RULE_ARGS);
+            $this->split(Code::SPLIT_RULE_ARGS . "_{$this->argsLevel}");
         }
-    }
-
-    protected function sArgsEnd(P\ArgsEnd $p) : void
-    {
-        if ($p->count) {
-            $this->split(Code::SPLIT_RULE_ARGS, 'end', ',');
-        }
-
-        $this->code[] = ')';
     }
 
     protected function sArgSeparator(P\Separator $p) : void
     {
         $this->code[] = ', ';
-        $this->split(Code::SPLIT_RULE_ARGS, 'mid', ',');
+        $this->split(Code::SPLIT_RULE_ARGS . "_{$this->argsLevel}", 'mid', ',');
+    }
+
+    protected function sArgsEnd(P\ArgsEnd $p) : void
+    {
+        if ($p->count) {
+            $this->split(Code::SPLIT_RULE_ARGS . "_{$this->argsLevel}", 'end', ',');
+        }
+
+        $this->code[] = ')';
+        $this->argsLevel --;
     }
 
     protected function sArray(P\Array_ $p) : void
     {
         $this->arrayLevel ++;
-
         $this->code[] = '[';
 
         if ($p->count) {
@@ -526,7 +530,7 @@ class Styler
     protected function sForExprSeparator(P\Separator $p) : void
     {
         $this->code[] = '; ';
-        $this->split(Code::SPLIT_RULE_ARGS, 'mid', ',');
+        $this->split(Code::SPLIT_RULE_ARGS . "_{$this->argsLevel}", 'mid', ',');
     }
 
     protected function sForeach(P\Foreach_ $p) : void
