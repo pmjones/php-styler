@@ -34,6 +34,8 @@ class Code extends ArrayObject
 
     protected array $splitRuleSet = [];
 
+    protected bool $forceSplit = false;
+
     public function __construct(
         protected string $eol = "\n",
         protected int $maxlen = 80
@@ -50,7 +52,7 @@ class Code extends ArrayObject
     {
         $oldIndent = $this->indent;
         $splitRules = [
-            static::SPLIT_RULE_PARAMS,
+            static::SPLIT_RULE_TERNARY,
             static::SPLIT_RULE_ARRAY . "_0",
             static::SPLIT_RULE_ARRAY . "_1",
             static::SPLIT_RULE_ARRAY . "_2",
@@ -59,7 +61,6 @@ class Code extends ArrayObject
             static::SPLIT_RULE_ARRAY . "_5",
             static::SPLIT_RULE_CONDITIONS,
             static::SPLIT_RULE_CONCAT,
-            static::SPLIT_RULE_TERNARY,
             static::SPLIT_RULE_ARGS . "_0",
             static::SPLIT_RULE_ARGS . "_1",
             static::SPLIT_RULE_ARGS . "_2",
@@ -67,6 +68,7 @@ class Code extends ArrayObject
             static::SPLIT_RULE_ARGS . "_4",
             static::SPLIT_RULE_ARGS . "_5",
             static::SPLIT_RULE_FLUENT,
+            static::SPLIT_RULE_PARAMS,
         ];
         $this->splitRuleSet = [];
         $this->setLines();
@@ -87,6 +89,11 @@ class Code extends ArrayObject
 
     protected function atLeastOneLineTooLong() : bool
     {
+        if ($this->forceSplit) {
+            $this->forceSplit = false;
+            return true;
+        }
+
         foreach (explode($this->eol, $this->lines) as $line) {
             if (strlen($line) > $this->maxlen) {
                 return true;
@@ -142,6 +149,11 @@ class Code extends ArrayObject
     protected function outdent() : void
     {
         $this->indent = substr($this->indent, 0, -4);
+    }
+
+    protected function forceSplit() : void
+    {
+        $this->forceSplit = true;
     }
 
     protected function split(

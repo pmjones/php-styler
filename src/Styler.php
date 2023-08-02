@@ -200,7 +200,7 @@ class Styler
     protected function sArgSeparator(P\Separator $p) : void
     {
         $this->code[] = ', ';
-        $this->split(Code::SPLIT_RULE_ARGS . "_{$this->argsLevel}", 'mid', ',');
+        $this->split(Code::SPLIT_RULE_ARGS . "_{$this->argsLevel}", 'mid');
     }
 
     protected function sArgsEnd(P\ArgsEnd $p) : void
@@ -226,7 +226,7 @@ class Styler
     protected function sArraySeparator(P\Separator $p) : void
     {
         $this->code[] = ', ';
-        $this->split(Code::SPLIT_RULE_ARRAY . "_{$this->arrayLevel}", 'mid', ',');
+        $this->split(Code::SPLIT_RULE_ARRAY . "_{$this->arrayLevel}", 'mid',);
     }
 
     protected function sArrayEnd(P\ArrayEnd $p) : void
@@ -334,6 +334,11 @@ class Styler
         $this->code[] = ' {';
         $this->indent();
         $this->done();
+
+        // this is a bit too clever
+        if ($this->argsLevel) {
+            $this->code[] = ['forceSplit'];
+        }
     }
 
     protected function sClosureBodyEnd(P\BodyEnd $p) : void
@@ -341,6 +346,10 @@ class Styler
         $this->outdent();
         $this->cuddle();
         $this->code[] = '}';
+
+        if ($this->argsLevel) {
+            $this->code[] = ['forceSplit'];
+        }
     }
 
     protected function sContinue(P\Continue_ $p) : void
@@ -530,7 +539,7 @@ class Styler
     protected function sForExprSeparator(P\Separator $p) : void
     {
         $this->code[] = '; ';
-        $this->split(Code::SPLIT_RULE_ARGS . "_{$this->argsLevel}", 'mid', ',');
+        $this->split(Code::SPLIT_RULE_ARGS . "_{$this->argsLevel}", 'mid');
     }
 
     protected function sForeach(P\Foreach_ $p) : void
@@ -881,7 +890,7 @@ class Styler
     protected function sParamSeparator(P\Separator $p) : void
     {
         $this->code[] = ', ';
-        $this->split(Code::SPLIT_RULE_PARAMS, 'mid', ',');
+        $this->split(Code::SPLIT_RULE_PARAMS, 'mid');
     }
 
     protected function sPostfixOp(P\PostfixOp $p) : void
