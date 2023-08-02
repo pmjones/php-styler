@@ -687,10 +687,11 @@ class Styler
             $this->split(Code::SPLIT_RULE_CONCAT, 'mid');
         }
 
-        if (
-            $p->class === BinaryOp\Coalesce::class
-            || $p->class === BinaryOp\Concat::class
-        ) {
+        if ($p->class === BinaryOp\Coalesce::class && ! $this->argsLevel) {
+            $this->split(Code::SPLIT_RULE_COALESCE, 'cuddle');
+        }
+
+        if ($p->class === BinaryOp\Concat::class) {
             $this->split(Code::SPLIT_RULE_CONCAT, 'cuddle');
         }
 
