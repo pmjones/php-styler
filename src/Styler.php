@@ -5,8 +5,6 @@ namespace PhpStyler;
 
 use BadMethodCallException;
 use PhpParser\Node\Expr;
-use PhpParser\Node\Expr\AssignOp;
-use PhpParser\Node\Expr\BinaryOp;
 use PhpParser\Node\Stmt;
 use PhpStyler\Printable as P;
 use PhpStyler\Printable\Printable;
@@ -26,48 +24,48 @@ class Styler
     protected bool $hadComment = false;
 
      protected array $operator = [
-        AssignOp\BitwiseAnd::class => '&=',
-        AssignOp\BitwiseOr::class => '|=',
-        AssignOp\BitwiseXor::class => '^=',
-        AssignOp\Coalesce::class => '??=',
-        AssignOp\Concat::class => '.=',
-        AssignOp\Div::class => '/=',
-        AssignOp\Minus::class => '-=',
-        AssignOp\Mod::class => '%=',
-        AssignOp\Mul::class => '*=',
-        AssignOp\Plus::class => '+=',
-        AssignOp\Pow::class => '**=',
-        AssignOp\ShiftLeft::class => '<<=',
-        AssignOp\ShiftRight::class => '>>=',
-        BinaryOp\BitwiseAnd::class => '&',
-        BinaryOp\BitwiseOr::class => '|',
-        BinaryOp\BitwiseXor::class => '^',
-        BinaryOp\BooleanAnd::class => '&&',
-        BinaryOp\BooleanOr::class => '||',
-        BinaryOp\Coalesce::class => '??',
-        BinaryOp\Concat::class => '.',
-        BinaryOp\Div::class => '/',
-        BinaryOp\Equal::class => '==',
-        BinaryOp\Greater::class => '>',
-        BinaryOp\GreaterOrEqual::class => '>=',
-        BinaryOp\Identical::class => '===',
-        BinaryOp\LogicalAnd::class => 'and',
-        BinaryOp\LogicalOr::class => 'or',
-        BinaryOp\LogicalXor::class => 'xor',
-        BinaryOp\Minus::class => '-',
-        BinaryOp\Mod::class => '%',
-        BinaryOp\Mul::class => '*',
-        BinaryOp\NotEqual::class => '!=',
-        BinaryOp\NotIdentical::class => '!==',
-        BinaryOp\Plus::class => '+',
-        BinaryOp\Pow::class => '**',
-        BinaryOp\ShiftLeft::class => '<<',
-        BinaryOp\ShiftRight::class => '>>',
-        BinaryOp\Smaller::class => '<',
-        BinaryOp\SmallerOrEqual::class => '<=',
-        BinaryOp\Spaceship::class => '<=>',
         Expr\Assign::class => '=',
+        Expr\AssignOp\BitwiseAnd::class => '&=',
+        Expr\AssignOp\BitwiseOr::class => '|=',
+        Expr\AssignOp\BitwiseXor::class => '^=',
+        Expr\AssignOp\Coalesce::class => '??=',
+        Expr\AssignOp\Concat::class => '.=',
+        Expr\AssignOp\Div::class => '/=',
+        Expr\AssignOp\Minus::class => '-=',
+        Expr\AssignOp\Mod::class => '%=',
+        Expr\AssignOp\Mul::class => '*=',
+        Expr\AssignOp\Plus::class => '+=',
+        Expr\AssignOp\Pow::class => '**=',
+        Expr\AssignOp\ShiftLeft::class => '<<=',
+        Expr\AssignOp\ShiftRight::class => '>>=',
         Expr\AssignRef::class => '= &',
+        Expr\BinaryOp\BitwiseAnd::class => '&',
+        Expr\BinaryOp\BitwiseOr::class => '|',
+        Expr\BinaryOp\BitwiseXor::class => '^',
+        Expr\BinaryOp\BooleanAnd::class => '&&',
+        Expr\BinaryOp\BooleanOr::class => '||',
+        Expr\BinaryOp\Coalesce::class => '??',
+        Expr\BinaryOp\Concat::class => '.',
+        Expr\BinaryOp\Div::class => '/',
+        Expr\BinaryOp\Equal::class => '==',
+        Expr\BinaryOp\Greater::class => '>',
+        Expr\BinaryOp\GreaterOrEqual::class => '>=',
+        Expr\BinaryOp\Identical::class => '===',
+        Expr\BinaryOp\LogicalAnd::class => 'and',
+        Expr\BinaryOp\LogicalOr::class => 'or',
+        Expr\BinaryOp\LogicalXor::class => 'xor',
+        Expr\BinaryOp\Minus::class => '-',
+        Expr\BinaryOp\Mod::class => '%',
+        Expr\BinaryOp\Mul::class => '*',
+        Expr\BinaryOp\NotEqual::class => '!=',
+        Expr\BinaryOp\NotIdentical::class => '!==',
+        Expr\BinaryOp\Plus::class => '+',
+        Expr\BinaryOp\Pow::class => '**',
+        Expr\BinaryOp\ShiftLeft::class => '<<',
+        Expr\BinaryOp\ShiftRight::class => '>>',
+        Expr\BinaryOp\Smaller::class => '<',
+        Expr\BinaryOp\SmallerOrEqual::class => '<=',
+        Expr\BinaryOp\Spaceship::class => '<=>',
         Expr\BitwiseNot::class => '~',
         Expr\BooleanNot::class => '!',
         Expr\ErrorSuppress::class => '@',
@@ -195,20 +193,20 @@ class Styler
         $this->code[] = '(';
 
         if ($p->count) {
-            $this->split(Code::SPLIT_RULE_ARGS . "_{$this->argsLevel}");
+            $this->split(P\Args::class . "_{$this->argsLevel}");
         }
     }
 
     protected function sArgSeparator(P\Separator $p) : void
     {
         $this->code[] = ', ';
-        $this->split(Code::SPLIT_RULE_ARGS . "_{$this->argsLevel}", 'mid');
+        $this->split(P\Args::class . "_{$this->argsLevel}", 'mid');
     }
 
     protected function sArgsEnd(P\ArgsEnd $p) : void
     {
         if ($p->count) {
-            $this->split(Code::SPLIT_RULE_ARGS . "_{$this->argsLevel}", 'end', ',');
+            $this->split(P\Args::class . "_{$this->argsLevel}", 'end', ',');
         }
 
         $this->code[] = ')';
@@ -221,20 +219,20 @@ class Styler
         $this->code[] = '[';
 
         if ($p->count) {
-            $this->split(Code::SPLIT_RULE_ARRAY . "_{$this->arrayLevel}");
+            $this->split(P\Array::class . "_{$this->arrayLevel}");
         }
     }
 
     protected function sArraySeparator(P\Separator $p) : void
     {
         $this->code[] = ', ';
-        $this->split(Code::SPLIT_RULE_ARRAY . "_{$this->arrayLevel}", 'mid',);
+        $this->split(P\Array::class . "_{$this->arrayLevel}", 'mid',);
     }
 
     protected function sArrayEnd(P\ArrayEnd $p) : void
     {
         if ($p->count) {
-            $this->split(Code::SPLIT_RULE_ARRAY . "_{$this->arrayLevel}", 'end', ',');
+            $this->split(P\Array::class . "_{$this->arrayLevel}", 'end', ',');
         }
 
         $this->code[] = ']';
@@ -380,12 +378,12 @@ class Styler
     {
         $this->condLevel ++;
         $this->code[] = '(';
-        $this->split(Code::SPLIT_RULE_CONDITIONS);
+        $this->split(P\Cond::class);
     }
 
     protected function sCondEnd(P\End $p) : void
     {
-        $this->split(Code::SPLIT_RULE_CONDITIONS, 'end');
+        $this->split(P\Cond::class, 'end');
         $this->code[] = ')';
         $this->condLevel --;
     }
@@ -543,7 +541,7 @@ class Styler
     protected function sForExprSeparator(P\Separator $p) : void
     {
         $this->code[] = '; ';
-        $this->split(Code::SPLIT_RULE_ARGS . "_{$this->argsLevel}", 'mid');
+        $this->split(P\Args::class . "_{$this->argsLevel}", 'mid');
     }
 
     protected function sForeach(P\Foreach_ $p) : void
@@ -684,27 +682,28 @@ class Styler
     {
         $this->code[] = ' ';
 
-        if (
-            $p->class === BinaryOp\BooleanAnd::class
-            || $p->class === BinaryOp\BooleanOr::class
-        ) {
-            if (! $this->condLevel) {
-                $this->split(Code::SPLIT_RULE_BOOLEAN, 'cuddle');
-            } else {
-                $this->split(Code::SPLIT_RULE_BOOLEAN, 'mid');
-            }
-        }
+        switch ($p->class) {
+            case Expr\BinaryOp\BooleanAnd::class:
+            case Expr\BinaryOp\BooleanOr::class:
+                if (! $this->condLevel) {
+                    $this->split($p->class, 'cuddle');
+                } else {
+                    $this->split($p->class, 'mid');
+                }
 
-        if ($p->class === BinaryOp\Coalesce::class && ! $this->argsLevel) {
-            $this->split(Code::SPLIT_RULE_COALESCE, 'cuddle');
-        }
+                break;
 
-        if ($p->class === BinaryOp\Concat::class) {
-            $this->split(Code::SPLIT_RULE_CONCAT, 'cuddle');
-        }
+            case Expr\BinaryOp\Coalesce::class:
+                if (! $this->argsLevel) {
+                    $this->split($p->class, 'cuddle');
+                }
 
-        if ($p->class === Expr\Ternary::class) {
-            $this->split(Code::SPLIT_RULE_TERNARY, 'cuddle');
+                break;
+
+            case Expr\BinaryOp\Concat::class:
+            case Expr\Ternary::class:
+                $this->split($p->class, 'cuddle');
+                break;
         }
 
         $this->code[] = $this->operator[$p->class];
@@ -716,25 +715,26 @@ class Styler
 
     protected function sInfixEnd(P\InfixEnd $p) : void
     {
-        if (
-            $p->class === BinaryOp\BooleanAnd::class
-            || $p->class === BinaryOp\BooleanOr::class
-        ) {
-            if (! $this->condLevel) {
-                $this->split(Code::SPLIT_RULE_BOOLEAN, 'endCuddle');
-            }
-        }
+        switch ($p->class) {
+            case Expr\BinaryOp\BooleanAnd::class:
+            case Expr\BinaryOp\BooleanOr::class:
+                if (! $this->condLevel) {
+                    $this->split($p->class, 'endCuddle');
+                }
 
-        if ($p->class === BinaryOp\Coalesce::class && ! $this->argsLevel) {
-            $this->split(Code::SPLIT_RULE_COALESCE, 'endCuddle');
-        }
+                break;
 
-        if ($p->class === BinaryOp\Concat::class) {
-            $this->split(Code::SPLIT_RULE_CONCAT, 'endCuddle');
-        }
+            case Expr\BinaryOp\Coalesce::class:
+                if (! $this->argsLevel) {
+                    $this->split($p->class, 'endCuddle');
+                }
 
-        if ($p->class === Expr\Ternary::class) {
-            $this->split(Code::SPLIT_RULE_TERNARY, 'endCuddle');
+                break;
+
+            case Expr\BinaryOp\Concat::class:
+            case Expr\Ternary::class:
+                $this->split($p->class, 'endCuddle');
+                break;
         }
     }
 
@@ -816,7 +816,7 @@ class Styler
     protected function sMethodCall(P\MethodCall $p)
     {
         if ($p->operator === '->' || $p->operator === '?->') {
-            $this->split(Code::SPLIT_RULE_FLUENT, 'cuddle');
+            $this->split(P\MethodCall::class, 'cuddle');
         }
 
         $this->code[] = $p->operator;
@@ -825,7 +825,7 @@ class Styler
     protected function sMethodCallEnd(P\MethodCallEnd $p)
     {
         if ($p->operator === '->' || $p->operator === '?->') {
-            $this->split(Code::SPLIT_RULE_FLUENT, 'endCuddle');
+            $this->split(P\MethodCall::class, 'endCuddle');
         }
     }
 
@@ -893,14 +893,14 @@ class Styler
         $this->code[] = '(';
 
         if ($p->count) {
-            $this->split(Code::SPLIT_RULE_PARAMS);
+            $this->split(P\Params::class);
         }
     }
 
     protected function sParamsEnd(P\ParamsEnd $p) : void
     {
         if ($p->count) {
-            $this->split(Code::SPLIT_RULE_PARAMS, 'end', ',');
+            $this->split(P\Params::class, 'end', ',');
         }
 
         $this->code[] = ')';
@@ -909,7 +909,7 @@ class Styler
     protected function sParamSeparator(P\Separator $p) : void
     {
         $this->code[] = ', ';
-        $this->split(Code::SPLIT_RULE_PARAMS, 'mid');
+        $this->split(P\Params::class, 'mid');
     }
 
     protected function sPostfixOp(P\PostfixOp $p) : void
@@ -920,12 +920,12 @@ class Styler
     protected function sPrecedence(P\Precedence $p) : void
     {
         $this->code[] = '(';
-        $this->split(Code::SPLIT_RULE_PRECEDENCE, 'cuddle');
+        $this->split(P\Precedence::class, 'cuddle');
     }
 
     protected function sPrecedenceEnd(P\End $p) : void
     {
-        $this->split(Code::SPLIT_RULE_PRECEDENCE, 'endCuddle');
+        $this->split(P\Precedence::class, 'endCuddle');
         $this->code[] = ')';
     }
 
@@ -1060,13 +1060,13 @@ class Styler
 
     protected function sTernary(P\Ternary $p) : void
     {
-        $this->split(Code::SPLIT_RULE_TERNARY, 'cuddle');
+        $this->split(Expr\Ternary::class, 'cuddle');
         $this->code[] = ' ' . $p->str . ' ';
     }
 
     protected function sTernaryEnd(P\End $p) : void
     {
-        $this->split(Code::SPLIT_RULE_TERNARY, 'endCuddle');
+        $this->split(Expr\Ternary::class, 'endCuddle');
     }
 
     protected function sThrow(P\Throw_ $p) : void
