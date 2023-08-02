@@ -134,6 +134,11 @@ class Styler
         $this->code[] = ['newline'];
     }
 
+    protected function forceSplit() : void
+    {
+        $this->code[] = ['forceSplit'];
+    }
+
     protected function split(string $strategy, string $type = '', ...$args) : void
     {
         $this->code[] = ['split', $strategy, $type, ...$args];
@@ -335,9 +340,8 @@ class Styler
         $this->indent();
         $this->done();
 
-        // this is a bit too clever
         if ($this->argsLevel) {
-            $this->code[] = ['forceSplit'];
+            $this->forceSplit();
         }
     }
 
@@ -348,7 +352,7 @@ class Styler
         $this->code[] = '}';
 
         if ($this->argsLevel) {
-            $this->code[] = ['forceSplit'];
+            $this->forceSplit();
         }
     }
 
@@ -362,7 +366,7 @@ class Styler
     {
         $this->code[] = $p->text;
         $this->hadComment = true;
-        $this->done();
+        $this->newline();
     }
 
     protected function sComments(P\Comments $p) : void
@@ -370,7 +374,7 @@ class Styler
         $this->cuddle();
 
         if (! $p->isFirst()) {
-            $this->done();
+            $this->newline();
         }
     }
 
