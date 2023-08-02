@@ -685,6 +685,10 @@ class Styler
             $this->split(Code::SPLIT_RULE_CONCAT, 'cuddle');
         }
 
+        if ($p->class === Expr\Ternary::class) {
+            $this->split(Code::SPLIT_RULE_TERNARY, 'cuddle');
+        }
+
         $this->code[] = $this->operator[$p->class];
 
         if ($p->class !== Expr\AssignRef::class) {
@@ -699,6 +703,10 @@ class Styler
             || $p->class === BinaryOp\Concat::class
         ) {
             $this->split(Code::SPLIT_RULE_CONCAT, 'endCuddle');
+        }
+
+        if ($p->class === Expr\Ternary::class) {
+            $this->split(Code::SPLIT_RULE_TERNARY, 'endCuddle');
         }
     }
 
@@ -1024,13 +1032,13 @@ class Styler
 
     protected function sTernary(P\Ternary $p) : void
     {
-        $this->split(Code::SPLIT_RULE_CONDITIONS, 'cuddle');
+        $this->split(Code::SPLIT_RULE_TERNARY, 'cuddle');
         $this->code[] = ' ' . $p->str . ' ';
     }
 
     protected function sTernaryEnd(P\End $p) : void
     {
-        $this->split(Code::SPLIT_RULE_CONDITIONS, 'endCuddle');
+        $this->split(Code::SPLIT_RULE_TERNARY, 'endCuddle');
     }
 
     protected function sThrow(P\Throw_ $p) : void

@@ -20,6 +20,8 @@ class Code extends ArrayObject
 
     public const SPLIT_RULE_FLUENT = 'SPLIT_RULE_FLUENT';
 
+    public const SPLIT_RULE_TERNARY = 'SPLIT_RULE_TERNARY';
+
     public const SPLIT_RULE_PARAMS = 'SPLIT_RULE_PARAMS';
 
     protected string $file = '';
@@ -55,8 +57,9 @@ class Code extends ArrayObject
             static::SPLIT_RULE_ARRAY . "_3",
             static::SPLIT_RULE_ARRAY . "_4",
             static::SPLIT_RULE_ARRAY . "_5",
-            static::SPLIT_RULE_CONDITIONS, // put ternaries after args?
+            static::SPLIT_RULE_CONDITIONS,
             static::SPLIT_RULE_CONCAT,
+            static::SPLIT_RULE_TERNARY,
             static::SPLIT_RULE_ARGS . "_0",
             static::SPLIT_RULE_ARGS . "_1",
             static::SPLIT_RULE_ARGS . "_2",

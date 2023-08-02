@@ -1014,11 +1014,6 @@ class Printer
         $this->list[] = 'namespace\\' . $this->name($node);
     }
 
-    protected function pNullableType(Node\NullableType $node) : void
-    {
-        $this->list[] = '?' . $this->type($node);
-    }
-
     protected function pNewAnonymous(Stmt\Class_ $node, array $args)
     {
         $this->pAttributeGroups($node);
@@ -1554,7 +1549,7 @@ class Printer
         }
     }
 
-     protected function pStmt_Property(Stmt\Property $node) : void
+    protected function pStmt_Property(Stmt\Property $node) : void
     {
         $this->pAttributeGroups($node);
         $this->pModifiers($node);
@@ -1764,6 +1759,21 @@ class Printer
         }
     }
 
+    protected function pIntersectionType(Node\IntersectionType $node) : void
+    {
+        $this->list[] = $this->intersectionType($node);
+    }
+
+    protected function pNullableType(Node\NullableType $node) : void
+    {
+        $this->list[] = $this->nullableType($node);
+    }
+
+    protected function pUnionType(Node\UnionType $node) : void
+    {
+        $this->list[] = $this->unionType($node);
+    }
+
     protected function pUnpack(Node $node) : void
     {
         if ($node->unpack) {
@@ -1897,36 +1907,41 @@ class Printer
         }
 
         if ($node->type instanceof Node\NullableType) {
-            return '?' . $this->name($node->type->type);
+            return $this->nullableType($node->type);
         }
 
         if ($node->type instanceof Node\IntersectionType) {
-            return $this->intersectionType($node);
+            return $this->intersectionType($node->type);
         }
 
         if ($node->type instanceof Node\UnionType) {
-            return $this->unionType($node);
+            return $this->unionType($node->type);
         }
 
         return $this->name($node->type);
     }
 
-    protected function intersectionType(Node\Param $node) : string
+    protected function intersectionType(Node\IntersectionType $node) : string
     {
         $types = [];
 
-        foreach ($node->type->types as $typeNode) {
+        foreach ($node->types as $typeNode) {
             $types[] = $this->name($typeNode);
         }
 
         return implode('&', $types);
     }
 
-    protected function unionType(Node\Param $node) : string
+    protected function nullableType(Node\NullableType $node) : string
+    {
+        return '?' . $this->name($node->type);
+    }
+
+    protected function unionType(Node\UnionType $node) : string
     {
         $types = [];
 
-        foreach ($node->type->types as $typeNode) {
+        foreach ($node->types as $typeNode) {
             if ($typeNode instanceof Node\IntersectionType) {
                 $types[] = '(' . $this->intersectionType($typeNode) . ')';
             } else {
