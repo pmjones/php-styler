@@ -13,13 +13,15 @@ use PhpStyler\Printable\Printable;
 
 class Styler
 {
-    protected $arrayLevel = 0;
+    protected int $argsLevel = 0;
 
-    protected $argsLevel = 0;
+    protected int $arrayLevel = 0;
 
     protected bool $atFirstInBody = false;
 
     protected Code $code;
+
+    protected int $condLevel = 0;
 
     protected bool $hadComment = false;
 
@@ -376,6 +378,7 @@ class Styler
 
     protected function sCond(P\Cond $p) : void
     {
+        $this->condLevel ++;
         $this->code[] = '(';
         $this->split(Code::SPLIT_RULE_CONDITIONS);
     }
@@ -384,6 +387,7 @@ class Styler
     {
         $this->split(Code::SPLIT_RULE_CONDITIONS, 'end');
         $this->code[] = ')';
+        $this->condLevel --;
     }
 
     protected function sConst(P\Const_ $p) : void
@@ -684,7 +688,11 @@ class Styler
             $p->class === BinaryOp\BooleanAnd::class
             || $p->class === BinaryOp\BooleanOr::class
         ) {
-            $this->split(Code::SPLIT_RULE_CONCAT, 'mid');
+            if (! $this->condLevel) {
+                $this->split(Code::SPLIT_RULE_BOOLEAN, 'cuddle');
+            } else {
+                $this->split(Code::SPLIT_RULE_BOOLEAN, 'mid');
+            }
         }
 
         if ($p->class === BinaryOp\Coalesce::class && ! $this->argsLevel) {
@@ -709,9 +717,19 @@ class Styler
     protected function sInfixEnd(P\InfixEnd $p) : void
     {
         if (
-            $p->class === BinaryOp\Coalesce::class
-            || $p->class === BinaryOp\Concat::class
+            $p->class === BinaryOp\BooleanAnd::class
+            || $p->class === BinaryOp\BooleanOr::class
         ) {
+            if (! $this->condLevel) {
+                $this->split(Code::SPLIT_RULE_BOOLEAN, 'endCuddle');
+            }
+        }
+
+        if ($p->class === BinaryOp\Coalesce::class && ! $this->argsLevel) {
+            $this->split(Code::SPLIT_RULE_COALESCE, 'endCuddle');
+        }
+
+        if ($p->class === BinaryOp\Concat::class) {
             $this->split(Code::SPLIT_RULE_CONCAT, 'endCuddle');
         }
 
@@ -902,12 +920,12 @@ class Styler
     protected function sPrecedence(P\Precedence $p) : void
     {
         $this->code[] = '(';
-        $this->split(Code::SPLIT_RULE_CONDITIONS);
+        $this->split(Code::SPLIT_RULE_PRECEDENCE, 'cuddle');
     }
 
     protected function sPrecedenceEnd(P\End $p) : void
     {
-        $this->split(Code::SPLIT_RULE_CONDITIONS, 'end');
+        $this->split(Code::SPLIT_RULE_PRECEDENCE, 'endCuddle');
         $this->code[] = ')';
     }
 

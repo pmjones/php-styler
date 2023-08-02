@@ -18,6 +18,10 @@ class Code extends ArrayObject
 
     public const SPLIT_RULE_CONCAT = 'SPLIT_RULE_CONCAT';
 
+    public const SPLIT_RULE_BOOLEAN = 'SPLIT_RULE_BOOLEAN';
+
+    public const SPLIT_RULE_PRECEDENCE = 'SPLIT_RULE_PRECEDENCE';
+
     public const SPLIT_RULE_CONDITIONS = 'SPLIT_RULE_CONDITIONS';
 
     public const SPLIT_RULE_FLUENT = 'SPLIT_RULE_FLUENT';
@@ -63,6 +67,8 @@ class Code extends ArrayObject
             static::SPLIT_RULE_ARRAY . "_4",
             static::SPLIT_RULE_ARRAY . "_5",
             static::SPLIT_RULE_CONDITIONS,
+            static::SPLIT_RULE_BOOLEAN,
+            static::SPLIT_RULE_PRECEDENCE,
             static::SPLIT_RULE_ARGS . "_0",
             static::SPLIT_RULE_ARGS . "_1",
             static::SPLIT_RULE_ARGS . "_2",
