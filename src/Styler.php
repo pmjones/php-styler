@@ -694,15 +694,12 @@ class Styler
                 break;
 
             case Expr\BinaryOp\Coalesce::class:
+            case Expr\BinaryOp\Concat::class:
+            case Expr\Ternary::class:
                 if (! $this->argsLevel) {
                     $this->split($p->class, 'cuddle');
                 }
 
-                break;
-
-            case Expr\BinaryOp\Concat::class:
-            case Expr\Ternary::class:
-                $this->split($p->class, 'cuddle');
                 break;
         }
 
@@ -725,15 +722,12 @@ class Styler
                 break;
 
             case Expr\BinaryOp\Coalesce::class:
+            case Expr\BinaryOp\Concat::class:
+            case Expr\Ternary::class:
                 if (! $this->argsLevel) {
                     $this->split($p->class, 'endCuddle');
                 }
 
-                break;
-
-            case Expr\BinaryOp\Concat::class:
-            case Expr\Ternary::class:
-                $this->split($p->class, 'endCuddle');
                 break;
         }
     }
