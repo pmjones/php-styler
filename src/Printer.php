@@ -1552,7 +1552,7 @@ class Printer
     protected function pStmt_Property(Stmt\Property $node) : void
     {
         $this->pAttributeGroups($node);
-        $this->pModifiers($node);
+        $this->list[] = new P\Property($node->flags);
         $this->pType($node);
         $this->pSeparate('property', $node->props);
         $this->pEnd('property');

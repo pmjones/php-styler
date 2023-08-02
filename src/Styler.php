@@ -946,6 +946,12 @@ class Styler
         $this->code[] = ' ';
     }
 
+    protected function sProperty(P\Property $p) : void
+    {
+        $this->maybeNewline($p);
+        $this->code[] = $this->modifiers($p->flags);
+    }
+
     protected function sPropertyEnd(P\End $end) : void
     {
         $this->code[] = ';';
