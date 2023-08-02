@@ -13,8 +13,6 @@ class Code extends ArrayObject
 {
     protected string $file = '';
 
-    protected string $indent = '';
-
     protected string $lines = '';
 
     protected bool $multiline = false;
@@ -23,11 +21,19 @@ class Code extends ArrayObject
 
     protected bool $forceSplit = false;
 
+    protected string $indentStr = '';
+
     public function __construct(
         protected string $eol = "\n",
-        protected int $maxlen = 80
+        protected int $lineLen = 80,
+        protected string $indent = "    ",
+        protected int $indentLen = 0,
     ) {
         parent::__construct([]);
+
+        if (! $this->indentLen) {
+            $this->indentLen = ($this->indent === "\t" ? 4 : strlen($indent));
+        }
     }
 
     public function getFile() : string
@@ -37,7 +43,7 @@ class Code extends ArrayObject
 
     public function done() : void
     {
-        $oldIndent = $this->indent;
+        $oldIndentStr = $this->indentStr;
         $splitRules = [
             Expr\BinaryOp\Concat::class,
             Expr\Ternary::class,
@@ -66,7 +72,7 @@ class Code extends ArrayObject
         $this->multiline = true;
 
         while ($this->atLeastOneLineTooLong() && $splitRules) {
-            $this->indent = $oldIndent;
+            $this->indentStr = $oldIndentStr;
             $this->splitRuleSet[] = array_shift($splitRules);
             $this->setLines();
         }
@@ -75,7 +81,7 @@ class Code extends ArrayObject
 
         // retain in file and reset for next round
         $this->file .= $this->lines;
-        $this->exchangeArray([$this->eol . $this->indent]);
+        $this->exchangeArray([$this->eol . $this->indentStr]);
     }
 
     protected function atLeastOneLineTooLong() : bool
@@ -86,7 +92,7 @@ class Code extends ArrayObject
         }
 
         foreach (explode($this->eol, $this->lines) as $line) {
-            if (strlen($line) > $this->maxlen) {
+            if (strlen($line) > $this->lineLen) {
                 return true;
             }
         }
@@ -112,13 +118,13 @@ class Code extends ArrayObject
 
     protected function newline() : void
     {
-        $this->lines .= $this->eol . $this->indent;
+        $this->lines .= $this->eol . $this->indentStr;
     }
 
     protected function cuddle() : void
     {
         $this->file = rtrim($this->file);
-        $this->lines = rtrim($this->lines) . $this->eol . $this->indent;
+        $this->lines = rtrim($this->lines) . $this->eol . $this->indentStr;
     }
 
     protected function cuddleParen() : void
@@ -134,12 +140,12 @@ class Code extends ArrayObject
 
     protected function indent() : void
     {
-        $this->indent .= '    ';
+        $this->indentStr .= $this->indent;
     }
 
     protected function outdent() : void
     {
-        $this->indent = substr($this->indent, 0, -4);
+        $this->indentStr = substr($this->indentStr, 0, -1 * strlen($this->indent));
     }
 
     protected function forceSplit() : void

@@ -23,7 +23,7 @@ class Styler
 
     protected bool $hadComment = false;
 
-     protected array $operator = [
+    protected array $operator = [
         Expr\Assign::class => '=',
         Expr\AssignOp\BitwiseAnd::class => '&=',
         Expr\AssignOp\BitwiseOr::class => '|=',
@@ -83,7 +83,9 @@ class Styler
 
     public function __construct(
         protected string $eol = "\n",
-        protected int $maxlen = 80
+        protected int $lineLen = 80,
+        protected string $indent = "    ",
+        protected int $indentLen = 0,
     ) {
     }
 
@@ -97,7 +99,12 @@ class Styler
         $this->argsLevel = 0;
         $this->arrayLevel = 0;
         $this->hadComment = false;
-        $this->code = new Code($this->eol, $this->maxlen);
+        $this->code = new Code(
+            $this->eol,
+            $this->lineLen,
+            $this->indent,
+            $this->indentLen
+        );
 
         while ($list) {
             $p = array_shift($list);
