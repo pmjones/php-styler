@@ -66,11 +66,17 @@ However, the default styling is basically reasonable, and can be customized with
 
 At first, PHP-Styler builds each statement/instruction as a single line. If that line is "too long" (80 characters by default) the _Styler_ reconstructs the code by trying to split it across multiple lines. It does so by applying one or more rules in order:
 
-- Function definition parameters are split at commas;
+- String concatenations are split at dots;
 - Array elements are split at commas;
-- Conditions are split at precedence-indicating parentheses, boolean operators, and ternary operators;
+- Ternaries are split at `?` and `:`
+- Conditions are split at parentheses;
+- Precedence-indicating parentheses are split;
+- Boolean `||` operators are split;
+- Boolean `&&` operators are split;
 - Method calls are split at `->` and `?->` operators;
-- Argument lists are split at commas.
+- Argument lists are split at commas;
+- Coalesce `??` operators are split;
+- Function definition parameters are split at commas.
 
 If the first rule does not make the line short enough, the second rule is applied in addition, then the third, and so on.
 

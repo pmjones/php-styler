@@ -23,6 +23,8 @@ class Styler
 
     protected bool $hadComment = false;
 
+    protected int $methodCallLevel = 0;
+
     protected array $operator = [
         Expr\Assign::class => '=',
         Expr\AssignOp\BitwiseAnd::class => '&=',
@@ -835,7 +837,9 @@ class Styler
     protected function sMethodCall(P\MethodCall $p)
     {
         if ($p->operator === '->' || $p->operator === '?->') {
-            $this->split(P\MethodCall::class, 'cuddle');
+            $this->methodCallLevel ++;
+            $level = $this->methodCallLevel;
+            $this->split(P\MethodCall::class . "_{$level}", 'cuddle');
         }
 
         $this->code[] = $p->operator;
@@ -844,7 +848,9 @@ class Styler
     protected function sMethodCallEnd(P\MethodCallEnd $p)
     {
         if ($p->operator === '->' || $p->operator === '?->') {
-            $this->split(P\MethodCall::class, 'endCuddle');
+            $level = $this->methodCallLevel;
+            $this->split(P\MethodCall::class . "_{$level}", 'endCuddle');
+            $this->methodCallLevel --;
         }
     }
 

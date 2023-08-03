@@ -45,18 +45,24 @@ class Code extends ArrayObject
     {
         $oldIndentStr = $this->indentStr;
         $splitRules = [
+            Expr\BinaryOp\Concat::class,
             P\Array::class . "_0",
             P\Array::class . "_1",
             P\Array::class . "_2",
             P\Array::class . "_3",
             P\Array::class . "_4",
             P\Array::class . "_5",
-            Expr\BinaryOp\Concat::class,
             Expr\Ternary::class,
             P\Cond::class,
+            Expr\BinaryOp\BooleanAnd::class,
             P\Precedence::class,
             Expr\BinaryOp\BooleanOr::class,
-            Expr\BinaryOp\BooleanAnd::class,
+            P\MethodCall::class . "_0",
+            P\MethodCall::class . "_1",
+            P\MethodCall::class . "_2",
+            P\MethodCall::class . "_3",
+            P\MethodCall::class . "_4",
+            P\MethodCall::class . "_5",
             P\Args::class . "_0",
             P\Args::class . "_1",
             P\Args::class . "_2",
@@ -64,7 +70,6 @@ class Code extends ArrayObject
             P\Args::class . "_4",
             P\Args::class . "_5",
             BinaryOp\Coalesce::class,
-            P\MethodCall::class,
             P\Params::class,
         ];
         $this->splitRuleSet = [];
