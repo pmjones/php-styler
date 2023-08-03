@@ -1091,8 +1091,9 @@ class Styler
 
     protected function sTernary(P\Ternary $p) : void
     {
+        $this->code[] = ' ';
         $this->split(Expr\Ternary::class, 'cuddle');
-        $this->code[] = ' ' . $p->str . ' ';
+        $this->code[] = $p->str . ' ';
     }
 
     protected function sTernaryEnd(P\End $p) : void
