@@ -29,71 +29,71 @@ class Printer
     protected $precedenceMap = [
         // [precedence, associativity]
         // where for precedence -1 is %left, 0 is %nonassoc and 1 is %right
-        BinaryOp\Pow::class            => [  0,  1],
-        Expr\BitwiseNot::class         => [ 10,  1],
-        Expr\PreInc::class             => [ 10,  1],
-        Expr\PreDec::class             => [ 10,  1],
-        Expr\PostInc::class            => [ 10, -1],
-        Expr\PostDec::class            => [ 10, -1],
-        Expr\UnaryPlus::class          => [ 10,  1],
-        Expr\UnaryMinus::class         => [ 10,  1],
-        Cast\Int_::class               => [ 10,  1],
-        Cast\Double::class             => [ 10,  1],
-        Cast\String_::class            => [ 10,  1],
-        Cast\Array_::class             => [ 10,  1],
-        Cast\Object_::class            => [ 10,  1],
-        Cast\Bool_::class              => [ 10,  1],
-        Cast\Unset_::class             => [ 10,  1],
-        Expr\ErrorSuppress::class      => [ 10,  1],
-        Expr\Instanceof_::class        => [ 20,  0],
-        Expr\BooleanNot::class         => [ 30,  1],
-        BinaryOp\Mul::class            => [ 40, -1],
-        BinaryOp\Div::class            => [ 40, -1],
-        BinaryOp\Mod::class            => [ 40, -1],
-        BinaryOp\Plus::class           => [ 50, -1],
-        BinaryOp\Minus::class          => [ 50, -1],
-        BinaryOp\Concat::class         => [ 50, -1],
-        BinaryOp\ShiftLeft::class      => [ 60, -1],
-        BinaryOp\ShiftRight::class     => [ 60, -1],
-        BinaryOp\Smaller::class        => [ 70,  0],
-        BinaryOp\SmallerOrEqual::class => [ 70,  0],
-        BinaryOp\Greater::class        => [ 70,  0],
-        BinaryOp\GreaterOrEqual::class => [ 70,  0],
-        BinaryOp\Equal::class          => [ 80,  0],
-        BinaryOp\NotEqual::class       => [ 80,  0],
-        BinaryOp\Identical::class      => [ 80,  0],
-        BinaryOp\NotIdentical::class   => [ 80,  0],
-        BinaryOp\Spaceship::class      => [ 80,  0],
-        BinaryOp\BitwiseAnd::class     => [ 90, -1],
-        BinaryOp\BitwiseXor::class     => [100, -1],
-        BinaryOp\BitwiseOr::class      => [110, -1],
-        BinaryOp\BooleanAnd::class     => [120, -1],
-        BinaryOp\BooleanOr::class      => [130, -1],
-        BinaryOp\Coalesce::class       => [140,  1],
-        Expr\Ternary::class            => [150,  0],
+        BinaryOp\Pow::class => [0, 1],
+        Expr\BitwiseNot::class => [10, 1],
+        Expr\PreInc::class => [10, 1],
+        Expr\PreDec::class => [10, 1],
+        Expr\PostInc::class => [10, -1],
+        Expr\PostDec::class => [10, -1],
+        Expr\UnaryPlus::class => [10, 1],
+        Expr\UnaryMinus::class => [10, 1],
+        Cast\Int_::class => [10, 1],
+        Cast\Double::class => [10, 1],
+        Cast\String_::class => [10, 1],
+        Cast\Array_::class => [10, 1],
+        Cast\Object_::class => [10, 1],
+        Cast\Bool_::class => [10, 1],
+        Cast\Unset_::class => [10, 1],
+        Expr\ErrorSuppress::class => [10, 1],
+        Expr\Instanceof_::class => [20, 0],
+        Expr\BooleanNot::class => [30, 1],
+        BinaryOp\Mul::class => [40, -1],
+        BinaryOp\Div::class => [40, -1],
+        BinaryOp\Mod::class => [40, -1],
+        BinaryOp\Plus::class => [50, -1],
+        BinaryOp\Minus::class => [50, -1],
+        BinaryOp\Concat::class => [50, -1],
+        BinaryOp\ShiftLeft::class => [60, -1],
+        BinaryOp\ShiftRight::class => [60, -1],
+        BinaryOp\Smaller::class => [70, 0],
+        BinaryOp\SmallerOrEqual::class => [70, 0],
+        BinaryOp\Greater::class => [70, 0],
+        BinaryOp\GreaterOrEqual::class => [70, 0],
+        BinaryOp\Equal::class => [80, 0],
+        BinaryOp\NotEqual::class => [80, 0],
+        BinaryOp\Identical::class => [80, 0],
+        BinaryOp\NotIdentical::class => [80, 0],
+        BinaryOp\Spaceship::class => [80, 0],
+        BinaryOp\BitwiseAnd::class => [90, -1],
+        BinaryOp\BitwiseXor::class => [100, -1],
+        BinaryOp\BitwiseOr::class => [110, -1],
+        BinaryOp\BooleanAnd::class => [120, -1],
+        BinaryOp\BooleanOr::class => [130, -1],
+        BinaryOp\Coalesce::class => [140, 1],
+        Expr\Ternary::class => [150, 0],
 
         // parser uses %left for assignments, but they really behave as %right
-        Expr\Assign::class             => [160,  1],
-        Expr\AssignRef::class          => [160,  1],
-        AssignOp\Plus::class           => [160,  1],
-        AssignOp\Minus::class          => [160,  1],
-        AssignOp\Mul::class            => [160,  1],
-        AssignOp\Div::class            => [160,  1],
-        AssignOp\Concat::class         => [160,  1],
-        AssignOp\Mod::class            => [160,  1],
-        AssignOp\BitwiseAnd::class     => [160,  1],
-        AssignOp\BitwiseOr::class      => [160,  1],
-        AssignOp\BitwiseXor::class     => [160,  1],
-        AssignOp\ShiftLeft::class      => [160,  1],
-        AssignOp\ShiftRight::class     => [160,  1],
-        AssignOp\Pow::class            => [160,  1],
-        AssignOp\Coalesce::class       => [160,  1],
-        Expr\YieldFrom::class          => [165,  1],
-        Expr\Print_::class             => [168,  1],
-        BinaryOp\LogicalAnd::class     => [170, -1],
-        BinaryOp\LogicalXor::class     => [180, -1],
-        BinaryOp\LogicalOr::class      => [190, -1],
-        Expr\Include_::class           => [200, -1],
+        Expr\Assign::class => [160, 1],
+        Expr\AssignRef::class => [160, 1],
+        AssignOp\Plus::class => [160, 1],
+        AssignOp\Minus::class => [160, 1],
+        AssignOp\Mul::class => [160, 1],
+        AssignOp\Div::class => [160, 1],
+        AssignOp\Concat::class => [160, 1],
+        AssignOp\Mod::class => [160, 1],
+        AssignOp\BitwiseAnd::class => [160, 1],
+        AssignOp\BitwiseOr::class => [160, 1],
+        AssignOp\BitwiseXor::class => [160, 1],
+        AssignOp\ShiftLeft::class => [160, 1],
+        AssignOp\ShiftRight::class => [160, 1],
+        AssignOp\Pow::class => [160, 1],
+        AssignOp\Coalesce::class => [160, 1],
+        Expr\YieldFrom::class => [165, 1],
+        Expr\Print_::class => [168, 1],
+        BinaryOp\LogicalAnd::class => [170, -1],
+        BinaryOp\LogicalXor::class => [180, -1],
+        BinaryOp\LogicalOr::class => [190, -1],
+        Expr\Include_::class => [200, -1],
     ];
 
     protected array $list = [];
@@ -136,7 +136,7 @@ class Printer
         }
 
         $method = 'p' . $spec->getType();
-        $this->$method($spec);
+        $this->{$method}($spec);
     }
 
     protected function pArg(Node\Arg $node) : void
@@ -144,6 +144,7 @@ class Printer
         if ($node->name) {
             $this->list[] = new P\ParamName($node->name->toString());
         }
+
         $this->pByref($node);
         $this->pUnpack($node);
         $this->p($node->value);
@@ -236,7 +237,6 @@ class Printer
         }
 
         $this->commented->attach($commentNodes[0]);
-
         $this->list[] = new P\Comments(count($commentNodes));
 
         foreach ($commentNodes as $commentNode) {
@@ -392,7 +392,9 @@ class Printer
         $this->pInfixOp(AssignOp\Mod::class, $node->var, $node->expr);
     }
 
-    protected function pExpr_AssignOp_BitwiseAnd(AssignOp\BitwiseAnd $node) : void
+    protected function pExpr_AssignOp_BitwiseAnd(
+        AssignOp\BitwiseAnd $node,
+    ) : void
     {
         $this->pInfixOp(AssignOp\BitwiseAnd::class, $node->var, $node->expr);
     }
@@ -402,7 +404,9 @@ class Printer
         $this->pInfixOp(AssignOp\BitwiseOr::class, $node->var, $node->expr);
     }
 
-    protected function pExpr_AssignOp_BitwiseXor(AssignOp\BitwiseXor $node) : void
+    protected function pExpr_AssignOp_BitwiseXor(
+        AssignOp\BitwiseXor $node,
+    ) : void
     {
         $this->pInfixOp(AssignOp\BitwiseXor::class, $node->var, $node->expr);
     }
@@ -412,7 +416,9 @@ class Printer
         $this->pInfixOp(AssignOp\ShiftLeft::class, $node->var, $node->expr);
     }
 
-    protected function pExpr_AssignOp_ShiftRight(AssignOp\ShiftRight $node) : void
+    protected function pExpr_AssignOp_ShiftRight(
+        AssignOp\ShiftRight $node,
+    ) : void
     {
         $this->pInfixOp(AssignOp\ShiftRight::class, $node->var, $node->expr);
     }
@@ -457,7 +463,9 @@ class Printer
         $this->pInfixOp(BinaryOp\Mod::class, $node->left, $node->right);
     }
 
-    protected function pExpr_BinaryOp_BooleanAnd(BinaryOp\BooleanAnd $node) : void
+    protected function pExpr_BinaryOp_BooleanAnd(
+        BinaryOp\BooleanAnd $node,
+    ) : void
     {
         $this->pInfixOp(BinaryOp\BooleanAnd::class, $node->left, $node->right);
     }
@@ -467,7 +475,9 @@ class Printer
         $this->pInfixOp(BinaryOp\BooleanOr::class, $node->left, $node->right);
     }
 
-    protected function pExpr_BinaryOp_BitwiseAnd(BinaryOp\BitwiseAnd $node) : void
+    protected function pExpr_BinaryOp_BitwiseAnd(
+        BinaryOp\BitwiseAnd $node,
+    ) : void
     {
         $this->pInfixOp(BinaryOp\BitwiseAnd::class, $node->left, $node->right);
     }
@@ -477,7 +487,9 @@ class Printer
         $this->pInfixOp(BinaryOp\BitwiseOr::class, $node->left, $node->right);
     }
 
-    protected function pExpr_BinaryOp_BitwiseXor(BinaryOp\BitwiseXor $node) : void
+    protected function pExpr_BinaryOp_BitwiseXor(
+        BinaryOp\BitwiseXor $node,
+    ) : void
     {
         $this->pInfixOp(BinaryOp\BitwiseXor::class, $node->left, $node->right);
     }
@@ -487,7 +499,9 @@ class Printer
         $this->pInfixOp(BinaryOp\ShiftLeft::class, $node->left, $node->right);
     }
 
-    protected function pExpr_BinaryOp_ShiftRight(BinaryOp\ShiftRight $node) : void
+    protected function pExpr_BinaryOp_ShiftRight(
+        BinaryOp\ShiftRight $node,
+    ) : void
     {
         $this->pInfixOp(BinaryOp\ShiftRight::class, $node->left, $node->right);
     }
@@ -497,7 +511,9 @@ class Printer
         $this->pInfixOp(BinaryOp\Pow::class, $node->left, $node->right);
     }
 
-    protected function pExpr_BinaryOp_LogicalAnd(BinaryOp\LogicalAnd $node) : void
+    protected function pExpr_BinaryOp_LogicalAnd(
+        BinaryOp\LogicalAnd $node,
+    ) : void
     {
         $this->pInfixOp(BinaryOp\LogicalAnd::class, $node->left, $node->right);
     }
@@ -507,7 +523,9 @@ class Printer
         $this->pInfixOp(BinaryOp\LogicalOr::class, $node->left, $node->right);
     }
 
-    protected function pExpr_BinaryOp_LogicalXor(BinaryOp\LogicalXor $node) : void
+    protected function pExpr_BinaryOp_LogicalXor(
+        BinaryOp\LogicalXor $node,
+    ) : void
     {
         $this->pInfixOp(BinaryOp\LogicalXor::class, $node->left, $node->right);
     }
@@ -527,9 +545,15 @@ class Printer
         $this->pInfixOp(BinaryOp\Identical::class, $node->left, $node->right);
     }
 
-    protected function pExpr_BinaryOp_NotIdentical(BinaryOp\NotIdentical $node) : void
+    protected function pExpr_BinaryOp_NotIdentical(
+        BinaryOp\NotIdentical $node,
+    ) : void
     {
-        $this->pInfixOp(BinaryOp\NotIdentical::class, $node->left, $node->right);
+        $this->pInfixOp(
+            BinaryOp\NotIdentical::class,
+            $node->left,
+            $node->right,
+        );
     }
 
     protected function pExpr_BinaryOp_Spaceship(BinaryOp\Spaceship $node) : void
@@ -542,9 +566,15 @@ class Printer
         $this->pInfixOp(BinaryOp\Greater::class, $node->left, $node->right);
     }
 
-    protected function pExpr_BinaryOp_GreaterOrEqual(BinaryOp\GreaterOrEqual $node) : void
+    protected function pExpr_BinaryOp_GreaterOrEqual(
+        BinaryOp\GreaterOrEqual $node,
+    ) : void
     {
-        $this->pInfixOp(BinaryOp\GreaterOrEqual::class, $node->left, $node->right);
+        $this->pInfixOp(
+            BinaryOp\GreaterOrEqual::class,
+            $node->left,
+            $node->right,
+        );
     }
 
     protected function pExpr_BinaryOp_Smaller(BinaryOp\Smaller $node) : void
@@ -552,9 +582,15 @@ class Printer
         $this->pInfixOp(BinaryOp\Smaller::class, $node->left, $node->right);
     }
 
-    protected function pExpr_BinaryOp_SmallerOrEqual(BinaryOp\SmallerOrEqual $node) : void
+    protected function pExpr_BinaryOp_SmallerOrEqual(
+        BinaryOp\SmallerOrEqual $node,
+    ) : void
     {
-        $this->pInfixOp(BinaryOp\SmallerOrEqual::class, $node->left, $node->right);
+        $this->pInfixOp(
+            BinaryOp\SmallerOrEqual::class,
+            $node->left,
+            $node->right,
+        );
     }
 
     protected function pExpr_BinaryOp_Coalesce(BinaryOp\Coalesce $node) : void
@@ -569,7 +605,7 @@ class Printer
 
     protected function pExpr_BooleanNot(Expr\BooleanNot $node) : void
     {
-        $this->pPrefixOp(Expr\BooleanNot::class,$node->expr);
+        $this->pPrefixOp(Expr\BooleanNot::class, $node->expr);
     }
 
     protected function pExpr_Cast_Bool(Cast\Bool_ $node) : void
@@ -673,8 +709,7 @@ class Printer
     protected function pExpr_Exit(Expr\Exit_ $node) : void
     {
         $kind = $node->getAttribute('kind', Expr\Exit_::KIND_DIE);
-        $word = ($kind === Expr\Exit_::KIND_EXIT ? 'exit' : 'die');
-
+        $word = $kind === Expr\Exit_::KIND_EXIT ? 'exit' : 'die';
         $this->list[] = new P\ReservedFunc($word);
         $this->p($node->expr);
         $this->pEnd('reservedFunc');
@@ -706,19 +741,19 @@ class Printer
     protected function pExpr_Include(Expr\Include_ $node) : void
     {
         static $map = [
-            Expr\Include_::TYPE_INCLUDE      => 'include',
+            Expr\Include_::TYPE_INCLUDE => 'include',
             Expr\Include_::TYPE_INCLUDE_ONCE => 'include_once',
-            Expr\Include_::TYPE_REQUIRE      => 'require',
+            Expr\Include_::TYPE_REQUIRE => 'require',
             Expr\Include_::TYPE_REQUIRE_ONCE => 'require_once',
         ];
-
         $this->list[] = new P\ReservedWord($map[$node->type]);
         $this->p($node->expr);
     }
 
     protected function pExpr_Instanceof(Expr\Instanceof_ $node) : void
     {
-        list($precedence, $associativity) = $this->precedenceMap[Expr\Instanceof_::class];
+        list($precedence,
+        $associativity) = $this->precedenceMap[Expr\Instanceof_::class];
         $this->pPrec($node->expr, $precedence, $associativity, -1);
         $this->list[] = new P\InfixOp(Expr\Instanceof_::class);
         $this->pNewVariable($node->class);
@@ -768,7 +803,9 @@ class Printer
         }
     }
 
-    protected function pExpr_NullsafeMethodCall(Expr\NullsafeMethodCall $node) : void
+    protected function pExpr_NullsafeMethodCall(
+        Expr\NullsafeMethodCall $node,
+    ) : void
     {
         $this->pDereferenceLhs($node->var);
         $this->list[] = new P\MethodCall('?->');
@@ -777,7 +814,9 @@ class Printer
         $this->list[] = new P\MethodCallEnd('?->');
     }
 
-    protected function pExpr_NullsafePropertyFetch(Expr\NullsafePropertyFetch $node) : void
+    protected function pExpr_NullsafePropertyFetch(
+        Expr\NullsafePropertyFetch $node,
+    ) : void
     {
         $this->pDereferenceLhs($node->var);
         $this->list[] = new P\MemberFetch('?->');
@@ -825,7 +864,9 @@ class Printer
         $this->list[] = '`';
     }
 
-    protected function pExpr_StaticPropertyFetch(Expr\StaticPropertyFetch $node) : void
+    protected function pExpr_StaticPropertyFetch(
+        Expr\StaticPropertyFetch $node,
+    ) : void
     {
         $this->pDereferenceLhs($node->class);
         $this->list[] = new P\MemberFetch('::$');
@@ -855,16 +896,13 @@ class Printer
     protected function pExpr_Ternary(Expr\Ternary $node)
     {
         if (! $node->if) {
-            $this->pInfixOp(
-                Expr\Ternary::class,
-                $node->cond,
-                $node->else
-            );
+            $this->pInfixOp(Expr\Ternary::class, $node->cond, $node->else);
             return;
         }
 
         // lifted from nInfixOp
-        list($precedence, $associativity) = $this->precedenceMap[Expr\Ternary::class];
+        list($precedence,
+        $associativity) = $this->precedenceMap[Expr\Ternary::class];
         $this->pPrec($node->cond, $precedence, $associativity, -1);
         $this->list[] = new P\Ternary('?');
         $this->p($node->if);
@@ -882,7 +920,10 @@ class Printer
 
     protected function pExpr_UnaryMinus(Expr\UnaryMinus $node) : void
     {
-        if ($node->expr instanceof Expr\UnaryMinus || $node->expr instanceof Expr\PreDec) {
+        if (
+            $node->expr instanceof Expr\UnaryMinus
+            || $node->expr instanceof Expr\PreDec
+        ) {
             // Enforce -(-$expr) instead of --$expr
             $this->list[] = '-(';
             $this->p($node->expr);
@@ -895,7 +936,10 @@ class Printer
 
     protected function pExpr_UnaryPlus(Expr\UnaryPlus $node) : void
     {
-        if ($node->expr instanceof Expr\UnaryPlus || $node->expr instanceof Expr\PreInc) {
+        if (
+            $node->expr instanceof Expr\UnaryPlus
+            || $node->expr instanceof Expr\PreInc
+        ) {
             // Enforce +(+$expr) instead of ++$expr
             $this->list[] = '+(';
             $this->p($node->expr);
@@ -969,7 +1013,11 @@ class Printer
         }
     }
 
-    protected function pInfixOp(string $class, Node $leftNode, Node $rightNode) : void
+    protected function pInfixOp(
+        string $class,
+        Node $leftNode,
+        Node $rightNode,
+    ) : void
     {
         list($precedence, $associativity) = $this->precedenceMap[$class];
         $this->list[] = new P\Infix($class);
@@ -1069,7 +1117,12 @@ class Printer
         $this->list[] = new P\PostfixOp($class);
     }
 
-    protected function pPrec(Node $node, int $parentPrecedence, int $parentAssociativity, int $childPosition) : void
+    protected function pPrec(
+        Node $node,
+        int $parentPrecedence,
+        int $parentAssociativity,
+        int $childPosition,
+    ) : void
     {
         $class = get_class($node);
 
@@ -1078,10 +1131,8 @@ class Printer
 
             if (
                 $childPrecedence > $parentPrecedence
-                || (
-                    $parentPrecedence === $childPrecedence
-                    && $parentAssociativity !== $childPosition
-                )
+                || $parentPrecedence === $childPrecedence
+                && $parentAssociativity !== $childPosition
             ) {
                 $this->list[] = new P\Precedence();
                 $this->p($node);
@@ -1112,13 +1163,13 @@ class Printer
     {
         if (! is_finite($node->value)) {
             if ($node->value === INF) {
-                $this->list[] = '\INF';
+                $this->list[] = '\\INF';
                 return;
-            } elseif ($node->value === -\INF) {
-                $this->list[] = '-\INF';
+            } elseif ($node->value === -INF) {
+                $this->list[] = '-\\INF';
                 return;
             } else {
-                $this->list[] = '\NAN';
+                $this->list[] = '\\NAN';
                 return;
             }
         }
@@ -1126,7 +1177,7 @@ class Printer
         // Try to find a short full-precision representation
         $stringValue = sprintf('%.16G', $node->value);
 
-        if ($node->value !== (double) $stringValue) {
+        if ($node->value !== (float) $stringValue) {
             $stringValue = sprintf('%.17G', $node->value);
         }
 
@@ -1136,15 +1187,22 @@ class Printer
         $stringValue = str_replace(',', '.', $stringValue);
 
         // ensure that number is really printed as float
-        $this->list[] = preg_match('/^-?[0-9]+$/', $stringValue) ? $stringValue . '.0' : $stringValue;
+        $this->list[] = preg_match('/^-?[0-9]+$/', $stringValue) ? $stringValue
+            . '.0'
+         : $stringValue;
     }
 
     protected function pScalar_Encapsed(Scalar\Encapsed $node) : void
     {
         if ($node->getAttribute('kind') === Scalar\String_::KIND_HEREDOC) {
             $label = $node->getAttribute('docLabel');
-            if ($label && ! $this->encapsedContainsEndLabel($node->parts, $label)) {
-                if (count($node->parts) === 1
+
+            if (
+                $label
+                && ! $this->encapsedContainsEndLabel($node->parts, $label)
+            ) {
+                if (
+                    count($node->parts) === 1
                     && $node->parts[0] instanceof Scalar\EncapsedStringPart
                     && $node->parts[0]->value === ''
                 ) {
@@ -1165,7 +1223,9 @@ class Printer
         $this->list[] = '"';
     }
 
-    protected function pScalar_EncapsedStringPart(Scalar\EncapsedStringPart $node) : void
+    protected function pScalar_EncapsedStringPart(
+        Scalar\EncapsedStringPart $node,
+    ) : void
     {
         throw new LogicException('Cannot directly print EncapsedStringPart');
     }
@@ -1190,7 +1250,9 @@ class Printer
         $this->list[] = '__FILE__';
     }
 
-    protected function pScalar_MagicConst_Function(MagicConst\Function_ $node) : void
+    protected function pScalar_MagicConst_Function(
+        MagicConst\Function_ $node,
+    ) : void
     {
         $this->list[] = '__FUNCTION__';
     }
@@ -1205,7 +1267,9 @@ class Printer
         $this->list[] = '__METHOD__';
     }
 
-    protected function pScalar_MagicConst_Namespace(MagicConst\Namespace_ $node) : void
+    protected function pScalar_MagicConst_Namespace(
+        MagicConst\Namespace_ $node,
+    ) : void
     {
         $this->list[] = '__NAMESPACE__';
     }
@@ -1230,8 +1294,7 @@ class Printer
                     return;
                 }
 
-                /* break missing intentionally */
-
+            /* break missing intentionally */
             case Scalar\String_::KIND_SINGLE_QUOTED:
                 $this->list[] = '\'' . addcslashes($node->value, '\'\\') . '\'';
                 return;
@@ -1249,10 +1312,12 @@ class Printer
                     $this->list = new P\HeredocEnd($label);
                 }
 
-                /* break missing intentionally */
-
+            /* break missing intentionally */
             case Scalar\String_::KIND_DOUBLE_QUOTED:
-                $this->list[] = '"' . $this->escapeString($node->value, '"') . '"';
+                $this->list[] = '"'
+                    . $this->escapeString($node->value, '"')
+                    . '"'
+                ;
                 return;
         }
 
@@ -1278,9 +1343,8 @@ class Printer
 
     protected function pStmt_Break(Stmt\Break_ $node) : void
     {
-        $this->list[] = new P\Break_(
-            $node->num ? $this->scalar_LNumber($node->num) : null
-        );
+        $num = $node->num ? $this->scalar_LNumber($node->num) : null;
+        $this->list[] = new P\Break_($num);
     }
 
     protected function pStmt_Class(Stmt\Class_ $node) : void
@@ -1330,9 +1394,8 @@ class Printer
 
     protected function pStmt_Continue(Stmt\Continue_ $node) : void
     {
-        $this->list[] = new P\Continue_(
-            $node->num ? $this->scalar_LNumber($node->num) : null
-        );
+        $num = $node->num ? $this->scalar_LNumber($node->num) : null;
+        $this->list[] = new P\Continue_($num);
     }
 
     protected function pStmt_Declare(Stmt\Declare_ $node) : void
@@ -1376,9 +1439,7 @@ class Printer
     protected function pStmt_Enum(Stmt\Enum_ $node) : void
     {
         $this->pAttributeGroups($node);
-        $this->list[] = new P\Enum_(
-            $this->name($node->name),
-        );
+        $this->list[] = new P\Enum_($this->name($node->name));
 
         if ($node->scalarType) {
             $this->list[] = new P\ReturnType();
@@ -1434,7 +1495,7 @@ class Printer
 
         if ($node->keyVar) {
             $this->p($node->keyVar);
-            $this->list[] =  ' => ';
+            $this->list[] = ' => ';
         }
 
         $this->pByRef($node);
@@ -1512,7 +1573,7 @@ class Printer
     protected function pStmt_InlineHTML(Stmt\InlineHTML $node) : void
     {
         $this->list[] = new P\InlineHtml(
-            $node->getAttribute('hasLeadingNewline', true)
+            $node->getAttribute('hasLeadingNewline', true),
         );
         $this->list[] = $node->value;
         $this->list[] = $this->pEnd('inlineHtml');
@@ -1535,9 +1596,8 @@ class Printer
 
     protected function pStmt_Namespace(Stmt\Namespace_ $node) : void
     {
-        $this->list[] = new P\Namespace_(
-            $node->name === null ? null : $this->name($node->name),
-        );
+        $name = $node->name === null ? null : $this->name($node->name);
+        $this->list[] = new P\Namespace_($name);
 
         if ($this->namespaceCount > 1) {
             $this->pBody('namespace');
@@ -1558,14 +1618,16 @@ class Printer
         $this->pEnd('property');
     }
 
-    protected function pStmt_PropertyProperty(Stmt\PropertyProperty $node) : void
+    protected function pStmt_PropertyProperty(
+        Stmt\PropertyProperty $node,
+    ) : void
     {
         // @todo consider infix/assign for this
         $this->p($node->name);
         $this->pDefaultValue($node);
     }
 
-   protected function pStmt_Return(Stmt\Return_ $node) : void
+    protected function pStmt_Return(Stmt\Return_ $node) : void
     {
         $this->list[] = new P\Return_(! $node->expr);
         $this->p($node->expr);
@@ -1642,23 +1704,28 @@ class Printer
         $this->list[] = new P\BodyEnd('useTrait');
     }
 
-    protected function pStmt_TraitUseAdaptation_Alias(Stmt\TraitUseAdaptation\Alias $node) : void
+    protected function pStmt_TraitUseAdaptation_Alias(
+        Stmt\TraitUseAdaptation\Alias $node,
+    ) : void
     {
+        $old = $node->trait ? $this->name($node->trait) : null;
+        $new = $node->newName ? $this->name($node->newName) : null;
         $this->list[] = new P\UseTraitAs(
-            $node->trait ? $this->name($node->trait) : null,
+            $old,
             $this->name($node->method),
             $node->newModifier,
-            $node->newName ? $this->name($node->newName) : null,
+            $new,
         );
     }
 
-    protected function pStmt_TraitUseAdaptation_Precedence(Stmt\TraitUseAdaptation\Precedence $node) : void
+    protected function pStmt_TraitUseAdaptation_Precedence(
+        Stmt\TraitUseAdaptation\Precedence $node,
+    ) : void
     {
         $this->list[] = new P\UseTraitInsteadof(
             $this->name($node->trait),
             $this->name($node->method),
         );
-
         $this->pSeparate('insteadof', $node->insteadof);
         $this->pEnd('useTraitInsteadOf');
     }
@@ -1705,10 +1772,7 @@ class Printer
 
     protected function pStmt_Use(Stmt\Use_ $node) : void
     {
-        $this->list[] = new P\UseImport(
-            $this->useType($node),
-            null
-        );
+        $this->list[] = new P\UseImport($this->useType($node), null);
         $this->pSeparate('use', $node->uses);
         $this->list[] = new P\UseImportEnd(null);
     }
@@ -1716,10 +1780,7 @@ class Printer
     protected function pStmt_GroupUse(Stmt\GroupUse $node) : void
     {
         $prefix = $this->name($node->prefix);
-        $this->list[] = new P\UseImport(
-            $this->useType($node),
-            $prefix,
-        );
+        $this->list[] = new P\UseImport($this->useType($node), $prefix);
         $this->pSeparate('use', $node->uses);
         $this->list[] = new P\UseImportEnd($prefix);
     }
@@ -1727,7 +1788,6 @@ class Printer
     protected function pStmt_UseUse(Stmt\UseUse $node) : void
     {
         $type = $this->useType($node);
-
         $this->list[] = $type . $this->name($node->name);
 
         if ($node->alias) {
@@ -1795,46 +1855,51 @@ class Printer
     }
 
     // Helpers
-
     protected function callLhsRequiresParens(Node $node) : bool
     {
         return ! (
             $node instanceof Node\Name
-            || $node instanceof Expr\Variable
-            || $node instanceof Expr\ArrayDimFetch
-            || $node instanceof Expr\FuncCall
-            || $node instanceof Expr\MethodCall
-            || $node instanceof Expr\NullsafeMethodCall
-            || $node instanceof Expr\StaticCall
-            || $node instanceof Expr\Array_
+                || $node instanceof Expr\Variable
+                || $node instanceof Expr\ArrayDimFetch
+                || $node instanceof Expr\FuncCall
+                || $node instanceof Expr\MethodCall
+                || $node instanceof Expr\NullsafeMethodCall
+                || $node instanceof Expr\StaticCall
+                || $node instanceof Expr\Array_
         );
     }
 
-    protected function containsEndLabel($string, $label, $atStart = true, $atEnd = true) : bool
+    protected function containsEndLabel(
+        $string,
+        $label,
+        $atStart = true,
+        $atEnd = true,
+    ) : bool
     {
-        $start = $atStart ? '(?:^|[\r\n])' : '[\r\n]';
-        $end = $atEnd ? '(?:$|[;\r\n])' : '[;\r\n]';
+        $start = $atStart ? '(?:^|[\\r\\n])' : '[\\r\\n]';
+        $end = $atEnd ? '(?:$|[;\\r\\n])' : '[;\\r\\n]';
         return false !== strpos($string, $label)
-            && preg_match('/' . $start . $label . $end . '/', $string);
+            && preg_match('/' . $start . $label . $end . '/', $string)
+        ;
     }
 
     protected function dereferenceLhsRequiresParens(Node $node) : bool
     {
         return ! (
             $node instanceof Expr\Variable
-            || $node instanceof Node\Name
-            || $node instanceof Expr\ArrayDimFetch
-            || $node instanceof Expr\PropertyFetch
-            || $node instanceof Expr\NullsafePropertyFetch
-            || $node instanceof Expr\StaticPropertyFetch
-            || $node instanceof Expr\FuncCall
-            || $node instanceof Expr\MethodCall
-            || $node instanceof Expr\NullsafeMethodCall
-            || $node instanceof Expr\StaticCall
-            || $node instanceof Expr\Array_
-            || $node instanceof Scalar\String_
-            || $node instanceof Expr\ConstFetch
-            || $node instanceof Expr\ClassConstFetch
+                || $node instanceof Node\Name
+                || $node instanceof Expr\ArrayDimFetch
+                || $node instanceof Expr\PropertyFetch
+                || $node instanceof Expr\NullsafePropertyFetch
+                || $node instanceof Expr\StaticPropertyFetch
+                || $node instanceof Expr\FuncCall
+                || $node instanceof Expr\MethodCall
+                || $node instanceof Expr\NullsafeMethodCall
+                || $node instanceof Expr\StaticCall
+                || $node instanceof Expr\Array_
+                || $node instanceof Scalar\String_
+                || $node instanceof Expr\ConstFetch
+                || $node instanceof Expr\ClassConstFetch
         );
     }
 
@@ -1843,12 +1908,20 @@ class Printer
         foreach ($parts as $i => $part) {
             $atStart = $i === 0;
             $atEnd = $i === count($parts) - 1;
-            if ($part instanceof Scalar\EncapsedStringPart
-                && $this->containsEndLabel($part->value, $label, $atStart, $atEnd)
+
+            if (
+                $part instanceof Scalar\EncapsedStringPart
+                && $this->containsEndLabel(
+                    $part->value,
+                    $label,
+                    $atStart,
+                    $atEnd,
+                )
             ) {
                 return true;
             }
         }
+
         return false;
     }
 
@@ -1856,38 +1929,34 @@ class Printer
     {
         if (null === $quote) {
             // For doc strings, don't escape newlines
-            $escaped = addcslashes($string, "\t\f\v$\\");
+            $escaped = addcslashes($string, "\t\f\v\$\\");
         } else {
-            $escaped = addcslashes($string, "\n\r\t\f\v$" . $quote . "\\");
+            $escaped = addcslashes($string, "\n\r\t\f\v\$" . $quote . "\\");
         }
 
         // Escape control characters and non-UTF-8 characters.
         // Regex based on https://stackoverflow.com/a/11709412/385378.
         $regex = '/(
-              [\x00-\x08\x0E-\x1F] # Control characters
-            | [\xC0-\xC1] # Invalid UTF-8 Bytes
-            | [\xF5-\xFF] # Invalid UTF-8 Bytes
-            | \xE0(?=[\x80-\x9F]) # Overlong encoding of prior code point
-            | \xF0(?=[\x80-\x8F]) # Overlong encoding of prior code point
-            | [\xC2-\xDF](?![\x80-\xBF]) # Invalid UTF-8 Sequence Start
-            | [\xE0-\xEF](?![\x80-\xBF]{2}) # Invalid UTF-8 Sequence Start
-            | [\xF0-\xF4](?![\x80-\xBF]{3}) # Invalid UTF-8 Sequence Start
-            | (?<=[\x00-\x7F\xF5-\xFF])[\x80-\xBF] # Invalid UTF-8 Sequence Middle
-            | (?<![\xC2-\xDF]|[\xE0-\xEF]|[\xE0-\xEF][\x80-\xBF]|[\xF0-\xF4]|[\xF0-\xF4][\x80-\xBF]|[\xF0-\xF4][\x80-\xBF]{2})[\x80-\xBF] # Overlong Sequence
-            | (?<=[\xE0-\xEF])[\x80-\xBF](?![\x80-\xBF]) # Short 3 byte sequence
-            | (?<=[\xF0-\xF4])[\x80-\xBF](?![\x80-\xBF]{2}) # Short 4 byte sequence
-            | (?<=[\xF0-\xF4][\x80-\xBF])[\x80-\xBF](?![\x80-\xBF]) # Short 4 byte sequence (2)
+              [\\x00-\\x08\\x0E-\\x1F] # Control characters
+            | [\\xC0-\\xC1] # Invalid UTF-8 Bytes
+            | [\\xF5-\\xFF] # Invalid UTF-8 Bytes
+            | \\xE0(?=[\\x80-\\x9F]) # Overlong encoding of prior code point
+            | \\xF0(?=[\\x80-\\x8F]) # Overlong encoding of prior code point
+            | [\\xC2-\\xDF](?![\\x80-\\xBF]) # Invalid UTF-8 Sequence Start
+            | [\\xE0-\\xEF](?![\\x80-\\xBF]{2}) # Invalid UTF-8 Sequence Start
+            | [\\xF0-\\xF4](?![\\x80-\\xBF]{3}) # Invalid UTF-8 Sequence Start
+            | (?<=[\\x00-\\x7F\\xF5-\\xFF])[\\x80-\\xBF] # Invalid UTF-8 Sequence Middle
+            | (?<![\\xC2-\\xDF]|[\\xE0-\\xEF]|[\\xE0-\\xEF][\\x80-\\xBF]|[\\xF0-\\xF4]|[\\xF0-\\xF4][\\x80-\\xBF]|[\\xF0-\\xF4][\\x80-\\xBF]{2})[\\x80-\\xBF] # Overlong Sequence
+            | (?<=[\\xE0-\\xEF])[\\x80-\\xBF](?![\\x80-\\xBF]) # Short 3 byte sequence
+            | (?<=[\\xF0-\\xF4])[\\x80-\\xBF](?![\\x80-\\xBF]{2}) # Short 4 byte sequence
+            | (?<=[\\xF0-\\xF4][\\x80-\\xBF])[\\x80-\\xBF](?![\\x80-\\xBF]) # Short 4 byte sequence (2)
         )/x';
-
-        return preg_replace_callback(
-            $regex,
-            function ($matches) {
-                assert(strlen($matches[0]) === 1);
-                $hex = dechex(ord($matches[0]));
-                return '\\x' . str_pad($hex, 2, '0', STR_PAD_LEFT);
-            },
-            $escaped
-        );
+        $callback = function ($matches) {
+            assert(strlen($matches[0]) === 1);
+            $hex = dechex(ord($matches[0]));
+            return '\\x' . str_pad($hex, 2, '0', STR_PAD_LEFT);
+        };
+        return preg_replace_callback($regex, $callback, $escaped);
     }
 
     protected function name(
@@ -1955,7 +2024,7 @@ class Printer
 
     protected function scalar_LNumber(Scalar\LNumber $node) : string
     {
-        if ($node->value === -\PHP_INT_MAX-1) {
+        if ($node->value === -PHP_INT_MAX - 1) {
             // PHP_INT_MIN cannot be represented as a literal,
             // because the sign is not part of the literal
             return '(-' . PHP_INT_MAX . '-1)';

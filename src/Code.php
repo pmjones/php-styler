@@ -32,7 +32,7 @@ class Code extends ArrayObject
         parent::__construct([]);
 
         if (! $this->indentLen) {
-            $this->indentLen = ($this->indent === "\t" ? 4 : strlen($indent));
+            $this->indentLen = $this->indent === "\t" ? 4 : strlen($indent);
         }
     }
 
@@ -45,14 +45,14 @@ class Code extends ArrayObject
     {
         $oldIndentStr = $this->indentStr;
         $splitRules = [
-            Expr\Ternary::class,
-            Expr\BinaryOp\Concat::class,
             P\Array::class . "_0",
             P\Array::class . "_1",
             P\Array::class . "_2",
             P\Array::class . "_3",
             P\Array::class . "_4",
             P\Array::class . "_5",
+            Expr\BinaryOp\Concat::class,
+            Expr\Ternary::class,
             P\Cond::class,
             P\Precedence::class,
             Expr\BinaryOp\BooleanOr::class,
@@ -113,7 +113,7 @@ class Code extends ArrayObject
             }
         }
 
-        $this->lines = preg_replace("/\s+$/m", "\n", $this->lines);
+        $this->lines = preg_replace("/\\s+\$/m", "\n", $this->lines);
     }
 
     protected function newline() : void
@@ -150,7 +150,11 @@ class Code extends ArrayObject
 
     protected function outdent() : void
     {
-        $this->indentStr = substr($this->indentStr, 0, -1 * strlen($this->indent));
+        $this->indentStr = substr(
+            $this->indentStr,
+            0,
+            -1 * strlen($this->indent),
+        );
     }
 
     protected function forceSplit() : void
@@ -161,7 +165,7 @@ class Code extends ArrayObject
     protected function split(
         string $splitRule,
         string $type = '',
-        string ...$args
+        string ...$args,
     ) : void
     {
         if (! $this->multiline) {

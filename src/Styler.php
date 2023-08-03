@@ -103,7 +103,7 @@ class Styler
             $this->eol,
             $this->lineLen,
             $this->indent,
-            $this->indentLen
+            $this->indentLen,
         );
 
         while ($list) {
@@ -146,7 +146,11 @@ class Styler
         $this->code[] = ['forceSplit'];
     }
 
-    protected function split(string $strategy, string $type = '', ...$args) : void
+    protected function split(
+        string $strategy,
+        string $type = '',
+        ...$args,
+    ) : void
     {
         $this->code[] = ['split', $strategy, $type, ...$args];
     }
@@ -160,7 +164,8 @@ class Styler
             . ($flags & Stmt\Class_::MODIFIER_PROTECTED ? 'protected ' : '')
             . ($flags & Stmt\Class_::MODIFIER_PRIVATE ? 'private ' : '')
             . ($flags & Stmt\Class_::MODIFIER_STATIC ? 'static ' : '')
-            . ($flags & Stmt\Class_::MODIFIER_READONLY ? 'readonly ' : '');
+            . ($flags & Stmt\Class_::MODIFIER_READONLY ? 'readonly ' : '')
+        ;
     }
 
     protected function maybeNewline(Printable $p) : void
@@ -196,7 +201,7 @@ class Styler
         // what method to use?
         $type = trim(strrchr(get_class($p), '\\'), '\\_');
         $method = 's' . $type;
-        $this->$method($p);
+        $this->{$method}($p);
     }
 
     protected function sArgs(P\Args $p) : void
@@ -239,7 +244,7 @@ class Styler
     protected function sArraySeparator(P\Separator $p) : void
     {
         $this->code[] = ', ';
-        $this->split(P\Array::class . "_{$this->arrayLevel}", 'mid',);
+        $this->split(P\Array::class . "_{$this->arrayLevel}", 'mid');
     }
 
     protected function sArrayEnd(P\ArrayEnd $p) : void
@@ -272,19 +277,19 @@ class Styler
     {
         $this->atFirstInBody = true;
         $method = 's' . ucfirst($p->type) . 'Body';
-        $this->$method($p);
+        $this->{$method}($p);
     }
 
     protected function sBodyEnd(P\BodyEnd $p) : void
     {
         $method = 's' . ucfirst($p->type) . 'BodyEnd';
-        $this->$method($p);
+        $this->{$method}($p);
     }
 
     protected function sBodyEmpty(P\BodyEmpty $p) : void
     {
         $method = 's' . ucfirst($p->type) . 'BodyEmpty';
-        $this->$method($p);
+        $this->{$method}($p);
     }
 
     protected function sBreak(P\Break_ $p) : void
@@ -303,11 +308,10 @@ class Styler
     {
         if ($p->name) {
             $this->maybeNewline($p);
-        };
+        }
 
-        $this->code[] = $this->modifiers($p->flags)
-            . 'class'
-            . ($p->name ? ' ' . $p->name : '');
+        $name = $p->name ? ' ' . $p->name : '';
+        $this->code[] = $this->modifiers($p->flags) . 'class' . $name;
     }
 
     protected function sClassBody(P\Body $p) : void
@@ -483,7 +487,7 @@ class Styler
     protected function sEnd(P\End $p) : void
     {
         $method = 's' . ucfirst($p->type) . 'End';
-        $this->$method($p);
+        $this->{$method}($p);
     }
 
     protected function sEnum(P\Enum_ $p) : void
@@ -589,7 +593,7 @@ class Styler
 
     protected function sFunction(P\Function_ $p) : void
     {
-        $this->code[] = $this->modifiers($p->flags) . 'function ' ;
+        $this->code[] = $this->modifiers($p->flags) . 'function ';
     }
 
     protected function sFunctionBodyEmpty(P\BodyEmpty $p) : void
@@ -1048,7 +1052,7 @@ class Styler
 
     protected function sSwitchCase(P\SwitchCase $p) : void
     {
-        $this->code[] = ($p->isDefault) ? 'default' : 'case ';
+        $this->code[] = $p->isDefault ? 'default' : 'case ';
     }
 
     protected function sSwitchCaseCondEnd(P\End $p) : void
@@ -1188,7 +1192,7 @@ class Styler
 
     protected function sUseImport(P\UseImport $p) : void
     {
-        $this->code[] = 'use ' . ($p->type ?  $p->type . ' ' : '');
+        $this->code[] = 'use ' . ($p->type ? $p->type . ' ' : '');
 
         if ($p->prefix) {
             $this->code[] = $p->prefix . '\\{';
@@ -1199,7 +1203,7 @@ class Styler
     {
         if ($p->prefix) {
             $this->code[] = '}';
-        };
+        }
 
         $this->code[] = ';';
         $this->done();
