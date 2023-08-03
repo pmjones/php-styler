@@ -369,13 +369,6 @@ class Styler
         $this->done();
     }
 
-    protected function sComment(P\Comment $p) : void
-    {
-        $this->code[] = $p->text;
-        $this->hadComment = true;
-        $this->commentNewline();
-    }
-
     protected function sComments(P\Comments $p) : void
     {
         $this->cuddle();
@@ -383,6 +376,13 @@ class Styler
         if (! $p->isFirst()) {
             $this->commentNewline();
         }
+    }
+
+    protected function sComment(P\Comment $p) : void
+    {
+        $this->code[] = $p->text;
+        $this->hadComment = true;
+        $this->commentNewline();
     }
 
     protected function commentNewline() : void
