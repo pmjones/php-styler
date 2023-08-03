@@ -1330,11 +1330,9 @@ class Printer
             return;
         }
 
-        $count = count($nodes);
-
-        foreach ($nodes as $num => $node) {
+        foreach ($nodes as $node) {
             $this->p($node);
-            $this->list[] = new P\Separator($type, $num, $count);
+            $this->list[] = new P\Separator($type);
         }
 
         // remove last separator
@@ -1662,9 +1660,13 @@ class Printer
 
     protected function pStmt_Case(Stmt\Case_ $node) : void
     {
-        $this->list[] = new P\SwitchCase(! $node->cond);
-        $this->p($node->cond);
-        $this->pEnd('switchCaseCond');
+        if ($node->cond) {
+            $this->list[] = new P\SwitchCase();
+            $this->p($node->cond);
+            $this->pEnd('switchCase');
+        } else {
+            $this->list[] = new P\SwitchCaseDefault();
+        }
 
         if ($node->stmts) {
             $this->pBody('switchCase');
@@ -1708,13 +1710,13 @@ class Printer
         Stmt\TraitUseAdaptation\Alias $node,
     ) : void
     {
-        $old = $node->trait ? $this->name($node->trait) : null;
-        $new = $node->newName ? $this->name($node->newName) : null;
+        $oldName = $node->trait ? $this->name($node->trait) : null;
+        $newName = $node->newName ? $this->name($node->newName) : null;
         $this->list[] = new P\UseTraitAs(
-            $old,
+            $oldName,
             $this->name($node->method),
             $node->newModifier,
-            $new,
+            $newName,
         );
     }
 

@@ -5,7 +5,4 @@ namespace PhpStyler\Printable;
 
 class SwitchCase extends Printable
 {
-    public function __construct(public readonly bool $isDefault)
-    {
-    }
 }

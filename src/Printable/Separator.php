@@ -7,8 +7,6 @@ class Separator extends Printable
 {
     public function __construct(
         public readonly string $type,
-        public int $num,
-        public int $count
     ) {
     }
 }

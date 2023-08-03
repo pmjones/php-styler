@@ -138,6 +138,11 @@ class Styler
         $this->code[] = ['cuddle'];
     }
 
+    protected function cuddleParen() : void
+    {
+        $this->code[] = ['cuddleParen'];
+    }
+
     protected function newline() : void
     {
         $this->code[] = ['newline'];
@@ -608,7 +613,7 @@ class Styler
     protected function sFunctionBody(P\Body $p) : void
     {
         $this->newline();
-        $this->code[] = ['cuddleParen'];
+        $this->cuddleParen();
         $this->code[] = '{';
         $this->indent();
         $this->done();
@@ -910,7 +915,7 @@ class Styler
 
     protected function sParamName(P\ParamName $p) : void
     {
-        $this->code[] = $p->str . ': ';
+        $this->code[] = $p->name . ': ';
     }
 
     protected function sParams(P\Params $p) : void
@@ -1058,13 +1063,18 @@ class Styler
 
     protected function sSwitchCase(P\SwitchCase $p) : void
     {
-        $this->code[] = $p->isDefault ? 'default' : 'case ';
+        $this->code[] = 'case ';
     }
 
-    protected function sSwitchCaseCondEnd(P\End $p) : void
+    protected function sSwitchCaseEnd(P\End $p) : void
     {
         $this->code[] = ':';
         $this->done();
+    }
+
+    protected function sSwitchCaseDefault(P\SwitchCaseDefault $p) : void
+    {
+        $this->code[] = 'default:';
     }
 
     protected function sSwitchCaseBody(P\Body $p) : void
@@ -1093,7 +1103,7 @@ class Styler
     {
         $this->code[] = ' ';
         $this->split(Expr\Ternary::class, 'cuddle');
-        $this->code[] = $p->str . ' ';
+        $this->code[] = $p->operator . ' ';
     }
 
     protected function sTernaryEnd(P\End $p) : void
