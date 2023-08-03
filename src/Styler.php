@@ -1091,6 +1091,7 @@ class Styler
 
     protected function sThrow(P\Throw_ $p) : void
     {
+        $this->maybeNewline($p);
         $this->code[] = 'throw ';
     }
 
