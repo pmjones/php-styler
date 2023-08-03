@@ -45,8 +45,8 @@ class Code extends ArrayObject
     {
         $oldIndentStr = $this->indentStr;
         $splitRules = [
-            Expr\BinaryOp\Concat::class,
             Expr\Ternary::class,
+            Expr\BinaryOp\Concat::class,
             P\Array::class . "_0",
             P\Array::class . "_1",
             P\Array::class . "_2",
