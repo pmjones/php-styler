@@ -229,6 +229,7 @@ class Styler
     {
         $this->arrayLevel ++;
         $this->code[] = '[';
+        $this->atFirstInBody = true;
 
         if ($p->count) {
             $this->split(P\Array::class . "_{$this->arrayLevel}");
