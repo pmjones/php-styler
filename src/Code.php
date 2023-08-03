@@ -123,8 +123,13 @@ class Code extends ArrayObject
 
     protected function cuddle() : void
     {
-        $this->file = rtrim($this->file);
-        $this->lines = rtrim($this->lines) . $this->eol . $this->indentStr;
+        $trimmed = rtrim($this->lines);
+
+        if ($trimmed === '') {
+            $this->file = rtrim($this->file);
+        }
+
+        $this->lines = $trimmed . $this->eol . $this->indentStr;
     }
 
     protected function cuddleParen() : void
