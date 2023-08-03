@@ -1666,6 +1666,7 @@ class Printer
     protected function pStmt_TryCatch(Stmt\TryCatch $node) : void
     {
         $this->list[] = new P\Try_();
+        $this->pBody('try');
         $this->p($node->stmts);
 
         foreach ($node->catches as $catch) {

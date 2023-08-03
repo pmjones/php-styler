@@ -1127,7 +1127,12 @@ class Styler
     protected function sTry(P\Try_ $p) : void
     {
         $this->maybeNewline($p);
-        $this->code[] = 'try {';
+        $this->code[] = 'try';
+    }
+
+    protected function sTryBody(P\Body $p) : void
+    {
+        $this->code[] = ' {';
         $this->indent();
         $this->done();
     }
