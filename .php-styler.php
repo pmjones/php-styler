@@ -1,5 +1,6 @@
 <?php
 return [
+    'cache' => __DIR__ . '/.php-styler.cache',
     'files' => new RecursiveIteratorIterator(
         new RecursiveCallbackFilterIterator(
             new RecursiveDirectoryIterator(__DIR__ . '/src'),
