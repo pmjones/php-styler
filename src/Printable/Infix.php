@@ -5,8 +5,7 @@ namespace PhpStyler\Printable;
 
 class Infix extends Printable
 {
-    public function __construct(
-        public readonly string $class
-    ) {
+    public function __construct(public readonly string $class)
+    {
     }
 }

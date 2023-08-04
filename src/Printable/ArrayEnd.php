@@ -5,8 +5,7 @@ namespace PhpStyler\Printable;
 
 class ArrayEnd extends Printable
 {
-    public function __construct(
-        public readonly int $count
-    ) {
+    public function __construct(public readonly int $count)
+    {
     }
 }

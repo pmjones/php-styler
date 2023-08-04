@@ -5,8 +5,7 @@ namespace PhpStyler\Printable;
 
 class Goto_ extends Printable
 {
-    public function __construct(
-        public readonly string $label,
-    ) {
+    public function __construct(public readonly string $label)
+    {
     }
 }

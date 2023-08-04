@@ -5,8 +5,7 @@ namespace PhpStyler\Printable;
 
 class InlineHtml extends Printable
 {
-    public function __construct(
-        public readonly bool $newline,
-    ) {
+    public function __construct(public readonly bool $newline)
+    {
     }
 }

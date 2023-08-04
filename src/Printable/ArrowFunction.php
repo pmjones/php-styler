@@ -5,8 +5,7 @@ namespace PhpStyler\Printable;
 
 class ArrowFunction extends Printable
 {
-    public function __construct(
-        public readonly bool $static,
-    ) {
+    public function __construct(public readonly bool $static)
+    {
     }
 }

@@ -5,8 +5,7 @@ namespace PhpStyler\Printable;
 
 class ArgsEnd extends Printable
 {
-    public function __construct(
-        public readonly int $count
-    ) {
+    public function __construct(public readonly int $count)
+    {
     }
 }

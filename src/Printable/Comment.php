@@ -5,8 +5,7 @@ namespace PhpStyler\Printable;
 
 class Comment extends Printable
 {
-    public function __construct(
-        public readonly string $text
-    ) {
+    public function __construct(public readonly string $text)
+    {
     }
 }

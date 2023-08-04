@@ -549,11 +549,9 @@ class Printer
         BinaryOp\NotIdentical $node,
     ) : void
     {
-        $this->pInfixOp(
-            BinaryOp\NotIdentical::class,
-            $node->left,
-            $node->right,
-        );
+        $this
+            ->pInfixOp(BinaryOp\NotIdentical::class, $node->left, $node->right)
+        ;
     }
 
     protected function pExpr_BinaryOp_Spaceship(BinaryOp\Spaceship $node) : void
@@ -570,11 +568,13 @@ class Printer
         BinaryOp\GreaterOrEqual $node,
     ) : void
     {
-        $this->pInfixOp(
-            BinaryOp\GreaterOrEqual::class,
-            $node->left,
-            $node->right,
-        );
+        $this
+            ->pInfixOp(
+                BinaryOp\GreaterOrEqual::class,
+                $node->left,
+                $node->right,
+            )
+        ;
     }
 
     protected function pExpr_BinaryOp_Smaller(BinaryOp\Smaller $node) : void
@@ -586,11 +586,13 @@ class Printer
         BinaryOp\SmallerOrEqual $node,
     ) : void
     {
-        $this->pInfixOp(
-            BinaryOp\SmallerOrEqual::class,
-            $node->left,
-            $node->right,
-        );
+        $this
+            ->pInfixOp(
+                BinaryOp\SmallerOrEqual::class,
+                $node->left,
+                $node->right,
+            )
+        ;
     }
 
     protected function pExpr_BinaryOp_Coalesce(BinaryOp\Coalesce $node) : void
@@ -1570,8 +1572,8 @@ class Printer
 
     protected function pStmt_InlineHTML(Stmt\InlineHTML $node) : void
     {
-        $this->list[] = new P\InlineHtml(
-            $node->getAttribute('hasLeadingNewline', true),
+        $this->list[] = new P\InlineHtml($node
+            ->getAttribute('hasLeadingNewline', true)
         );
         $this->list[] = $node->value;
         $this->list[] = $this->pEnd('inlineHtml');
@@ -1712,21 +1714,19 @@ class Printer
     {
         $oldName = $node->trait ? $this->name($node->trait) : null;
         $newName = $node->newName ? $this->name($node->newName) : null;
-        $this->list[] = new P\UseTraitAs(
-            $oldName,
-            $this->name($node->method),
-            $node->newModifier,
-            $newName,
-        );
+        $this->list[] = new P\UseTraitAs($oldName, $this
+            ->name($node->method)
+        , $node->newModifier, $newName);
     }
 
     protected function pStmt_TraitUseAdaptation_Precedence(
         Stmt\TraitUseAdaptation\Precedence $node,
     ) : void
     {
-        $this->list[] = new P\UseTraitInsteadof(
-            $this->name($node->trait),
-            $this->name($node->method),
+        $this->list[] = new P\UseTraitInsteadof($this
+            ->name($node->trait)
+        , $this
+            ->name($node->method)
         );
         $this->pSeparate('insteadof', $node->insteadof);
         $this->pEnd('useTraitInsteadOf');
@@ -1913,12 +1913,9 @@ class Printer
 
             if (
                 $part instanceof Scalar\EncapsedStringPart
-                && $this->containsEndLabel(
-                    $part->value,
-                    $label,
-                    $atStart,
-                    $atEnd,
-                )
+                && $this
+                    ->containsEndLabel($part->value, $label, $atStart, $atEnd)
+
             ) {
                 return true;
             }

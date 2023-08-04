@@ -5,8 +5,7 @@ namespace PhpStyler\Printable;
 
 class Heredoc extends Printable
 {
-    public function __construct(
-        public string $label,
-    ) {
+    public function __construct(public string $label)
+    {
     }
 }

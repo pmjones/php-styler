@@ -61,7 +61,10 @@ class Code extends ArrayObject
         parent::__construct([]);
 
         if (! $this->indentLen) {
-            $this->indentLen = $this->indentStr === "\t" ? 4 : strlen($indentStr);
+            $this->indentLen = $this->indentStr === "\t"
+                ? 4
+                : strlen($indentStr)
+            ;
         }
 
         foreach ($split as $rule) {
@@ -167,11 +170,7 @@ class Code extends ArrayObject
 
     protected function outdent() : void
     {
-        $this->indent = substr(
-            $this->indent,
-            0,
-            -1 * strlen($this->indentStr),
-        );
+        $this->indent = substr($this->indent, 0, -1 * strlen($this->indentStr));
     }
 
     protected function forceSplit() : void

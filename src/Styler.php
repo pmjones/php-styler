@@ -160,13 +160,7 @@ class Styler
         ...$args,
     ) : void
     {
-        $this->code[] = [
-            'split',
-            Code::SPLIT[$class],
-            $level,
-            $type,
-            ...$args
-        ];
+        $this->code[] = ['split', Code::SPLIT[$class], $level, $type, ...$args];
     }
 
     protected function modifiers(?int $flags) : string
@@ -850,11 +844,7 @@ class Styler
     {
         if ($p->operator === '->' || $p->operator === '?->') {
             $this->methodCallLevel ++;
-            $this->split(
-                P\MethodCall::class,
-                $this->methodCallLevel,
-                'cuddle'
-            );
+            $this->split(P\MethodCall::class, $this->methodCallLevel, 'cuddle');
         }
 
         $this->code[] = $p->operator;
@@ -863,11 +853,13 @@ class Styler
     protected function sMethodCallEnd(P\MethodCallEnd $p)
     {
         if ($p->operator === '->' || $p->operator === '?->') {
-            $this->split(
-                P\MethodCall::class,
-                $this->methodCallLevel,
-                'endCuddle'
-            );
+            $this
+                ->split(
+                    P\MethodCall::class,
+                    $this->methodCallLevel,
+                    'endCuddle',
+                )
+            ;
             $this->methodCallLevel --;
         }
     }

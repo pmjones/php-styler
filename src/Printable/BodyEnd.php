@@ -5,8 +5,7 @@ namespace PhpStyler\Printable;
 
 class BodyEnd extends Printable
 {
-    public function __construct(
-        public readonly string $type
-    ) {
+    public function __construct(public readonly string $type)
+    {
     }
 }

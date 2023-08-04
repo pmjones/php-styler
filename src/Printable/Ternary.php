@@ -5,8 +5,7 @@ namespace PhpStyler\Printable;
 
 class Ternary extends Printable
 {
-    public function __construct(
-        public readonly string $operator
-    ) {
+    public function __construct(public readonly string $operator)
+    {
     }
 }

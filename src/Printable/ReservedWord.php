@@ -5,8 +5,7 @@ namespace PhpStyler\Printable;
 
 class ReservedWord extends Printable
 {
-    public function __construct(
-        public readonly string $name,
-    ) {
+    public function __construct(public readonly string $name)
+    {
     }
 }
