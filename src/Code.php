@@ -11,28 +11,67 @@ use ArrayObject;
 
 class Code extends ArrayObject
 {
+    public const SPLIT = [
+        P\Args::class => 'args',
+        P\Array::class => 'array',
+        P\Cond::class => 'cond',
+        Expr\BinaryOp\BooleanAnd::class => 'bool_and',
+        Expr\BinaryOp\BooleanOr::class => 'bool_or',
+        Expr\BinaryOp\Coalesce::class => 'coalesce',
+        Expr\BinaryOp\Concat::class => 'concat',
+        P\MethodCall::class => 'method_call',
+        P\Params::class => 'params',
+        P\Precedence::class => 'precedence',
+        Expr\Ternary::class => 'ternary',
+    ];
+
     protected string $file = '';
 
     protected string $lines = '';
 
     protected bool $multiline = false;
 
-    protected array $splitRuleSet = [];
+    protected array $splitApply = [];
 
     protected bool $forceSplit = false;
 
-    protected string $indentStr = '';
+    protected string $indent = '';
+
+    protected array $splitOrder = [];
 
     public function __construct(
         protected string $eol = "\n",
         protected int $lineLen = 80,
-        protected string $indent = "    ",
+        protected string $indentStr = "    ",
         protected int $indentLen = 0,
+        array $split = [
+            'concat',
+            'array',
+            'ternary',
+            'cond',
+            'bool_and',
+            'precedence',
+            'bool_or',
+            'method_call',
+            'args',
+            'coalesce',
+            'params',
+        ],
     ) {
         parent::__construct([]);
 
         if (! $this->indentLen) {
-            $this->indentLen = $this->indent === "\t" ? 4 : strlen($indent);
+            $this->indentLen = $this->indentStr === "\t" ? 4 : strlen($indentStr);
+        }
+
+        foreach ($split as $rule) {
+            if (in_array($rule, ['array', 'method_call', 'args'])) {
+                for ($level = 0; $level <= 5; $level ++) {
+                    $this->splitOrder[] = "{$rule}_{$level}";
+                }
+            } else {
+                $this->splitOrder[] = $rule;
+            }
         }
     }
 
@@ -43,42 +82,15 @@ class Code extends ArrayObject
 
     public function done() : void
     {
-        $oldIndentStr = $this->indentStr;
-        $splitRules = [
-            Expr\BinaryOp\Concat::class,
-            P\Array::class . "_0",
-            P\Array::class . "_1",
-            P\Array::class . "_2",
-            P\Array::class . "_3",
-            P\Array::class . "_4",
-            P\Array::class . "_5",
-            Expr\Ternary::class,
-            P\Cond::class,
-            Expr\BinaryOp\BooleanAnd::class,
-            P\Precedence::class,
-            Expr\BinaryOp\BooleanOr::class,
-            P\MethodCall::class . "_0",
-            P\MethodCall::class . "_1",
-            P\MethodCall::class . "_2",
-            P\MethodCall::class . "_3",
-            P\MethodCall::class . "_4",
-            P\MethodCall::class . "_5",
-            P\Args::class . "_0",
-            P\Args::class . "_1",
-            P\Args::class . "_2",
-            P\Args::class . "_3",
-            P\Args::class . "_4",
-            P\Args::class . "_5",
-            BinaryOp\Coalesce::class,
-            P\Params::class,
-        ];
-        $this->splitRuleSet = [];
+        $oldIndent = $this->indent;
+        $splitOrder = $this->splitOrder;
+        $this->splitApply = [];
         $this->setLines();
         $this->multiline = true;
 
-        while ($this->atLeastOneLineTooLong() && $splitRules) {
-            $this->indentStr = $oldIndentStr;
-            $this->splitRuleSet[] = array_shift($splitRules);
+        while ($this->atLeastOneLineTooLong() && $splitOrder) {
+            $this->indent = $oldIndent;
+            $this->splitApply[] = array_shift($splitOrder);
             $this->setLines();
         }
 
@@ -86,7 +98,7 @@ class Code extends ArrayObject
 
         // retain in file and reset for next round
         $this->file .= $this->lines;
-        $this->exchangeArray([$this->eol . $this->indentStr]);
+        $this->exchangeArray([$this->eol . $this->indent]);
     }
 
     protected function atLeastOneLineTooLong() : bool
@@ -123,7 +135,7 @@ class Code extends ArrayObject
 
     protected function newline() : void
     {
-        $this->lines .= $this->eol . $this->indentStr;
+        $this->lines .= $this->eol . $this->indent;
     }
 
     protected function cuddle() : void
@@ -134,7 +146,7 @@ class Code extends ArrayObject
             $this->file = rtrim($this->file);
         }
 
-        $this->lines = $trimmed . $this->eol . $this->indentStr;
+        $this->lines = $trimmed . $this->eol . $this->indent;
     }
 
     protected function cuddleParen() : void
@@ -150,15 +162,15 @@ class Code extends ArrayObject
 
     protected function indent() : void
     {
-        $this->indentStr .= $this->indent;
+        $this->indent .= $this->indentStr;
     }
 
     protected function outdent() : void
     {
-        $this->indentStr = substr(
-            $this->indentStr,
+        $this->indent = substr(
+            $this->indent,
             0,
-            -1 * strlen($this->indent),
+            -1 * strlen($this->indentStr),
         );
     }
 
@@ -168,8 +180,9 @@ class Code extends ArrayObject
     }
 
     protected function split(
-        string $splitRule,
-        string $type = '',
+        string $rule,
+        ?int $level,
+        ?string $type,
         string ...$args,
     ) : void
     {
@@ -177,12 +190,16 @@ class Code extends ArrayObject
             return;
         }
 
-        if (! in_array($splitRule, $this->splitRuleSet)) {
+        if ($level !== null) {
+            $rule .= "_{$level}";
+        }
+
+        if (! in_array($rule, $this->splitApply)) {
             return;
         }
 
         switch ($type) {
-            case '':
+            case null:
                 $this->indent();
                 $this->newline();
                 break;

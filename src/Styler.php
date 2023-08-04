@@ -154,12 +154,19 @@ class Styler
     }
 
     protected function split(
-        string $strategy,
-        string $type = '',
+        string $class,
+        int $level = null,
+        string $type = null,
         ...$args,
     ) : void
     {
-        $this->code[] = ['split', $strategy, $type, ...$args];
+        $this->code[] = [
+            'split',
+            Code::SPLIT[$class],
+            $level,
+            $type,
+            ...$args
+        ];
     }
 
     protected function modifiers(?int $flags) : string
@@ -217,20 +224,20 @@ class Styler
         $this->code[] = '(';
 
         if ($p->count) {
-            $this->split(P\Args::class . "_{$this->argsLevel}");
+            $this->split(P\Args::class, $this->argsLevel);
         }
     }
 
     protected function sArgSeparator(P\Separator $p) : void
     {
         $this->code[] = ', ';
-        $this->split(P\Args::class . "_{$this->argsLevel}", 'mid');
+        $this->split(P\Args::class, $this->argsLevel, 'mid');
     }
 
     protected function sArgsEnd(P\ArgsEnd $p) : void
     {
         if ($p->count) {
-            $this->split(P\Args::class . "_{$this->argsLevel}", 'end', ',');
+            $this->split(P\Args::class, $this->argsLevel, 'end', ',');
         }
 
         $this->code[] = ')';
@@ -244,20 +251,20 @@ class Styler
         $this->atFirstInBody = true;
 
         if ($p->count) {
-            $this->split(P\Array::class . "_{$this->arrayLevel}");
+            $this->split(P\Array::class, $this->arrayLevel);
         }
     }
 
     protected function sArraySeparator(P\Separator $p) : void
     {
         $this->code[] = ', ';
-        $this->split(P\Array::class . "_{$this->arrayLevel}", 'mid');
+        $this->split(P\Array::class, $this->arrayLevel, 'mid');
     }
 
     protected function sArrayEnd(P\ArrayEnd $p) : void
     {
         if ($p->count) {
-            $this->split(P\Array::class . "_{$this->arrayLevel}", 'end', ',');
+            $this->split(P\Array::class, $this->arrayLevel, 'end', ',');
         }
 
         $this->code[] = ']';
@@ -415,7 +422,7 @@ class Styler
 
     protected function sCondEnd(P\End $p) : void
     {
-        $this->split(P\Cond::class, 'end');
+        $this->split(P\Cond::class, null, 'end');
         $this->code[] = ')';
         $this->condLevel --;
     }
@@ -573,7 +580,7 @@ class Styler
     protected function sForExprSeparator(P\Separator $p) : void
     {
         $this->code[] = '; ';
-        $this->split(P\Args::class . "_{$this->argsLevel}", 'mid');
+        $this->split(P\Args::class, $this->argsLevel, 'mid');
     }
 
     protected function sForeach(P\Foreach_ $p) : void
@@ -718,9 +725,9 @@ class Styler
             case Expr\BinaryOp\BooleanAnd::class:
             case Expr\BinaryOp\BooleanOr::class:
                 if (! $this->condLevel) {
-                    $this->split($p->class, 'cuddle');
+                    $this->split($p->class, null, 'cuddle');
                 } else {
-                    $this->split($p->class, 'mid');
+                    $this->split($p->class, null, 'mid');
                 }
 
                 break;
@@ -729,7 +736,7 @@ class Styler
             case Expr\BinaryOp\Concat::class:
             case Expr\Ternary::class:
                 if (! $this->argsLevel) {
-                    $this->split($p->class, 'cuddle');
+                    $this->split($p->class, null, 'cuddle');
                 }
 
                 break;
@@ -748,7 +755,7 @@ class Styler
             case Expr\BinaryOp\BooleanAnd::class:
             case Expr\BinaryOp\BooleanOr::class:
                 if (! $this->condLevel) {
-                    $this->split($p->class, 'endCuddle');
+                    $this->split($p->class, null, 'endCuddle');
                 }
 
                 break;
@@ -757,7 +764,7 @@ class Styler
             case Expr\BinaryOp\Concat::class:
             case Expr\Ternary::class:
                 if (! $this->argsLevel) {
-                    $this->split($p->class, 'endCuddle');
+                    $this->split($p->class, null, 'endCuddle');
                 }
 
                 break;
@@ -843,8 +850,11 @@ class Styler
     {
         if ($p->operator === '->' || $p->operator === '?->') {
             $this->methodCallLevel ++;
-            $level = $this->methodCallLevel;
-            $this->split(P\MethodCall::class . "_{$level}", 'cuddle');
+            $this->split(
+                P\MethodCall::class,
+                $this->methodCallLevel,
+                'cuddle'
+            );
         }
 
         $this->code[] = $p->operator;
@@ -853,8 +863,11 @@ class Styler
     protected function sMethodCallEnd(P\MethodCallEnd $p)
     {
         if ($p->operator === '->' || $p->operator === '?->') {
-            $level = $this->methodCallLevel;
-            $this->split(P\MethodCall::class . "_{$level}", 'endCuddle');
+            $this->split(
+                P\MethodCall::class,
+                $this->methodCallLevel,
+                'endCuddle'
+            );
             $this->methodCallLevel --;
         }
     }
@@ -930,7 +943,7 @@ class Styler
     protected function sParamsEnd(P\ParamsEnd $p) : void
     {
         if ($p->count) {
-            $this->split(P\Params::class, 'end', ',');
+            $this->split(P\Params::class, null, 'end', ',');
         }
 
         $this->code[] = ')';
@@ -939,7 +952,7 @@ class Styler
     protected function sParamSeparator(P\Separator $p) : void
     {
         $this->code[] = ', ';
-        $this->split(P\Params::class, 'mid');
+        $this->split(P\Params::class, null, 'mid');
     }
 
     protected function sPostfixOp(P\PostfixOp $p) : void
@@ -950,12 +963,12 @@ class Styler
     protected function sPrecedence(P\Precedence $p) : void
     {
         $this->code[] = '(';
-        $this->split(P\Precedence::class, 'cuddle');
+        $this->split(P\Precedence::class, null, 'cuddle');
     }
 
     protected function sPrecedenceEnd(P\End $p) : void
     {
-        $this->split(P\Precedence::class, 'endCuddle');
+        $this->split(P\Precedence::class, null, 'endCuddle');
         $this->code[] = ')';
     }
 
@@ -1102,13 +1115,13 @@ class Styler
     protected function sTernary(P\Ternary $p) : void
     {
         $this->code[] = ' ';
-        $this->split(Expr\Ternary::class, 'cuddle');
+        $this->split(Expr\Ternary::class, null, 'cuddle');
         $this->code[] = $p->operator . ' ';
     }
 
     protected function sTernaryEnd(P\End $p) : void
     {
-        $this->split(Expr\Ternary::class, 'endCuddle');
+        $this->split(Expr\Ternary::class, null, 'endCuddle');
     }
 
     protected function sThrow(P\Throw_ $p) : void
