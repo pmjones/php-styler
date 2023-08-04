@@ -97,7 +97,8 @@ class Code extends ArrayObject
     {
         $rule = Code::SPLIT[$class];
         $this[] = ['applySplit', $rule, $level, $type, ...$args];
-        $this->splitCalls[$rule] = true;
+        $key = $rule . ($level !== null ? "_{$level}" : '');
+        $this->splitCalls[$key] = true;
     }
 
     public function done() : void
@@ -112,7 +113,7 @@ class Code extends ArrayObject
             $this->indent = $oldIndent;
             $rule = array_shift($splitOrder);
 
-            if ($this->splitCalls[$rule] ?? true) {
+            if ($this->splitCalls[$rule] ?? false) {
                 $this->splitApply[] = $rule;
                 $this->setLines();
             }

@@ -16,7 +16,8 @@
     },
     "require-dev": {
         "pds/skeleton": "^1.0",
-        "phpunit/phpunit": "^10.0"
+        "phpunit/phpunit": "^10.0",
+        "phpstan/phpstan": "^1.10"
     },
     "scripts": {
         "check": "composer cs-fix && composer test",

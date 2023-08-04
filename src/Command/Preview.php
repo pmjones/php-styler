@@ -12,15 +12,8 @@ class Preview extends Command
 {
     public function __invoke(string $configFile, string $sourceFile) : int
     {
-        // load config
         $config = $this->load($configFile);
-        unset($config['cache']);
-        unset($config['files']);
-
-        // get the configured styler object
-        $this->styler = $config['styler'] ?? null;
-        unset($config['styler']);
-        $this->styler ??= new Styler(...$config);
+        $this->setStyler($config);
 
         if (! $this->lint($sourceFile)) {
             exit(1);

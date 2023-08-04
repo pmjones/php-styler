@@ -16,49 +16,18 @@ class Apply extends Command
     {
         $start = microtime(true);
         $this->count = 0;
-
-        // load config
         echo "Loading " . $configFile . PHP_EOL;
         $config = $this->load($configFile);
-        $cache = ['time' => filemtime($configFile)];
-
-        // load cache
-        $cacheFile = $config['cache'] ?? false;
-        unset($config['cache']);
-
-        if ($cacheFile && file_exists($cacheFile)) {
-            echo "Loading " . $cacheFile . PHP_EOL;
-            $cache = $this->load($cacheFile);
-        } else {
-            $cache = ['time' => 0];
-        }
-
-        // get files to style
+        $cache = $this->getCache($config, $configFile);
+        $this->setStyler($config);
         $files = $config['files'] ?? [];
-        unset($config['files']);
-
-        // get the configured styler object
-        $this->styler = $config['styler'] ?? null;
-        unset($config['styler']);
-        $this->styler ??= new Styler(...$config);
-
-        // apply to files
         $exit = $this->apply($files, $cache['time']);
 
         if ($exit) {
             return $exit;
         }
 
-        // save cache
-        if ($cacheFile) {
-            echo "Saving {$cacheFile}" . PHP_EOL;
-            $data = '<?php return '
-                . var_export(['time' => time()], true)
-                . ';'
-                . PHP_EOL
-            ;
-            file_put_contents($cacheFile, $data);
-        }
+        $this->putCache($config);
 
         // report results
         echo "Styled {$this->count} files in "
@@ -68,6 +37,38 @@ class Apply extends Command
         ;
 
         return 0;
+    }
+
+    protected function getCache(array $config, string $configFile) : array
+    {
+        $cache = ['time' => filemtime($configFile)];
+        $cacheFile = $config['cache'] ?? false;
+
+        if ($cacheFile && file_exists($cacheFile)) {
+            echo "Loading " . $cacheFile . PHP_EOL;
+            $cache = $this->load($cacheFile);
+        } else {
+            $cache = ['time' => 0];
+        }
+
+        return $cache;
+    }
+
+    protected function putCache(array $config) : void
+    {
+        $cacheFile = $config['cache'] ?? false;
+
+        if (! $cacheFile) {
+            return;
+        }
+
+        echo "Saving {$cacheFile}" . PHP_EOL;
+        $data = '<?php return '
+            . var_export(['time' => time()], true)
+            . ';'
+            . PHP_EOL
+        ;
+        file_put_contents($cacheFile, $data);
     }
 
     protected function apply(array $files, int $mtime) : int

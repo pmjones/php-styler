@@ -14,6 +14,8 @@ abstract class Command
 
     protected Printer $printer;
 
+    protected Styler $styler;
+
     public function __construct()
     {
         $parserFactory = new ParserFactory();
@@ -37,6 +39,17 @@ abstract class Command
         }
 
         return true;
+    }
+
+    protected function setStyler(array $config) : void
+    {
+        $styler = $config['styler'] ?? [];
+
+        if (is_array($styler)) {
+            $this->styler = new Styler(...$styler);
+        } else {
+            $this->styler = $styler;
+        }
     }
 
     protected function style(string $file) : string
