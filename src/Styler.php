@@ -86,7 +86,7 @@ class Styler
     public function __construct(
         protected string $eol = "\n",
         protected int $lineLen = 80,
-        protected string $indent = "    ",
+        protected string $indentStr = "    ",
         protected int $indentLen = 0,
     ) {
     }
@@ -104,7 +104,7 @@ class Styler
         $this->code = new Code(
             $this->eol,
             $this->lineLen,
-            $this->indent,
+            $this->indentStr,
             $this->indentLen,
         );
 
