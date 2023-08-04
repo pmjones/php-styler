@@ -21,6 +21,7 @@
     "scripts": {
         "check": "composer cs-fix && composer test",
         "cs-fix": "php ./bin/php-styler.php apply .php-styler.php",
+        "cs-fix-preview": "php ./bin/php-styler.php preview .php-styler.php",
         "test": "./vendor/bin/phpunit",
         "test-coverage": "./vendor/bin/phpunit --coverage-html=./tmp/unit"
     }

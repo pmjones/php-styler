@@ -8,20 +8,9 @@ use PhpParser\Parser;
 use PhpStyler\Printer;
 use PhpStyler\Styler;
 
-class Apply
+class Apply extends Command
 {
-    protected Parser $parser;
-
-    protected Printer $printer;
-
     protected int $count = 0;
-
-    public function __construct()
-    {
-        $parserFactory = new ParserFactory();
-        $this->parser = $parserFactory->create(ParserFactory::PREFER_PHP7);
-        $this->printer = new Printer();
-    }
 
     public function __invoke(string $configFile) : int
     {
@@ -29,6 +18,7 @@ class Apply
         $this->count = 0;
 
         // load config
+        echo "Loading " . $configFile . PHP_EOL;
         $config = $this->load($configFile);
         $cache = ['time' => filemtime($configFile)];
 
@@ -37,6 +27,7 @@ class Apply
         unset($config['cache']);
 
         if ($cacheFile && file_exists($cacheFile)) {
+            echo "Loading " . $cacheFile . PHP_EOL;
             $cache = $this->load($cacheFile);
         } else {
             $cache = ['time' => 0];
@@ -79,26 +70,6 @@ class Apply
         return 0;
     }
 
-    protected function load(string $file) : array
-    {
-        echo "Loading " . $file . PHP_EOL;
-
-        return require $file;
-    }
-
-    protected function lint(string $file) : bool
-    {
-        exec("php -l {$file}", $output, $return);
-
-        if ($return !== 0) {
-            echo implode(PHP_EOL, $output) . PHP_EOL;
-
-            return false;
-        }
-
-        return true;
-    }
-
     protected function apply(array $files, int $mtime) : int
     {
         foreach ($files as $file) {
@@ -114,17 +85,11 @@ class Apply
                 return 1;
             }
 
-            $this->replace($file);
+            $code = $this->style($file);
+            file_put_contents($file, $code);
+            echo $file . PHP_EOL;
         }
 
         return 0;
-    }
-
-    protected function replace(string $file) : void
-    {
-        $stmts = $this->parser->parse(file_get_contents($file));
-        $code = $this->printer->printFile($stmts, $this->styler);
-        file_put_contents($file, $code);
-        echo $file . PHP_EOL;
     }
 }
