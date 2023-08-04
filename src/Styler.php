@@ -166,7 +166,7 @@ class Styler
         ...$args,
     ) : void
     {
-        $this->code[] = ['split', Code::SPLIT[$class], $level, $type, ...$args];
+        $this->code->split($class, $level, $type, ...$args);
     }
 
     protected function modifiers(?int $flags) : string

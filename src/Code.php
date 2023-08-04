@@ -33,6 +33,8 @@ class Code extends ArrayObject
 
     protected array $splitApply = [];
 
+    protected array $splitCalls = [];
+
     protected bool $forceSplit = false;
 
     protected string $indent = '';
@@ -86,6 +88,18 @@ class Code extends ArrayObject
         return rtrim($this->file) . $this->eol;
     }
 
+    public function split(
+        string $class,
+        int $level = null,
+        string $type = null,
+        ...$args,
+    ) : void
+    {
+        $rule = Code::SPLIT[$class];
+        $this[] = ['applySplit', $rule, $level, $type, ...$args];
+        $this->splitCalls[$rule] = true;
+    }
+
     public function done() : void
     {
         $oldIndent = $this->indent;
@@ -96,14 +110,19 @@ class Code extends ArrayObject
 
         while ($this->atLeastOneLineTooLong() && $splitOrder) {
             $this->indent = $oldIndent;
-            $this->splitApply[] = array_shift($splitOrder);
-            $this->setLines();
+            $rule = array_shift($splitOrder);
+
+            if ($this->splitCalls[$rule] ?? true) {
+                $this->splitApply[] = $rule;
+                $this->setLines();
+            }
         }
 
         $this->multiline = false;
 
         // retain in file and reset for next round
         $this->file .= $this->lines;
+        $this->splitCalls = [];
         $this->exchangeArray([$this->eol . $this->indent]);
     }
 
@@ -182,7 +201,7 @@ class Code extends ArrayObject
         $this->forceSplit = true;
     }
 
-    protected function split(
+    protected function applySplit(
         string $rule,
         ?int $level,
         ?string $type,
