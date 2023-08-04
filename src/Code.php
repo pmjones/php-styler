@@ -13,7 +13,7 @@ class Code extends ArrayObject
 {
     public const SPLIT = [
         P\Args::class => 'args',
-        P\Array::class => 'array',
+        P\Array_::class => 'array',
         P\Cond::class => 'cond',
         Expr\BinaryOp\BooleanAnd::class => 'bool_and',
         Expr\BinaryOp\BooleanOr::class => 'bool_or',

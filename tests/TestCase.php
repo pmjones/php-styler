@@ -7,6 +7,10 @@ use PhpParser\ParserFactory;
 
 abstract class TestCase extends \PHPUnit\Framework\TestCase
 {
+    protected Printer $printer;
+
+    protected Styler $styler;
+
     protected function setUp() : void
     {
         $this->printer = new Printer();
@@ -17,6 +21,8 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
     {
         $parserFactory = new ParserFactory();
         $parser = $parserFactory->create(ParserFactory::PREFER_PHP7);
+
+        /** @var array<\PhpParser\Node\Stmt> */
         $stmts = $parser->parse($source);
         return $this->printer->printFile($stmts, $this->styler);
     }

@@ -25,6 +25,9 @@ class Styler
 
     protected int $memberLevel = 0;
 
+    /**
+     * @var array<class-string, string>
+     */
     protected array $operator = [
         Expr\Assign::class => '=',
         Expr\AssignOp\BitwiseAnd::class => '&=',
@@ -91,6 +94,9 @@ class Styler
     ) {
     }
 
+    /**
+     * @param array<int, Printable|string> $list
+     */
     public function style(array $list) : string
     {
         if (! $list) {
@@ -101,16 +107,11 @@ class Styler
         $this->argsLevel = 0;
         $this->arrayLevel = 0;
         $this->hadComment = false;
-        $this
-            ->code
-         = new Code($this
-            ->eol
-        , $this
-            ->lineLen
-        , $this
-            ->indentStr
-        , $this
-            ->indentLen
+        $this->code = new Code(
+            $this->eol,
+            $this->lineLen,
+            $this->indentStr,
+            $this->indentLen
         );
 
         while ($list) {
@@ -163,7 +164,7 @@ class Styler
         string $class,
         int $level = null,
         string $type = null,
-        ...$args,
+        mixed ...$args,
     ) : void
     {
         $this->code->split($class, $level, $type, ...$args);
@@ -214,7 +215,9 @@ class Styler
         $this->hadComment = false;
 
         // what method to use?
-        $type = trim(strrchr(get_class($p), '\\'), '\\_');
+        /** @var string */
+        $last = strrchr(get_class($p), '\\');
+        $type = trim($last, '\\_');
         $method = 's' . $type;
         $this->{$method}($p);
     }
@@ -252,20 +255,20 @@ class Styler
         $this->atFirstInBody = true;
 
         if ($p->count) {
-            $this->split(P\Array::class, $this->arrayLevel);
+            $this->split(P\Array_::class, $this->arrayLevel);
         }
     }
 
     protected function sArraySeparator(P\Separator $p) : void
     {
         $this->code[] = ', ';
-        $this->split(P\Array::class, $this->arrayLevel, 'mid');
+        $this->split(P\Array_::class, $this->arrayLevel, 'mid');
     }
 
     protected function sArrayEnd(P\ArrayEnd $p) : void
     {
         if ($p->count) {
-            $this->split(P\Array::class, $this->arrayLevel, 'end', ',');
+            $this->split(P\Array_::class, $this->arrayLevel, 'end', ',');
         }
 
         $this->code[] = ']';
@@ -351,12 +354,12 @@ class Styler
         $this->code[] = $p->static ? 'static function ' : 'function ';
     }
 
-    protected function sClosureUse(P\ClosureUse $p)
+    protected function sClosureUse(P\ClosureUse $p) : void
     {
         $this->code[] = ' use (';
     }
 
-    protected function sClosureUseEnd(P\ClosureUseEnd $p)
+    protected function sClosureUseEnd(P\ClosureUseEnd $p) : void
     {
         $this->code[] = ')';
     }
@@ -838,7 +841,7 @@ class Styler
         $this->code[] = '}';
     }
 
-    protected function sMember(P\Member $p)
+    protected function sMember(P\Member $p) : void
     {
         if ($p->operator === '->' || $p->operator === '?->') {
             $this->memberLevel ++;
@@ -848,7 +851,7 @@ class Styler
         $this->code[] = $p->operator;
     }
 
-    protected function sMemberEnd(P\MemberEnd $p)
+    protected function sMemberEnd(P\MemberEnd $p) : void
     {
         if ($p->operator === '->' || $p->operator === '?->') {
             $this->split(P\Member::class, $this->memberLevel, 'endCuddle');
@@ -1265,7 +1268,7 @@ class Styler
         $this->done();
     }
 
-    protected function sUseTraitInsteadOf(P\UseTraitInsteadOf $p) : void
+    protected function sUseTraitInsteadof(P\UseTraitInsteadof $p) : void
     {
         $this->code[] = $p->trait;
         $this->code[] = '::' . $p->method . ' insteadof ';

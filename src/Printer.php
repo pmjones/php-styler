@@ -98,6 +98,9 @@ class Printer
 
     protected array $list = [];
 
+    /**
+     * @param Stmt[] $nodes
+     */
     public function printFile(array $nodes, Styler $styler) : string
     {
         $this->list = [];
