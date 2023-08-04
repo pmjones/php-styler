@@ -12,6 +12,8 @@ class Apply
 {
     protected Parser $parser;
 
+    protected int $count = 0;
+
     public function __construct()
     {
         $parserFactory = new ParserFactory();
@@ -21,7 +23,7 @@ class Apply
     public function __invoke(string $configFile) : int
     {
         $start = microtime(true);
-        $count = 0;
+        $this->count = 0;
         $this->printer = new Printer();
 
         // load config
@@ -43,27 +45,18 @@ class Apply
         unset($config['files']);
 
         // get the configured styler object
-        $styler = $config['styler'] ?? null;
+        $this->styler = $config['styler'] ?? null;
         unset($config['styler']);
-        $this->styler = $styler ?? new Styler(...$config);
+        $this->styler ??= new Styler(...$config);
 
         // apply to files
-        foreach ($files as $file) {
-            $file = (string) $file;
+        $exit = $this->apply($files, $cache['time']);
 
-            if (is_dir($file) || filemtime($file) < $cache['time']) {
-                continue;
-            }
-
-            $count ++;
-
-            if (! $this->lint($file)) {
-                return 1;
-            }
-
-            $this->replace($file);
+        if ($exit) {
+            return $exit;
         }
 
+        // save cache
         if ($cacheFile) {
             echo "Saving {$cacheFile}" . PHP_EOL;
             $data = '<?php return '
@@ -74,17 +67,20 @@ class Apply
             file_put_contents($cacheFile, $data);
         }
 
-        echo "Styled {$count} files in "
+        // report results
+        echo "Styled {$this->count} files in "
             . number_format(microtime(true) - $start, 3)
             . ' seconds.'
             . PHP_EOL
         ;
+
         return 0;
     }
 
     protected function load(string $file) : array
     {
         echo "Loading " . $file . PHP_EOL;
+
         return require $file;
     }
 
@@ -94,10 +90,32 @@ class Apply
 
         if ($return !== 0) {
             echo implode(PHP_EOL, $output) . PHP_EOL;
+
             return false;
         }
 
         return true;
+    }
+
+    protected function apply(array $files, int $mtime) : int
+    {
+        foreach ($files as $file) {
+            $file = (string) $file;
+
+            if (is_dir($file) || filemtime($file) < $mtime) {
+                continue;
+            }
+
+            $this->count ++;
+
+            if (! $this->lint($file)) {
+                return 1;
+            }
+
+            $this->replace($file);
+        }
+
+        return 0;
     }
 
     protected function replace(string $file) : void
