@@ -23,7 +23,7 @@ class Styler
 
     protected bool $hadComment = false;
 
-    protected int $methodCallLevel = 0;
+    protected int $memberLevel = 0;
 
     protected array $operator = [
         Expr\Assign::class => '=',
@@ -101,11 +101,16 @@ class Styler
         $this->argsLevel = 0;
         $this->arrayLevel = 0;
         $this->hadComment = false;
-        $this->code = new Code(
-            $this->eol,
-            $this->lineLen,
-            $this->indentStr,
-            $this->indentLen,
+        $this
+            ->code
+         = new Code($this
+            ->eol
+        , $this
+            ->lineLen
+        , $this
+            ->indentStr
+        , $this
+            ->indentLen
         );
 
         while ($list) {
@@ -833,36 +838,21 @@ class Styler
         $this->code[] = '}';
     }
 
-    protected function sMemberFetch(P\MemberFetch $p)
-    {
-        $this->code[] = $p->operator;
-    }
-
-    protected function sMemberFetchEnd(P\MemberFetchEnd $p)
-    {
-    }
-
-    protected function sMethodCall(P\MethodCall $p)
+    protected function sMember(P\Member $p)
     {
         if ($p->operator === '->' || $p->operator === '?->') {
-            $this->methodCallLevel ++;
-            $this->split(P\MethodCall::class, $this->methodCallLevel, 'cuddle');
+            $this->memberLevel ++;
+            $this->split(P\Member::class, $this->memberLevel, 'cuddle');
         }
 
         $this->code[] = $p->operator;
     }
 
-    protected function sMethodCallEnd(P\MethodCallEnd $p)
+    protected function sMemberEnd(P\MemberEnd $p)
     {
         if ($p->operator === '->' || $p->operator === '?->') {
-            $this
-                ->split(
-                    P\MethodCall::class,
-                    $this->methodCallLevel,
-                    'endCuddle',
-                )
-            ;
-            $this->methodCallLevel --;
+            $this->split(P\Member::class, $this->memberLevel, 'endCuddle');
+            $this->memberLevel --;
         }
     }
 

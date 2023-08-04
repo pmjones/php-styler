@@ -19,7 +19,7 @@ class Code extends ArrayObject
         Expr\BinaryOp\BooleanOr::class => 'bool_or',
         Expr\BinaryOp\Coalesce::class => 'coalesce',
         Expr\BinaryOp\Concat::class => 'concat',
-        P\MethodCall::class => 'method_call',
+        P\Member::class => 'member',
         P\Params::class => 'params',
         P\Precedence::class => 'precedence',
         Expr\Ternary::class => 'ternary',
@@ -37,23 +37,36 @@ class Code extends ArrayObject
 
     protected string $indent = '';
 
-    protected array $splitOrder = [];
-
     public function __construct(
         protected string $eol = "\n",
         protected int $lineLen = 80,
         protected string $indentStr = "    ",
         protected int $indentLen = 0,
-        array $split = [
+        protected array $splitOrder = [
             'concat',
-            'array',
+            'array_0',
+            'array_1',
+            'array_2',
+            'array_3',
+            'array_4',
+            'array_5',
             'ternary',
             'cond',
             'bool_and',
             'precedence',
             'bool_or',
-            'method_call',
-            'args',
+            'member_0',
+            'args_0',
+            'member_1',
+            'args_1',
+            'member_2',
+            'args_2',
+            'member_3',
+            'args_3',
+            'member_4',
+            'args_4',
+            'member_5',
+            'args_5',
             'coalesce',
             'params',
         ],
@@ -65,16 +78,6 @@ class Code extends ArrayObject
                 ? 4
                 : strlen($indentStr)
             ;
-        }
-
-        foreach ($split as $rule) {
-            if (in_array($rule, ['array', 'method_call', 'args'])) {
-                for ($level = 0; $level <= 5; $level ++) {
-                    $this->splitOrder[] = "{$rule}_{$level}";
-                }
-            } else {
-                $this->splitOrder[] = $rule;
-            }
         }
     }
 

@@ -646,9 +646,9 @@ class Printer
     protected function pExpr_ClassConstFetch(Expr\ClassConstFetch $node) : void
     {
         $this->pDereferenceLhs($node->class);
-        $this->list[] = new P\MemberFetch('::');
+        $this->list[] = new P\Member('::');
         $this->p($node->name);
-        $this->list[] = new P\MemberFetchEnd('->');
+        $this->list[] = new P\MemberEnd('::');
     }
 
     protected function pExpr_Clone(Expr\Clone_ $node) : void
@@ -790,10 +790,10 @@ class Printer
     protected function pExpr_MethodCall(Expr\MethodCall $node) : void
     {
         $this->pDereferenceLhs($node->var);
-        $this->list[] = new P\MethodCall('->');
+        $this->list[] = new P\Member('->');
         $this->pObjectProperty($node->name);
         $this->pArgs($node);
-        $this->list[] = new P\MethodCallEnd('->');
+        $this->list[] = new P\MemberEnd('->');
     }
 
     protected function pExpr_New(Expr\New_ $node)
@@ -813,10 +813,10 @@ class Printer
     ) : void
     {
         $this->pDereferenceLhs($node->var);
-        $this->list[] = new P\MethodCall('?->');
+        $this->list[] = new P\Member('?->');
         $this->pObjectProperty($node->name);
         $this->pArgs($node);
-        $this->list[] = new P\MethodCallEnd('?->');
+        $this->list[] = new P\MemberEnd('?->');
     }
 
     protected function pExpr_NullsafePropertyFetch(
@@ -824,17 +824,17 @@ class Printer
     ) : void
     {
         $this->pDereferenceLhs($node->var);
-        $this->list[] = new P\MemberFetch('?->');
+        $this->list[] = new P\Member('?->');
         $this->pObjectProperty($node->name);
-        $this->list[] = new P\MemberFetchEnd('?->');
+        $this->list[] = new P\MemberEnd('?->');
     }
 
     protected function pExpr_PropertyFetch(Expr\PropertyFetch $node) : void
     {
         $this->pDereferenceLhs($node->var);
-        $this->list[] = new P\MemberFetch('->');
+        $this->list[] = new P\Member('->');
         $this->pObjectProperty($node->name);
-        $this->list[] = new P\MemberFetchEnd('->');
+        $this->list[] = new P\MemberEnd('->');
     }
 
     protected function pExpr_PostInc(Expr\PostInc $node) : void
@@ -874,15 +874,15 @@ class Printer
     ) : void
     {
         $this->pDereferenceLhs($node->class);
-        $this->list[] = new P\MemberFetch('::$');
+        $this->list[] = new P\Member('::$');
         $this->pObjectProperty($node->name);
-        $this->list[] = new P\MemberFetchEnd('::$');
+        $this->list[] = new P\MemberEnd('::$');
     }
 
     protected function pExpr_StaticCall(Expr\StaticCall $node) : void
     {
         $this->pDereferenceLhs($node->class);
-        $this->list[] = new P\MethodCall('::');
+        $this->list[] = new P\Member('::');
 
         if ($node->name instanceof Expr) {
             if ($node->name instanceof Expr\Variable) {
@@ -895,7 +895,7 @@ class Printer
         }
 
         $this->pArgs($node);
-        $this->list[] = new P\MethodCallEnd('::');
+        $this->list[] = new P\MemberEnd('::');
     }
 
     protected function pExpr_Ternary(Expr\Ternary $node)
@@ -1588,7 +1588,9 @@ class Printer
 
     protected function pStmt_InlineHTML(Stmt\InlineHTML $node) : void
     {
-        $this->list[] = new P\InlineHtml($node
+        $this
+            ->list
+        [] = new P\InlineHtml($node
             ->getAttribute('hasLeadingNewline', true)
         );
         $this->list[] = $node->value;
@@ -1731,16 +1733,22 @@ class Printer
     {
         $oldName = $node->trait ? $this->name($node->trait) : null;
         $newName = $node->newName ? $this->name($node->newName) : null;
-        $this->list[] = new P\UseTraitAs($oldName, $this
+        $this
+            ->list
+        [] = new P\UseTraitAs($oldName, $this
             ->name($node->method)
-        , $node->newModifier, $newName);
+        , $node
+            ->newModifier
+        , $newName);
     }
 
     protected function pStmt_TraitUseAdaptation_Precedence(
         Stmt\TraitUseAdaptation\Precedence $node,
     ) : void
     {
-        $this->list[] = new P\UseTraitInsteadof($this
+        $this
+            ->list
+        [] = new P\UseTraitInsteadof($this
             ->name($node->trait)
         , $this
             ->name($node->method)
