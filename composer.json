@@ -19,7 +19,7 @@
         "phpunit/phpunit": "^10.0"
     },
     "scripts": {
-        "check": "composer test && composer cs-fix",
+        "check": "composer cs-fix && composer test",
         "cs-fix": "php ./bin/php-styler.php apply .php-styler.php",
         "test": "./vendor/bin/phpunit",
         "test-coverage": "./vendor/bin/phpunit --coverage-html=./tmp/unit"

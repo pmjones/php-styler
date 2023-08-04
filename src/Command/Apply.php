@@ -12,19 +12,21 @@ class Apply
 {
     protected Parser $parser;
 
+    protected Printer $printer;
+
     protected int $count = 0;
 
     public function __construct()
     {
         $parserFactory = new ParserFactory();
         $this->parser = $parserFactory->create(ParserFactory::PREFER_PHP7);
+        $this->printer = new Printer();
     }
 
     public function __invoke(string $configFile) : int
     {
         $start = microtime(true);
         $this->count = 0;
-        $this->printer = new Printer();
 
         // load config
         $config = $this->load($configFile);
