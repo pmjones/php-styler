@@ -10,8 +10,9 @@ use PhpStyler\Styler;
 
 class Preview extends Command
 {
-    public function __invoke(string $configFile, string $sourceFile) : int
+    public function __invoke(string $sourceFile) : int
     {
+        $configFile = $this->findConfig();
         $config = $this->load($configFile);
         $this->setStyler($config);
 
