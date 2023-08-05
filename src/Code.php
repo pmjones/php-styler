@@ -40,38 +40,11 @@ class Code extends ArrayObject
     protected string $indent = '';
 
     public function __construct(
-        protected string $eol = "\n",
-        protected int $lineLen = 80,
-        protected string $indentStr = "    ",
-        protected int $indentLen = 0,
-        protected array $splitOrder = [
-            'concat',
-            'array_0',
-            'array_1',
-            'array_2',
-            'array_3',
-            'array_4',
-            'array_5',
-            'ternary',
-            'cond',
-            'bool_and',
-            'precedence',
-            'bool_or',
-            'member_0',
-            'args_0',
-            'member_1',
-            'args_1',
-            'member_2',
-            'args_2',
-            'member_3',
-            'args_3',
-            'member_4',
-            'args_4',
-            'member_5',
-            'args_5',
-            'coalesce',
-            'params',
-        ],
+        protected string $eol,
+        protected int $lineLen,
+        protected string $indentStr,
+        protected int $indentLen,
+        protected array $splitOrder,
     ) {
         parent::__construct([]);
 

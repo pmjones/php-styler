@@ -91,6 +91,31 @@ class Styler
         protected int $lineLen = 80,
         protected string $indentStr = "    ",
         protected int $indentLen = 0,
+        protected array $splitOrder = [
+            'concat',
+            'array_1',
+            'array_2',
+            'array_3',
+            'array_4',
+            'array_5',
+            'ternary',
+            'cond',
+            'bool_and',
+            'precedence',
+            'bool_or',
+            'member_1',
+            'args_1',
+            'member_2',
+            'args_2',
+            'member_3',
+            'args_3',
+            'member_4',
+            'args_4',
+            'member_5',
+            'args_5',
+            'coalesce',
+            'params',
+        ],
     ) {
     }
 
@@ -107,12 +132,7 @@ class Styler
         $this->argsLevel = 0;
         $this->arrayLevel = 0;
         $this->hadComment = false;
-        $this->code = new Code(
-            $this->eol,
-            $this->lineLen,
-            $this->indentStr,
-            $this->indentLen
-        );
+        $this->code = $this->newCode();
 
         while ($list) {
             $p = array_shift($list);
@@ -123,6 +143,17 @@ class Styler
         $file = "<?php" . $this->eol . ltrim($this->code->getFile());
 
         return rtrim($file) . $this->eol;
+    }
+
+    protected function newCode() : Code
+    {
+        return new Code(
+            $this->eol,
+            $this->lineLen,
+            $this->indentStr,
+            $this->indentLen,
+            $this->splitOrder,
+        );
     }
 
     protected function done() : void
