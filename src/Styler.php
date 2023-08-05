@@ -91,7 +91,7 @@ class Styler
         protected int $lineLen = 80,
         protected string $indentStr = "    ",
         protected int $indentLen = 0,
-        protected array $splitOrder = [
+        protected array $split = [
             'concat',
             'array',
             'ternary',
@@ -139,7 +139,7 @@ class Styler
             $this->lineLen,
             $this->indentStr,
             $this->indentLen,
-            $this->splitOrder,
+            $this->split,
         );
     }
 

@@ -39,14 +39,14 @@ class Code extends ArrayObject
 
     protected string $indent = '';
 
-    protected array $splitOrder = [];
+    protected array $split = [];
 
     public function __construct(
         protected string $eol,
         protected int $lineLen,
         protected string $indentStr,
         protected int $indentLen,
-        array $splitOrder,
+        array $split,
     ) {
         parent::__construct([]);
 
@@ -57,7 +57,7 @@ class Code extends ArrayObject
             ;
         }
 
-        $this->setSplitOrder($splitOrder);
+        $this->setSplitOrder($split);
     }
 
     public function getFile() : string
@@ -81,14 +81,14 @@ class Code extends ArrayObject
     public function done() : void
     {
         $oldIndent = $this->indent;
-        $splitOrder = $this->splitOrder;
+        $split = $this->split;
         $this->splitApply = [];
         $this->setLines();
         $this->multiline = true;
 
-        while ($this->atLeastOneLineTooLong() && $splitOrder) {
+        while ($this->atLeastOneLineTooLong() && $split) {
             $this->indent = $oldIndent;
-            $rule = array_shift($splitOrder);
+            $rule = array_shift($split);
 
             if ($this->splitCalls[$rule] ?? false) {
                 $this->splitApply[] = $rule;
@@ -229,69 +229,69 @@ class Code extends ArrayObject
         }
     }
 
-    protected function setSplitOrder($splitOrder) : void
+    protected function setSplitOrder($split) : void
     {
-        foreach ($splitOrder as $rule) {
+        foreach ($split as $rule) {
             switch ($rule) {
                 case 'array':
-                    $this->splitOrder[] = 'array_0';
-                    $this->splitOrder[] = 'array_1';
-                    $this->splitOrder[] = 'array_2';
-                    $this->splitOrder[] = 'array_3';
-                    $this->splitOrder[] = 'array_4';
-                    $this->splitOrder[] = 'array_5';
+                    $this->split[] = 'array_0';
+                    $this->split[] = 'array_1';
+                    $this->split[] = 'array_2';
+                    $this->split[] = 'array_3';
+                    $this->split[] = 'array_4';
+                    $this->split[] = 'array_5';
                     break;
 
                 case 'member_args':
-                    $this->splitOrder[] = 'member_0';
-                    $this->splitOrder[] = 'args_0';
-                    $this->splitOrder[] = 'member_1';
-                    $this->splitOrder[] = 'args_1';
-                    $this->splitOrder[] = 'member_2';
-                    $this->splitOrder[] = 'args_2';
-                    $this->splitOrder[] = 'member_3';
-                    $this->splitOrder[] = 'args_3';
-                    $this->splitOrder[] = 'member_4';
-                    $this->splitOrder[] = 'args_4';
-                    $this->splitOrder[] = 'member_5';
-                    $this->splitOrder[] = 'args_5';
+                    $this->split[] = 'member_0';
+                    $this->split[] = 'args_0';
+                    $this->split[] = 'member_1';
+                    $this->split[] = 'args_1';
+                    $this->split[] = 'member_2';
+                    $this->split[] = 'args_2';
+                    $this->split[] = 'member_3';
+                    $this->split[] = 'args_3';
+                    $this->split[] = 'member_4';
+                    $this->split[] = 'args_4';
+                    $this->split[] = 'member_5';
+                    $this->split[] = 'args_5';
                     break;
 
                 case 'args-member':
-                    $this->splitOrder[] = 'args_0';
-                    $this->splitOrder[] = 'member_0';
-                    $this->splitOrder[] = 'args_1';
-                    $this->splitOrder[] = 'member_1';
-                    $this->splitOrder[] = 'args_2';
-                    $this->splitOrder[] = 'member_2';
-                    $this->splitOrder[] = 'args_3';
-                    $this->splitOrder[] = 'member_3';
-                    $this->splitOrder[] = 'args_4';
-                    $this->splitOrder[] = 'member_4';
-                    $this->splitOrder[] = 'args_5';
-                    $this->splitOrder[] = 'member_5';
+                    $this->split[] = 'args_0';
+                    $this->split[] = 'member_0';
+                    $this->split[] = 'args_1';
+                    $this->split[] = 'member_1';
+                    $this->split[] = 'args_2';
+                    $this->split[] = 'member_2';
+                    $this->split[] = 'args_3';
+                    $this->split[] = 'member_3';
+                    $this->split[] = 'args_4';
+                    $this->split[] = 'member_4';
+                    $this->split[] = 'args_5';
+                    $this->split[] = 'member_5';
                     break;
 
                 case 'args':
-                    $this->splitOrder[] = 'args_0';
-                    $this->splitOrder[] = 'args_1';
-                    $this->splitOrder[] = 'args_2';
-                    $this->splitOrder[] = 'args_3';
-                    $this->splitOrder[] = 'args_4';
-                    $this->splitOrder[] = 'args_5';
+                    $this->split[] = 'args_0';
+                    $this->split[] = 'args_1';
+                    $this->split[] = 'args_2';
+                    $this->split[] = 'args_3';
+                    $this->split[] = 'args_4';
+                    $this->split[] = 'args_5';
                     break;
 
                 case 'member':
-                    $this->splitOrder[] = 'member_0';
-                    $this->splitOrder[] = 'member_1';
-                    $this->splitOrder[] = 'member_2';
-                    $this->splitOrder[] = 'member_3';
-                    $this->splitOrder[] = 'member_4';
-                    $this->splitOrder[] = 'member_5';
+                    $this->split[] = 'member_0';
+                    $this->split[] = 'member_1';
+                    $this->split[] = 'member_2';
+                    $this->split[] = 'member_3';
+                    $this->split[] = 'member_4';
+                    $this->split[] = 'member_5';
                     break;
 
                 default:
-                    $this->splitOrder[] = $rule;
+                    $this->split[] = $rule;
                     break;
             }
         }

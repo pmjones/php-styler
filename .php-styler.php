@@ -4,7 +4,7 @@ use PhpStyler\Files;
 return [
     'styler' => [
         'lineLen' => 80,
-        'splitOrder' => [
+        'split' => [
             'concat',
             'array',
             'ternary',
