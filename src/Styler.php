@@ -86,6 +86,9 @@ class Styler
         Expr\YieldFrom::class => 'yield from',
     ];
 
+    /**
+     * @param string[] $split
+     */
     public function __construct(
         protected string $eol = "\n",
         protected int $lineLen = 80,

@@ -1321,11 +1321,11 @@ class Printer
                 if ($label && ! $this->containsEndLabel($node->value, $label)) {
                     $this->list[] = new P\Heredoc($label);
 
-                    if ($value) {
+                    if ($node->value) {
                         $this->list[] = $this->escapeString($node->value, null);
                     }
 
-                    $this->list = new P\HeredocEnd($label);
+                    $this->list[] = new P\HeredocEnd($label);
                 }
 
             /* break missing intentionally */
@@ -1341,6 +1341,9 @@ class Printer
         throw new Exception('Invalid string kind');
     }
 
+    /**
+     * @param ?Node[] $nodes
+     */
     protected function pSeparate(string $type, ?array $nodes) : void
     {
         if (! $nodes) {
@@ -1491,9 +1494,9 @@ class Printer
         $this->list[] = new P\For_();
         $this->list[] = new P\Cond();
         $this->pSeparate('for', $node->init);
-        $this->list[] = new P\Separator('forExpr', 1, 2);
+        $this->list[] = new P\Separator('forExpr');
         $this->pSeparate('for', $node->cond);
-        $this->list[] = new P\Separator('forExpr', 2, 2);
+        $this->list[] = new P\Separator('forExpr');
         $this->pSeparate('for', $node->loop);
         $this->pEnd('cond');
         $this->pBody('for');
@@ -1588,7 +1591,7 @@ class Printer
     protected function pStmt_InlineHTML(Stmt\InlineHTML $node) : void
     {
         $this->list[] = new P\InlineHtml(
-            $node->getAttribute('hasLeadingNewline', true),
+            (bool) $node->getAttribute('hasLeadingNewline', true),
         );
         $this->list[] = $node->value;
         $this->list[] = $this->pEnd('inlineHtml');
@@ -1743,7 +1746,7 @@ class Printer
     ) : void
     {
         $this->list[] = new P\UseTraitInsteadof(
-            $this->name($node->trait),
+            $this->name($node->trait ?? null),
             $this->name($node->method),
         );
         $this->pSeparate('insteadof', $node->insteadof);
@@ -1857,14 +1860,14 @@ class Printer
 
     protected function pUnpack(Node $node) : void
     {
-        if ($node->unpack) {
+        if ($node->unpack ?? null) {
             $this->list[] = '...';
         }
     }
 
     protected function pVariadic(Node $node) : void
     {
-        if ($node->variadic) {
+        if ($node->variadic ?? null) {
             $this->list[] = '...';
         }
     }
@@ -1890,10 +1893,10 @@ class Printer
     }
 
     protected function containsEndLabel(
-        $string,
-        $label,
-        $atStart = true,
-        $atEnd = true,
+        string $string,
+        string $label,
+        bool $atStart = true,
+        bool $atEnd = true,
     ) : bool
     {
         $start = $atStart ? '(?:^|[\\r\\n])' : '[\\r\\n]';
@@ -1924,7 +1927,13 @@ class Printer
         );
     }
 
-    protected function encapsedContainsEndLabel(array $parts, $label) : bool
+    /**
+     * @param mixed[] $parts
+     */
+    protected function encapsedContainsEndLabel(
+        array $parts,
+        string $label,
+    ) : bool
     {
         foreach ($parts as $i => $part) {
             $atStart = $i === 0;
@@ -1946,9 +1955,9 @@ class Printer
         return false;
     }
 
-    protected function escapeString($string, $quote) : string
+    protected function escapeString(string $string, ?string $quote) : ?string
     {
-        if (null === $quote) {
+        if ($quote === null) {
             // For doc strings, don't escape newlines
             $escaped = addcslashes($string, "\t\f\v\$\\");
         } else {
@@ -1982,36 +1991,36 @@ class Printer
         return preg_replace_callback($regex, $callback, $escaped);
     }
 
-    protected function name(
-        Node\Identifier|Node\Name|Name\FullyQualified|Name\Relative $node,
-    ) : string
+    protected function name(?Node $node) : string
     {
         if ($node instanceof Node\Identifier) {
             return $node->name;
         } else {
-            return implode('\\', $node->parts);
+            return implode('\\', $node->parts ?? []);
         }
     }
 
     protected function type(Node $node) : string
     {
-        if (! $node->type) {
+        $type = $node->type ?? null;
+
+        if ($type === null) {
             return '';
         }
 
-        if ($node->type instanceof Node\NullableType) {
-            return $this->nullableType($node->type);
+        if ($type instanceof Node\NullableType) {
+            return $this->nullableType($type);
         }
 
-        if ($node->type instanceof Node\IntersectionType) {
-            return $this->intersectionType($node->type);
+        if ($type instanceof Node\IntersectionType) {
+            return $this->intersectionType($type);
         }
 
-        if ($node->type instanceof Node\UnionType) {
-            return $this->unionType($node->type);
+        if ($type instanceof Node\UnionType) {
+            return $this->unionType($type);
         }
 
-        return $this->name($node->type);
+        return $this->name($type);
     }
 
     protected function intersectionType(Node\IntersectionType $node) : string
@@ -2083,7 +2092,7 @@ class Printer
 
     protected function useType(Node $node) : string
     {
-        switch ($node->type) {
+        switch ($node->type ?? null) {
             case Stmt\Use_::TYPE_CONSTANT:
                 return 'const';
 
