@@ -31,16 +31,29 @@ class Code extends ArrayObject
 
     protected bool $multiline = false;
 
+    /**
+     * @var string[]
+     */
     protected array $splitApply = [];
 
+    /**
+     * @var array<string, bool>
+     */
     protected array $splitCalls = [];
 
     protected bool $forceSplit = false;
 
     protected string $indent = '';
 
+    /**
+     * @var string[]
+     */
     protected array $split = [];
 
+    /**
+     * @param non-empty-string $eol
+     * @param string[] $split
+     */
     public function __construct(
         protected string $eol,
         protected int $lineLen,
@@ -69,7 +82,7 @@ class Code extends ArrayObject
         string $class,
         int $level = null,
         string $type = null,
-        ...$args,
+        mixed ...$args,
     ) : void
     {
         $rule = Code::SPLIT[$class];
@@ -134,7 +147,7 @@ class Code extends ArrayObject
             }
         }
 
-        $this->lines = preg_replace("/\\s+\$/m", "\n", $this->lines);
+        $this->lines = (string) preg_replace("/\\s+\$/m", "\n", $this->lines);
     }
 
     protected function newline() : void
@@ -229,7 +242,10 @@ class Code extends ArrayObject
         }
     }
 
-    protected function setSplitOrder($split) : void
+    /**
+     * @param string[] $split
+     */
+    protected function setSplitOrder(array $split) : void
     {
         foreach ($split as $rule) {
             switch ($rule) {

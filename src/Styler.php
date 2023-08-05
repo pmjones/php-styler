@@ -87,6 +87,7 @@ class Styler
     ];
 
     /**
+     * @param non-empty-string $eol
      * @param string[] $split
      */
     public function __construct(

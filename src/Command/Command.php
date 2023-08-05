@@ -5,8 +5,10 @@ namespace PhpStyler\Command;
 
 use PhpParser\ParserFactory;
 use PhpParser\Parser;
+use PhpParser\Node\Stmt;
 use PhpStyler\Printer;
 use PhpStyler\Styler;
+use UnexpectedValueException;
 
 abstract class Command
 {
@@ -23,6 +25,9 @@ abstract class Command
         $this->printer = new Printer();
     }
 
+    /**
+     * @return mixed[]
+     */
     protected function load(string $file) : array
     {
         return require $file;
@@ -41,20 +46,31 @@ abstract class Command
         return true;
     }
 
+    /**
+     * @param mixed[] $config
+     */
     protected function setStyler(array $config) : void
     {
         $styler = $config['styler'] ?? [];
 
-        if (is_array($styler)) {
+        if ($styler instanceof Styler) {
+            $this->styler = $styler;
+        } elseif (is_array($styler)) {
             $this->styler = new Styler(...$styler);
         } else {
-            $this->styler = $styler;
+            throw new UnexpectedValueException(
+                "Config key 'styler' misconfigured.",
+            );
         }
     }
 
     protected function style(string $file) : string
     {
-        $stmts = $this->parser->parse(file_get_contents($file));
+        /** @var string */
+        $code = file_get_contents($file);
+
+        /** @var Stmt[] */
+        $stmts = $this->parser->parse($code);
 
         return $this->printer->printFile($stmts, $this->styler);
     }
