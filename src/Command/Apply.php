@@ -41,7 +41,6 @@ class Apply extends Command
 
     protected function getCache(array $config, string $configFile) : array
     {
-        $cache = ['time' => filemtime($configFile)];
         $cacheFile = $config['cache'] ?? false;
 
         if ($cacheFile && file_exists($cacheFile)) {
@@ -49,6 +48,12 @@ class Apply extends Command
             $cache = $this->load($cacheFile);
         } else {
             $cache = ['time' => 0];
+        }
+
+        $configTime = filemtime($configFile);
+
+        if ($configTime > $cache['time']) {
+            $cache['time'] = 0;
         }
 
         return $cache;

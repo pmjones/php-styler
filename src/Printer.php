@@ -209,9 +209,9 @@ class Printer
     protected function pCast(string $type, Node $node) : void
     {
         $class = get_class($node);
-        list($precedence, $associativity) = $this->precedenceMap[$class];
+        list($prec, $assoc) = $this->precedenceMap[$class];
         $this->list[] = new P\Cast($type);
-        $this->pPrec($node->expr, $precedence, $associativity, 1);
+        $this->pPrec($node->expr, $prec, $assoc, 1);
     }
 
     protected function pCallLhs(Node $node) : void
@@ -758,10 +758,8 @@ class Printer
 
     protected function pExpr_Instanceof(Expr\Instanceof_ $node) : void
     {
-        list($precedence, $associativity) = $this
-            ->precedenceMap
-        [Expr\Instanceof_::class];
-        $this->pPrec($node->expr, $precedence, $associativity, -1);
+        list($prec, $assoc) = $this->precedenceMap[Expr\Instanceof_::class];
+        $this->pPrec($node->expr, $prec, $assoc, -1);
         $this->list[] = new P\InfixOp(Expr\Instanceof_::class);
         $this->pNewVariable($node->class);
     }
@@ -909,15 +907,13 @@ class Printer
         }
 
         // lifted from nInfixOp
-        list($precedence, $associativity) = $this
-            ->precedenceMap
-        [Expr\Ternary::class];
-        $this->pPrec($node->cond, $precedence, $associativity, -1);
+        list($prec, $assoc) = $this->precedenceMap[Expr\Ternary::class];
+        $this->pPrec($node->cond, $prec, $assoc, -1);
         $this->list[] = new P\Ternary('?');
         $this->p($node->if);
         $this->list[] = new P\End('ternary');
         $this->list[] = new P\Ternary(':');
-        $this->pPrec($node->else, $precedence, $associativity, 1);
+        $this->pPrec($node->else, $prec, $assoc, 1);
         $this->list[] = new P\End('ternary');
     }
 
@@ -1031,11 +1027,11 @@ class Printer
         Node $rightNode,
     ) : void
     {
-        list($precedence, $associativity) = $this->precedenceMap[$class];
+        list($prec, $assoc) = $this->precedenceMap[$class];
         $this->list[] = new P\Infix($class);
-        $this->pPrec($leftNode, $precedence, $associativity, -1);
+        $this->pPrec($leftNode, $prec, $assoc, -1);
         $this->list[] = new P\InfixOp($class);
-        $this->pPrec($rightNode, $precedence, $associativity, 1);
+        $this->pPrec($rightNode, $prec, $assoc, 1);
         $this->list[] = new P\InfixEnd($class);
     }
 
@@ -1124,8 +1120,8 @@ class Printer
 
     protected function pPostfixOp(string $class, Node $node) : void
     {
-        list($precedence, $associativity) = $this->precedenceMap[$class];
-        $this->pPrec($node, $precedence, $associativity, -1);
+        list($prec, $assoc) = $this->precedenceMap[$class];
+        $this->pPrec($node, $prec, $assoc, -1);
         $this->list[] = new P\PostfixOp($class);
     }
 
@@ -1159,9 +1155,9 @@ class Printer
 
     protected function pPrefixOp(string $class, Node $node) : void
     {
-        list($precedence, $associativity) = $this->precedenceMap[$class];
+        list($prec, $assoc) = $this->precedenceMap[$class];
         $this->list[] = new P\PrefixOp($class);
-        $this->pPrec($node, $precedence, $associativity, 1);
+        $this->pPrec($node, $prec, $assoc, 1);
     }
 
     protected function pReturnType(Node $node)
