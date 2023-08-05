@@ -39,12 +39,14 @@ class Code extends ArrayObject
 
     protected string $indent = '';
 
+    protected array $splitOrder = [];
+
     public function __construct(
         protected string $eol,
         protected int $lineLen,
         protected string $indentStr,
         protected int $indentLen,
-        protected array $splitOrder,
+        array $splitOrder,
     ) {
         parent::__construct([]);
 
@@ -54,6 +56,8 @@ class Code extends ArrayObject
                 : strlen($indentStr)
             ;
         }
+
+        $this->setSplitOrder($splitOrder);
     }
 
     public function getFile() : string
@@ -222,6 +226,74 @@ class Code extends ArrayObject
                 break;
 
             default:
+        }
+    }
+
+    protected function setSplitOrder($splitOrder) : void
+    {
+        foreach ($splitOrder as $rule) {
+            switch ($rule) {
+                case 'array':
+                    $this->splitOrder[] = 'array_0';
+                    $this->splitOrder[] = 'array_1';
+                    $this->splitOrder[] = 'array_2';
+                    $this->splitOrder[] = 'array_3';
+                    $this->splitOrder[] = 'array_4';
+                    $this->splitOrder[] = 'array_5';
+                    break;
+
+                case 'member_args':
+                    $this->splitOrder[] = 'member_0';
+                    $this->splitOrder[] = 'args_0';
+                    $this->splitOrder[] = 'member_1';
+                    $this->splitOrder[] = 'args_1';
+                    $this->splitOrder[] = 'member_2';
+                    $this->splitOrder[] = 'args_2';
+                    $this->splitOrder[] = 'member_3';
+                    $this->splitOrder[] = 'args_3';
+                    $this->splitOrder[] = 'member_4';
+                    $this->splitOrder[] = 'args_4';
+                    $this->splitOrder[] = 'member_5';
+                    $this->splitOrder[] = 'args_5';
+                    break;
+
+                case 'args-member':
+                    $this->splitOrder[] = 'args_0';
+                    $this->splitOrder[] = 'member_0';
+                    $this->splitOrder[] = 'args_1';
+                    $this->splitOrder[] = 'member_1';
+                    $this->splitOrder[] = 'args_2';
+                    $this->splitOrder[] = 'member_2';
+                    $this->splitOrder[] = 'args_3';
+                    $this->splitOrder[] = 'member_3';
+                    $this->splitOrder[] = 'args_4';
+                    $this->splitOrder[] = 'member_4';
+                    $this->splitOrder[] = 'args_5';
+                    $this->splitOrder[] = 'member_5';
+                    break;
+
+                case 'args':
+                    $this->splitOrder[] = 'args_0';
+                    $this->splitOrder[] = 'args_1';
+                    $this->splitOrder[] = 'args_2';
+                    $this->splitOrder[] = 'args_3';
+                    $this->splitOrder[] = 'args_4';
+                    $this->splitOrder[] = 'args_5';
+                    break;
+
+                case 'member':
+                    $this->splitOrder[] = 'member_0';
+                    $this->splitOrder[] = 'member_1';
+                    $this->splitOrder[] = 'member_2';
+                    $this->splitOrder[] = 'member_3';
+                    $this->splitOrder[] = 'member_4';
+                    $this->splitOrder[] = 'member_5';
+                    break;
+
+                default:
+                    $this->splitOrder[] = $rule;
+                    break;
+            }
         }
     }
 }
