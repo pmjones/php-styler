@@ -12,11 +12,11 @@ class Apply extends Command
 {
     protected int $count = 0;
 
-    public function __invoke() : int
+    public function __invoke(CommandOptions $options) : int
     {
         $start = microtime(true);
         $this->count = 0;
-        $configFile = $this->findConfig();
+        $configFile = $options->configFile ?? $this->findConfigFile();
         echo "Loading " . $configFile . PHP_EOL;
         $config = $this->load($configFile);
         $cache = $this->getCache($config, $configFile);

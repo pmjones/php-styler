@@ -9,6 +9,7 @@ use PhpParser\Node\Stmt;
 use PhpStyler\Printer;
 use PhpStyler\Styler;
 use UnexpectedValueException;
+use RuntimeException;
 
 abstract class Command
 {
@@ -33,25 +34,15 @@ abstract class Command
         return require $file;
     }
 
-    protected function findConfig() : string
+    protected function findConfigFile() : string
     {
-        //  6         5      4       3          2   1
-        // {$PROJECT}/vendor/pmjones/php-styler/src/Command/Command.php
-        $files = [dirname(__DIR__, 6)
-            . DIRECTORY_SEPARATOR
-            . ".php-styler.php"
-        , dirname(__DIR__, 2)
-            . DIRECTORY_SEPARATOR
-            . ".php-styler.php"
-        ];
+        $file = dirname(__DIR__, 6) . DIRECTORY_SEPARATOR . ".php-styler.php";
 
-        foreach ($files as $file) {
-            if (file_exists($file)) {
-                return $file;
-            }
+        if (file_exists($file)) {
+            return $file;
         }
 
-        throw new RuntimeException("Could not find config file.");
+        throw new RuntimeException("Could not find {$file}");
     }
 
     protected function lint(string $file) : bool

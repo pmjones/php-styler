@@ -23,8 +23,8 @@
     "scripts": {
         "analyze": "./vendor/bin/phpstan",
         "check": "composer cs-fix && composer test && composer analyze",
-        "cs-fix": "php ./bin/php-styler.php apply",
-        "cs-fix-preview": "php ./bin/php-styler.php preview",
+        "cs-fix": "php ./bin/php-styler.php apply -c .php-styler.php ",
+        "cs-fix-preview": "php ./bin/php-styler.php preview -c .php-styler.php",
         "test": "./vendor/bin/phpunit",
         "test-coverage": "./vendor/bin/phpunit --coverage-html=./tmp/unit"
     }
