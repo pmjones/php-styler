@@ -4,11 +4,13 @@ declare(strict_types=1);
 namespace PhpStyler;
 
 use Exception;
+use LogicException;
 use PhpParser\Internal\DiffElem;
 use PhpParser\Internal\PrintableNewAnonClassNode;
 use PhpParser\Internal\TokenStream;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Expr\AssignOp;
 use PhpParser\Node\Expr\BinaryOp;
 use PhpParser\Node\Expr\Cast;
@@ -18,6 +20,7 @@ use PhpParser\Node\Scalar\MagicConst;
 use PhpParser\Node\Stmt;
 use PhpParser\PrettyPrinterAbstract;
 use PhpStyler\Printable as P;
+use PhpStyler\Printable\Printable;
 use SplObjectStorage;
 
 class Printer
@@ -26,6 +29,9 @@ class Printer
 
     protected int $namespaceCount = 0;
 
+    /**
+     * @var array<class-string, array{int, int}>
+     */
     protected $precedenceMap = [
         // [precedence, associativity]
         // where for precedence -1 is %left, 0 is %nonassoc and 1 is %right
@@ -96,6 +102,9 @@ class Printer
         Expr\Include_::class => [200, -1],
     ];
 
+    /**
+     * @var array<int, null|string|Printable>
+     */
     protected array $list = [];
 
     /**
@@ -104,7 +113,6 @@ class Printer
     public function printFile(array $nodes, Styler $styler) : string
     {
         $this->list = [];
-        $this->indentLevel = 0;
         $this->commented = new SplObjectStorage();
         $this->namespaceCount = 0;
 
@@ -119,6 +127,9 @@ class Printer
         return $styler->style($this->list);
     }
 
+    /**
+     * @param null|Node[]|Node $spec
+     */
     protected function p(null|array|Node $spec) : void
     {
         if (is_array($spec)) {
@@ -154,11 +165,12 @@ class Printer
         $this->p($node->value);
     }
 
-    protected function pArgs(Node $node)
+    protected function pArgs(Node $node) : void
     {
-        $this->list[] = new P\Args(count($node->args));
-        $this->pSeparate('arg', $node->args);
-        $this->list[] = new P\ArgsEnd(count($node->args));
+        $count = count($node->args ?? []);
+        $this->list[] = new P\Args($count);
+        $this->pSeparate('arg', $node->args ?? null);
+        $this->list[] = new P\ArgsEnd($count);
     }
 
     protected function pAttribute(Node\Attribute $node) : void
@@ -179,7 +191,7 @@ class Printer
 
     protected function pAttributeGroups(Node $node) : void
     {
-        foreach ($node->attrGroups as $attrGroup) {
+        foreach ($node->attrGroups ?? [] as $attrGroup) {
             $this->p($attrGroup);
         }
     }
@@ -201,7 +213,7 @@ class Printer
 
     protected function pByRef(Node $node) : void
     {
-        if ($node->byRef) {
+        if ($node->byRef ?? null) {
             $this->list[] = '&';
         }
     }
@@ -211,7 +223,10 @@ class Printer
         $class = get_class($node);
         list($prec, $assoc) = $this->precedenceMap[$class];
         $this->list[] = new P\Cast($type);
-        $this->pPrec($node->expr, $prec, $assoc, 1);
+
+        /** @phpstan-ignore-next-line */
+        $expr = $node->expr;
+        $this->pPrec($expr, $prec, $assoc, 1);
     }
 
     protected function pCallLhs(Node $node) : void
@@ -245,7 +260,9 @@ class Printer
         $this->list[] = new P\Comments(count($commentNodes));
 
         foreach ($commentNodes as $commentNode) {
-            $lines = explode("\n", $commentNode->getReformattedText());
+            /** @var string */
+            $text = $commentNode->getReformattedText();
+            $lines = explode("\n", $text);
 
             foreach ($lines as $line) {
                 $this->list[] = new P\Comment($line);
@@ -255,9 +272,11 @@ class Printer
 
     protected function pCond(Node $node) : void
     {
-        $this->list[] = new P\Cond();
-        $this->p($node->cond);
-        $this->pEnd('cond');
+        if ($node->cond ?? null) {
+            $this->list[] = new P\Cond();
+            $this->p($node->cond);
+            $this->pEnd('cond');
+        }
     }
 
     protected function pConst(Node\Const_ $node) : void
@@ -269,7 +288,7 @@ class Printer
 
     protected function pDefaultValue(Node $node) : void
     {
-        if ($node->default) {
+        if ($node->default ?? null) {
             $this->list[] = ' = ';
             $this->p($node->default);
         }
@@ -304,8 +323,12 @@ class Printer
         }
     }
 
-    protected function pEncapsList(array $encapsList, $quote) : void
+    /**
+     * @param mixed[] $encapsList
+     */
+    protected function pEncapsList(array $encapsList, ?string $quote) : void
     {
+        /** @var Node|string $element */
         foreach ($encapsList as $element) {
             if ($element instanceof Scalar\EncapsedStringPart) {
                 $this->list[] = $this->escapeString($element->value, $quote);
@@ -315,15 +338,18 @@ class Printer
         }
     }
 
-    protected function pEnd(string $type, string $str = '')
+    protected function pEnd(string $type) : void
     {
-        $this->list[] = new P\End($type, $str);
+        $this->list[] = new P\End($type);
     }
 
     protected function pExpr_Array(Expr\Array_ $node) : void
     {
         $this->list[] = new P\Array_(count($node->items));
-        $this->pSeparate('array', $node->items);
+
+        /** @var ArrayItem[] */
+        $items = $node->items;
+        $this->pSeparate('array', $items);
         $this->list[] = new P\ArrayEnd(count($node->items));
     }
 
@@ -774,7 +800,10 @@ class Printer
     protected function pExpr_List(Expr\List_ $node) : void
     {
         $this->list[] = new P\ReservedFunc('list');
-        $this->pSeparate('arg', $node->items);
+
+        /** @var Node[] */
+        $items = $node->items;
+        $this->pSeparate('arg', $items);
         $this->pEnd('reservedFunc');
     }
 
@@ -796,7 +825,7 @@ class Printer
         $this->list[] = new P\MemberEnd('->');
     }
 
-    protected function pExpr_New(Expr\New_ $node)
+    protected function pExpr_New(Expr\New_ $node) : void
     {
         $this->list[] = new P\New_();
 
@@ -898,7 +927,7 @@ class Printer
         $this->list[] = new P\MemberEnd('::');
     }
 
-    protected function pExpr_Ternary(Expr\Ternary $node)
+    protected function pExpr_Ternary(Expr\Ternary $node) : void
     {
         if (! $node->if) {
             $this->pInfixOp(Expr\Ternary::class, $node->cond, $node->else);
@@ -985,23 +1014,23 @@ class Printer
         $this->pPrefixOp(Expr\YieldFrom::class, $node->expr);
     }
 
-    protected function pExtends(Node $node)
+    protected function pExtends(Node $node) : void
     {
-        $extends = $node->extends;
+        $extends = $node->extends ?? null;
 
         if (! $extends) {
             return;
         }
 
         if (! is_array($extends)) {
-            $this->list[] = new P\Extends_($this->name($node->extends));
+            $this->list[] = new P\Extends_($this->name($extends));
 
             return;
         }
 
         $names = [];
 
-        foreach ($node->extends as $name) {
+        foreach ($extends as $name) {
             $names[] = $this->name($name);
         }
 
@@ -1015,7 +1044,7 @@ class Printer
 
     protected function pImplements(Node $node) : void
     {
-        if ($node->implements) {
+        if ($node->implements ?? null) {
             $this->list[] = new P\Implements_();
             $this->pSeparate('implements', $node->implements);
         }
@@ -1050,7 +1079,7 @@ class Printer
 
     protected function pModifiers(Node $node) : void
     {
-        if ($node->flags) {
+        if ($node->flags ?? null) {
             $this->list[] = new P\Modifiers($node->flags);
         }
     }
@@ -1070,7 +1099,10 @@ class Printer
         $this->list[] = 'namespace\\' . $this->name($node);
     }
 
-    protected function pNewAnonymous(Stmt\Class_ $node, array $args)
+    /**
+     * @param Node[] $args
+     */
+    protected function pNewAnonymous(Stmt\Class_ $node, array $args) : void
     {
         $this->pAttributeGroups($node);
         $this->pModifiers($node);
@@ -1111,11 +1143,12 @@ class Printer
         $this->pDefaultValue($node);
     }
 
-    protected function pParams(Node $node)
+    protected function pParams(Node $node) : void
     {
-        $this->list[] = new P\Params(count($node->params));
-        $this->pSeparate('param', $node->params);
-        $this->list[] = new P\ParamsEnd(count($node->params));
+        $count = count($node->params ?? []);
+        $this->list[] = new P\Params($count);
+        $this->pSeparate('param', $node->params ?? null);
+        $this->list[] = new P\ParamsEnd($count);
     }
 
     protected function pPostfixOp(string $class, Node $node) : void
@@ -1144,7 +1177,7 @@ class Printer
             ) {
                 $this->list[] = new P\Precedence();
                 $this->p($node);
-                $this->list[] = $this->pEnd('precedence');
+                $this->pEnd('precedence');
 
                 return;
             }
@@ -1160,9 +1193,9 @@ class Printer
         $this->pPrec($node, $prec, $assoc, 1);
     }
 
-    protected function pReturnType(Node $node)
+    protected function pReturnType(Node $node) : void
     {
-        if ($node->returnType) {
+        if ($node->returnType ?? null) {
             $this->list[] = new P\ReturnType();
             $this->p($node->returnType);
         }
@@ -1207,6 +1240,7 @@ class Printer
     protected function pScalar_Encapsed(Scalar\Encapsed $node) : void
     {
         if ($node->getAttribute('kind') === Scalar\String_::KIND_HEREDOC) {
+            /** @var string */
             $label = $node->getAttribute('docLabel');
 
             if (
@@ -1299,6 +1333,7 @@ class Printer
 
         switch ($kind) {
             case Scalar\String_::KIND_NOWDOC:
+                /** @var string */
                 $label = $node->getAttribute('docLabel');
 
                 if ($label && ! $this->containsEndLabel($node->value, $label)) {
@@ -1316,6 +1351,7 @@ class Printer
                 return;
 
             case Scalar\String_::KIND_HEREDOC:
+                /** @var string */
                 $label = $node->getAttribute('docLabel');
 
                 if ($label && ! $this->containsEndLabel($node->value, $label)) {
@@ -1342,7 +1378,7 @@ class Printer
     }
 
     /**
-     * @param ?Node[] $nodes
+     * @param null|Node[]|ArrayItem[] $nodes
      */
     protected function pSeparate(string $type, ?array $nodes) : void
     {
@@ -1594,7 +1630,7 @@ class Printer
             (bool) $node->getAttribute('hasLeadingNewline', true),
         );
         $this->list[] = $node->value;
-        $this->list[] = $this->pEnd('inlineHtml');
+        $this->pEnd('inlineHtml');
     }
 
     protected function pStmt_Interface(Stmt\Interface_ $node) : void

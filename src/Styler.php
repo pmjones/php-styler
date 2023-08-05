@@ -110,7 +110,7 @@ class Styler
     }
 
     /**
-     * @param array<int, Printable|string> $list
+     * @param array<int, null|string|Printable> $list
      */
     public function style(array $list) : string
     {
