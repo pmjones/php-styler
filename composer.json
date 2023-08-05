@@ -15,9 +15,10 @@
         "pmjones/auto-shell": "^1.0"
     },
     "require-dev": {
+        "pds/composer-script-names": "^1.0",
         "pds/skeleton": "^1.0",
-        "phpunit/phpunit": "^10.0",
-        "phpstan/phpstan": "^1.10"
+        "phpstan/phpstan": "^1.10",
+        "phpunit/phpunit": "^10.0"
     },
     "scripts": {
         "analyze": "./vendor/bin/phpstan",
