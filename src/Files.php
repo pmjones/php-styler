@@ -6,9 +6,14 @@ namespace PhpStyler;
 use RecursiveCallbackFilterIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use SplFileInfo;
 
 class Files
 {
+    /**
+     * @param string[] $dirs
+     * @return string[]
+     */
     public static function find(array $dirs) : array
     {
         $found = [];
@@ -21,15 +26,20 @@ class Files
                 ),
             );
 
+            /** @var SplFileInfo $file */
             foreach ($files as $file) {
-                $found[] = (string) $file;
+                $found[] = $file->getPathname();
             }
         }
 
         return $found;
     }
 
-    public static function filter($current, $key, $iterator) : bool
+    public static function filter(
+        SplFileInfo $current,
+        string $key,
+        RecursiveDirectoryIterator $iterator,
+    ) : bool
     {
         return $iterator->hasChildren()
             || str_ends_with((string) $current, '.php')
