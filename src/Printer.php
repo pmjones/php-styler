@@ -1280,7 +1280,7 @@ class Printer
 
     protected function pScalar_LNumber(Scalar\LNumber $node) : void
     {
-        $this->list[] = $this->scalar_LNumber($node);
+        $this->list[] = $this->lnumber($node);
     }
 
     protected function pScalar_MagicConst_Class(MagicConst\Class_ $node) : void
@@ -1397,7 +1397,7 @@ class Printer
 
     protected function pStmt_Break(Stmt\Break_ $node) : void
     {
-        $num = $node->num ? $this->scalar_LNumber($node->num) : null;
+        $num = $node->num ? $this->lnumber($node->num) : null;
         $this->list[] = new P\Break_($num);
     }
 
@@ -1448,7 +1448,7 @@ class Printer
 
     protected function pStmt_Continue(Stmt\Continue_ $node) : void
     {
-        $num = $node->num ? $this->scalar_LNumber($node->num) : null;
+        $num = $node->num ? $this->lnumber($node->num) : null;
         $this->list[] = new P\Continue_($num);
     }
 
@@ -2090,7 +2090,7 @@ class Printer
         return implode('|', $types);
     }
 
-    protected function scalar_LNumber(Scalar\LNumber $node) : string
+    protected function lnumber(Scalar\LNumber $node) : string
     {
         if ($node->value === -PHP_INT_MAX - 1) {
             // PHP_INT_MIN cannot be represented as a literal,
