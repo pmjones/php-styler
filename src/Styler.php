@@ -331,7 +331,12 @@ class Styler
     protected function sAttributeArgsEnd(P\AttributeArgsEnd $p) : void
     {
         if ($p->count) {
-            $this->split(P\AttributeArgs::class, $this->attrArgsLevel, 'end', '');
+            $this->split(
+                P\AttributeArgs::class,
+                $this->attrArgsLevel,
+                'end',
+                '',
+            );
         }
 
         $this->code[] = ')';
@@ -344,7 +349,12 @@ class Styler
 
         if ($this->paramLevel) {
             $this->code[] = ' ';
-            $this->split(P\AttributeArgs::class, $this->attrArgsLevel, 'mid', '');
+            $this->split(
+                P\AttributeArgs::class,
+                $this->attrArgsLevel,
+                'mid',
+                '',
+            );
         } else {
             $this->done();
         }
