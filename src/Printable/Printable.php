@@ -5,9 +5,22 @@ namespace PhpStyler\Printable;
 
 abstract class Printable
 {
+    protected bool $hasAttribute = false;
+
     protected bool $hasComment = false;
 
     protected bool $isFirst = false;
+
+    public function hasAttribute(bool $hasAttribute = null) : ?bool
+    {
+        if ($hasAttribute === null) {
+            return $this->hasAttribute;
+        }
+
+        $this->hasAttribute = $hasAttribute;
+
+        return null;
+    }
 
     public function hasComment(bool $hasComment = null) : ?bool
     {

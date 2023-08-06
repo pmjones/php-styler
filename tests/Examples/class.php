@@ -1,4 +1,8 @@
 <?php
+namespace MyNamespace;
+
+use Something;
+
 abstract class Bar extends Baz implements Dib, Zim, Gir
 {
     public const FOOCON = 'FOOCON';
@@ -7,13 +11,43 @@ abstract class Bar extends Baz implements Dib, Zim, Gir
 
     protected int $count = 0;
 
-    public function __construct(public bool $baz = false)
-    {
+    public function __construct(
+        #[MyVeryVeryVeryVeryVeryVeryLongAttribute]
+        public readonly ?string $foofoo,
+        #[MyAttribute(
+            foofofoo: 'barbarbar',
+            bazbazbaz: 'dibdibdib',
+            zimzimzim: 'girgirgir'
+        )]
+        public readonly ?string $barbar,
+        #[MyVeryVeryVeryVeryVeryVeryLongAttribute]
+        public readonly ?string $bazbaz,
+    ) {
     }
 
-    final private static function doom()
+    final private static function doom(bool $baz = false)
     {
     }
 
     abstract protected function irk();
+}
+
+#[MyAttribute]
+class WithAttributes
+{
+}
+
+/**
+ * Comment
+ */
+class WithComment
+{
+}
+
+/**
+ * Comment
+ */
+#[MyAttribute]
+class WithAttributesAndComments
+{
 }

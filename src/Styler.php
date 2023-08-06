@@ -25,6 +25,8 @@ class Styler
 
     protected bool $hadComment = false;
 
+    protected bool $hadAttribute = false;
+
     protected int $memberLevel = 0;
 
     protected int $paramLevel = 0;
@@ -128,6 +130,7 @@ class Styler
         $this->argsLevel = 0;
         $this->arrayLevel = 0;
         $this->hadComment = false;
+        $this->hadAttribute = false;
         $this->code = $this->newCode();
 
         while ($list) {
@@ -212,7 +215,7 @@ class Styler
 
     protected function maybeNewline(Printable $p) : void
     {
-        if ($p->isFirst() || $p->hasComment()) {
+        if ($p->isFirst() || $p->hasComment() || $p->hasAttribute()) {
             return;
         }
 
@@ -240,6 +243,10 @@ class Styler
         // has comment?
         $p->hasComment($this->hadComment);
         $this->hadComment = false;
+
+        // has attribute?
+        $p->hasAttribute($this->hadAttribute);
+        $this->hadAttribute = false;
 
         // what method to use?
         /** @var string */
@@ -358,6 +365,8 @@ class Styler
         } else {
             $this->done();
         }
+
+        $this->hadAttribute = true;
     }
 
     protected function sBody(P\Body $p) : void
