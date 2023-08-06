@@ -20,6 +20,9 @@
         "phpstan/phpstan": "^1.10",
         "phpunit/phpunit": "^10.0"
     },
+    "bin": [
+        "bin/phpstyler.php"
+    ],
     "scripts": {
         "analyze": "./vendor/bin/phpstan",
         "check": "composer cs-fix && composer test && composer analyze",
