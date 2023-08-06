@@ -17,7 +17,7 @@ class Apply extends Command
         $start = microtime(true);
         $this->count = 0;
         $configFile = $options->configFile ?? $this->findConfigFile();
-        echo "Loading " . $configFile . PHP_EOL;
+        echo "Load config " . $configFile . PHP_EOL;
         $config = $this->load($configFile);
         $cache = $this->getCache($config, $configFile);
         $this->setStyler($config);
@@ -45,7 +45,7 @@ class Apply extends Command
         $cacheFile = $config['cache'] ?? false;
 
         if ($cacheFile && file_exists($cacheFile)) {
-            echo "Loading " . $cacheFile . PHP_EOL;
+            echo "Load cache " . $cacheFile . PHP_EOL;
             $cache = $this->load($cacheFile);
         } else {
             $cache = ['time' => 0];
@@ -68,7 +68,7 @@ class Apply extends Command
             return;
         }
 
-        echo "Saving {$cacheFile}" . PHP_EOL;
+        echo "Save {$cacheFile}" . PHP_EOL;
         $data = '<?php return '
             . var_export(['time' => time()], true)
             . ';'
