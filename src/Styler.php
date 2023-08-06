@@ -21,9 +21,13 @@ class Styler
 
     protected int $condLevel = 0;
 
+    protected int $attrArgsLevel = 0;
+
     protected bool $hadComment = false;
 
     protected int $memberLevel = 0;
+
+    protected int $paramLevel = 0;
 
     /**
      * @var array<class-string, string>
@@ -106,6 +110,7 @@ class Styler
             'member_args',
             'coalesce',
             'params',
+            'attribute_args',
         ],
     ) {
     }
@@ -307,10 +312,42 @@ class Styler
         $this->code[] = '#[';
     }
 
+    protected function sAttributeArgs(P\AttributeArgs $p) : void
+    {
+        $this->attrArgsLevel ++;
+        $this->code[] = '(';
+
+        if ($p->count) {
+            $this->split(P\AttributeArgs::class, $this->attrArgsLevel);
+        }
+    }
+
+    protected function sAttributeArgSeparator(P\Separator $p) : void
+    {
+        $this->code[] = ', ';
+        $this->split(P\AttributeArgs::class, $this->attrArgsLevel, 'mid', ', ');
+    }
+
+    protected function sAttributeArgsEnd(P\AttributeArgsEnd $p) : void
+    {
+        if ($p->count) {
+            $this->split(P\AttributeArgs::class, $this->attrArgsLevel, 'end', '');
+        }
+
+        $this->code[] = ')';
+        $this->attrArgsLevel --;
+    }
+
     protected function sAttributeGroupEnd(P\End $p) : void
     {
         $this->code[] = ']';
-        $this->newline();
+
+        if ($this->paramLevel) {
+            $this->code[] = ' ';
+            $this->split(P\AttributeArgs::class, $this->attrArgsLevel, 'mid', '');
+        } else {
+            $this->done();
+        }
     }
 
     protected function sBody(P\Body $p) : void
@@ -942,6 +979,7 @@ class Styler
 
     protected function sParams(P\Params $p) : void
     {
+        $this->paramLevel ++;
         $this->code[] = '(';
 
         if ($p->count) {
@@ -956,6 +994,7 @@ class Styler
         }
 
         $this->code[] = ')';
+        $this->paramLevel --;
     }
 
     protected function sParamSeparator(P\Separator $p) : void

@@ -177,9 +177,14 @@ class Printer
     {
         $this->p($node->name);
 
-        if ($node->args) {
-            $this->pArgs($node);
+        if (! $node->args) {
+            return;
         }
+
+        $count = count($node->args ?? []);
+        $this->list[] = new P\AttributeArgs($count);
+        $this->pSeparate('attributeArg', $node->args ?? null);
+        $this->list[] = new P\AttributeArgsEnd($count);
     }
 
     protected function pAttributeGroup(Node\AttributeGroup $node) : void
@@ -345,12 +350,13 @@ class Printer
 
     protected function pExpr_Array(Expr\Array_ $node) : void
     {
-        $this->list[] = new P\Array_(count($node->items));
+        $count = count($node->items);
+        $this->list[] = new P\Array_($count);
 
         /** @var ArrayItem[] */
         $items = $node->items;
         $this->pSeparate('array', $items);
-        $this->list[] = new P\ArrayEnd(count($node->items));
+        $this->list[] = new P\ArrayEnd($count);
     }
 
     protected function pExpr_ArrayDimFetch(Expr\ArrayDimFetch $node) : void
@@ -1104,12 +1110,13 @@ class Printer
      */
     protected function pNewAnonymous(Stmt\Class_ $node, array $args) : void
     {
+        $count = count($args);
         $this->pAttributeGroups($node);
         $this->pModifiers($node);
         $this->list[] = new P\Class_(null, null);
-        $this->list[] = new P\Args(count($args));
+        $this->list[] = new P\Args($count);
         $this->pSeparate('arg', $args);
-        $this->list[] = new P\ArgsEnd(count($args));
+        $this->list[] = new P\ArgsEnd($count);
         $this->pExtends($node);
         $this->pImplements($node);
         $this->pBody('closure');
@@ -1454,10 +1461,11 @@ class Printer
 
     protected function pStmt_Declare(Stmt\Declare_ $node) : void
     {
+        $count = count($node->declares);
         $this->list[] = new P\Declare_();
-        $this->list[] = new P\Params(count($node->declares));
+        $this->list[] = new P\Params($count);
         $this->pSeparate('param', $node->declares);
-        $this->list[] = new P\ParamsEnd(count($node->declares));
+        $this->list[] = new P\ParamsEnd($count);
 
         if ($node->stmts !== null) {
             $this->pBody('declare');
@@ -1808,8 +1816,9 @@ class Printer
 
     protected function pStmt_Catch(Stmt\Catch_ $node) : void
     {
+        $count = count($node->types);
         $this->list[] = new P\TryCatch();
-        $this->list[] = new P\Args(count($node->types));
+        $this->list[] = new P\Args($count);
         $this->list[] = implode('|', $node->types);
 
         if ($node->var) {
@@ -1817,7 +1826,7 @@ class Printer
             $this->p($node->var);
         }
 
-        $this->list[] = new P\ArgsEnd(count($node->types));
+        $this->list[] = new P\ArgsEnd($count);
         $this->pBody('tryCatch');
         $this->p($node->stmts);
     }

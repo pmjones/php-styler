@@ -13,6 +13,7 @@ class Code extends ArrayObject
 {
     public const SPLIT = [
         P\Args::class => 'args',
+        P\AttributeArgs::class => 'attribute_args',
         P\Array_::class => 'array',
         P\Cond::class => 'cond',
         Expr\BinaryOp\BooleanAnd::class => 'bool_and',
@@ -273,7 +274,7 @@ class Code extends ArrayObject
                     $this->split[] = 'args_5';
                     break;
 
-                case 'args-member':
+                case 'args_member':
                     $this->split[] = 'args_0';
                     $this->split[] = 'member_0';
                     $this->split[] = 'args_1';
@@ -295,6 +296,15 @@ class Code extends ArrayObject
                     $this->split[] = 'args_3';
                     $this->split[] = 'args_4';
                     $this->split[] = 'args_5';
+                    break;
+
+                case 'attribute_args':
+                    $this->split[] = 'attribute_args_0';
+                    $this->split[] = 'attribute_args_1';
+                    $this->split[] = 'attribute_args_2';
+                    $this->split[] = 'attribute_args_3';
+                    $this->split[] = 'attribute_args_4';
+                    $this->split[] = 'attribute_args_5';
                     break;
 
                 case 'member':
