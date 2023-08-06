@@ -310,7 +310,7 @@ class Styler
     protected function sAttributeGroupEnd(P\End $p) : void
     {
         $this->code[] = ']';
-        $this->done();
+        $this->newline();
     }
 
     protected function sBody(P\Body $p) : void
