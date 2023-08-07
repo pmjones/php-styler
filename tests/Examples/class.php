@@ -51,3 +51,7 @@ class WithComment
 class WithAttributesAndComments
 {
 }
+
+class Local extends \Global
+{
+}

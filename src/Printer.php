@@ -1097,12 +1097,12 @@ class Printer
 
     protected function pName_FullyQualified(Name\FullyQualified $node) : void
     {
-        $this->list[] = '\\' . $this->name($node);
+        $this->list[] = $this->name($node);
     }
 
     protected function pName_Relative(Name\Relative $node) : void
     {
-        $this->list[] = 'namespace\\' . $this->name($node);
+        $this->list[] = $this->name($node);
     }
 
     /**
@@ -2040,6 +2040,10 @@ class Printer
     {
         if ($node instanceof Node\Identifier) {
             return $node->name;
+        } elseif ($node instanceof Name\FullyQualified) {
+            return '\\' . implode('\\', $node->parts ?? []);
+        } elseif ($node instanceof Name\Relative) {
+            return 'namespace\\' . implode('\\', $node->parts ?? []);
         } else {
             return implode('\\', $node->parts ?? []);
         }
