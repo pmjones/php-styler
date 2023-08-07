@@ -3,13 +3,16 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
+use ArrayAccess;
 use BadMethodCallException;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Stmt;
 use PhpStyler\Printable as P;
-use ArrayObject;
 
-class Code extends ArrayObject
+/**
+ * @implements ArrayAccess<int, mixed>
+ */
+class Code implements ArrayAccess
 {
     public const SPLIT = [
         P\Args::class => 'args',
@@ -25,6 +28,11 @@ class Code extends ArrayObject
         P\Precedence::class => 'precedence',
         Expr\Ternary::class => 'ternary',
     ];
+
+    /**
+     * @var mixed[]
+     */
+    protected array $parts = [];
 
     protected string $file = '';
 
@@ -62,8 +70,6 @@ class Code extends ArrayObject
         protected int $indentLen,
         array $split,
     ) {
-        parent::__construct([]);
-
         if (! $this->indentLen) {
             $this->indentLen = $this->indentStr === "\t"
                 ? 4
@@ -72,6 +78,30 @@ class Code extends ArrayObject
         }
 
         $this->setSplitOrder($split);
+    }
+
+    public function offsetSet(mixed $offset, mixed $value) : void
+    {
+        if ($offset === null) {
+            $this->parts[] = $value;
+        } else {
+            $this->parts[$offset] = $value;
+        }
+    }
+
+    public function offsetGet(mixed $offset) : mixed
+    {
+        return $this->parts[$offset];
+    }
+
+    public function offsetExists(mixed $offset) : bool
+    {
+        return isset($this->parts[$offset]);
+    }
+
+    public function offsetUnset(mixed $offset) : void
+    {
+        unset($this->parts[$offset]);
     }
 
     public function getFile() : string
@@ -115,7 +145,7 @@ class Code extends ArrayObject
         // retain in file and reset for next round
         $this->file .= $this->lines;
         $this->splitCalls = [];
-        $this->exchangeArray([$this->eol . $this->indent]);
+        $this->parts = [$this->eol . $this->indent];
     }
 
     protected function atLeastOneLineTooLong() : bool
@@ -138,7 +168,7 @@ class Code extends ArrayObject
     {
         $this->lines = '';
 
-        foreach ($this as $part) {
+        foreach ($this->parts as $part) {
             if (is_array($part)) {
                 $method = array_shift($part);
                 $this->{$method}(...$part);
