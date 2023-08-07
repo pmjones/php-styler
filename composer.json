@@ -21,7 +21,7 @@
         "phpunit/phpunit": "^10.0"
     },
     "bin": [
-        "bin/php-styler.php"
+        "bin/php-styler"
     ],
     "scripts": {
         "analyze": "./vendor/bin/phpstan",
