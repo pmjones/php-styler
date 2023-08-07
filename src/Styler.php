@@ -49,7 +49,7 @@ class Styler
         Expr\AssignOp\Pow::class => '**=',
         Expr\AssignOp\ShiftLeft::class => '<<=',
         Expr\AssignOp\ShiftRight::class => '>>=',
-        Expr\AssignRef::class => '= &',
+        Expr\AssignRef::class => '=&',
         Expr\BinaryOp\BitwiseAnd::class => '&',
         Expr\BinaryOp\BitwiseOr::class => '|',
         Expr\BinaryOp\BitwiseXor::class => '^',
@@ -822,10 +822,7 @@ class Styler
         }
 
         $this->code[] = $this->operator[$p->class];
-
-        if ($p->class !== Expr\AssignRef::class) {
-            $this->code[] = ' ';
-        }
+        $this->code[] = ' ';
     }
 
     protected function sInfixEnd(P\InfixEnd $p) : void
