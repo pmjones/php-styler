@@ -180,9 +180,9 @@ class Printer
             return;
         }
 
-        $count = count($node->args ?? []);
+        $count = count($node->args);
         $this->list[] = new P\AttributeArgs($count);
-        $this->pSeparate('attributeArg', $node->args ?? null);
+        $this->pSeparate('attributeArg', $node->args);
         $this->list[] = new P\AttributeArgsEnd($count);
     }
 
@@ -1388,8 +1388,7 @@ class Printer
 
     protected function pStmt_Break(Stmt\Break_ $node) : void
     {
-        $num = $node->num ? $this->lnumber($node->num) : null;
-        $this->list[] = new P\Break_($num);
+        $this->list[] = new P\Break_($node->num->value ?? null);
     }
 
     protected function pStmt_Class(Stmt\Class_ $node) : void
@@ -1439,8 +1438,7 @@ class Printer
 
     protected function pStmt_Continue(Stmt\Continue_ $node) : void
     {
-        $num = $node->num ? $this->lnumber($node->num) : null;
-        $this->list[] = new P\Continue_($num);
+        $this->list[] = new P\Continue_($node->num->value ?? null);
     }
 
     protected function pStmt_Declare(Stmt\Declare_ $node) : void
@@ -2021,9 +2019,9 @@ class Printer
         if ($node instanceof Node\Identifier) {
             return $node->name;
         } elseif ($node instanceof Name\FullyQualified) {
-            return '\\' . implode('\\', $node->parts ?? []);
+            return '\\' . implode('\\', $node->parts);
         } elseif ($node instanceof Name\Relative) {
-            return 'namespace\\' . implode('\\', $node->parts ?? []);
+            return 'namespace\\' . implode('\\', $node->parts);
         } else {
             return implode('\\', $node->parts ?? []);
         }

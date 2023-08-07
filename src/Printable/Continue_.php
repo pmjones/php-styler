@@ -5,7 +5,7 @@ namespace PhpStyler\Printable;
 
 class Continue_ extends Printable
 {
-    public function __construct(public readonly ?string $num)
+    public function __construct(public readonly ?int $num)
     {
     }
 }
