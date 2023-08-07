@@ -1948,7 +1948,7 @@ class Printer
         $end = $atEnd ? '(?:$|[;\\r\\n])' : '[;\\r\\n]';
 
         return false !== strpos($string, $label)
-            && preg_match('/' . $start . $label . $end . '/', $string)
+            && preg_match("/{$start}{$label}{$end}/", $string)
         ;
     }
 

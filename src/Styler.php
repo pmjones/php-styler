@@ -817,10 +817,7 @@ class Styler
             case Expr\BinaryOp\Coalesce::class:
             case Expr\BinaryOp\Concat::class:
             case Expr\Ternary::class:
-                if (! $this->argsLevel) {
-                    $this->split($p->class, null, 'cuddle');
-                }
-
+                $this->split($p->class, null, 'cuddle');
                 break;
         }
 
@@ -845,10 +842,7 @@ class Styler
             case Expr\BinaryOp\Coalesce::class:
             case Expr\BinaryOp\Concat::class:
             case Expr\Ternary::class:
-                if (! $this->argsLevel) {
-                    $this->split($p->class, null, 'endCuddle');
-                }
-
+                $this->split($p->class, null, 'endCuddle');
                 break;
         }
     }
