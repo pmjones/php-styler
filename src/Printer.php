@@ -123,7 +123,6 @@ class Printer
         }
 
         $this->p($nodes);
-
         return $styler->style($this->list);
     }
 
@@ -238,7 +237,6 @@ class Printer
     {
         if (! $this->callLhsRequiresParens($node)) {
             $this->p($node);
-
             return;
         }
 
@@ -308,7 +306,6 @@ class Printer
     {
         if (! $this->dereferenceLhsRequiresParens($node)) {
             $this->p($node);
-
             return;
         }
 
@@ -937,7 +934,6 @@ class Printer
     {
         if (! $node->if) {
             $this->pInfixOp(Expr\Ternary::class, $node->cond, $node->else);
-
             return;
         }
 
@@ -968,7 +964,6 @@ class Printer
             $this->list[] = '-(';
             $this->p($node->expr);
             $this->list[] = ')';
-
             return;
         }
 
@@ -985,7 +980,6 @@ class Printer
             $this->list[] = '+(';
             $this->p($node->expr);
             $this->list[] = ')';
-
             return;
         }
 
@@ -1030,7 +1024,6 @@ class Printer
 
         if (! is_array($extends)) {
             $this->list[] = new P\Extends_($this->name($extends));
-
             return;
         }
 
@@ -1185,7 +1178,6 @@ class Printer
                 $this->list[] = new P\Precedence();
                 $this->p($node);
                 $this->pEnd('precedence');
-
                 return;
             }
         }
@@ -1213,15 +1205,12 @@ class Printer
         if (! is_finite($node->value)) {
             if ($node->value === INF) {
                 $this->list[] = '\\INF';
-
                 return;
             } elseif ($node->value === -INF) {
                 $this->list[] = '-\\INF';
-
                 return;
             } else {
                 $this->list[] = '\\NAN';
-
                 return;
             }
         }
@@ -1261,14 +1250,12 @@ class Printer
                 ) {
                     $this->list[] = new P\Heredoc($label);
                     $this->list[] = new P\HeredocEnd($label);
-
                     return;
                 }
 
                 $this->list[] = new P\Heredoc($label);
                 $this->pEncapsList($node->parts, null);
                 $this->list[] = new P\HeredocEnd($label);
-
                 return;
             }
         }
@@ -1347,14 +1334,12 @@ class Printer
                     $this->list[] = new P\Nowdoc($label);
                     $this->list[] = $node->value;
                     $this->list[] = new P\HeredocEnd($label);
-
                     return;
                 }
 
             /* break missing intentionally */
             case Scalar\String_::KIND_SINGLE_QUOTED:
                 $this->list[] = '\'' . addcslashes($node->value, '\'\\') . '\'';
-
                 return;
 
             case Scalar\String_::KIND_HEREDOC:
@@ -1377,7 +1362,6 @@ class Printer
                     . $this->escapeString($node->value, '"')
                     . '"'
                 ;
-
                 return;
         }
 
@@ -1762,7 +1746,6 @@ class Printer
 
         if (! $node->adaptations) {
             $this->pEnd('useTrait');
-
             return;
         }
 
@@ -1946,7 +1929,6 @@ class Printer
     {
         $start = $atStart ? '(?:^|[\\r\\n])' : '[\\r\\n]';
         $end = $atEnd ? '(?:$|[;\\r\\n])' : '[;\\r\\n]';
-
         return false !== strpos($string, $label)
             && preg_match("/{$start}{$label}{$end}/", $string)
         ;
@@ -2029,10 +2011,8 @@ class Printer
         $callback = function ($matches) {
             assert(strlen($matches[0]) === 1);
             $hex = dechex(ord($matches[0]));
-
             return '\\x' . str_pad($hex, 2, '0', STR_PAD_LEFT);
         };
-
         return preg_replace_callback($regex, $callback, $escaped);
     }
 

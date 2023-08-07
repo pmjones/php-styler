@@ -140,7 +140,6 @@ class Styler
 
         $this->done();
         $file = "<?php" . $this->eol . ltrim($this->code->getFile());
-
         return rtrim($file) . $this->eol;
     }
 
@@ -232,7 +231,6 @@ class Styler
 
         if (is_string($p)) {
             $this->code[] = $p;
-
             return;
         }
 
@@ -1062,7 +1060,6 @@ class Styler
 
     protected function sReturn(P\Return_ $p) : void
     {
-        $this->maybeNewline($p);
         $this->code[] = $p->isEmpty ? 'return' : 'return ';
     }
 
@@ -1114,7 +1111,6 @@ class Styler
 
         if (method_exists($this, $method)) {
             $this->{$method}($p);
-
             return;
         }
 
