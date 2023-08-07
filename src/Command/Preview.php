@@ -13,15 +13,14 @@ class Preview extends Command
     public function __invoke(CommandOptions $options, string $sourceFile) : int
     {
         $configFile = $options->configFile ?? $this->findConfigFile();
-        $config = $this->load($configFile);
+        $config = $this->loadConfigFile($configFile);
         $this->setStyler($config);
 
         if (! $this->lint($sourceFile)) {
-            exit(1);
+            return 1;
         }
 
         echo $this->style($sourceFile);
-
         return 0;
     }
 }

@@ -122,7 +122,6 @@ class Code extends ArrayObject
     {
         if ($this->forceSplit) {
             $this->forceSplit = false;
-
             return true;
         }
 

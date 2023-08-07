@@ -18,7 +18,6 @@ abstract class Printable
         }
 
         $this->hasAttribute = $hasAttribute;
-
         return null;
     }
 
@@ -29,7 +28,6 @@ abstract class Printable
         }
 
         $this->hasComment = $hasComment;
-
         return null;
     }
 
@@ -40,7 +38,6 @@ abstract class Printable
         }
 
         $this->isFirst = $isFirst;
-
         return null;
     }
 }

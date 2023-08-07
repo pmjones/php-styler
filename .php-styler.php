@@ -1,8 +1,13 @@
 <?php
+use PhpStyler\Config;
 use PhpStyler\Files;
 
-return [
-    'styler' => [
+return new Config(
+    cache: __DIR__ . '/.php-styler.cache',
+    files: Files::find([
+        __DIR__ . '/src',
+    ]),
+    styler: [
         'lineLen' => 80,
         'split' => [
             'concat',
@@ -18,8 +23,4 @@ return [
             'attribute_args',
         ],
     ],
-    'cache' => __DIR__ . '/.php-styler.cache',
-    'files' => Files::find([
-        __DIR__ . '/src',
-    ])
-];
+);

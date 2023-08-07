@@ -3,13 +3,14 @@ declare(strict_types=1);
 
 namespace PhpStyler\Command;
 
-use PhpParser\ParserFactory;
-use PhpParser\Parser;
 use PhpParser\Node\Stmt;
+use PhpParser\Parser;
+use PhpParser\ParserFactory;
+use PhpStyler\Config;
 use PhpStyler\Printer;
 use PhpStyler\Styler;
-use UnexpectedValueException;
 use RuntimeException;
+use UnexpectedValueException;
 
 abstract class Command
 {
@@ -26,12 +27,15 @@ abstract class Command
         $this->printer = new Printer();
     }
 
-    /**
-     * @return mixed[]
-     */
-    protected function load(string $file) : array
+    protected function load(string $file) : mixed
     {
         return require $file;
+    }
+
+    protected function loadConfigFile(string $configFile) : Config
+    {
+        /** @var Config */
+        return $this->load($configFile);
     }
 
     protected function findConfigFile() : string
@@ -51,28 +55,18 @@ abstract class Command
 
         if ($return !== 0) {
             echo implode(PHP_EOL, $output) . PHP_EOL;
-
             return false;
         }
 
         return true;
     }
 
-    /**
-     * @param mixed[] $config
-     */
-    protected function setStyler(array $config) : void
+    protected function setStyler(Config $config) : void
     {
-        $styler = $config['styler'] ?? [];
-
-        if ($styler instanceof Styler) {
-            $this->styler = $styler;
-        } elseif (is_array($styler)) {
-            $this->styler = new Styler(...$styler);
+        if ($config->styler instanceof Styler) {
+            $this->styler = $config->styler;
         } else {
-            throw new UnexpectedValueException(
-                "Config key 'styler' misconfigured.",
-            );
+            $this->styler = new Styler(...$config->styler);
         }
     }
 
@@ -83,7 +77,6 @@ abstract class Command
 
         /** @var Stmt[] */
         $stmts = $this->parser->parse($code);
-
         return $this->printer->printFile($stmts, $this->styler);
     }
 }

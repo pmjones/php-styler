@@ -5,6 +5,7 @@ namespace PhpStyler\Command;
 
 use PhpParser\ParserFactory;
 use PhpParser\Parser;
+use PhpStyler\Config;
 use PhpStyler\Printer;
 use PhpStyler\Styler;
 
@@ -16,13 +17,16 @@ class Apply extends Command
     {
         $start = microtime(true);
         $this->count = 0;
+
+        // config and cache
         $configFile = $options->configFile ?? $this->findConfigFile();
         echo "Load config " . $configFile . PHP_EOL;
-        $config = $this->load($configFile);
+        $config = $this->loadConfigFile($configFile);
         $cache = $this->getCache($config, $configFile);
+
+        // set and apply styling
         $this->setStyler($config);
-        $files = $config['files'] ?? [];
-        $exit = $this->apply($files, $cache['time']);
+        $exit = $this->apply($config->files, $cache['time']);
 
         if ($exit) {
             return $exit;
@@ -36,17 +40,19 @@ class Apply extends Command
             . ' seconds.'
             . PHP_EOL
         ;
-
         return 0;
     }
 
-    protected function getCache(array $config, string $configFile) : array
+    /**
+     * @return array{time:int}
+     */
+    protected function getCache(Config $config, string $configFile) : array
     {
-        $cacheFile = $config['cache'] ?? false;
+        if ($config->cache && file_exists($config->cache)) {
+            echo "Load cache " . $config->cache;
 
-        if ($cacheFile && file_exists($cacheFile)) {
-            echo "Load cache " . $cacheFile . PHP_EOL;
-            $cache = $this->load($cacheFile);
+            /** @var array{time:int} */
+            $cache = $this->load($config->cache);
         } else {
             $cache = ['time' => 0];
         }
@@ -60,23 +66,24 @@ class Apply extends Command
         return $cache;
     }
 
-    protected function putCache(array $config) : void
+    protected function putCache(Config $config) : void
     {
-        $cacheFile = $config['cache'] ?? false;
-
-        if (! $cacheFile) {
+        if (! $config->cache) {
             return;
         }
 
-        echo "Save {$cacheFile}" . PHP_EOL;
+        echo "Save {$config->cache}" . PHP_EOL;
         $data = '<?php return '
             . var_export(['time' => time()], true)
             . ';'
             . PHP_EOL
         ;
-        file_put_contents($cacheFile, $data);
+        file_put_contents($config->cache, $data);
     }
 
+    /**
+     * @param string[] $files
+     */
     protected function apply(array $files, int $mtime) : int
     {
         foreach ($files as $file) {
