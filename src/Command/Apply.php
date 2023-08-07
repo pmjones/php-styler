@@ -25,8 +25,7 @@ class Apply extends Command
         $cache = $this->getCache($config, $configFile);
 
         // set and apply styling
-        $this->setStyler($config);
-        $exit = $this->apply($config->files, $cache['time']);
+        $exit = $this->apply($config, $cache['time']);
 
         if ($exit) {
             return $exit;
@@ -81,12 +80,9 @@ class Apply extends Command
         file_put_contents($config->cache, $data);
     }
 
-    /**
-     * @param string[] $files
-     */
-    protected function apply(array $files, int $mtime) : int
+    protected function apply(Config $config, int $mtime) : int
     {
-        foreach ($files as $file) {
+        foreach ($config->files as $file) {
             $file = (string) $file;
 
             if (is_dir($file) || filemtime($file) < $mtime) {
@@ -99,7 +95,7 @@ class Apply extends Command
                 return 1;
             }
 
-            $code = $this->style($file);
+            $code = $this->style($file, $config->styler);
             file_put_contents($file, $code);
             echo $file . PHP_EOL;
         }

@@ -1,15 +1,16 @@
 <?php
 use PhpStyler\Config;
 use PhpStyler\Files;
+use PhpStyler\Styler;
 
 return new Config(
     cache: __DIR__ . '/.php-styler.cache',
     files: Files::find([
         __DIR__ . '/src',
     ]),
-    styler: [
-        'lineLen' => 80,
-        'split' => [
+    styler: new Styler(
+        lineLen: 80,
+        split: [
             'concat',
             'array',
             'ternary',
@@ -22,5 +23,5 @@ return new Config(
             'params',
             'attribute_args',
         ],
-    ],
+    ),
 );

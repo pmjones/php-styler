@@ -14,13 +14,12 @@ class Preview extends Command
     {
         $configFile = $options->configFile ?? $this->findConfigFile();
         $config = $this->loadConfigFile($configFile);
-        $this->setStyler($config);
 
         if (! $this->lint($sourceFile)) {
             return 1;
         }
 
-        echo $this->style($sourceFile);
+        echo $this->style($sourceFile, $config->styler);
         return 0;
     }
 }

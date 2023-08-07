@@ -61,22 +61,13 @@ abstract class Command
         return true;
     }
 
-    protected function setStyler(Config $config) : void
-    {
-        if ($config->styler instanceof Styler) {
-            $this->styler = $config->styler;
-        } else {
-            $this->styler = new Styler(...$config->styler);
-        }
-    }
-
-    protected function style(string $file) : string
+    protected function style(string $file, Styler $styler) : string
     {
         /** @var string */
         $code = file_get_contents($file);
 
         /** @var Stmt[] */
         $stmts = $this->parser->parse($code);
-        return $this->printer->printFile($stmts, $this->styler);
+        return $this->printer->printFile($stmts, $styler);
     }
 }
