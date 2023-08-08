@@ -122,7 +122,7 @@ class Code implements ArrayAccess
         $this->splitCalls[$key] = true;
     }
 
-    public function done() : void
+    public function commit() : void
     {
         $oldIndent = $this->indent;
         $split = $this->split;

@@ -32,6 +32,13 @@ abstract class Bar extends Baz implements Dib, Zim, Gir
     abstract protected function irk();
 }
 
+abstract class VeryLongClassname extends VeryLongBaseClass implements VeryLongInterface
+{
+    public function __construct()
+    {
+    }
+}
+
 #[MyAttribute]
 class WithAttributes
 {
