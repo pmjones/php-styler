@@ -1564,9 +1564,8 @@ class Printer
 
     protected function pStmt_InlineHTML(Stmt\InlineHTML $node) : void
     {
-        $this->list[] = new P\InlineHtml(
-            (bool) $node->getAttribute('hasLeadingNewline', true),
-        );
+        $newlne = (bool) $node->getAttribute('hasLeadingNewline', true);
+        $this->list[] = new P\InlineHtml($newline);
         $this->list[] = $node->value;
         $this->pEnd('inlineHtml');
     }
@@ -1702,24 +1701,22 @@ class Printer
         Stmt\TraitUseAdaptation\Alias $node,
     ) : void
     {
-        $oldName = $node->trait ? $this->name($node->trait) : null;
-        $newName = $node->newName ? $this->name($node->newName) : null;
-        $this->list[] = new P\UseTraitAs(
-            $oldName,
+        $useTraitAs = new P\UseTraitAs(
+            $node->trait ? $this->name($node->trait) : null,
             $this->name($node->method),
             $node->newModifier,
-            $newName,
+            $node->newName ? $this->name($node->newName) : null,
         );
+        $this->list[] = $useTraitAs;
     }
 
     protected function pStmt_TraitUseAdaptation_Precedence(
         Stmt\TraitUseAdaptation\Precedence $node,
     ) : void
     {
-        $this->list[] = new P\UseTraitInsteadof(
-            $this->name($node->trait ?? null),
-            $this->name($node->method),
-        );
+        $trait = $this->name($node->trait ?? null);
+        $method = $this->name($node->method);
+        $this->list[] = new P\UseTraitInsteadof($trait, $method);
         $this->pSeparate('insteadof', $node->insteadof);
         $this->pEnd('useTraitInsteadOf');
     }

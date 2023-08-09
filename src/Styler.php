@@ -101,19 +101,6 @@ class Styler
         protected int $lineLen = 88,
         protected string $indentStr = "    ",
         protected int $indentLen = 0,
-        protected array $split = [
-            'concat',
-            'array',
-            'ternary',
-            'cond',
-            'precedence',
-            'bool_and',
-            'bool_or',
-            'member_args',
-            'coalesce',
-            'params',
-            'attribute_args',
-        ],
     ) {
     }
 
@@ -145,13 +132,7 @@ class Styler
 
     protected function newCode() : Code
     {
-        return new Code(
-            $this->eol,
-            $this->lineLen,
-            $this->indentStr,
-            $this->indentLen,
-            $this->split,
-        );
+        return new Code($this->eol, $this->lineLen, $this->indentStr, $this->indentLen);
     }
 
     protected function commit() : void
@@ -167,6 +148,11 @@ class Styler
     protected function outdent() : void
     {
         $this->code[] = ['outdent'];
+    }
+
+    protected function clip() : void
+    {
+        $this->code[] = ['clip'];
     }
 
     protected function cuddle() : void
@@ -266,6 +252,7 @@ class Styler
 
     protected function sArgSeparator(P\Separator $p) : void
     {
+        $this->clip();
         $this->code[] = ', ';
         $this->split(P\Args::class, $this->argsLevel, 'mid');
     }
@@ -293,6 +280,7 @@ class Styler
 
     protected function sArraySeparator(P\Separator $p) : void
     {
+        $this->clip();
         $this->code[] = ', ';
         $this->split(P\Array_::class, $this->arrayLevel, 'mid');
     }
@@ -612,7 +600,7 @@ class Styler
 
     protected function sExprEnd(P\End $p) : void
     {
-        $this->code[] = ['clip'];
+        $this->clip();
         $this->code[] = ';';
         $this->commit();
     }
