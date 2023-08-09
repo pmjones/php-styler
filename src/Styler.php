@@ -100,7 +100,7 @@ class Styler
      */
     public function __construct(
         protected string $eol = "\n",
-        protected int $lineLen = 88,
+        protected int $lineLen = 80,
         protected string $indentStr = "    ",
         protected int $indentLen = 0,
     ) {
@@ -299,9 +299,26 @@ class Styler
         $this->arrayLevel --;
     }
 
+    protected function sArrayDim(P\ArrayDim $p) : void
+    {
+        $this->arrayLevel ++;
+        $this->code[] = '[';
+    }
+
+    protected function sArrayDimEnd(P\End $p) : void
+    {
+        $this->code[] = ']';
+        $this->arrayLevel --;
+    }
+
     protected function sArrowFunction(P\ArrowFunction $p) : void
     {
         $this->code[] = $p->static ? 'static fn ' : 'fn ';
+    }
+
+    protected function sAs(P\As_ $p) : void
+    {
+        $this->code[] = ' as ';
     }
 
     protected function sAttributeGroup(P\AttributeGroup $p) : void

@@ -361,9 +361,9 @@ class Printer
     protected function pExpr_ArrayDimFetch(Expr\ArrayDimFetch $node) : void
     {
         $this->pDereferenceLhs($node->var);
-        $this->list[] = '[';
+        $this->list[] = new P\ArrayDim();
         $this->p($node->dim);
-        $this->list[] = ']';
+        $this->list[] = new P\End('arrayDim');
     }
 
     protected function pExpr_ArrayItem(Expr\ArrayItem $node) : void
@@ -1489,11 +1489,11 @@ class Printer
         $this->list[] = new P\Foreach_();
         $this->list[] = new P\Cond();
         $this->p($node->expr);
-        $this->list[] = ' as ';
+        $this->list[] = new P\As_();
 
         if ($node->keyVar) {
             $this->p($node->keyVar);
-            $this->list[] = ' => ';
+            $this->list[] = new P\DoubleArrow();
         }
 
         $this->pByRef($node);
@@ -1789,7 +1789,8 @@ class Printer
         $this->list[] = $type . $this->name($node->name);
 
         if ($node->alias) {
-            $this->list[] = ' as ' . $node->alias;
+            $this->list[] = new P\As_();
+            $this->list[] = (string) $node->alias;
         }
     }
 
