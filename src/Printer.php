@@ -1360,8 +1360,7 @@ class Printer
             case Scalar\String_::KIND_DOUBLE_QUOTED:
                 $this->list[] = '"'
                     . $this->escapeString($node->value, '"')
-                    . '"'
-                ;
+                    . '"';
                 return;
         }
 

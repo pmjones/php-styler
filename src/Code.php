@@ -73,8 +73,7 @@ class Code implements ArrayAccess
         if (! $this->indentLen) {
             $this->indentLen = $this->indentStr === "\t"
                 ? 4
-                : strlen($indentStr)
-            ;
+                : strlen($indentStr);
         }
 
         $this->setSplitOrder($split);
@@ -183,6 +182,11 @@ class Code implements ArrayAccess
     protected function newline() : void
     {
         $this->lines .= $this->eol . $this->indent;
+    }
+
+    protected function clip() : void
+    {
+        $this->lines = rtrim($this->lines);
     }
 
     protected function cuddle() : void

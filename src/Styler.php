@@ -106,10 +106,10 @@ class Styler
             'array',
             'ternary',
             'cond',
-            'bool_and',
             'precedence',
+            'bool_and',
             'bool_or',
-            'member_args',
+            'args_member',
             'coalesce',
             'params',
             'attribute_args',
@@ -622,6 +622,7 @@ class Styler
 
     protected function sExprEnd(P\End $p) : void
     {
+        $this->code[] = ['clip'];
         $this->code[] = ';';
         $this->commit();
     }

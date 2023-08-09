@@ -75,8 +75,7 @@ class Apply extends Command
         $data = '<?php return '
             . var_export(['time' => time()], true)
             . ';'
-            . PHP_EOL
-        ;
+            . PHP_EOL;
         file_put_contents($config->cache, $data);
     }
 
