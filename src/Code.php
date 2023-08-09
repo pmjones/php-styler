@@ -71,9 +71,7 @@ class Code implements ArrayAccess
         array $split,
     ) {
         if (! $this->indentLen) {
-            $this->indentLen = $this->indentStr === "\t"
-                ? 4
-                : strlen($indentStr);
+            $this->indentLen = $this->indentStr === "\t" ? 4 : strlen($indentStr);
         }
 
         $this->setSplitOrder($split);

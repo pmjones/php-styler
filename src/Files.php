@@ -41,8 +41,6 @@ class Files
         RecursiveDirectoryIterator $iterator,
     ) : bool
     {
-        return $iterator->hasChildren()
-            || str_ends_with((string) $current, '.php')
-        ;
+        return $iterator->hasChildren() || str_ends_with((string) $current, '.php');
     }
 }

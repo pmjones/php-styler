@@ -98,7 +98,7 @@ class Styler
      */
     public function __construct(
         protected string $eol = "\n",
-        protected int $lineLen = 80,
+        protected int $lineLen = 88,
         protected string $indentStr = "    ",
         protected int $indentLen = 0,
         protected array $split = [
@@ -336,12 +336,7 @@ class Styler
     protected function sAttributeArgsEnd(P\AttributeArgsEnd $p) : void
     {
         if ($p->count) {
-            $this->split(
-                P\AttributeArgs::class,
-                $this->attrArgsLevel,
-                'end',
-                '',
-            );
+            $this->split(P\AttributeArgs::class, $this->attrArgsLevel, 'end', '');
         }
 
         $this->code[] = ')';
@@ -354,12 +349,7 @@ class Styler
 
         if ($this->paramLevel) {
             $this->code[] = ' ';
-            $this->split(
-                P\AttributeArgs::class,
-                $this->attrArgsLevel,
-                'mid',
-                '',
-            );
+            $this->split(P\AttributeArgs::class, $this->attrArgsLevel, 'mid', '');
         } else {
             $this->commit();
         }

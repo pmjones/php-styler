@@ -22,7 +22,7 @@ class Apply extends Command
         $configFile = $options->configFile ?? $this->findConfigFile();
         echo "Load config " . $configFile . PHP_EOL;
         $config = $this->loadConfigFile($configFile);
-        $cache = $this->getCache($config, $configFile);
+        $cache = $this->getCache($config, $configFile, $options->force);
 
         // set and apply styling
         $exit = $this->apply($config, $cache['time']);
@@ -45,7 +45,11 @@ class Apply extends Command
     /**
      * @return array{time:int}
      */
-    protected function getCache(Config $config, string $configFile) : array
+    protected function getCache(
+        Config $config,
+        string $configFile,
+        ?bool $force,
+    ) : array
     {
         if ($config->cache && file_exists($config->cache)) {
             echo "Load cache " . $config->cache;
@@ -58,7 +62,7 @@ class Apply extends Command
 
         $configTime = filemtime($configFile);
 
-        if ($configTime > $cache['time']) {
+        if ($configTime > $cache['time'] || $force) {
             $cache['time'] = 0;
         }
 
@@ -72,10 +76,7 @@ class Apply extends Command
         }
 
         echo "Save {$config->cache}" . PHP_EOL;
-        $data = '<?php return '
-            . var_export(['time' => time()], true)
-            . ';'
-            . PHP_EOL;
+        $data = '<?php return ' . var_export(['time' => time()], true) . ';' . PHP_EOL;
         file_put_contents($config->cache, $data);
     }
 
