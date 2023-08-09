@@ -100,7 +100,7 @@ class Styler
      */
     public function __construct(
         protected string $eol = "\n",
-        protected int $lineLen = 80,
+        protected int $lineLen = 88,
         protected string $indentStr = "    ",
         protected int $indentLen = 0,
     ) {
