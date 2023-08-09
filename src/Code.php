@@ -268,6 +268,10 @@ class Code implements ArrayAccess
                 $this->cuddle();
                 break;
 
+            case 'outdent':
+                $this->outdent();
+                break;
+
             default:
         }
     }

@@ -822,6 +822,10 @@ class Styler
 
         $this->code[] = $this->operator[$p->class];
         $this->code[] = ' ';
+
+        if ($p->class === Expr\BinaryOp\Coalesce::class) {
+            $this->split($p->class, null, 'outdent');
+        }
     }
 
     protected function sInfixEnd(P\InfixEnd $p) : void
@@ -835,7 +839,6 @@ class Styler
 
                 break;
 
-            case Expr\BinaryOp\Coalesce::class:
             case Expr\BinaryOp\Concat::class:
             case Expr\Ternary::class:
                 $this->split($p->class, null, 'endCuddle');
