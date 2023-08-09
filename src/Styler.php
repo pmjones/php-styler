@@ -31,6 +31,8 @@ class Styler
 
     protected int $paramLevel = 0;
 
+    protected int $encapsedLevel = 0;
+
     /**
      * @var array<class-string, string>
      */
@@ -182,7 +184,9 @@ class Styler
         mixed ...$args,
     ) : void
     {
-        $this->code->split($class, $level, $type, ...$args);
+        if (! $this->encapsedLevel) {
+            $this->code->split($class, $level, $type, ...$args);
+        }
     }
 
     protected function modifiers(?int $flags) : string
@@ -557,6 +561,16 @@ class Styler
         $this->code[] = ' => ';
     }
 
+    protected function sEncapsed(P\Encapsed $p) : void
+    {
+        $this->encapsedLevel ++;
+    }
+
+    protected function sEncapsedEnd(P\End $p) : void
+    {
+        $this->encapsedLevel --;
+    }
+
     protected function sEnd(P\End $p) : void
     {
         $method = 's' . ucfirst($p->type) . 'End';
@@ -895,7 +909,7 @@ class Styler
     {
         $isInstance = $p->operator === '->' || $p->operator === '?->';
 
-        if ($isInstance && ! $this->argsLevel) {
+        if ($isInstance && ! $this->argsLevel && ! $this->arrayLevel) {
             $this->memberLevel ++;
             $this->split(P\Member::class, $this->memberLevel, 'cuddle');
         }
@@ -907,7 +921,7 @@ class Styler
     {
         $isInstance = $p->operator === '->' || $p->operator === '?->';
 
-        if ($isInstance && ! $this->argsLevel) {
+        if ($isInstance && ! $this->argsLevel && ! $this->arrayLevel) {
             $this->split(P\Member::class, $this->memberLevel, 'endCuddle');
             $this->memberLevel --;
         }

@@ -338,6 +338,8 @@ class Printer
                 $this->pEmbrace($element);
             }
         }
+
+        $this->item[] = new P\End('encapsList');
     }
 
     protected function pEnd(string $type) : void
@@ -1208,16 +1210,20 @@ class Printer
                     return;
                 }
 
+                $this->item[] = new P\Encapsed();
                 $this->list[] = new P\Heredoc($label);
                 $this->pEncapsList($node->parts, null);
                 $this->list[] = new P\HeredocEnd($label);
+                $this->list[] = new P\End('encapsed');
                 return;
             }
         }
 
+        $this->list[] = new P\Encapsed();
         $this->list[] = '"';
         $this->pEncapsList($node->parts, '"');
         $this->list[] = '"';
+        $this->list[] = new P\End('encapsed');
     }
 
     protected function pScalar_EncapsedStringPart(
@@ -1564,7 +1570,7 @@ class Printer
 
     protected function pStmt_InlineHTML(Stmt\InlineHTML $node) : void
     {
-        $newlne = (bool) $node->getAttribute('hasLeadingNewline', true);
+        $newline = (bool) $node->getAttribute('hasLeadingNewline', true);
         $this->list[] = new P\InlineHtml($newline);
         $this->list[] = $node->value;
         $this->pEnd('inlineHtml');
