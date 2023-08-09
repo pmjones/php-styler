@@ -109,7 +109,7 @@ class Styler
             'precedence',
             'bool_and',
             'bool_or',
-            'args_member',
+            'member_args',
             'coalesce',
             'params',
             'attribute_args',
@@ -905,7 +905,9 @@ class Styler
 
     protected function sMember(P\Member $p) : void
     {
-        if ($p->operator === '->' || $p->operator === '?->') {
+        $isInstance = $p->operator === '->' || $p->operator === '?->';
+
+        if ($isInstance && ! $this->argsLevel) {
             $this->memberLevel ++;
             $this->split(P\Member::class, $this->memberLevel, 'cuddle');
         }
@@ -915,7 +917,9 @@ class Styler
 
     protected function sMemberEnd(P\MemberEnd $p) : void
     {
-        if ($p->operator === '->' || $p->operator === '?->') {
+        $isInstance = $p->operator === '->' || $p->operator === '?->';
+
+        if ($isInstance && ! $this->argsLevel) {
             $this->split(P\Member::class, $this->memberLevel, 'endCuddle');
             $this->memberLevel --;
         }
