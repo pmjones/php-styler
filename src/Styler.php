@@ -514,6 +514,7 @@ class Styler
 
     protected function sConstEnd(P\End $p) : void
     {
+        $this->clip();
         $this->code[] = ';';
         $this->newline();
         $this->commit();
@@ -1071,6 +1072,7 @@ class Styler
 
     protected function sPropertyEnd(P\End $end) : void
     {
+        $this->clip();
         $this->code[] = ';';
         $this->newline();
         $this->commit();
@@ -1207,6 +1209,7 @@ class Styler
 
     protected function sThrowEnd(P\End $p) : void
     {
+        $this->clip();
         $this->code[] = ';';
         $this->commit();
     }
@@ -1310,6 +1313,7 @@ class Styler
             $this->code[] = '}';
         }
 
+        $this->clip();
         $this->code[] = ';';
         $this->commit();
     }
