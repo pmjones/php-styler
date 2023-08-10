@@ -197,8 +197,7 @@ class Styler
             . ($flags & Stmt\Class_::MODIFIER_PROTECTED ? 'protected ' : '')
             . ($flags & Stmt\Class_::MODIFIER_PRIVATE ? 'private ' : '')
             . ($flags & Stmt\Class_::MODIFIER_STATIC ? 'static ' : '')
-            . ($flags & Stmt\Class_::MODIFIER_READONLY ? 'readonly ' : '')
-        ;
+            . ($flags & Stmt\Class_::MODIFIER_READONLY ? 'readonly ' : '');
     }
 
     protected function maybeNewline(Printable $p) : void

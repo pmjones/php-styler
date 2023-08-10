@@ -1709,11 +1709,11 @@ class Printer
         Stmt\TraitUseAdaptation\Alias $node,
     ) : void
     {
-        $useTraitAs = new P\UseTraitAs(
-            $node->trait ? $this->name($node->trait) : null,
-            $this->name($node->method),
-            $node->newModifier,
-            $node->newName ? $this->name($node->newName) : null,
+        $useTraitAs = new P\UseTraitAs($node->trait
+            ? $this->name($node->trait)
+            : null, $this->name($node->method), $node->newModifier, $node->newName
+            ? $this->name($node->newName)
+            : null
         );
         $this->list[] = $useTraitAs;
     }
@@ -1880,8 +1880,7 @@ class Printer
         $start = $atStart ? '(?:^|[\\r\\n])' : '[\\r\\n]';
         $end = $atEnd ? '(?:$|[;\\r\\n])' : '[;\\r\\n]';
         return false !== strpos($string, $label)
-            && preg_match("/{$start}{$label}{$end}/", $string)
-        ;
+            && preg_match("/{$start}{$label}{$end}/", $string);
     }
 
     protected function dereferenceLhsRequiresParens(Node $node) : bool
