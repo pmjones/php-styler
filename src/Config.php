@@ -11,7 +11,7 @@ class Config
      */
     public function __construct(
         public readonly Styler $styler,
-        public readonly array $files = [],
+        public readonly iterable $files = [],
         public readonly ?string $cache = null,
     ) {
     }
