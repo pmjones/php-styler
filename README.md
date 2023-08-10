@@ -112,6 +112,17 @@ $foo = 'muchlonger' . $bar;
 
 Comment lines are always attached to the following line, not the same or previous line. That is, leading or trailing comments *on the same line* may not appear where you expect. Likewise, comments intended to be attached to the *previous* line may end up attached to the *following* line. (This is a limitation of PHP-Parser.)
 
+Inline comments after array elements will mess up indenting.
+
+Comments on closure signatures will mess up indenting:
+
+        $this->htmlAttrMatcher =
+
+        /** @param array<array-key, string> $matches */
+        function (array $matches) : string {
+           return $this->htmlAttrMatcher($matches);
+        };
+
 ## Comparable Offerings
 
 [PHP CS Fixer](https://cs.symfony.com/) is the category leader here. It offers a huge range of customization options to fix (or not fix) specific elements of PHP code. However, it is extremely complex and difficult to modify. By comparison, PHP-Styler does not "fix" code; it restructures code entirely from an abstract syntax tree. It is also much less complex to modify.

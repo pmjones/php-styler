@@ -13,3 +13,9 @@ $long = [
     'veryLongElement',
     'veryLongElement',
 ];
+$veryVeryVeryVeryVeryVeryLongVariableName = [
+    34 => 'quot',
+    38 => 'amp',
+    60 => 'lt',
+    62 => 'gt',
+];
