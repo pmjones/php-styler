@@ -96,7 +96,6 @@ class Styler
 
     /**
      * @param non-empty-string $eol
-     * @param string[] $split
      */
     public function __construct(
         protected string $eol = "\n",
@@ -444,10 +443,11 @@ class Styler
     {
         $this->code[] = ' {';
         $this->indent();
-        $this->commit();
 
         if ($this->argsLevel) {
-            $this->forceSplit();
+            $this->cuddle();
+        } else {
+            $this->commit();
         }
     }
 
@@ -458,7 +458,9 @@ class Styler
         $this->code[] = '}';
 
         if ($this->argsLevel) {
-            $this->forceSplit();
+            $this->code[] = '--end--';
+            $this->commit();
+            $this->newline();
         }
     }
 

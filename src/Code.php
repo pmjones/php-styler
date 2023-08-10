@@ -94,7 +94,6 @@ class Code implements ArrayAccess
 
     /**
      * @param non-empty-string $eol
-     * @param string[] $split
      */
     public function __construct(
         protected string $eol,

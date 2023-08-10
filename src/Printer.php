@@ -5,6 +5,7 @@ namespace PhpStyler;
 
 use Exception;
 use LogicException;
+use PhpParser\Comment;
 use PhpParser\Internal\DiffElem;
 use PhpParser\Internal\PrintableNewAnonClassNode;
 use PhpParser\Internal\TokenStream;
@@ -25,6 +26,9 @@ use SplObjectStorage;
 
 class Printer
 {
+    /**
+     * @var SplObjectStorage<Comment, mixed>
+     */
     protected SplObjectStorage $commented;
 
     protected int $namespaceCount = 0;
@@ -338,8 +342,6 @@ class Printer
                 $this->pEmbrace($element);
             }
         }
-
-        $this->item[] = new P\End('encapsList');
     }
 
     protected function pEnd(string $type) : void
@@ -1210,7 +1212,7 @@ class Printer
                     return;
                 }
 
-                $this->item[] = new P\Encapsed();
+                $this->list[] = new P\Encapsed();
                 $this->list[] = new P\Heredoc($label);
                 $this->pEncapsList($node->parts, null);
                 $this->list[] = new P\HeredocEnd($label);
