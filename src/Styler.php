@@ -1083,6 +1083,7 @@ class Styler
 
     protected function sReturnEnd(P\End $p) : void
     {
+        $this->clip();
         $this->code[] = ';';
         $this->commit();
     }
