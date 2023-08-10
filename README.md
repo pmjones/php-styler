@@ -225,6 +225,6 @@ Alternatively, it may be an indication that the source line(s) should be refacto
 
 ## Comparable Offerings
 
-[PHP CS Fixer](https://cs.symfony.com/) is the category leader here. It offers a huge range of customization options to fix (or not fix) specific elements of PHP code. However, it is extremely complex, and can be difficult to modify.
+[PHP CS Fixer](https://cs.symfony.com/) is the category leader for PHP here. It offers a huge range of customization options to fix (or not fix) specific elements of PHP code. However, it is extremely complex, and can be difficult to modify.
 
-By comparison, PHP-Styler does not "fix" code; it restructures code entirely from an abstract syntax tree. It is also much less complex to modify.
+The [Black](https://black.readthedocs.io/en/stable/) formatter for Python appears to have similar design goals and operation as PHP-Styler.
