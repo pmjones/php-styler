@@ -2,7 +2,7 @@
 
 **EXPERIMENTAL. NOT FOR PRODUCTION USE.**
 
-PHP-Styler reconstructs PHP code after it has been deconstructed into an abstract syntax tree. It will **completely reformat** the code it is given, discarding any previous formatting entirely.
+PHP-Styler is a companion to [PHP-Parser](https://github.com/nikic/PHP-Parser) for reconstructing PHP code after it has been deconstructed into an abstract syntax tree. It will **completely reformat** the code it is given, discarding any previous formatting entirely.
 
 > McCoy: What if this thing were used where [formatting] already exists?
 >
@@ -12,19 +12,27 @@ PHP-Styler reconstructs PHP code after it has been deconstructed into an abstrac
 >
 > Spock: I was not attempting to evaulate its [aesthetic] implications.
 >
-> -- Star Trek II: The Wrath of Khan (paraphrased)
+> -- *Star Trek II: The Wrath of Khan* (paraphrased)
 
-PHP-Styler is a companion to [PHP-Parser](https://github.com/nikic/PHP-Parser). Whereas the PHP-Parser pretty printer does not have output customization as a main design goal, PHP-Styler does.
+Whereas the PHP-Parser pretty printer does not have output customization as a main design goal, PHP-Styler does.
 
 PHP-Styler is targeted toward declaration/definition files (class, interface, enum, trait) and script files.
 
 PHP-Styler is **not appropriate** for PHP-based templates, as it does not use the alternative control structures. Perhaps a future release will include a custom _AlternativeStyler_ for PHP-based templates using alternative control structures.
 
-## Design Goals
+### How It Works
+
+PHP-Styler uses a 3-pass system to reformat and style PHP code:
+
+1. _PHPParser\Parser_ converts the code to an abstract syntax tree of _Node_ elements.
+2. _PHPStyler\Printer_ flattens the _Node_ tree into a list of _Printable_ elements.
+3. _PHPStyler\Styler_ converts each _Printable_ back into text; it applies horizontal spacing, vertical spacing, and line-splitting rules as it goes.
+
+### Design Goals
 
 - **Logic Preservation.** Restructured PHP code will continue to operate as before.
 
-- **Horizontal and Vertical Spacing.** Automatic, reasonable indenting and blank-line placement.
+- **Horizontal and Vertical Spacing.** Automatic indenting and blank-line placement.
 
 - **Line Length Control.** Automatic splitting across multiple lines when a single line is too long.
 
@@ -34,7 +42,7 @@ PHP-Styler is **not appropriate** for PHP-based templates, as it does not use th
 
 - **Comment Preservation.** As much as the PHP-Parser will allow.
 
-## Using PHP-Styler
+## Usage
 
 ### Installation
 
@@ -81,19 +89,63 @@ PHP-Styler will track the last time it was applied in `.php-styler.cache` and on
 
 ### Configuration
 
-TBD.
+The default config file looks like this:
+
+```php
+<?php
+use PhpStyler\Config;
+use PhpStyler\Files;
+use PhpStyler\Styler;
+
+return new Config(
+    cache: __DIR__ . '/.php-styler.cache',
+    files: Files::find([
+        __DIR__ . '/src',
+    ]),
+    styler: new Styler(),
+);
+```
+
+The `cache` parameter specifies where the cache file is located; set to `null` to turn off caching.
+
+The `files` parameter is any `iterable` of file names to which PHP-Styler should be applied.
+
+The `styler` parameter is any instance of _Styler_, whether the default one or any custom extended class.
+
+The _Styler_ instance can be configured with these constructor parameters:
+
+- `string $eol = "\n"`: The end-of-line string to use.
+
+- `int $lineLen = 88`: The maximum line length before PHP-Styler tries to split lines automatically.
+
+- `string $indentStr = "    "`: The string used for one level of indentation; default is 4 spaces.
+
+- `int $indentLen`: When `$indentStr` is a tab (`"\t"`), use this value as the character length for the tab when calculating line length. Default is 4; i.e., a tab is counted as 4 spaces.
+
+Here is a _Styler_ configured for Windows line endings on 120-character lines with tab indentation at 8 spaces wide:
+
+```php
+<?php
+use PhpStyler\Config;
+use PhpStyler\Files;
+use PhpStyler\Styler;
+
+return new Config(
+    cache: __DIR__ . '/.php-styler.cache',
+    files: Files::find([
+        __DIR__ . '/src',
+    ]),
+    styler: new Styler(
+        eol: "\r\n",
+        lineLen: 120,
+        indentStr: "\t",
+        indentLen: 8
+    ),
+);
+```
 
 
-## How It Works
-
-PHP-Styler uses a 3-pass system to reformat and style PHP code:
-
-1. _PHPParser\Parser_ converts the code to an abstract syntax tree of _Node_ elements.
-2. _PHPStyler\Printer_ flattens the _Node_ tree into a list of _Printable_ elements.
-3. _PHPStyler\Styler_ converts each _Printable_ back into text; it applies horizontal spacing, vertical spacing, and line-splitting rules as it goes.
-
-
-### Automatic Line-Splitting
+## Automatic Line-Splitting
 
 At first, PHP-Styler builds each statement/instruction as a single line. If that line is "too long" (88 characters by default) the _Styler_ reconstructs the code by trying to split it across multiple lines. It does so by applying one or more rules in order:
 
@@ -106,23 +158,25 @@ At first, PHP-Styler builds each statement/instruction as a single line. If that
 - Ternaries are split at `?` and `:`.
 - Object member operators are split at `->` and `?->`.
 - Argument lists are split at commas.
-- Coalesce `??` operators are split;
+- Coalesce `??` operators are split.
 - Function and method parameters are split at commas.
 - Attribute arguments are split at commas.
 
 If the first rule does not make the line short enough, the second rule is applied in addition, then the third, and so on.
 
-Even after all rules are applied, the line may still end up "too long."
 
 ## Caveats
 
 (These are not all-inclusive.)
 
+Even after all splitting rules are applied, the line may still end up "too long."
+
 PHP-Styler does not:
 
-- rearrange or reorder code blocks
-- separate imports into groups (use, use function, use const)
-- split comment lines
+- Rearrange or reorder code blocks
+- Regroup `use` imports
+- Split comment lines
+- Split literal string lines
 
 PHP-Styler will de-align lines like this ...
 
@@ -144,7 +198,7 @@ Comment lines are always attached to the following line, not the same or previou
 
 Inline comments after array elements will mess up indenting.
 
-Comments on closure signatures will mess up indenting; the following is how PHP-Styler reformats one part of Laminas Escaper:
+Comments on closure signatures will mess up indenting. For example, the following is how PHP-Styler reformats one part of Laminas Escaper:
 
 ```php
 $this->htmlAttrMatcher =
