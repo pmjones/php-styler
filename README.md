@@ -262,9 +262,9 @@ If PHP-Styler generates "ugly" or "weird" or "mangled" results, it might be a pr
 
 Alternatively, it may be an indication that the source line(s) should be refactored. Here are some suggestions:
 
-- Increase the maximum line length. The default length is 88 characters (10% more than the commonly-suggested 80-character length) to allow some wiggle room. However, some codebases tend to much longer lines, so increasing the line length may result in more-agreeable line splits.
+- Increase the maximum line length. The default length is 88 characters (10% more than the commonly-suggested 80-character length to allow some wiggle room). However, some codebases tend to prefer much longer lines, so increasing the line length may result in more-agreeable line splits.
 
-- Break up a single long line into shorter multiple lines.
+- Break up a single long line into multiple shorter lines.
 
 - Move inline comments from the beginning or end of the line to *above* the line.
 
