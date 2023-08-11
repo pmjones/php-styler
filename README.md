@@ -155,16 +155,16 @@ At first, PHP-Styler builds each statement/instruction as a single line. If that
 - Precedence-indicating parentheses are split.
 - Boolean `||` operators are split.
 - Boolean `&&` operators are split.
-- Ternaries are split at `?` and `:` (1)
-- Object member operators are split at `->` and `?->`. (1)(2)
+- Ternaries are split at `?` and `:` *(1)*
+- Object member operators are split at `->` and `?->`. *(1) (2)*
 - Argument lists are split at commas.
 - Coalesce `??` operators are split.
 - Function and method parameters are split at commas.
 - Attribute arguments are split at commas.
 
-> (1) Except when the element is used as an argument.
+> (1) Except when used as an argument.
 >
-> (2) Except when the element is used as an array element.
+> (2) Except when used as an array element.
 
 If the first rule does not make the line short enough, the second rule is applied in addition, then the third, and so on.
 
