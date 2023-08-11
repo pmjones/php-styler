@@ -86,7 +86,6 @@ PHP-Styler will track the last time it was applied in `.php-styler.cache` and on
 ./vendor/bin/php-styler apply -f
 ```
 
-
 ### Configuration
 
 The default config file looks like this:
@@ -144,6 +143,20 @@ return new Config(
 );
 ```
 
+### Avoiding Blame
+
+Applying PHP-Styler to your source files for the first time may introduce a volume of changes that will make it difficult to track authorship via `git blame`.
+
+You can tell Git ignore this initial reformatting pass by adding a `.git-blame-ignore-revs` file to your repository, and adding the full hash of the initial reformatting commit to it.
+
+1. Issue `php-styler apply` to your codebase.
+2. Issue `git log` and copy the full 40-character hash string.
+3. Create and commit a file named `.git-blame-ignore-revs` with that hash pasted into it, perhaps with a comment.
+4. Configure Git to look at that file: `git config blame.ignoreRevsFile .git-blame-ignore-revs`
+
+Voila: `git blame` will now ignore that file when looking at authorship history, as will the GitHub `blame` user interface.
+
+(See also <https://git-scm.com/docs/git-blame#Documentation/git-blame.txt---ignore-revs-fileltfilegt>.)
 
 ## Automatic Line-Splitting
 
