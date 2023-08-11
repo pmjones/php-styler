@@ -29,3 +29,11 @@ $useTraitAs = new P\UseTraitAs(
     $node->newModifier,
     $node->newName ? $this->name($node->newName) : null,
 );
+
+// short ternary in argument
+$useTraitAs = new P\UseTraitAs(
+    $node->trait ?: $this->name($node->trait),
+    $this->name($node->method),
+    $node->newModifier,
+    $node->newName ?: $this->name($node->newName),
+);
