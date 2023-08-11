@@ -810,6 +810,9 @@ class Styler
     {
     }
 
+    /**
+     * Handles line split for `&&`, `||`, `.`, and `?:`.
+     */
     protected function sInfixOp(P\InfixOp $p) : void
     {
         $this->code[] = ' ';
@@ -1190,6 +1193,11 @@ class Styler
         $this->commit();
     }
 
+    /**
+     * Handles `$var ? $true : $false`.
+     *
+     * @see sInfixOp() for `$var ?: $false` handling.
+     */
     protected function sTernary(P\Ternary $p) : void
     {
         $this->code[] = ' ';
