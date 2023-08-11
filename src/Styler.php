@@ -1193,13 +1193,19 @@ class Styler
     protected function sTernary(P\Ternary $p) : void
     {
         $this->code[] = ' ';
-        $this->split(Expr\Ternary::class, null, 'cuddle');
+
+        if (! $this->argsLevel) {
+            $this->split(Expr\Ternary::class, null, 'cuddle');
+        }
+
         $this->code[] = $p->operator . ' ';
     }
 
     protected function sTernaryEnd(P\End $p) : void
     {
-        $this->split(Expr\Ternary::class, null, 'endCuddle');
+        if (! $this->argsLevel) {
+            $this->split(Expr\Ternary::class, null, 'endCuddle');
+        }
     }
 
     protected function sThrow(P\Throw_ $p) : void
