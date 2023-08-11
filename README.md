@@ -171,9 +171,13 @@ If the first rule does not make the line short enough, the second rule is applie
 
 ## Caveats
 
-(These are not all-inclusive.)
+These are not all-inclusive; see also [FIXME.md](./FIXME.md) for known issues to be addressed.
+
+### Line Length
 
 Even after all splitting rules are applied, the line may still end up "too long."
+
+### Reordering Code
 
 PHP-Styler does not:
 
@@ -181,6 +185,8 @@ PHP-Styler does not:
 - Regroup `use` imports
 - Split comment lines
 - Split literal string lines
+
+### Horizontal Alignment
 
 PHP-Styler will de-align lines like this ...
 
@@ -197,6 +203,43 @@ $foo = 'longish' . $bar
 $foo = 'short' . $bar;
 $foo = 'muchlonger' . $bar;
 ```
+
+### Vertical Spacing
+
+PHP-Style will compress lines like this ...
+
+```
+$foo = 'longish' . $bar
+
+$foo = 'short' . $bar;
+
+$foo = 'muchlonger' . $bar;
+```
+
+... into this:
+
+```
+$foo = 'longish' . $bar
+$foo = 'short' . $bar;
+$foo = 'muchlonger' . $bar;
+```
+
+If you want extra vertical spacing, add a comment; comment lines get one blank line above them.
+
+```
+// baseline foo
+$foo = 'longish' . $bar
+
+// reassign foo
+$foo = 'short' . $bar;
+
+// reassign foo again
+$foo = 'muchlonger' . $bar;
+```
+
+### Comment Lines
+
+PHP-Styler does not reformat comment line contents.
 
 Comment lines are always attached to the following line, not the same or previous line. That is, leading or trailing comments *on the same line* may not appear where you expect. Likewise, comments intended to be attached to the *previous* line may end up attached to the *following* line. (This is a limitation of PHP-Parser.)
 
@@ -223,7 +266,7 @@ Alternatively, it may be an indication that the source line(s) should be refacto
 
 - Break up a single long line into shorter multiple lines.
 
-- Move inline conditions from the beginning or end of the line to *above* the line.
+- Move inline comments from the beginning or end of the line to *above* the line.
 
 - Assign inline closures to variables.
 
