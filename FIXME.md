@@ -1,4 +1,23 @@
 ```php
+
+// heredoc/nowdoc do not indent their bodies properly.
+// need to add the current indent to the start of each body line.
+// easier in nowdoc beccause it is a single string, can be explode()ed.
+// harder in heredoc.
+ function foo()
+ {
+     if ($bar) {
+         $baz = <<<'BAZ'
+         more text
+-                with $vars
+-            and then the end
++        with $vars
++    and then the end
+
+         BAZ;
+     }
+ }
+
 // splitting long closure parameters and uses
 $veryLongVariableName = function ($veryLongVar1, $veryLongVar2) use ($veryLongVar3,
 $veryLongVar4) {
