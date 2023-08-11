@@ -3,12 +3,13 @@ declare(strict_types=1);
 
 namespace PhpStyler\Command;
 
-use PhpParser\ParserFactory;
+use AutoShell\Help;
 use PhpParser\Parser;
+use PhpParser\ParserFactory;
 use PhpStyler\Config;
 use PhpStyler\Printer;
 use PhpStyler\Styler;
-
+#[Help("Applies styling to the configured files, rewriting them in place.")]
 class Apply extends Command
 {
     protected int $count = 0;
