@@ -99,16 +99,16 @@ use PhpStyler\Styler;
 
 return new Config(
     cache: __DIR__ . '/.php-styler.cache',
-    files: Files::find([
+    files: new Files(
         __DIR__ . '/src',
-    ]),
+    ),
     styler: new Styler(),
 );
 ```
 
 The `cache` parameter specifies where the cache file is located; set to `null` to turn off caching.
 
-The `files` parameter is any `iterable` of file names to which PHP-Styler should be applied.
+The `files` parameter is any `iterable` of file names to which PHP-Styler should be applied. (If the _Files_ object is not to your liking, try [Symfony Finder](https://symfony.com/doc/current/components/finder.html) instead.)
 
 The `styler` parameter is any instance of _Styler_, whether the default one or any custom extended class.
 
