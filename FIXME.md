@@ -1,13 +1,11 @@
 ```php
 
-// heredoc/nowdoc do not indent their bodies properly.
-// need to add the current indent to the start of each body line.
-// easier in nowdoc beccause it is a single string, can be explode()ed.
-// harder in heredoc.
+// heredoc does not indent the body properly. need to add the
+// current indent to the start of each body line somehow.
  function foo()
  {
      if ($bar) {
-         $baz = <<<'BAZ'
+         $baz = <<<BAZ
          more text
 -                with $vars
 -            and then the end

@@ -1019,7 +1019,15 @@ class Styler
     protected function sNowdoc(P\Nowdoc $p) : void
     {
         $this->code[] = "<<<'{$p->label}'";
-        $this->commit();
+        $this->newline();
+
+        foreach (explode($this->eol, $p->value) as $line) {
+            $this->code[] = $line;
+            $this->newline();
+        }
+
+        $this->code[] = $p->label;
+        $this->newline();
     }
 
     protected function sNull(P\Null_ $p) : void

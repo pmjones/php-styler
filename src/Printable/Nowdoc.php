@@ -5,7 +5,7 @@ namespace PhpStyler\Printable;
 
 class Nowdoc extends Printable
 {
-    public function __construct(public string $label)
+    public function __construct(public string $label, public string $value)
     {
     }
 }

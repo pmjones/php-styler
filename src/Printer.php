@@ -1290,9 +1290,7 @@ class Printer
                 $label = $node->getAttribute('docLabel');
 
                 if ($label && ! $this->containsEndLabel($node->value, $label)) {
-                    $this->list[] = new P\Nowdoc($label);
-                    $this->list[] = $node->value;
-                    $this->list[] = new P\HeredocEnd($label);
+                    $this->list[] = new P\Nowdoc($label, $node->value);
                     return;
                 }
 

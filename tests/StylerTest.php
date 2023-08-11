@@ -19,14 +19,12 @@ class StylerTest extends TestCase
         $ninf = -1e10000;
 
         SOURCE;
-
         $expect = <<<'EXPECT'
         <?php
         $inf = \INF;
         $ninf = -\INF;
 
         EXPECT;
-
         $this->assertPrint($expect, $source);
     }
 }
