@@ -55,7 +55,7 @@ composer require --dev pmjones/php-styler 0.x-dev
 Copy the default `php-styler.php` config file to your package root:
 
 ```
-cp ./vendor/bin/pmjones/php-styler/php-styler.php .
+cp ./vendor/bin/pmjones/php-styler/resources/php-styler.dist.php ./php-styler.php
 ```
 
 ### Preview Formatting
@@ -98,9 +98,7 @@ use PhpStyler\Styler;
 
 return new Config(
     cache: __DIR__ . '/.php-styler.cache',
-    files: new Files(
-        __DIR__ . '/src',
-    ),
+    files: new Files(__DIR__ . '/src'),
     styler: new Styler(),
 );
 ```

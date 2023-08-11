@@ -19,19 +19,24 @@ class Files implements IteratorAggregate
     /**
      * @var string[]
      */
-    protected array $dirs = [];
+    protected array $paths = [];
 
-    public function __construct(string ...$dirs)
+    public function __construct(string ...$paths)
     {
-        $this->dirs = $dirs;
+        $this->paths = $paths;
     }
 
     public function getIterator() : Generator
     {
-        foreach ($this->dirs as $dir) {
+        foreach ($this->paths as $path) {
+            if (is_file($path) && str_ends_with($path, '.php')) {
+                yield $path;
+                continue;
+            }
+
             $files = new RecursiveIteratorIterator(
                 new RecursiveCallbackFilterIterator(
-                    new RecursiveDirectoryIterator($dir),
+                    new RecursiveDirectoryIterator($path),
                     fn ($c, $k, $i) => self::filter($c, $k, $i),
                 ),
             );

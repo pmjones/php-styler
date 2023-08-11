@@ -101,7 +101,7 @@ class Styler
         protected string $eol = "\n",
         protected int $lineLen = 88,
         protected string $indentStr = "    ",
-        protected int $indentLen = 0,
+        protected ?int $indentLen = null,
     ) {
     }
 
@@ -133,7 +133,12 @@ class Styler
 
     protected function newCode() : Code
     {
-        return new Code($this->eol, $this->lineLen, $this->indentStr, $this->indentLen);
+        return new Code(
+            $this->eol,
+            $this->lineLen,
+            $this->indentStr,
+            $this->indentLen ?? 0,
+        );
     }
 
     protected function commit() : void
