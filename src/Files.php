@@ -3,22 +3,32 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
+use Generator;
+use IteratorAggregate;
 use RecursiveCallbackFilterIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
+use Traversable;
 
-class Files
+/**
+ * @implements IteratorAggregate<int, string>
+ */
+class Files implements IteratorAggregate
 {
     /**
-     * @param string[] $dirs
-     * @return string[]
+     * @var string[]
      */
-    public static function find(array $dirs) : array
-    {
-        $found = [];
+    protected array $dirs = [];
 
-        foreach ($dirs as $dir) {
+    public function __construct(string ...$dirs)
+    {
+        $this->dirs = $dirs;
+    }
+
+    public function getIterator() : Generator
+    {
+        foreach ($this->dirs as $dir) {
             $files = new RecursiveIteratorIterator(
                 new RecursiveCallbackFilterIterator(
                     new RecursiveDirectoryIterator($dir),
@@ -28,14 +38,12 @@ class Files
 
             /** @var SplFileInfo $file */
             foreach ($files as $file) {
-                $found[] = $file->getPathname();
+                yield $file->getPathname();
             }
         }
-
-        return $found;
     }
 
-    public static function filter(
+    public function filter(
         SplFileInfo $current,
         string $key,
         RecursiveDirectoryIterator $iterator,
