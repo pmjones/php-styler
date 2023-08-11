@@ -53,7 +53,7 @@ class Apply extends Command
     ) : array
     {
         if ($config->cache && file_exists($config->cache)) {
-            echo "Load cache " . $config->cache;
+            echo "Load cache " . $config->cache . PHP_EOL;
 
             /** @var array{time:int} */
             $cache = $this->load($config->cache);
