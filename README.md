@@ -63,7 +63,7 @@ cp ./vendor/bin/pmjones/php-styler/php-styler.php .
 Preview how PHP-Styler will restructure a source PHP file:
 
 ```
-./vendor/bin/php-styler preview ./src//My/Source/File.php
+./vendor/bin/php-styler preview ./src/My/Source/File.php
 ```
 
 ### Apply Formatting
