@@ -4,3 +4,17 @@ $foo = match ($bar) {
     'dir', 'irk' => 'doom',
     default => 'foo',
 };
+$veryLongVariableName = match ($veryLongVariableName) {
+    'veryLongElement',
+    'veryLongElement',
+    'veryLongElement',
+    'veryLongElement' => 'veryLongElement',
+    'veryLongElement',
+    'veryLongElement',
+    'veryLongElement',
+    'veryLongElement' => 'veryLongElement',
+    'veryLongElement',
+    'veryLongElement',
+    'veryLongElement',
+    'veryLongElement' => 'veryLongElement',
+};

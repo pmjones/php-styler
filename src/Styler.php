@@ -926,6 +926,13 @@ class Styler
         $this->commit();
     }
 
+    protected function sMatchSeparator(P\Separator $p) : void
+    {
+        $this->clip();
+        $this->code[] = ', ';
+        $this->split(P\Args::class, $this->argsLevel, 'mid');
+    }
+
     protected function sMatchArmEnd(P\End $p) : void
     {
         $this->code[] = ',';
