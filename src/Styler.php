@@ -837,6 +837,7 @@ class Styler
                 if (! $this->argsLevel) {
                     $this->split($p->class, null, 'cuddle');
                 }
+
                 break;
         }
 
