@@ -20,7 +20,10 @@ class ExamplesTest extends TestCase
         $sourceFiles = glob(__DIR__ . '/Examples/*.php');
 
         foreach ($sourceFiles as $sourceFile) {
-            $key = ltrim(strrchr(str_replace('.source.php', '', $sourceFile), '/'), '/') ;
+            $key = ltrim(
+                strrchr(str_replace('.source.php', '', $sourceFile), '/'),
+                '/',
+            );
             $provide[$key] = [$sourceFile];
         }
 
