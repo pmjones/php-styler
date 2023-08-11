@@ -181,7 +181,6 @@ Even after all splitting rules are applied, the line may still end up "too long.
 
 PHP-Styler does not:
 
-- Rearrange or reorder code blocks
 - Regroup `use` imports
 - Split comment lines
 - Split literal string lines
