@@ -28,3 +28,10 @@ try {
 } catch (Exception) {
     $k ++;
 }
+
+// catch with fqcn
+try {
+    $i ++;
+} catch (\Throwable) {
+    $k ++;
+}

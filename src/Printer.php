@@ -1749,7 +1749,13 @@ class Printer
         $count = count($node->types);
         $this->list[] = new P\TryCatch();
         $this->list[] = new P\Args($count);
-        $this->list[] = implode('|', $node->types);
+        $types = [];
+
+        foreach ($node->types as $type) {
+            $types[] = $this->name($type);
+        }
+
+        $this->list[] = implode('|', $types);
 
         if ($node->var) {
             $this->list[] = ' ';
