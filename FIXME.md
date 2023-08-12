@@ -1,8 +1,4 @@
 ```php
-// from Nette
--               } catch (\Throwable $e) {
-+               } catch (Throwable $e) {
-
 // from slim -- ???
  final class CallableResolver implements AdvancedCallableResolverInterface
  {
