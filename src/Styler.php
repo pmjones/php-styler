@@ -33,6 +33,8 @@ class Styler
 
     protected int $encapsedLevel = 0;
 
+    protected int $heredocLevel = 0;
+
     /**
      * @var array<class-string, string>
      */
@@ -223,6 +225,11 @@ class Styler
         }
 
         if (is_string($p)) {
+            if ($this->heredocLevel) {
+                $this->sHeredocBody($p);
+                return;
+            }
+
             $this->code[] = $p;
             return;
         }
@@ -747,12 +754,25 @@ class Styler
     protected function sHeredoc(P\Heredoc $p) : void
     {
         $this->code[] = "<<<{$p->label}";
-        $this->commit();
+        $this->heredocLevel ++;
+        $this->newline();
+    }
+
+    protected function sHeredocBody(string $p) : void
+    {
+        $lines = explode($this->eol, $p);
+        $this->code[] = array_shift($lines);
+
+        foreach ($lines as $line) {
+            $this->newline();
+            $this->code[] = $line;
+        }
     }
 
     protected function sHeredocEnd(P\HeredocEnd $p) : void
     {
         $this->newline();
+        $this->heredocLevel --;
         $this->code[] = $p->label;
     }
 

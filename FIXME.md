@@ -1,21 +1,4 @@
 ```php
-
-// heredoc does not indent the body properly. need to add the
-// current indent to the start of each body line somehow.
- function foo()
- {
-     if ($bar) {
-         $baz = <<<BAZ
-         more text
--                with $vars
--            and then the end
-+        with $vars
-+    and then the end
-
-         BAZ;
-     }
- }
-
 // splitting long closure parameters and uses
 $veryLongVariableName = function ($veryLongVar1, $veryLongVar2) use ($veryLongVar3,
 $veryLongVar4) {
@@ -46,23 +29,22 @@ class foo
             }
 
 // comment vs closure signature
-        $this->htmlAttrMatcher =
+$this->htmlAttrMatcher =
 
-        /** @param array<array-key, string> $matches */
-        function (array $matches) : string {
-           return $this->htmlAttrMatcher($matches);
-        };
-        $this->jsMatcher =
+/** @param array<array-key, string> $matches */
+function (array $matches) : string {
+   return $this->htmlAttrMatcher($matches);
+};
+$this->jsMatcher =
 
-        /** @param array<array-key, string> $matches */
-        function (array $matches) : string {
-           return $this->jsMatcher($matches);
-        };
-        $this->cssMatcher =
+/** @param array<array-key, string> $matches */
+function (array $matches) : string {
+   return $this->jsMatcher($matches);
+};
+$this->cssMatcher =
 
-        /** @param array<array-key, string> $matches */
-        function (array $matches) : string {
-           return $this->cssMatcher($matches);
-        };
-
+/** @param array<array-key, string> $matches */
+function (array $matches) : string {
+   return $this->cssMatcher($matches);
+};
 ```
