@@ -469,7 +469,6 @@ class Styler
         $this->code[] = '}';
 
         if ($this->argsLevel) {
-            $this->code[] = '--end--';
             $this->commit();
             $this->newline();
         }
