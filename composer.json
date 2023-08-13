@@ -1,5 +1,6 @@
 {
     "name": "pmjones/php-styler",
+    "license": "BSD-3-Clause",
     "autoload": {
         "psr-4" : {
             "PhpStyler\\": "src/"
