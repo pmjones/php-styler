@@ -421,8 +421,8 @@ class Styler
     {
         $this->newline();
         $this->code[] = '{';
-        $this->commit();
         $this->indent();
+        $this->commit();
         $this->cuddle();
     }
 
