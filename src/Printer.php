@@ -1346,7 +1346,7 @@ class Printer
         array_pop($this->list);
     }
 
-    protected function pStaticDereferenceLhs(Node $node)
+    protected function pStaticDereferenceLhs(Node $node) : void
     {
         if (! $this->staticDereferenceLhsRequiresParens($node)) {
             $this->p($node);
@@ -1378,9 +1378,11 @@ class Printer
         $this->pAttributeGroups($node);
         $this->pModifiers($node);
         $this->list[] = new P\Const_();
-        if ($node->type) {
+
+        if ($node->type !== null) {
             $this->p($node->type);
         }
+
         $this->pSeparate('const', $node->consts);
         $this->pEnd('const');
     }
