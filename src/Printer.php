@@ -647,7 +647,7 @@ class Printer
 
     protected function pExpr_ClassConstFetch(Expr\ClassConstFetch $node) : void
     {
-        $this->pDereferenceLhs($node->class);
+        $this->pStaticDereferenceLhs($node->class);
         $this->list[] = new P\Member('::');
         $this->p($node->name);
         $this->list[] = new P\MemberEnd('::');
@@ -873,7 +873,7 @@ class Printer
 
     protected function pExpr_StaticPropertyFetch(Expr\StaticPropertyFetch $node) : void
     {
-        $this->pDereferenceLhs($node->class);
+        $this->pStaticDereferenceLhs($node->class);
         $this->list[] = new P\Member('::$');
         $this->pObjectProperty($node->name);
         $this->list[] = new P\MemberEnd('::$');
@@ -881,7 +881,7 @@ class Printer
 
     protected function pExpr_StaticCall(Expr\StaticCall $node) : void
     {
-        $this->pDereferenceLhs($node->class);
+        $this->pStaticDereferenceLhs($node->class);
         $this->list[] = new P\Member('::');
 
         if ($node->name instanceof Expr) {
@@ -1081,8 +1081,14 @@ class Printer
 
     protected function pNewVariable(Node $node) : void
     {
-        // TODO: This is not fully accurate.
-        $this->pDereferenceLhs($node);
+        if (! $this->newOperandRequiresParens($node)) {
+            $this->p($node);
+            return;
+        }
+
+        $this->list[] = '(';
+        $this->p($node);
+        $this->list[] = ')';
     }
 
     protected function pObjectProperty(Node $node) : void
@@ -1340,6 +1346,17 @@ class Printer
         array_pop($this->list);
     }
 
+    protected function pStaticDereferenceLhs(Node $node)
+    {
+        if (! $this->staticDereferenceLhsRequiresParens($node)) {
+            $this->p($node);
+        } else {
+            $this->list[] = '(';
+            $this->p($node);
+            $this->list[] = ')';
+        }
+    }
+
     protected function pStmt_Break(Stmt\Break_ $node) : void
     {
         $this->list[] = new P\Break_($node->num->value ?? null);
@@ -1361,6 +1378,9 @@ class Printer
         $this->pAttributeGroups($node);
         $this->pModifiers($node);
         $this->list[] = new P\Const_();
+        if ($node->type) {
+            $this->p($node->type);
+        }
         $this->pSeparate('const', $node->consts);
         $this->pEnd('const');
     }
@@ -1889,6 +1909,12 @@ class Printer
 
     protected function dereferenceLhsRequiresParens(Node $node) : bool
     {
+        return $this->staticDereferenceLhsRequiresParens($node)
+            && ! $node instanceof Expr\ConstFetch;
+    }
+
+    protected function staticDereferenceLhsRequiresParens(Node $node) : bool
+    {
         return ! (
             $node instanceof Expr\Variable
                 || $node instanceof Node\Name
@@ -1902,7 +1928,6 @@ class Printer
                 || $node instanceof Expr\StaticCall
                 || $node instanceof Expr\Array_
                 || $node instanceof Scalar\String_
-                || $node instanceof Expr\ConstFetch
                 || $node instanceof Expr\ClassConstFetch
         );
     }
@@ -2006,6 +2031,27 @@ class Printer
         }
 
         return implode('&', $types);
+    }
+
+    protected function newOperandRequiresParens(Node $node) : bool
+    {
+        if ($node instanceof Node\Name || $node instanceof Expr\Variable) {
+            return false;
+        }
+
+        if (
+            $node instanceof Expr\ArrayDimFetch
+            || $node instanceof Expr\PropertyFetch
+            || $node instanceof Expr\NullsafePropertyFetch
+        ) {
+            return $this->newOperandRequiresParens($node->var);
+        }
+
+        if ($node instanceof Expr\StaticPropertyFetch) {
+            return $this->newOperandRequiresParens($node->class);
+        }
+
+        return true;
     }
 
     protected function nullableType(Node\NullableType $node) : string
