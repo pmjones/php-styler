@@ -20,7 +20,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
     protected function print(string $source) : string
     {
         $parserFactory = new ParserFactory();
-        $parser = $parserFactory->create(ParserFactory::PREFER_PHP7);
+        $parser = $parserFactory->create(ParserFactory::ONLY_PHP7);
 
         /** @var array<\PhpParser\Node\Stmt> */
         $stmts = $parser->parse($source);
