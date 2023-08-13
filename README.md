@@ -1,8 +1,8 @@
 # PHP Styler
 
-**EXPERIMENTAL. NOT FOR PRODUCTION USE.**
+**WARNING!!!**
 
-PHP-Styler is a companion to [PHP-Parser](https://github.com/nikic/PHP-Parser) for reconstructing PHP code after it has been deconstructed into an abstract syntax tree. It will **completely reformat** the code it is given, discarding any previous formatting entirely.
+PHP-Styler will **completely reformat** your PHP code, discarding any previous formatting entirely.
 
 > McCoy: What if this thing were used where [formatting] already exists?
 >
@@ -13,6 +13,12 @@ PHP-Styler is a companion to [PHP-Parser](https://github.com/nikic/PHP-Parser) f
 > Spock: I was not attempting to evaulate its [aesthetic] implications.
 >
 > -- *Star Trek II: The Wrath of Khan* (paraphrased)
+
+* * *
+
+## Introduction
+
+PHP-Styler is a companion to [PHP-Parser](https://github.com/nikic/PHP-Parser) for reconstructing PHP code after it has been deconstructed into an abstract syntax tree.
 
 Whereas the PHP-Parser pretty printer does not have output customization as a main design goal, PHP-Styler does.
 
@@ -41,6 +47,13 @@ PHP-Styler uses a 3-pass system to reformat and style PHP code:
 - **Customization.** Change the output style of printable elements by extending the _Styler_ and overriding the method for each _Printable_ you want to change.
 
 - **Comment Preservation.** As much as the PHP-Parser will allow.
+
+### Comparable Offerings
+
+[PHP CS Fixer](https://cs.symfony.com/) is the category leader for PHP here. It offers a huge range of customization options to fix (or not fix) specific elements of PHP code. However, it is extremely complex, and can be difficult to modify.
+
+The [Black](https://black.readthedocs.io/en/stable/) formatter for Python appears to have similar design goals and operation as PHP-Styler.
+
 
 ## Usage
 
@@ -156,7 +169,25 @@ Voila: `git blame` will now ignore that file when looking at authorship history,
 
 (See also <https://git-scm.com/docs/git-blame#Documentation/git-blame.txt---ignore-revs-fileltfilegt>.)
 
-## Automatic Line-Splitting
+### Fixing Mangled Output
+
+If PHP-Styler generates "ugly" or "weird" or "mangled" results, it might be a problem with how PHP-Styler works; please submit an issue.
+
+Alternatively, it may be an indication that the source line(s) should be refactored. Here are some suggestions:
+
+- Increase the maximum line length. The default length is 88 characters (10% more than the commonly-suggested 80-character length to allow some wiggle room). However, some codebases tend to prefer much longer lines, so increasing the line length may result in more-agreeable line splits.
+
+- Break up a single long line into multiple shorter lines.
+
+- Move inline comments from the beginning or end of the line to *above* the line.
+
+- Assign inline closures to variables.
+
+## Caveats
+
+These are not all-inclusive; see also [FIXME.md](./FIXME.md) for known issues to be addressed.
+
+### Automatic Line-Splitting
 
 At first, PHP-Styler builds each statement/instruction as a single line. If that line is "too long" (88 characters by default) the _Styler_ reconstructs the code by trying to split it across multiple lines. It does so by applying one or more rules in order:
 
@@ -178,11 +209,6 @@ At first, PHP-Styler builds each statement/instruction as a single line. If that
 > (2) Except when used as an array element.
 
 If the first rule does not make the line short enough, the second rule is applied in addition, then the third, and so on.
-
-
-## Caveats
-
-These are not all-inclusive; see also [FIXME.md](./FIXME.md) for known issues to be addressed.
 
 ### Line Length
 
@@ -216,7 +242,7 @@ $foo = 'muchlonger' . $bar;
 
 ### Vertical Spacing
 
-PHP-Style will compress lines like this ...
+PHP-Styler will compress lines like this ...
 
 ```
 $foo = 'longish' . $bar
@@ -265,23 +291,3 @@ function (array $matches) : string {
    return $this->htmlAttrMatcher($matches);
 };
 ```
-
-## Fixing Mangled Output
-
-If PHP-Styler generates "ugly" or "weird" or "mangled" results, it might be a problem with how PHP-Styler works; please submit an issue.
-
-Alternatively, it may be an indication that the source line(s) should be refactored. Here are some suggestions:
-
-- Increase the maximum line length. The default length is 88 characters (10% more than the commonly-suggested 80-character length to allow some wiggle room). However, some codebases tend to prefer much longer lines, so increasing the line length may result in more-agreeable line splits.
-
-- Break up a single long line into multiple shorter lines.
-
-- Move inline comments from the beginning or end of the line to *above* the line.
-
-- Assign inline closures to variables.
-
-## Comparable Offerings
-
-[PHP CS Fixer](https://cs.symfony.com/) is the category leader for PHP here. It offers a huge range of customization options to fix (or not fix) specific elements of PHP code. However, it is extremely complex, and can be difficult to modify.
-
-The [Black](https://black.readthedocs.io/en/stable/) formatter for Python appears to have similar design goals and operation as PHP-Styler.
