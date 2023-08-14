@@ -385,7 +385,7 @@ class Printer
         $this->pAttributeGroups($node);
         $this->list[] = new P\ArrowFunction($node->static);
         $this->pByRef($node);
-        $this->pParams($node);
+        $this->pClosureParams($node);
         $this->pReturnType($node);
         $this->pDoubleArrow();
         $this->p($node->expr);
@@ -664,7 +664,7 @@ class Printer
         $this->pAttributeGroups($node);
         $this->list[] = new P\Closure($node->static);
         $this->pByRef($node);
-        $this->pParams($node);
+        $this->pClosureParams($node);
 
         if ($node->uses) {
             $this->list[] = new P\ClosureUse();
@@ -1111,12 +1111,20 @@ class Printer
         $this->pDefaultValue($node);
     }
 
-    protected function pParams(Node $node) : void
+    protected function pFunctionParams(Node $node) : void
     {
         $count = count($node->params ?? []);
-        $this->list[] = new P\Params($count);
-        $this->pSeparate('param', $node->params ?? null);
-        $this->list[] = new P\ParamsEnd($count);
+        $this->list[] = new P\FunctionParams($count);
+        $this->pSeparate('functionParam', $node->params ?? null);
+        $this->list[] = new P\FunctionParamsEnd($count);
+    }
+
+    protected function pClosureParams(Node $node) : void
+    {
+        $count = count($node->params ?? []);
+        $this->list[] = new P\ClosureParams($count);
+        $this->pSeparate('closureParam', $node->params ?? null);
+        $this->list[] = new P\ClosureParamsEnd($count);
     }
 
     protected function pPostfixOp(string $class, Node $node) : void
@@ -1393,7 +1401,7 @@ class Printer
         $this->list[] = new P\Function_($node->flags);
         $this->pByRef($node);
         $this->p($node->name);
-        $this->pParams($node);
+        $this->pFunctionParams($node);
         $this->pReturnType($node);
 
         if ($node->stmts === null) {
@@ -1421,9 +1429,9 @@ class Printer
     {
         $count = count($node->declares);
         $this->list[] = new P\Declare_();
-        $this->list[] = new P\Params($count);
-        $this->pSeparate('param', $node->declares);
-        $this->list[] = new P\ParamsEnd($count);
+        $this->list[] = new P\FunctionParams($count);
+        $this->pSeparate('functionParam', $node->declares);
+        $this->list[] = new P\FunctionParamsEnd($count);
 
         if ($node->stmts !== null) {
             $this->pBody('declare');
@@ -1532,7 +1540,7 @@ class Printer
         $this->list[] = new P\Function_(null);
         $this->pByRef($node);
         $this->p($node->name);
-        $this->pParams($node);
+        $this->pFunctionParams($node);
         $this->pReturnType($node);
         $this->pBody('function');
         $this->p($node->stmts);

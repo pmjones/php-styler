@@ -47,4 +47,24 @@ $this->cssMatcher =
 function (array $matches) : string {
    return $this->cssMatcher($matches);
 };
+
+// splits member instead of argument, when argument
+// might make more sense
+-            $html .= $this->radio(
+-                $name,
+-                $value,
+-                (string) $optionValue,
+-                (string) $optionLabel,
+-                $attr,
+-                $__attr
+-            );
++            $html .= $this
++                ->radio(
++                    $name,
++                    $value,
++                    (string) $optionValue,
++                    (string) $optionLabel,
++                    $attr,
++                    $__attr,
++                );
 ```

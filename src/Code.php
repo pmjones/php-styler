@@ -24,7 +24,8 @@ class Code implements ArrayAccess
         Expr\BinaryOp\Coalesce::class => 'coalesce',
         Expr\BinaryOp\Concat::class => 'concat',
         P\Member::class => 'member',
-        P\Params::class => 'params',
+        P\FunctionParams::class => 'function_params',
+        P\ClosureParams::class => 'closure_params',
         P\Precedence::class => 'precedence',
         Expr\Ternary::class => 'ternary',
     ];
@@ -65,6 +66,7 @@ class Code implements ArrayAccess
         'array_3',
         'array_4',
         'array_5',
+        'function_params',
         'cond',
         'precedence',
         'bool_or',
@@ -83,7 +85,7 @@ class Code implements ArrayAccess
         'args_4',
         'args_5',
         'coalesce',
-        'params',
+        'closure_params',
         'attribute_args_0',
         'attribute_args_1',
         'attribute_args_2',
@@ -155,14 +157,16 @@ class Code implements ArrayAccess
         $this->splitApply = [];
         $this->setLines();
         $this->multiline = true;
+        $atLeastOneLineTooLong = $this->atLeastOneLineTooLong();
 
-        while ($this->atLeastOneLineTooLong() && $split) {
+        while ($atLeastOneLineTooLong && $split) {
             $this->indent = $oldIndent;
             $rule = array_shift($split);
 
             if ($this->splitCalls[$rule] ?? false) {
                 $this->splitApply[] = $rule;
                 $this->setLines();
+                $atLeastOneLineTooLong = $this->atLeastOneLineTooLong();
             }
         }
 
