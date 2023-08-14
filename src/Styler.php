@@ -11,29 +11,9 @@ use PhpStyler\Printable\Printable;
 
 class Styler
 {
-    protected int $argsLevel = 0;
-
-    protected int $arrayLevel = 0;
-
-    protected bool $atFirstInBody = false;
-
     protected Code $code;
 
-    protected int $condLevel = 0;
-
-    protected int $attrArgsLevel = 0;
-
-    protected bool $hadComment = false;
-
-    protected bool $hadAttribute = false;
-
-    protected int $memberLevel = 0;
-
-    protected int $paramLevel = 0;
-
-    protected int $encapsedLevel = 0;
-
-    protected int $heredocLevel = 0;
+    protected State $state;
 
     /**
      * @var array<class-string, string>
@@ -116,12 +96,8 @@ class Styler
             return "<?php" . $this->eol;
         }
 
-        $this->atFirstInBody = true;
-        $this->argsLevel = 0;
-        $this->arrayLevel = 0;
-        $this->hadComment = false;
-        $this->hadAttribute = false;
         $this->code = $this->newCode();
+        $this->state = $this->newState();
 
         while ($list) {
             $p = array_shift($list);
@@ -141,6 +117,11 @@ class Styler
             $this->indentStr,
             $this->indentLen ?? 0,
         );
+    }
+
+    protected function newState() : State
+    {
+        return new State();
     }
 
     protected function commit() : void
@@ -190,7 +171,7 @@ class Styler
         mixed ...$args,
     ) : void
     {
-        if (! $this->encapsedLevel) {
+        if (! $this->state->encapsed) {
             $this->code->split($class, $level, $type, ...$args);
         }
     }
@@ -225,7 +206,7 @@ class Styler
         }
 
         if (is_string($p)) {
-            if ($this->heredocLevel) {
+            if ($this->state->heredoc) {
                 $this->sHeredocBody($p);
                 return;
             }
@@ -235,16 +216,16 @@ class Styler
         }
 
         // first printable in body?
-        $p->isFirst($this->atFirstInBody);
-        $this->atFirstInBody = false;
+        $p->isFirst($this->state->atFirstInBody);
+        $this->state->atFirstInBody = false;
 
         // has comment?
-        $p->hasComment($this->hadComment);
-        $this->hadComment = false;
+        $p->hasComment($this->state->hadComment);
+        $this->state->hadComment = false;
 
         // has attribute?
-        $p->hasAttribute($this->hadAttribute);
-        $this->hadAttribute = false;
+        $p->hasAttribute($this->state->hadAttribute);
+        $this->state->hadAttribute = false;
 
         // what method to use?
         /** @var string */
@@ -256,11 +237,11 @@ class Styler
 
     protected function sArgs(P\Args $p) : void
     {
-        $this->argsLevel ++;
+        $this->state->args ++;
         $this->code[] = '(';
 
         if ($p->count) {
-            $this->split(P\Args::class, $this->argsLevel);
+            $this->split(P\Args::class, $this->state->args);
         }
     }
 
@@ -268,27 +249,27 @@ class Styler
     {
         $this->clip();
         $this->code[] = ', ';
-        $this->split(P\Args::class, $this->argsLevel, 'mid');
+        $this->split(P\Args::class, $this->state->args, 'mid');
     }
 
     protected function sArgsEnd(P\ArgsEnd $p) : void
     {
         if ($p->count) {
-            $this->split(P\Args::class, $this->argsLevel, 'end', ',');
+            $this->split(P\Args::class, $this->state->args, 'end', ',');
         }
 
         $this->code[] = ')';
-        $this->argsLevel --;
+        $this->state->args --;
     }
 
     protected function sArray(P\Array_ $p) : void
     {
-        $this->arrayLevel ++;
+        $this->state->array ++;
         $this->code[] = '[';
-        $this->atFirstInBody = true;
+        $this->state->atFirstInBody = true;
 
         if ($p->count) {
-            $this->split(P\Array_::class, $this->arrayLevel);
+            $this->split(P\Array_::class, $this->state->array);
         }
     }
 
@@ -296,29 +277,29 @@ class Styler
     {
         $this->clip();
         $this->code[] = ', ';
-        $this->split(P\Array_::class, $this->arrayLevel, 'mid');
+        $this->split(P\Array_::class, $this->state->array, 'mid');
     }
 
     protected function sArrayEnd(P\ArrayEnd $p) : void
     {
         if ($p->count) {
-            $this->split(P\Array_::class, $this->arrayLevel, 'end', ',');
+            $this->split(P\Array_::class, $this->state->array, 'end', ',');
         }
 
         $this->code[] = ']';
-        $this->arrayLevel --;
+        $this->state->array --;
     }
 
     protected function sArrayDim(P\ArrayDim $p) : void
     {
-        $this->arrayLevel ++;
+        $this->state->array ++;
         $this->code[] = '[';
     }
 
     protected function sArrayDimEnd(P\End $p) : void
     {
         $this->code[] = ']';
-        $this->arrayLevel --;
+        $this->state->array --;
     }
 
     protected function sArrowFunction(P\ArrowFunction $p) : void
@@ -338,47 +319,47 @@ class Styler
 
     protected function sAttributeArgs(P\AttributeArgs $p) : void
     {
-        $this->attrArgsLevel ++;
+        $this->state->attrArgs ++;
         $this->code[] = '(';
 
         if ($p->count) {
-            $this->split(P\AttributeArgs::class, $this->attrArgsLevel);
+            $this->split(P\AttributeArgs::class, $this->state->attrArgs);
         }
     }
 
     protected function sAttributeArgSeparator(P\Separator $p) : void
     {
         $this->code[] = ', ';
-        $this->split(P\AttributeArgs::class, $this->attrArgsLevel, 'mid', ', ');
+        $this->split(P\AttributeArgs::class, $this->state->attrArgs, 'mid', ', ');
     }
 
     protected function sAttributeArgsEnd(P\AttributeArgsEnd $p) : void
     {
         if ($p->count) {
-            $this->split(P\AttributeArgs::class, $this->attrArgsLevel, 'end', '');
+            $this->split(P\AttributeArgs::class, $this->state->attrArgs, 'end', '');
         }
 
         $this->code[] = ')';
-        $this->attrArgsLevel --;
+        $this->state->attrArgs --;
     }
 
     protected function sAttributeGroupEnd(P\End $p) : void
     {
         $this->code[] = ']';
 
-        if ($this->paramLevel) {
+        if ($this->state->param) {
             $this->code[] = ' ';
-            $this->split(P\AttributeArgs::class, $this->attrArgsLevel, 'mid', '');
+            $this->split(P\AttributeArgs::class, $this->state->attrArgs, 'mid', '');
         } else {
             $this->commit();
         }
 
-        $this->hadAttribute = true;
+        $this->state->hadAttribute = true;
     }
 
     protected function sBody(P\Body $p) : void
     {
-        $this->atFirstInBody = true;
+        $this->state->atFirstInBody = true;
         $method = 's' . ucfirst($p->type) . 'Body';
         $this->{$method}($p);
     }
@@ -455,7 +436,7 @@ class Styler
         $this->code[] = ' {';
         $this->indent();
 
-        if ($this->argsLevel) {
+        if ($this->state->args) {
             $this->condense();
         } else {
             $this->commit();
@@ -468,7 +449,7 @@ class Styler
         $this->condense();
         $this->code[] = '}';
 
-        if ($this->argsLevel) {
+        if ($this->state->args) {
             $this->commit();
             $this->newline();
         }
@@ -492,13 +473,13 @@ class Styler
     protected function sComment(P\Comment $p) : void
     {
         $this->code[] = $p->text;
-        $this->hadComment = true;
+        $this->state->hadComment = true;
         $this->commentNewline();
     }
 
     protected function commentNewline() : void
     {
-        if ($this->condLevel || $this->argsLevel || $this->arrayLevel) {
+        if ($this->state->cond || $this->state->args || $this->state->array) {
             $this->newline();
         } else {
             $this->commit();
@@ -507,7 +488,7 @@ class Styler
 
     protected function sCond(P\Cond $p) : void
     {
-        $this->condLevel ++;
+        $this->state->cond ++;
         $this->code[] = '(';
         $this->split(P\Cond::class);
     }
@@ -516,7 +497,7 @@ class Styler
     {
         $this->split(P\Cond::class, null, 'end');
         $this->code[] = ')';
-        $this->condLevel --;
+        $this->state->cond --;
     }
 
     protected function sConst(P\Const_ $p) : void
@@ -593,12 +574,12 @@ class Styler
 
     protected function sEncapsed(P\Encapsed $p) : void
     {
-        $this->encapsedLevel ++;
+        $this->state->encapsed ++;
     }
 
     protected function sEncapsedEnd(P\End $p) : void
     {
-        $this->encapsedLevel --;
+        $this->state->encapsed --;
     }
 
     protected function sEnd(P\End $p) : void
@@ -684,7 +665,7 @@ class Styler
     protected function sForExprSeparator(P\Separator $p) : void
     {
         $this->code[] = '; ';
-        $this->split(P\Args::class, $this->argsLevel, 'mid');
+        $this->split(P\Args::class, $this->state->args, 'mid');
     }
 
     protected function sForeach(P\Foreach_ $p) : void
@@ -753,7 +734,7 @@ class Styler
     protected function sHeredoc(P\Heredoc $p) : void
     {
         $this->code[] = "<<<{$p->label}";
-        $this->heredocLevel ++;
+        $this->state->heredoc ++;
         $this->newline();
     }
 
@@ -771,7 +752,7 @@ class Styler
     protected function sHeredocEnd(P\HeredocEnd $p) : void
     {
         $this->newline();
-        $this->heredocLevel --;
+        $this->state->heredoc --;
         $this->code[] = $p->label;
     }
 
@@ -844,7 +825,7 @@ class Styler
         switch ($p->class) {
             case Expr\BinaryOp\BooleanAnd::class:
             case Expr\BinaryOp\BooleanOr::class:
-                if (! $this->condLevel) {
+                if (! $this->state->cond) {
                     $this->split($p->class, null, 'condense');
                 } else {
                     $this->split($p->class, null, 'mid');
@@ -858,7 +839,7 @@ class Styler
                 break;
 
             case Expr\Ternary::class:
-                if (! $this->argsLevel) {
+                if (! $this->state->args) {
                     $this->split($p->class, null, 'condense');
                 }
 
@@ -878,7 +859,7 @@ class Styler
         switch ($p->class) {
             case Expr\BinaryOp\BooleanAnd::class:
             case Expr\BinaryOp\BooleanOr::class:
-                if (! $this->condLevel) {
+                if (! $this->state->cond) {
                     $this->split($p->class, null, 'endCondense');
                 }
 
@@ -889,7 +870,7 @@ class Styler
                 break;
 
             case Expr\Ternary::class:
-                if (! $this->argsLevel) {
+                if (! $this->state->args) {
                     $this->split($p->class, null, 'endCondense');
                 }
 
@@ -954,7 +935,7 @@ class Styler
     {
         $this->clip();
         $this->code[] = ', ';
-        $this->split(P\Args::class, $this->argsLevel, 'mid');
+        $this->split(P\Args::class, $this->state->args, 'mid');
     }
 
     protected function sMatchArmEnd(P\End $p) : void
@@ -974,9 +955,9 @@ class Styler
     {
         $isInstance = $p->operator === '->' || $p->operator === '?->';
 
-        if ($isInstance && ! $this->argsLevel && ! $this->arrayLevel) {
-            $this->memberLevel ++;
-            $this->split(P\Member::class, $this->memberLevel, 'condense');
+        if ($isInstance && ! $this->state->args && ! $this->state->array) {
+            $this->state->member ++;
+            $this->split(P\Member::class, $this->state->member, 'condense');
         }
 
         $this->code[] = $p->operator;
@@ -986,9 +967,9 @@ class Styler
     {
         $isInstance = $p->operator === '->' || $p->operator === '?->';
 
-        if ($isInstance && ! $this->argsLevel && ! $this->arrayLevel) {
-            $this->split(P\Member::class, $this->memberLevel, 'endCondense');
-            $this->memberLevel --;
+        if ($isInstance && ! $this->state->args && ! $this->state->array) {
+            $this->split(P\Member::class, $this->state->member, 'endCondense');
+            $this->state->member --;
         }
     }
 
@@ -1061,7 +1042,7 @@ class Styler
 
     protected function sParams(P\Params $p) : void
     {
-        $this->paramLevel ++;
+        $this->state->param ++;
         $this->code[] = '(';
 
         if ($p->count) {
@@ -1076,7 +1057,7 @@ class Styler
         }
 
         $this->code[] = ')';
-        $this->paramLevel --;
+        $this->state->param --;
     }
 
     protected function sParamSeparator(P\Separator $p) : void
@@ -1253,7 +1234,7 @@ class Styler
     {
         $this->code[] = ' ';
 
-        if (! $this->argsLevel) {
+        if (! $this->state->args) {
             $this->split(Expr\Ternary::class, null, 'condense');
         }
 
@@ -1262,7 +1243,7 @@ class Styler
 
     protected function sTernaryEnd(P\End $p) : void
     {
-        if (! $this->argsLevel) {
+        if (! $this->state->args) {
             $this->split(Expr\Ternary::class, null, 'endCondense');
         }
     }
