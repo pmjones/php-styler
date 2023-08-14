@@ -48,9 +48,15 @@ PHP-Styler uses a 3-pass system to reformat and style PHP code:
 
 - **Comment Preservation.** As much as the PHP-Parser will allow.
 
+### Styling Examples
+
+See the [Examples](./tests/Examples) directory for a nearly-exhaustive series of styling examples, or try the safe `preview` command on one of your own source files.
+
 ### Comparable Offerings
 
 [PHP CS Fixer](https://cs.symfony.com/) is the category leader for PHP here. It offers a huge range of customization options to fix (or not fix) specific elements of PHP code. However, it is extremely complex, and can be difficult to modify.
+
+Other PHP code fixers include [PHP_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer)/[PHPCBF](https://phpqa.io/projects/phpcbf.html) and [ECS](https://github.com/easy-coding-standard/easy-coding-standard).
 
 The [Black](https://black.readthedocs.io/en/stable/) formatter for Python appears to have similar design goals and operation as PHP-Styler.
 
