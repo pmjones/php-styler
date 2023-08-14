@@ -79,7 +79,7 @@ cp ./vendor/pmjones/php-styler/resources/php-styler.dist.php ./php-styler.php
 
 ### Preview Formatting
 
-Preview how PHP-Styler will restructure a source PHP file:
+Safely preview how PHP-Styler will restructure a source PHP file:
 
 ```
 ./vendor/bin/php-styler preview ./src/My/Source/File.php
@@ -87,7 +87,7 @@ Preview how PHP-Styler will restructure a source PHP file:
 
 ### Apply Formatting
 
-Apply PHP-Styler to all files identified in the `php-styler.php` config file:
+Apply PHP-Styler to all files identified in the `php-styler.php` config file, overwriting them with new formatting:
 
 ```
 ./vendor/bin/php-styler apply
