@@ -205,16 +205,21 @@ class Styler
             return;
         }
 
-        if (is_string($p)) {
-            if ($this->state->heredoc) {
-                $this->sHeredocBody($p);
-                return;
-            }
-
-            $this->code[] = $p;
+        if ($p instanceof Printable) {
+            $this->sPrintable($p);
             return;
         }
 
+        if ($this->state->heredoc) {
+            $this->sHeredocBody($p);
+            return;
+        }
+
+        $this->code[] = $p;
+    }
+
+    protected function sPrintable(Printable $p) : void
+    {
         // first printable in body?
         $p->isFirst($this->state->atFirstInBody);
         $this->state->atFirstInBody = false;
@@ -227,11 +232,9 @@ class Styler
         $p->hasAttribute($this->state->hadAttribute);
         $this->state->hadAttribute = false;
 
-        // what method to use?
-        /** @var string */
-        $last = strrchr(get_class($p), '\\');
-        $type = trim($last, '\\_');
-        $method = 's' . $type;
+        // add the printable to the code
+        $last = (string) strrchr(get_class($p), '\\');
+        $method = 's' . trim($last, '\\_');
         $this->{$method}($p);
     }
 
