@@ -1,5 +1,7 @@
 {
     "name": "pmjones/php-styler",
+    "description": "Companion to PHP-Parser that rebuilds PHP code from AST.",
+    "keywords": ["style", "guide", "parser", "standard"],
     "license": "BSD-3-Clause",
     "autoload": {
         "psr-4" : {
