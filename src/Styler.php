@@ -163,14 +163,14 @@ class Styler
         $this->code[] = ['clip'];
     }
 
-    protected function cuddle() : void
+    protected function condense() : void
     {
-        $this->code[] = ['cuddle'];
+        $this->code[] = ['condense'];
     }
 
-    protected function cuddleParen() : void
+    protected function condenseParen() : void
     {
-        $this->code[] = ['cuddleParen'];
+        $this->code[] = ['condenseParen'];
     }
 
     protected function newline() : void
@@ -213,7 +213,7 @@ class Styler
             return;
         }
 
-        $this->cuddle();
+        $this->condense();
         $this->newline();
         $this->commit();
     }
@@ -423,13 +423,13 @@ class Styler
         $this->code[] = '{';
         $this->indent();
         $this->commit();
-        $this->cuddle();
+        $this->condense();
     }
 
     protected function sClassBodyEnd(P\BodyEnd $p) : void
     {
         $this->outdent();
-        $this->cuddle();
+        $this->condense();
         $this->code[] = '}';
         $this->newline();
         $this->commit();
@@ -456,7 +456,7 @@ class Styler
         $this->indent();
 
         if ($this->argsLevel) {
-            $this->cuddle();
+            $this->condense();
         } else {
             $this->commit();
         }
@@ -465,7 +465,7 @@ class Styler
     protected function sClosureBodyEnd(P\BodyEnd $p) : void
     {
         $this->outdent();
-        $this->cuddle();
+        $this->condense();
         $this->code[] = '}';
 
         if ($this->argsLevel) {
@@ -482,7 +482,7 @@ class Styler
 
     protected function sComments(P\Comments $p) : void
     {
-        $this->cuddle();
+        $this->condense();
 
         if (! $p->isFirst()) {
             $this->commentNewline();
@@ -547,7 +547,7 @@ class Styler
     public function sDeclareBodyEnd(P\BodyEnd $p) : void
     {
         $this->outdent();
-        $this->cuddle();
+        $this->condense();
         $this->code[] = '}';
         $this->commit();
     }
@@ -575,7 +575,7 @@ class Styler
     protected function sDoBodyEnd(P\BodyEnd $p) : void
     {
         $this->outdent();
-        $this->cuddle();
+        $this->condense();
         $this->code[] = '} while ';
     }
 
@@ -636,7 +636,7 @@ class Styler
     protected function sEnumBodyEnd(P\BodyEnd $p) : void
     {
         $this->outdent();
-        $this->cuddle();
+        $this->condense();
         $this->code[] = '}';
         $this->newline();
         $this->commit();
@@ -675,7 +675,7 @@ class Styler
     protected function sForBodyEnd(P\BodyEnd $p) : void
     {
         $this->outdent();
-        $this->cuddle();
+        $this->condense();
         $this->code[] = '}';
         $this->newline();
         $this->commit();
@@ -703,7 +703,7 @@ class Styler
     protected function sForeachBodyEnd(P\BodyEnd $p) : void
     {
         $this->outdent();
-        $this->cuddle();
+        $this->condense();
         $this->code[] = '}';
         $this->newline();
         $this->commit();
@@ -724,7 +724,7 @@ class Styler
     protected function sFunctionBody(P\Body $p) : void
     {
         $this->newline();
-        $this->cuddleParen();
+        $this->condenseParen();
         $this->code[] = '{';
         $this->indent();
         $this->commit();
@@ -733,7 +733,7 @@ class Styler
     protected function sFunctionBodyEnd(P\BodyEnd $p) : void
     {
         $this->outdent();
-        $this->cuddle();
+        $this->condense();
         $this->code[] = '}';
         $this->newline();
         $this->commit();
@@ -791,7 +791,7 @@ class Styler
     protected function sElseIf(P\ElseIf_ $p) : void
     {
         $this->outdent();
-        $this->cuddle();
+        $this->condense();
         $this->code[] = '} elseif ';
     }
 
@@ -805,7 +805,7 @@ class Styler
     protected function sElse(P\Else_ $p) : void
     {
         $this->outdent();
-        $this->cuddle();
+        $this->condense();
         $this->code[] = '} else ';
     }
 
@@ -819,7 +819,7 @@ class Styler
     protected function sIfEnd(P\End $p) : void
     {
         $this->outdent();
-        $this->cuddle();
+        $this->condense();
         $this->code[] = '}';
         $this->newline();
         $this->commit();
@@ -845,7 +845,7 @@ class Styler
             case Expr\BinaryOp\BooleanAnd::class:
             case Expr\BinaryOp\BooleanOr::class:
                 if (! $this->condLevel) {
-                    $this->split($p->class, null, 'cuddle');
+                    $this->split($p->class, null, 'condense');
                 } else {
                     $this->split($p->class, null, 'mid');
                 }
@@ -854,12 +854,12 @@ class Styler
 
             case Expr\BinaryOp\Coalesce::class:
             case Expr\BinaryOp\Concat::class:
-                $this->split($p->class, null, 'cuddle');
+                $this->split($p->class, null, 'condense');
                 break;
 
             case Expr\Ternary::class:
                 if (! $this->argsLevel) {
-                    $this->split($p->class, null, 'cuddle');
+                    $this->split($p->class, null, 'condense');
                 }
 
                 break;
@@ -879,18 +879,18 @@ class Styler
             case Expr\BinaryOp\BooleanAnd::class:
             case Expr\BinaryOp\BooleanOr::class:
                 if (! $this->condLevel) {
-                    $this->split($p->class, null, 'endCuddle');
+                    $this->split($p->class, null, 'endCondense');
                 }
 
                 break;
 
             case Expr\BinaryOp\Concat::class:
-                $this->split($p->class, null, 'endCuddle');
+                $this->split($p->class, null, 'endCondense');
                 break;
 
             case Expr\Ternary::class:
                 if (! $this->argsLevel) {
-                    $this->split($p->class, null, 'endCuddle');
+                    $this->split($p->class, null, 'endCondense');
                 }
 
                 break;
@@ -925,7 +925,7 @@ class Styler
     protected function sInterfaceBodyEnd(P\BodyEnd $p) : void
     {
         $this->outdent();
-        $this->cuddle();
+        $this->condense();
         $this->code[] = '}';
         $this->newline();
         $this->commit();
@@ -966,7 +966,7 @@ class Styler
     protected function sMatchBodyEnd(P\BodyEnd $p) : void
     {
         $this->outdent();
-        $this->cuddle();
+        $this->condense();
         $this->code[] = '}';
     }
 
@@ -976,7 +976,7 @@ class Styler
 
         if ($isInstance && ! $this->argsLevel && ! $this->arrayLevel) {
             $this->memberLevel ++;
-            $this->split(P\Member::class, $this->memberLevel, 'cuddle');
+            $this->split(P\Member::class, $this->memberLevel, 'condense');
         }
 
         $this->code[] = $p->operator;
@@ -987,7 +987,7 @@ class Styler
         $isInstance = $p->operator === '->' || $p->operator === '?->';
 
         if ($isInstance && ! $this->argsLevel && ! $this->arrayLevel) {
-            $this->split(P\Member::class, $this->memberLevel, 'endCuddle');
+            $this->split(P\Member::class, $this->memberLevel, 'endCondense');
             $this->memberLevel --;
         }
     }
@@ -1017,7 +1017,7 @@ class Styler
     protected function sNamespaceBodyEnd(P\BodyEnd $p) : void
     {
         $this->outdent();
-        $this->cuddle();
+        $this->condense();
         $this->code[] = '}';
         $this->newline();
         $this->commit();
@@ -1093,12 +1093,12 @@ class Styler
     protected function sPrecedence(P\Precedence $p) : void
     {
         $this->code[] = '(';
-        $this->split(P\Precedence::class, null, 'cuddle');
+        $this->split(P\Precedence::class, null, 'condense');
     }
 
     protected function sPrecedenceEnd(P\End $p) : void
     {
-        $this->split(P\Precedence::class, null, 'endCuddle');
+        $this->split(P\Precedence::class, null, 'endCondense');
         $this->code[] = ')';
     }
 
@@ -1225,20 +1225,20 @@ class Styler
     protected function sSwitchCaseBody(P\Body $p) : void
     {
         $this->indent();
-        $this->cuddle();
+        $this->condense();
     }
 
     protected function sSwitchCaseBodyEnd(P\BodyEnd $p) : void
     {
         $this->outdent();
-        $this->cuddle();
+        $this->condense();
         $this->commit();
     }
 
     protected function sSwitchBodyEnd(P\BodyEnd $p) : void
     {
         $this->outdent();
-        $this->cuddle();
+        $this->condense();
         $this->code[] = '}';
         $this->newline();
         $this->commit();
@@ -1254,7 +1254,7 @@ class Styler
         $this->code[] = ' ';
 
         if (! $this->argsLevel) {
-            $this->split(Expr\Ternary::class, null, 'cuddle');
+            $this->split(Expr\Ternary::class, null, 'condense');
         }
 
         $this->code[] = $p->operator . ' ';
@@ -1263,7 +1263,7 @@ class Styler
     protected function sTernaryEnd(P\End $p) : void
     {
         if (! $this->argsLevel) {
-            $this->split(Expr\Ternary::class, null, 'endCuddle');
+            $this->split(Expr\Ternary::class, null, 'endCondense');
         }
     }
 
@@ -1297,7 +1297,7 @@ class Styler
     protected function sTraitBodyEnd(P\BodyEnd $p) : void
     {
         $this->outdent();
-        $this->cuddle();
+        $this->condense();
         $this->code[] = '}';
         $this->newline();
         $this->commit();
@@ -1319,7 +1319,7 @@ class Styler
     protected function sTryCatch(P\TryCatch $p) : void
     {
         $this->outdent();
-        $this->cuddle();
+        $this->condense();
         $this->code[] = '} catch ';
     }
 
@@ -1333,7 +1333,7 @@ class Styler
     protected function sTryFinally(P\TryFinally $p) : void
     {
         $this->outdent();
-        $this->cuddle();
+        $this->condense();
         $this->code[] = '} finally ';
     }
 
@@ -1347,7 +1347,7 @@ class Styler
     protected function sTryEnd(P\End $p) : void
     {
         $this->outdent();
-        $this->cuddle();
+        $this->condense();
         $this->code[] = '}';
         $this->newline();
         $this->commit();
@@ -1399,7 +1399,7 @@ class Styler
     protected function sUseTraitBodyEnd(P\BodyEnd $p) : void
     {
         $this->outdent();
-        $this->cuddle();
+        $this->condense();
         $this->code[] = '}';
         $this->commit();
     }
@@ -1458,7 +1458,7 @@ class Styler
     protected function sWhileBodyEnd(P\BodyEnd $p) : void
     {
         $this->outdent();
-        $this->cuddle();
+        $this->condense();
         $this->code[] = '}';
         $this->newline();
         $this->commit();

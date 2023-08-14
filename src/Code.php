@@ -216,7 +216,7 @@ class Code implements ArrayAccess
         $this->lines = rtrim($this->lines);
     }
 
-    protected function cuddle() : void
+    protected function condense() : void
     {
         $trimmed = rtrim($this->lines);
 
@@ -227,7 +227,7 @@ class Code implements ArrayAccess
         $this->lines = $trimmed . $this->eol . $this->indent;
     }
 
-    protected function cuddleParen() : void
+    protected function condenseParen() : void
     {
         $trimmed = rtrim($this->lines);
         $lines = explode($this->eol, $trimmed);
@@ -289,14 +289,14 @@ class Code implements ArrayAccess
                 $this->newline();
                 break;
 
-            case 'cuddle':
+            case 'condense':
                 $this->indent();
-                $this->cuddle();
+                $this->condense();
                 break;
 
-            case 'endCuddle':
+            case 'endCondense':
                 $this->outdent();
-                $this->cuddle();
+                $this->condense();
                 break;
 
             case 'outdent':
