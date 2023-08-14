@@ -1,5 +1,4 @@
 <?php
-// hanging/orphan semicolon after split return
 function foo()
 {
     if ($bar) {
