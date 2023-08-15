@@ -37,7 +37,7 @@ class Files implements IteratorAggregate
             $files = new RecursiveIteratorIterator(
                 new RecursiveCallbackFilterIterator(
                     new RecursiveDirectoryIterator($path),
-                    fn ($c, $k, $i) => self::filter($c, $k, $i),
+                    fn ($c, $k, $i) => $this->filter($c, $k, $i),
                 ),
             );
 
@@ -48,7 +48,7 @@ class Files implements IteratorAggregate
         }
     }
 
-    public function filter(
+    protected function filter(
         SplFileInfo $current,
         string $key,
         RecursiveDirectoryIterator $iterator,
