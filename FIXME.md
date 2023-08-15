@@ -1,4 +1,11 @@
 ```php
+
+// attributes between use and class
+use PhpParser\Error as ParserError;
+#[Help("Applies styling to the configured files, rewriting them in place.")]
+class Apply extends Command
+
+
 // indenting after closure as argument
 class foo
 {

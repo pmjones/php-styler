@@ -1192,6 +1192,7 @@ class Styler
 
     protected function sReservedStmtEnd(P\End $p) : void
     {
+        $this->clip();
         $this->code[] = ';';
         $this->commit();
     }
