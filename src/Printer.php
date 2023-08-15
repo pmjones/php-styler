@@ -200,9 +200,17 @@ class Printer
 
     protected function pAttributeGroups(Node $node) : void
     {
-        foreach ($node->attrGroups ?? [] as $attrGroup) {
+        if (! $node->attrGroups) {
+            return;
+        }
+
+        $this->list[] = new P\AttributeGroups();
+
+        foreach ($node->attrGroups as $attrGroup) {
             $this->p($attrGroup);
         }
+
+        $this->list[] = new P\End('attributeGroups');
     }
 
     protected function pBody(string $type) : void

@@ -315,6 +315,19 @@ class Styler
         $this->code[] = ' as ';
     }
 
+    protected function sAttributeGroups(P\AttributeGroups $p) : void
+    {
+        if ($this->state->param) {
+            return;
+        }
+
+        $this->condense();
+
+        if (! $p->hasComment()) {
+            $this->newline();
+        }
+    }
+
     protected function sAttributeGroup(P\AttributeGroup $p) : void
     {
         $this->code[] = '#[';
@@ -356,7 +369,10 @@ class Styler
         } else {
             $this->commit();
         }
+    }
 
+    protected function sAttributeGroupsEnd(P\End $p) : void
+    {
         $this->state->hadAttribute = true;
     }
 

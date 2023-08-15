@@ -10,6 +10,7 @@ use PhpStyler\Config;
 use PhpStyler\Printer;
 use PhpStyler\Styler;
 use PhpParser\Error as ParserError;
+
 #[Help("Applies styling to the configured files, rewriting them in place.")]
 class Apply extends Command
 {

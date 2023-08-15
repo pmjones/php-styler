@@ -3,6 +3,7 @@ namespace MyNamespace;
 
 use Something;
 
+#[MyAttribute]
 abstract class Bar extends Baz implements Dib, Zim, Gir
 {
     public const FOOCON = 'FOOCON';

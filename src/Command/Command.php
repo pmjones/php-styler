@@ -47,7 +47,11 @@ abstract class Command
         throw new RuntimeException("Could not find {$file}");
     }
 
-    protected function style(string $file, Styler $styler, PreviewOptions $options = null) : string
+    protected function style(
+        string $file,
+        Styler $styler,
+        PreviewOptions $options = null,
+    ) : string
     {
         /** @var string */
         $code = file_get_contents($file);
