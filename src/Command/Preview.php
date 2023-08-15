@@ -19,11 +19,7 @@ class Preview extends Command
         $configFile = $options->configFile ?? $this->findConfigFile();
         $config = $this->loadConfigFile($configFile);
 
-        if (! $this->lint($sourceFile)) {
-            return 1;
-        }
-
-        echo $this->style($sourceFile, $config->styler);
+        echo $this->style($sourceFile, $config->styler, $options);
         return 0;
     }
 }

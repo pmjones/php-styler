@@ -23,11 +23,6 @@ class PreviewOptions implements Options
             help: "Dump array of printables in output."
         )]
         public readonly ?bool $debugPrinter,
-        #[Option(
-            'debug-styler',
-            help: "Dump styler arrays in output."
-        )]
-        public readonly ?bool $debugStyler,
     ) {
     }
 }

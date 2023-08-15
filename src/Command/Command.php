@@ -47,14 +47,26 @@ abstract class Command
         throw new RuntimeException("Could not find {$file}");
     }
 
-    protected function style(string $file, Styler $styler) : string
+    protected function style(string $file, Styler $styler, PreviewOptions $options = null) : string
     {
         /** @var string */
         $code = file_get_contents($file);
 
         /** @var Stmt[] */
         $stmts = $this->parser->parse($code);
+
+        if ($options?->debugParser) {
+            echo "Parser nodes: ";
+            var_dump($stmts);
+        }
+
         $printables = $this->printer->__invoke($stmts);
+
+        if ($options?->debugPrinter) {
+            echo "Printables: ";
+            var_dump($printables);
+        }
+
         return $styler->__invoke($printables);
     }
 }
