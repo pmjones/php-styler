@@ -47,18 +47,6 @@ abstract class Command
         throw new RuntimeException("Could not find {$file}");
     }
 
-    protected function lint(string $file) : bool
-    {
-        exec("php -l {$file}", $output, $return);
-
-        if ($return !== 0) {
-            echo implode(PHP_EOL, $output) . PHP_EOL;
-            return false;
-        }
-
-        return true;
-    }
-
     protected function style(string $file, Styler $styler) : string
     {
         /** @var string */

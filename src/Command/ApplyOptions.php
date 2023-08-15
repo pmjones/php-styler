@@ -13,11 +13,6 @@ class ApplyOptions implements Options
             help: 'Path to the config file.'
         )]
         public readonly ?string $configFile,
-        #[Option(
-            'f,force',
-            help: "Force styling regardless of cache."
-        )]
-        public readonly ?bool $force,
     ) {
     }
 }
