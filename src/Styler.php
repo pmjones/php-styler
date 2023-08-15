@@ -90,7 +90,7 @@ class Styler
     /**
      * @param array<int, null|string|Printable> $list
      */
-    public function style(array $list) : string
+    public function __invoke(array $list) : string
     {
         if (! $list) {
             return "<?php" . $this->eol;

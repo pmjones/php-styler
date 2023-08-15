@@ -24,7 +24,8 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
 
         /** @var array<\PhpParser\Node\Stmt> */
         $stmts = $parser->parse($source);
-        return $this->printer->printFile($stmts, $this->styler);
+        $printables = $this->printer->__invoke($stmts);
+        return $this->styler->__invoke($printables);
     }
 
     protected function assertPrint(string $expect, string $source) : void

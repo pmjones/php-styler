@@ -14,7 +14,7 @@ class Apply extends Command
 {
     protected int $count = 0;
 
-    public function __invoke(CommandOptions $options) : int
+    public function __invoke(ApplyOptions $options) : int
     {
         $start = microtime(true);
         $this->count = 0;

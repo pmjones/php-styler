@@ -18,8 +18,6 @@ abstract class Command
 
     protected Printer $printer;
 
-    protected Styler $styler;
-
     public function __construct()
     {
         $parserFactory = new ParserFactory();
@@ -68,6 +66,7 @@ abstract class Command
 
         /** @var Stmt[] */
         $stmts = $this->parser->parse($code);
-        return $this->printer->printFile($stmts, $styler);
+        $printables = $this->printer->__invoke($stmts);
+        return $styler->__invoke($printables);
     }
 }

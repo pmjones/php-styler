@@ -113,8 +113,9 @@ class Printer
 
     /**
      * @param Stmt[] $nodes
+     * @return array<int, null|string|Printable>
      */
-    public function printFile(array $nodes, Styler $styler) : string
+    public function __invoke(array $nodes) : array
     {
         $this->list = [];
         $this->commented = new SplObjectStorage();
@@ -127,7 +128,7 @@ class Printer
         }
 
         $this->p($nodes);
-        return $styler->style($this->list);
+        return $this->list;
     }
 
     /**

@@ -12,7 +12,7 @@ use PhpStyler\Styler;
 class Preview extends Command
 {
     public function __invoke(
-        CommandOptions $options,
+        PreviewOptions $options,
         #[Help("The source file to preview.")] string $sourceFile,
     ) : int
     {

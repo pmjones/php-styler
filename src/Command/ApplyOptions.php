@@ -4,7 +4,7 @@ namespace PhpStyler\Command;
 use AutoShell\Option;
 use AutoShell\Options;
 
-class CommandOptions implements Options
+class ApplyOptions implements Options
 {
     public function __construct(
         #[Option(
