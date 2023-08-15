@@ -426,12 +426,22 @@ class Styler
 
     protected function sClosureUse(P\ClosureUse $p) : void
     {
+        $this->state->param ++;
         $this->code[] = ' use (';
+
+        if ($p->count) {
+            $this->split(P\ClosureParams::class);
+        }
     }
 
     protected function sClosureUseEnd(P\ClosureUseEnd $p) : void
     {
+        if ($p->count) {
+            $this->split(P\ClosureParams::class, null, 'end', ',');
+        }
+
         $this->code[] = ')';
+        $this->state->param --;
     }
 
     protected function sClosureBody(P\Body $p) : void

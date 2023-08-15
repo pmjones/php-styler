@@ -1,10 +1,4 @@
 ```php
-// splitting long closure parameters and uses
-$veryLongVariableName = function ($veryLongVar1, $veryLongVar2) use ($veryLongVar3,
-$veryLongVar4) {
-    // function body
-};
-
 // indenting after closure as argument
 class foo
 {

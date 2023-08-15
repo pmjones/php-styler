@@ -667,9 +667,10 @@ class Printer
         $this->pClosureParams($node);
 
         if ($node->uses) {
-            $this->list[] = new P\ClosureUse();
-            $this->pSeparate('arg', $node->uses);
-            $this->list[] = new P\ClosureUseEnd();
+            $count = count($node->uses ?? []);
+            $this->list[] = new P\ClosureUse($count);
+            $this->pSeparate('closureParam', $node->uses);
+            $this->list[] = new P\ClosureUseEnd($count);
         }
 
         $this->pReturnType($node);
