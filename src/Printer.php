@@ -200,7 +200,7 @@ class Printer
 
     protected function pAttributeGroups(Node $node) : void
     {
-        if (! $node->attrGroups) {
+        if (! ($node->attrGroups ?? [])) {
             return;
         }
 
@@ -676,7 +676,7 @@ class Printer
         $this->pClosureParams($node);
 
         if ($node->uses) {
-            $count = count($node->uses ?? []);
+            $count = count($node->uses);
             $this->list[] = new P\ClosureUse($count);
             $this->pSeparate('closureParam', $node->uses);
             $this->list[] = new P\ClosureUseEnd($count);
