@@ -1,12 +1,14 @@
 ```php
-
-// attributes between use and class
-use PhpParser\Error as ParserError;
-#[Help("Applies styling to the configured files, rewriting them in place.")]
-class Apply extends Command
-
-
 // indenting after closure as argument
+$result = $this
+    ->veryLongProperty
+    ->veryLongMethod(
+        $veryLongVariableName,
+        new VeryLongClassName(static function () : void {
+            throw VeryLongException::create();
+        }, $this->veryLongVariableName));
+
+// same here
 class foo
 {
     public function onDispatch(MvcEvent $e)
@@ -29,6 +31,15 @@ class foo
                 }
             }
 
+// need a way to for splitting of **all** function_params if a param is a closure, or has an attribute or comment
+//
+// maybe something to do with how atLeastOneLineTooLong() works? can't go back after commit().
+//
+// should forceSplit() take a rule, where it applies only to printables of that rule? trouble is that it may need to apply to multiple rules at the same time -- again, closures.
+
+```
+
+```php
 // comment vs closure signature
 $this->htmlAttrMatcher =
 
@@ -50,7 +61,7 @@ function (array $matches) : string {
 };
 
 // splits member instead of argument, when argument
-// might make more sense
+// makes more sense
 -            $html .= $this->radio(
 -                $name,
 -                $value,
@@ -73,51 +84,51 @@ function (array $matches) : string {
 // do not break members (or array dim fetches) on left side of assignment
 
 
-        return sprintf(
-            '%s %s %s',
-            $this->getMethod(),
-            $this->getRequestUri(),
-            $this->server->get('SERVER_PROTOCOL'),
-        )
-            . "\r\n"
-            . $this
-                ->headers
-            . $cookieHeader
-            . "\r\n"
-            . $content;
+return sprintf(
+    '%s %s %s',
+    $this->getMethod(),
+    $this->getRequestUri(),
+    $this->server->get('SERVER_PROTOCOL'),
+)
+    . "\r\n"
+    . $this
+        ->headers
+    . $cookieHeader
+    . "\r\n"
+    . $content;
 
 
-        // if args have closure, force-split the args
-        self::$trustedProxies = array_reduce($proxies, function ($proxies, $proxy) {
-            if ('REMOTE_ADDR' !== $proxy) {
-                $proxies[] = $proxy;
-            } elseif (isset($_SERVER['REMOTE_ADDR'])) {
-                $proxies[] = $_SERVER['REMOTE_ADDR'];
-            }
+// if args have closure, force-split the args
+self::$trustedProxies = array_reduce($proxies, function ($proxies, $proxy) {
+    if ('REMOTE_ADDR' !== $proxy) {
+        $proxies[] = $proxy;
+    } elseif (isset($_SERVER['REMOTE_ADDR'])) {
+        $proxies[] = $_SERVER['REMOTE_ADDR'];
+    }
 
-            return $proxies;
-        }, []);
-
-
-        // something about ternaries?
-        $sourceDirs = explode('/', isset($basePath[0])
-            && '/' === $basePath[0]
-         ? substr($basePath, 1) : $basePath);
+    return $proxies;
+}, []);
 
 
-        $sourceDirs = explode(
-            '/',
-            isset($basePath[0]) && '/' === $basePath[0]
-                ? substr($basePath, 1)
-                : $basePath
-        );
+// something about ternaries?
+$sourceDirs = explode('/', isset($basePath[0])
+    && '/' === $basePath[0]
+ ? substr($basePath, 1) : $basePath);
 
-         // something about ternaries?
-        return ! isset($path[0]) || '/' === $path[0] || false !== (
-            $colonPos = strpos($path, ':')
-        ) && (
-            $colonPos < (
-                $slashPos = strpos($path, '/')
-            ) || false === $slashPos
-        ) ? "./{$path}" : $path;
+
+$sourceDirs = explode(
+    '/',
+    isset($basePath[0]) && '/' === $basePath[0]
+        ? substr($basePath, 1)
+        : $basePath
+);
+
+ // something about ternaries?
+return ! isset($path[0]) || '/' === $path[0] || false !== (
+    $colonPos = strpos($path, ':')
+) && (
+    $colonPos < (
+        $slashPos = strpos($path, '/')
+    ) || false === $slashPos
+) ? "./{$path}" : $path;
 ```
