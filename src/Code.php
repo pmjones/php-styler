@@ -5,32 +5,12 @@ namespace PhpStyler;
 
 use ArrayAccess;
 use BadMethodCallException;
-use PhpParser\Node\Expr;
-use PhpParser\Node\Stmt;
-use PhpStyler\Printable as P;
 
 /**
  * @implements ArrayAccess<int, mixed>
  */
 class Code implements ArrayAccess
 {
-    public const SPLIT = [
-        Expr\BinaryOp\BooleanAnd::class => 'bool_and',
-        Expr\BinaryOp\BooleanOr::class => 'bool_or',
-        Expr\BinaryOp\Coalesce::class => 'coalesce',
-        Expr\BinaryOp\Concat::class => 'concat',
-        Expr\Ternary::class => 'ternary',
-        P\Args::class => 'args',
-        P\Array_::class => 'array',
-        P\AttributeArgs::class => 'attribute_args',
-        P\ClosureParams::class => 'closure_params',
-        P\Cond::class => 'cond',
-        P\FunctionParams::class => 'function_params',
-        P\InstanceCall::class => 'instance_call',
-        P\InstanceProp::class => 'instance_prop',
-        P\Precedence::class => 'precedence',
-    ];
-
     /**
      * @var mixed[]
      */
@@ -51,8 +31,6 @@ class Code implements ArrayAccess
      * @var array<string, bool>
      */
     protected array $splitCalls = [];
-
-    protected bool $forceSplit = false;
 
     protected string $indent = '';
 
@@ -145,17 +123,16 @@ class Code implements ArrayAccess
         return rtrim($this->file) . $this->eol;
     }
 
-    public function split(
+    public function addSplit(
         string $class,
         int $level = null,
         string $type = null,
         mixed ...$args,
     ) : void
     {
-        $rule = Code::SPLIT[$class];
-        $this[] = ['applySplit', $rule, $level, $type, ...$args];
-        $key = $rule . ($level !== null ? "_{$level}" : '');
-        $this->splitCalls[$key] = true;
+        $split = new Space\Split($class, $level, $type, ...$args);
+        $this[] = $split;
+        $this->splitCalls[$split->rule] = true;
     }
 
     public function commit() : void
@@ -188,11 +165,6 @@ class Code implements ArrayAccess
 
     protected function atLeastOneLineTooLong() : bool
     {
-        if ($this->forceSplit) {
-            $this->forceSplit = false;
-            return true;
-        }
-
         foreach (explode($this->eol, $this->lines) as $line) {
             if (strlen($line) > $this->lineLen) {
                 return true;
@@ -207,9 +179,9 @@ class Code implements ArrayAccess
         $this->lines = '';
 
         foreach ($this->parts as $part) {
-            if (is_array($part)) {
-                $method = array_shift($part);
-                $this->{$method}(...$part);
+            if ($part instanceof Space\Space) {
+                $method = lcfirst(ltrim(strrchr(get_class($part), '\\'), '\\'));
+                $this->{$method}($part);
             } else {
                 $this->lines .= $part;
             }
@@ -218,17 +190,17 @@ class Code implements ArrayAccess
         $this->lines = (string) preg_replace("/\\s+\$/m", "\n", $this->lines);
     }
 
-    protected function newline() : void
+    protected function newline(Space\Newline $newline = null) : void
     {
         $this->lines .= $this->eol . $this->indent;
     }
 
-    protected function clip() : void
+    protected function clip(Space\Clip $clip = null) : void
     {
         $this->lines = rtrim($this->lines);
     }
 
-    protected function condense() : void
+    protected function condense(Space\Condense $condense = null) : void
     {
         $trimmed = rtrim($this->lines);
 
@@ -239,52 +211,40 @@ class Code implements ArrayAccess
         $this->lines = $trimmed . $this->eol . $this->indent;
     }
 
-    protected function condenseParen() : void
+    // clips the line **only if** the last character is a paren.
+    protected function clipToParen(Space\ClipToParen $clipToParen = null) : void
     {
         $trimmed = rtrim($this->lines);
         $lines = explode($this->eol, $trimmed);
         $last = end($lines);
 
+        // can we just use $trimmed instead, and skip the explode()?
         if (trim($last) === ')') {
             $this->lines = $trimmed . ' ';
         }
     }
 
-    protected function indent() : void
+    protected function indent(Space\Indent $indent = null) : void
     {
         $this->indent .= $this->indentStr;
     }
 
-    protected function outdent() : void
+    protected function outdent(Space\Outdent $outdent = null) : void
     {
         $this->indent = substr($this->indent, 0, -1 * strlen($this->indentStr));
     }
 
-    protected function forceSplit() : void
-    {
-        $this->forceSplit = true;
-    }
-
-    protected function applySplit(
-        string $rule,
-        ?int $level,
-        ?string $type,
-        string ...$args,
-    ) : void
+    protected function split(Space\Split $split) : void
     {
         if (! $this->multiline) {
             return;
         }
 
-        if ($level !== null) {
-            $rule .= "_{$level}";
-        }
-
-        if (! in_array($rule, $this->splitApply)) {
+        if (! in_array($split->rule, $this->splitApply)) {
             return;
         }
 
-        switch ($type) {
+        switch ($split->type) {
             case null:
                 $this->indent();
                 $this->newline();
@@ -296,7 +256,7 @@ class Code implements ArrayAccess
                 break;
 
             case 'end':
-                $this->lines .= $args[0] ?? '';
+                $this->lines .= $split->args[0] ?? '';
                 $this->outdent();
                 $this->newline();
                 break;

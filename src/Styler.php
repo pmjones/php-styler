@@ -131,37 +131,32 @@ class Styler
 
     protected function indent() : void
     {
-        $this->code[] = ['indent'];
+        $this->code[] = new Space\Indent();
     }
 
     protected function outdent() : void
     {
-        $this->code[] = ['outdent'];
+        $this->code[] = new Space\Outdent();
     }
 
     protected function clip() : void
     {
-        $this->code[] = ['clip'];
+        $this->code[] = new Space\Clip();
     }
 
     protected function condense() : void
     {
-        $this->code[] = ['condense'];
+        $this->code[] = new Space\Condense();
     }
 
-    protected function condenseParen() : void
+    protected function clipToParen() : void
     {
-        $this->code[] = ['condenseParen'];
+        $this->code[] = new Space\ClipToParen();
     }
 
     protected function newline() : void
     {
-        $this->code[] = ['newline'];
-    }
-
-    protected function forceSplit() : void
-    {
-        $this->code[] = ['forceSplit'];
+        $this->code[] = new Space\Newline();
     }
 
     protected function split(
@@ -172,7 +167,7 @@ class Styler
     ) : void
     {
         if (! $this->state->encapsed) {
-            $this->code->split($class, $level, $type, ...$args);
+            $this->code->addSplit($class, $level, $type, ...$args);
         }
     }
 
@@ -741,7 +736,7 @@ class Styler
     protected function sFunctionBody(P\Body $p) : void
     {
         $this->newline();
-        $this->condenseParen();
+        $this->clipToParen();
         $this->code[] = '{';
         $this->indent();
         $this->commit();
