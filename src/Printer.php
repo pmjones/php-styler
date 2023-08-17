@@ -195,7 +195,7 @@ class Printer
     {
         $this->list[] = new P\AttributeGroup();
         $this->pSeparate('attribute', $node->attrs);
-        $this->pEnd('attributeGroup');
+        $this->list[] = new P\End('attributeGroup');
     }
 
     protected function pAttributeGroups(Node $node) : void
@@ -291,7 +291,7 @@ class Printer
         if ($node->cond ?? null) {
             $this->list[] = new P\Cond();
             $this->p($node->cond);
-            $this->pEnd('cond');
+            $this->list[] = new P\End('cond');
         }
     }
 
@@ -351,11 +351,6 @@ class Printer
                 $this->pEmbrace($element);
             }
         }
-    }
-
-    protected function pEnd(string $type) : void
-    {
-        $this->list[] = new P\End($type);
     }
 
     protected function pExpr_Array(Expr\Array_ $node) : void
@@ -719,7 +714,7 @@ class Printer
     {
         $this->list[] = new P\ReservedFunc('empty');
         $this->p($node->expr);
-        $this->pEnd('reservedFunc');
+        $this->list[] = new P\End('reservedFunc');
     }
 
     protected function pExpr_Exit(Expr\Exit_ $node) : void
@@ -728,7 +723,7 @@ class Printer
         $word = $kind === Expr\Exit_::KIND_EXIT ? 'exit' : 'die';
         $this->list[] = new P\ReservedFunc($word);
         $this->p($node->expr);
-        $this->pEnd('reservedFunc');
+        $this->list[] = new P\End('reservedFunc');
     }
 
     protected function pExpr_Error(Expr\Error $node) : void
@@ -745,7 +740,7 @@ class Printer
     {
         $this->list[] = new P\ReservedFunc('eval');
         $this->p($node->expr);
-        $this->pEnd('reservedFunc');
+        $this->list[] = new P\End('reservedFunc');
     }
 
     protected function pExpr_FuncCall(Expr\FuncCall $node) : void
@@ -778,7 +773,7 @@ class Printer
     {
         $this->list[] = new P\ReservedFunc('isset');
         $this->pSeparate('arg', $node->vars);
-        $this->pEnd('reservedFunc');
+        $this->list[] = new P\End('reservedFunc');
     }
 
     protected function pExpr_List(Expr\List_ $node) : void
@@ -788,7 +783,7 @@ class Printer
         /** @var Node[] */
         $items = $node->items;
         $this->pSeparate('arg', $items);
-        $this->pEnd('reservedFunc');
+        $this->list[] = new P\End('reservedFunc');
     }
 
     protected function pExpr_Match(Expr\Match_ $node) : void
@@ -1042,7 +1037,7 @@ class Printer
 
         $this->pDoubleArrow();
         $this->p($node->body);
-        $this->pEnd('matchArm');
+        $this->list[] = new P\End('matchArm');
     }
 
     protected function pModifiers(Node $node) : void
@@ -1160,7 +1155,7 @@ class Printer
             ) {
                 $this->list[] = new P\Precedence();
                 $this->p($node);
-                $this->pEnd('precedence');
+                $this->list[] = new P\End('precedence');
                 return;
             }
         }
@@ -1399,7 +1394,7 @@ class Printer
         }
 
         $this->pSeparate('const', $node->consts);
-        $this->pEnd('const');
+        $this->list[] = new P\End('const');
     }
 
     protected function pStmt_ClassMethod(Stmt\ClassMethod $node) : void
@@ -1424,7 +1419,7 @@ class Printer
     {
         $this->list[] = new P\Const_();
         $this->pSeparate('const', $node->consts);
-        $this->pEnd('const');
+        $this->list[] = new P\End('const');
     }
 
     protected function pStmt_Continue(Stmt\Continue_ $node) : void
@@ -1461,14 +1456,14 @@ class Printer
         $this->p($node->stmts);
         $this->pBodyEnd('do');
         $this->pCond($node);
-        $this->pEnd('do');
+        $this->list[] = new P\End('do');
     }
 
     protected function pStmt_Echo(Stmt\Echo_ $node) : void
     {
         $this->list[] = new P\ReservedStmt('echo');
         $this->pSeparate('reservedStmt', $node->exprs);
-        $this->pEnd('reservedStmt');
+        $this->list[] = new P\End('reservedStmt');
     }
 
     protected function pStmt_Enum(Stmt\Enum_ $node) : void
@@ -1497,13 +1492,13 @@ class Printer
             $this->p($node->expr);
         }
 
-        $this->pEnd('enumCase');
+        $this->list[] = new P\End('enumCase');
     }
 
     protected function pStmt_Expression(Stmt\Expression $node) : void
     {
         $this->p($node->expr);
-        $this->pEnd('expr');
+        $this->list[] = new P\End('expr'); // reset instance counts at the current level
     }
 
     protected function pStmt_For(Stmt\For_ $node) : void
@@ -1515,7 +1510,7 @@ class Printer
         $this->pSeparate('for', $node->cond);
         $this->list[] = new P\Separator('forExpr');
         $this->pSeparate('for', $node->loop);
-        $this->pEnd('cond');
+        $this->list[] = new P\End('cond');
         $this->pBody('for');
         $this->p($node->stmts);
         $this->pBodyEnd('for');
@@ -1535,7 +1530,7 @@ class Printer
 
         $this->pByRef($node);
         $this->p($node->valueVar);
-        $this->pEnd('cond');
+        $this->list[] = new P\End('cond');
         $this->pBody('foreach');
         $this->p($node->stmts);
         $this->pBodyEnd('foreach');
@@ -1558,7 +1553,7 @@ class Printer
     {
         $this->list[] = new P\ReservedStmt('global');
         $this->pSeparate('reservedStmt', $node->vars);
-        $this->pEnd('reservedStmt');
+        $this->list[] = new P\End('reservedStmt');
     }
 
     protected function pStmt_Goto(Stmt\Goto_ $node) : void
@@ -1587,7 +1582,7 @@ class Printer
             $this->p($node->else);
         }
 
-        $this->pEnd('if');
+        $this->list[] = new P\End('if');
     }
 
     protected function pStmt_ElseIf(Stmt\ElseIf_ $node) : void
@@ -1610,7 +1605,7 @@ class Printer
         $newline = (bool) $node->getAttribute('hasLeadingNewline', true);
         $this->list[] = new P\InlineHtml($newline);
         $this->list[] = $node->value;
-        $this->pEnd('inlineHtml');
+        $this->list[] = new P\End('inlineHtml');
     }
 
     protected function pStmt_Interface(Stmt\Interface_ $node) : void
@@ -1649,7 +1644,7 @@ class Printer
         $this->list[] = new P\Property($node->flags);
         $this->pType($node);
         $this->pSeparate('property', $node->props);
-        $this->pEnd('property');
+        $this->list[] = new P\End('property');
     }
 
     protected function pStmt_PropertyProperty(Stmt\PropertyProperty $node) : void
@@ -1663,14 +1658,14 @@ class Printer
     {
         $this->list[] = new P\Return_(! $node->expr);
         $this->p($node->expr);
-        $this->pEnd('return');
+        $this->list[] = new P\End('return');
     }
 
     protected function pStmt_Static(Stmt\Static_ $node) : void
     {
         $this->list[] = new P\ReservedStmt('static');
         $this->pSeparate('reservedStmt', $node->vars);
-        $this->pEnd('reservedStmt');
+        $this->list[] = new P\End('reservedStmt');
     }
 
     protected function pStmt_StaticVar(Stmt\StaticVar $node) : void
@@ -1697,7 +1692,7 @@ class Printer
         if ($node->cond) {
             $this->list[] = new P\SwitchCase();
             $this->p($node->cond);
-            $this->pEnd('switchCase');
+            $this->list[] = new P\End('switchCase');
         } else {
             $this->list[] = new P\SwitchCaseDefault();
         }
@@ -1713,7 +1708,7 @@ class Printer
     {
         $this->list[] = new P\Throw_();
         $this->p($node->expr);
-        $this->pEnd('throw');
+        $this->list[] = new P\End('throw');
     }
 
     protected function pStmt_Trait(Stmt\Trait_ $node) : void
@@ -1731,7 +1726,7 @@ class Printer
         $this->pSeparate('useTrait', $node->traits);
 
         if (! $node->adaptations) {
-            $this->pEnd('useTrait');
+            $this->list[] = new P\End('useTrait');
             return;
         }
 
@@ -1761,7 +1756,7 @@ class Printer
         $method = $this->name($node->method);
         $this->list[] = new P\UseTraitInsteadof($trait, $method);
         $this->pSeparate('insteadof', $node->insteadof);
-        $this->pEnd('useTraitInsteadOf');
+        $this->list[] = new P\End('useTraitInsteadOf');
     }
 
     protected function pStmt_TryCatch(Stmt\TryCatch $node) : void
@@ -1778,7 +1773,7 @@ class Printer
             $this->p($node->finally);
         }
 
-        $this->pEnd('try');
+        $this->list[] = new P\End('try');
     }
 
     protected function pStmt_Catch(Stmt\Catch_ $node) : void
@@ -1841,7 +1836,7 @@ class Printer
     {
         $this->list[] = new P\Unset_();
         $this->pSeparate('arg', $node->vars);
-        $this->pEnd('unset');
+        $this->list[] = new P\End('unset');
     }
 
     protected function pStmt_While(Stmt\While_ $node) : void
