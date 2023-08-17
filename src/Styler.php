@@ -178,14 +178,21 @@ class Styler
 
     protected function modifiers(?int $flags) : string
     {
-        return ''
-            . ($flags & Stmt\Class_::MODIFIER_FINAL ? 'final ' : '')
-            . ($flags & Stmt\Class_::MODIFIER_ABSTRACT ? 'abstract ' : '')
-            . ($flags & Stmt\Class_::MODIFIER_PUBLIC ? 'public ' : '')
-            . ($flags & Stmt\Class_::MODIFIER_PROTECTED ? 'protected ' : '')
-            . ($flags & Stmt\Class_::MODIFIER_PRIVATE ? 'private ' : '')
-            . ($flags & Stmt\Class_::MODIFIER_STATIC ? 'static ' : '')
-            . ($flags & Stmt\Class_::MODIFIER_READONLY ? 'readonly ' : '');
+        return (
+            $flags & Stmt\Class_::MODIFIER_FINAL ? 'final ' : ''
+        ) . (
+            $flags & Stmt\Class_::MODIFIER_ABSTRACT ? 'abstract ' : ''
+        ) . (
+            $flags & Stmt\Class_::MODIFIER_PUBLIC ? 'public ' : ''
+        ) . (
+            $flags & Stmt\Class_::MODIFIER_PROTECTED ? 'protected ' : ''
+        ) . (
+            $flags & Stmt\Class_::MODIFIER_PRIVATE ? 'private ' : ''
+        ) . (
+            $flags & Stmt\Class_::MODIFIER_STATIC ? 'static ' : ''
+        ) . (
+            $flags & Stmt\Class_::MODIFIER_READONLY ? 'readonly ' : ''
+        );
     }
 
     protected function maybeNewline(Printable $p) : void
@@ -980,25 +987,54 @@ class Styler
         $this->code[] = '}';
     }
 
-    protected function sMember(P\Member $p) : void
+    protected function sStaticMember(P\StaticMember $p) : void
     {
-        $isInstance = $p->operator === '->' || $p->operator === '?->';
+        $this->code[] = $p->operator;
+    }
 
-        if ($isInstance && ! $this->state->args && ! $this->state->array) {
-            $this->state->member ++;
-            $this->split(P\Member::class, $this->state->member, 'condense');
+    protected function sInstanceCall(P\InstanceCall $p) : void
+    {
+        if (! $this->state->args && ! $this->state->array) {
+            $this->state->instanceCall ++;
+            $this->split(P\InstanceCall::class, $this->state->instanceCall, 'condense');
         }
 
         $this->code[] = $p->operator;
     }
 
-    protected function sMemberEnd(P\MemberEnd $p) : void
+    protected function sInstanceCallEnd(P\End $p) : void
     {
-        $isInstance = $p->operator === '->' || $p->operator === '?->';
+        if (! $this->state->args && ! $this->state->array) {
+            $this
+                ->split(
+                    P\InstanceCall::class,
+                    $this->state->instanceCall,
+                    'endCondense',
+                );
+            $this->state->instanceCall --;
+        }
+    }
 
-        if ($isInstance && ! $this->state->args && ! $this->state->array) {
-            $this->split(P\Member::class, $this->state->member, 'endCondense');
-            $this->state->member --;
+    protected function sInstanceProp(P\InstanceProp $p) : void
+    {
+        if (! $this->state->args && ! $this->state->array) {
+            $this->state->instanceProp ++;
+            $this->split(P\InstanceProp::class, $this->state->instanceProp, 'condense');
+        }
+
+        $this->code[] = $p->operator;
+    }
+
+    protected function sInstancePropEnd(P\End $p) : void
+    {
+        if (! $this->state->args && ! $this->state->array) {
+            $this
+                ->split(
+                    P\InstanceProp::class,
+                    $this->state->instanceProp,
+                    'endCondense',
+                );
+            $this->state->instanceProp --;
         }
     }
 

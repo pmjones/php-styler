@@ -25,7 +25,9 @@ class State
 
     public int $heredoc = 0;
 
-    public int $member = 0;
+    public int $instanceCall = 0;
+
+    public int $instanceProp = 0;
 
     public int $param = 0;
 

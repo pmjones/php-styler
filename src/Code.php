@@ -15,19 +15,20 @@ use PhpStyler\Printable as P;
 class Code implements ArrayAccess
 {
     public const SPLIT = [
-        P\Args::class => 'args',
-        P\AttributeArgs::class => 'attribute_args',
-        P\Array_::class => 'array',
-        P\Cond::class => 'cond',
         Expr\BinaryOp\BooleanAnd::class => 'bool_and',
         Expr\BinaryOp\BooleanOr::class => 'bool_or',
         Expr\BinaryOp\Coalesce::class => 'coalesce',
         Expr\BinaryOp\Concat::class => 'concat',
-        P\Member::class => 'member',
-        P\FunctionParams::class => 'function_params',
-        P\ClosureParams::class => 'closure_params',
-        P\Precedence::class => 'precedence',
         Expr\Ternary::class => 'ternary',
+        P\Args::class => 'args',
+        P\Array_::class => 'array',
+        P\AttributeArgs::class => 'attribute_args',
+        P\ClosureParams::class => 'closure_params',
+        P\Cond::class => 'cond',
+        P\FunctionParams::class => 'function_params',
+        P\InstanceCall::class => 'instance_call',
+        P\InstanceProp::class => 'instance_prop',
+        P\Precedence::class => 'precedence',
     ];
 
     /**
@@ -59,7 +60,6 @@ class Code implements ArrayAccess
      * @var string[]
      */
     protected array $split = [
-        'concat',
         'array_0',
         'array_1',
         'array_2',
@@ -72,12 +72,19 @@ class Code implements ArrayAccess
         'bool_or',
         'bool_and',
         'ternary',
-        'member_0',
-        'member_1',
-        'member_2',
-        'member_3',
-        'member_4',
-        'member_5',
+        'instance_call_0',
+        'instance_call_1',
+        'instance_call_2',
+        'instance_call_3',
+        'instance_call_4',
+        'instance_call_5',
+
+        // 'instance_prop_0',
+        // 'instance_prop_1',
+        'instance_prop_2',
+        'instance_prop_3',
+        'instance_prop_4',
+        'instance_prop_5',
         'args_0',
         'args_1',
         'args_2',
@@ -92,6 +99,7 @@ class Code implements ArrayAccess
         'attribute_args_3',
         'attribute_args_4',
         'attribute_args_5',
+        'concat',
     ];
 
     /**

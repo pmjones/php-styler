@@ -657,9 +657,8 @@ class Printer
     protected function pExpr_ClassConstFetch(Expr\ClassConstFetch $node) : void
     {
         $this->pStaticDereferenceLhs($node->class);
-        $this->list[] = new P\Member('::');
+        $this->list[] = new P\StaticMember('::');
         $this->p($node->name);
-        $this->list[] = new P\MemberEnd('::');
     }
 
     protected function pExpr_Clone(Expr\Clone_ $node) : void
@@ -804,10 +803,10 @@ class Printer
     protected function pExpr_MethodCall(Expr\MethodCall $node) : void
     {
         $this->pDereferenceLhs($node->var);
-        $this->list[] = new P\Member('->');
+        $this->list[] = new P\InstanceCall('->');
         $this->pObjectProperty($node->name);
         $this->pArgs($node);
-        $this->list[] = new P\MemberEnd('->');
+        $this->list[] = new P\End('instanceCall');
     }
 
     protected function pExpr_New(Expr\New_ $node) : void
@@ -825,10 +824,10 @@ class Printer
     protected function pExpr_NullsafeMethodCall(Expr\NullsafeMethodCall $node) : void
     {
         $this->pDereferenceLhs($node->var);
-        $this->list[] = new P\Member('?->');
+        $this->list[] = new P\InstanceCall('?->');
         $this->pObjectProperty($node->name);
         $this->pArgs($node);
-        $this->list[] = new P\MemberEnd('?->');
+        $this->list[] = new P\End('instanceCall');
     }
 
     protected function pExpr_NullsafePropertyFetch(
@@ -836,17 +835,17 @@ class Printer
     ) : void
     {
         $this->pDereferenceLhs($node->var);
-        $this->list[] = new P\Member('?->');
+        $this->list[] = new P\InstanceProp('?->');
         $this->pObjectProperty($node->name);
-        $this->list[] = new P\MemberEnd('?->');
+        $this->list[] = new P\End('instanceProp');
     }
 
     protected function pExpr_PropertyFetch(Expr\PropertyFetch $node) : void
     {
         $this->pDereferenceLhs($node->var);
-        $this->list[] = new P\Member('->');
+        $this->list[] = new P\InstanceProp('->');
         $this->pObjectProperty($node->name);
-        $this->list[] = new P\MemberEnd('->');
+        $this->list[] = new P\End('instanceProp');
     }
 
     protected function pExpr_PostInc(Expr\PostInc $node) : void
@@ -884,15 +883,14 @@ class Printer
     protected function pExpr_StaticPropertyFetch(Expr\StaticPropertyFetch $node) : void
     {
         $this->pStaticDereferenceLhs($node->class);
-        $this->list[] = new P\Member('::$');
+        $this->list[] = new P\StaticMember('::$');
         $this->pObjectProperty($node->name);
-        $this->list[] = new P\MemberEnd('::$');
     }
 
     protected function pExpr_StaticCall(Expr\StaticCall $node) : void
     {
         $this->pStaticDereferenceLhs($node->class);
-        $this->list[] = new P\Member('::');
+        $this->list[] = new P\StaticMember('::');
 
         if ($node->name instanceof Expr) {
             if ($node->name instanceof Expr\Variable) {
@@ -905,7 +903,6 @@ class Printer
         }
 
         $this->pArgs($node);
-        $this->list[] = new P\MemberEnd('::');
     }
 
     protected function pExpr_Ternary(Expr\Ternary $node) : void
@@ -1214,9 +1211,9 @@ class Printer
         $stringValue = str_replace(',', '.', $stringValue);
 
         // ensure that number is really printed as float
-        $this->list[] = preg_match('/^-?[0-9]+$/', $stringValue) ? $stringValue
-            . '.0'
-         : $stringValue;
+        $this->list[] = preg_match('/^-?[0-9]+$/', $stringValue)
+            ? $stringValue . '.0'
+            : $stringValue;
     }
 
     protected function pScalar_Encapsed(Scalar\Encapsed $node) : void

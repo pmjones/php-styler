@@ -33,14 +33,14 @@ class Apply extends Command
             return $exit;
         }
 
+        // statistics
         $time = (hrtime(true) - $start) / 1000000000;
+        $sum = number_format($time, 3);
+        $avg = number_format($time / $this->count, 3);
 
-        // report results
-        echo "Styled {$this->count} files in "
-            . number_format($time, 3)
-            . ' seconds ('
-            . number_format($time / $this->count, 3)
-            . ' seconds/file).'
+        // report
+        echo "Styled {$this->count} files in {$sum} seconds "
+            . "({$avg} seconds/file)"
             . PHP_EOL;
         return 0;
     }
