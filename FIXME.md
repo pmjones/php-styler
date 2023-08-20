@@ -1,7 +1,6 @@
 ```php
 // indenting after closure as argument
-$result = $this
-    ->veryLongProperty
+$result = $this->veryLongProperty
     ->veryLongMethod(
         $veryLongVariableName,
         new VeryLongClassName(static function () : void {
@@ -81,8 +80,9 @@ function (array $matches) : string {
 +                );
 
 
-// do not break members (or array dim fetches) on left side of assignment
-
+// do not break members (or array dim fetches) on left side of assignment.
+// can we set a node attr in the printer to state "i am on the left" (that
+// is, "i am the assignee") ?
 
 return sprintf(
     '%s %s %s',

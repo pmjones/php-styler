@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace PhpStyler;
 
 use PhpParser\ParserFactory;
+use PhpParser\NodeTraverser;
 
 abstract class TestCase extends \PHPUnit\Framework\TestCase
 {
@@ -24,6 +25,14 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
 
         /** @var array<\PhpParser\Node\Stmt> */
         $stmts = $parser->parse($source);
+
+        // additional information for styler
+        $visitor = new Visitor();
+        $traverser = new NodeTraverser();
+        $traverser->addVisitor($visitor);
+        $traverser->traverse($stmts);
+
+        // printable form
         $printables = $this->printer->__invoke($stmts);
         return $this->styler->__invoke($printables);
     }

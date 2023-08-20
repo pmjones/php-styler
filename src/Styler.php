@@ -989,7 +989,7 @@ class Styler
 
     protected function sInstanceCall(P\InstanceCall $p) : void
     {
-        if (! $this->state->args && ! $this->state->array) {
+        if (! $this->state->inArgsOrArray() && $p->isFluent()) {
             $this->state->instanceCall ++;
             $this->split(P\InstanceCall::class, $this->state->instanceCall, 'condense');
         }
@@ -997,22 +997,21 @@ class Styler
         $this->code[] = $p->operator;
     }
 
-    protected function sInstanceCallEnd(P\End $p) : void
+    protected function sInstanceCallEnd(P\InstanceCallEnd $p) : void
     {
-        if (! $this->state->args && ! $this->state->array) {
-            $this
-                ->split(
-                    P\InstanceCall::class,
-                    $this->state->instanceCall,
-                    'endCondense',
-                );
+        if (! $this->state->inArgsOrArray() && $p->isFluent()) {
+            $this->split(
+                P\InstanceCall::class,
+                $this->state->instanceCall,
+                'endCondense',
+            );
             $this->state->instanceCall --;
         }
     }
 
     protected function sInstanceProp(P\InstanceProp $p) : void
     {
-        if (! $this->state->args && ! $this->state->array) {
+        if (! $this->state->inArgsOrArray() && $p->isFluent()) {
             $this->state->instanceProp ++;
             $this->split(P\InstanceProp::class, $this->state->instanceProp, 'condense');
         }
@@ -1020,15 +1019,14 @@ class Styler
         $this->code[] = $p->operator;
     }
 
-    protected function sInstancePropEnd(P\End $p) : void
+    protected function sInstancePropEnd(P\InstancePropEnd $p) : void
     {
-        if (! $this->state->args && ! $this->state->array) {
-            $this
-                ->split(
-                    P\InstanceProp::class,
-                    $this->state->instanceProp,
-                    'endCondense',
-                );
+        if (! $this->state->inArgsOrArray() && $p->isFluent()) {
+            $this->split(
+                P\InstanceProp::class,
+                $this->state->instanceProp,
+                'endCondense',
+            );
             $this->state->instanceProp --;
         }
     }

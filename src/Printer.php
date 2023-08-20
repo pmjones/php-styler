@@ -798,10 +798,18 @@ class Printer
     protected function pExpr_MethodCall(Expr\MethodCall $node) : void
     {
         $this->pDereferenceLhs($node->var);
-        $this->list[] = new P\InstanceCall('->');
+        $this->list[] = new P\InstanceCall(
+            '->',
+            $node->getAttribute('fluent_num'),
+            $node->getAttribute('fluent_end'),
+        );
         $this->pObjectProperty($node->name);
         $this->pArgs($node);
-        $this->list[] = new P\End('instanceCall');
+        $this->list[] = new P\InstanceCallEnd(
+            '->',
+            $node->getAttribute('fluent_num'),
+            $node->getAttribute('fluent_end'),
+        );
     }
 
     protected function pExpr_New(Expr\New_ $node) : void
@@ -819,10 +827,18 @@ class Printer
     protected function pExpr_NullsafeMethodCall(Expr\NullsafeMethodCall $node) : void
     {
         $this->pDereferenceLhs($node->var);
-        $this->list[] = new P\InstanceCall('?->');
+        $this->list[] = new P\InstanceCall(
+            '?->',
+            $node->getAttribute('fluent_num'),
+            $node->getAttribute('fluent_end'),
+        );
         $this->pObjectProperty($node->name);
         $this->pArgs($node);
-        $this->list[] = new P\End('instanceCall');
+        $this->list[] = new P\InstanceCallEnd(
+            '?->',
+            $node->getAttribute('fluent_num'),
+            $node->getAttribute('fluent_end'),
+        );
     }
 
     protected function pExpr_NullsafePropertyFetch(
@@ -830,17 +846,33 @@ class Printer
     ) : void
     {
         $this->pDereferenceLhs($node->var);
-        $this->list[] = new P\InstanceProp('?->');
+        $this->list[] = new P\InstanceProp(
+            '?->',
+            $node->getAttribute('fluent_num'),
+            $node->getAttribute('fluent_end'),
+        );
         $this->pObjectProperty($node->name);
-        $this->list[] = new P\End('instanceProp');
+        $this->list[] = new P\InstancePropEnd(
+            '?->',
+            $node->getAttribute('fluent_num'),
+            $node->getAttribute('fluent_end'),
+        );
     }
 
     protected function pExpr_PropertyFetch(Expr\PropertyFetch $node) : void
     {
         $this->pDereferenceLhs($node->var);
-        $this->list[] = new P\InstanceProp('->');
+        $this->list[] = new P\InstanceProp(
+            '->',
+            $node->getAttribute('fluent_num'),
+            $node->getAttribute('fluent_end'),
+        );
         $this->pObjectProperty($node->name);
-        $this->list[] = new P\End('instanceProp');
+        $this->list[] = new P\InstancePropEnd(
+            '->',
+            $node->getAttribute('fluent_num'),
+            $node->getAttribute('fluent_end'),
+        );
     }
 
     protected function pExpr_PostInc(Expr\PostInc $node) : void
@@ -1498,7 +1530,7 @@ class Printer
     protected function pStmt_Expression(Stmt\Expression $node) : void
     {
         $this->p($node->expr);
-        $this->list[] = new P\End('expr'); // reset instance counts at the current level
+        $this->list[] = new P\End('expr');
     }
 
     protected function pStmt_For(Stmt\For_ $node) : void

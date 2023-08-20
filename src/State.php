@@ -50,4 +50,9 @@ class State
     {
         throw new RuntimeException("No such property: {$key}");
     }
+
+    public function inArgsOrArray() : bool
+    {
+        return $this->args || $this->array;
+    }
 }

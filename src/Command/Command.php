@@ -4,11 +4,13 @@ declare(strict_types=1);
 namespace PhpStyler\Command;
 
 use PhpParser\Node\Stmt;
+use PhpParser\NodeTraverser;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
 use PhpStyler\Config;
 use PhpStyler\Printer;
 use PhpStyler\Styler;
+use PhpStyler\Visitor;
 use RuntimeException;
 use UnexpectedValueException;
 
@@ -58,6 +60,12 @@ abstract class Command
 
         /** @var Stmt[] */
         $stmts = $this->parser->parse($code);
+
+        // additional information for styler
+        $visitor = new Visitor();
+        $traverser = new NodeTraverser();
+        $traverser->addVisitor($visitor);
+        $traverser->traverse($stmts);
 
         if ($options?->debugParser) {
             echo "Parser nodes: ";
