@@ -800,15 +800,15 @@ class Printer
         $this->pDereferenceLhs($node->var);
         $this->list[] = new P\InstanceCall(
             '->',
-            $node->getAttribute('fluent_num'),
-            $node->getAttribute('fluent_end'),
+            (int) $node->getAttribute('fluent_num'),
+            (int) $node->getAttribute('fluent_end'),
         );
         $this->pObjectProperty($node->name);
         $this->pArgs($node);
         $this->list[] = new P\InstanceCallEnd(
             '->',
-            $node->getAttribute('fluent_num'),
-            $node->getAttribute('fluent_end'),
+            (int) $node->getAttribute('fluent_num'),
+            (int) $node->getAttribute('fluent_end'),
         );
     }
 
@@ -829,15 +829,15 @@ class Printer
         $this->pDereferenceLhs($node->var);
         $this->list[] = new P\InstanceCall(
             '?->',
-            $node->getAttribute('fluent_num'),
-            $node->getAttribute('fluent_end'),
+            (int) $node->getAttribute('fluent_num'),
+            (int) $node->getAttribute('fluent_end'),
         );
         $this->pObjectProperty($node->name);
         $this->pArgs($node);
         $this->list[] = new P\InstanceCallEnd(
             '?->',
-            $node->getAttribute('fluent_num'),
-            $node->getAttribute('fluent_end'),
+            (int) $node->getAttribute('fluent_num'),
+            (int) $node->getAttribute('fluent_end'),
         );
     }
 
@@ -848,14 +848,14 @@ class Printer
         $this->pDereferenceLhs($node->var);
         $this->list[] = new P\InstanceProp(
             '?->',
-            $node->getAttribute('fluent_num'),
-            $node->getAttribute('fluent_end'),
+            (int) $node->getAttribute('fluent_num'),
+            (int) $node->getAttribute('fluent_end'),
         );
         $this->pObjectProperty($node->name);
         $this->list[] = new P\InstancePropEnd(
             '?->',
-            $node->getAttribute('fluent_num'),
-            $node->getAttribute('fluent_end'),
+            (int) $node->getAttribute('fluent_num'),
+            (int) $node->getAttribute('fluent_end'),
         );
     }
 
@@ -864,14 +864,14 @@ class Printer
         $this->pDereferenceLhs($node->var);
         $this->list[] = new P\InstanceProp(
             '->',
-            $node->getAttribute('fluent_num'),
-            $node->getAttribute('fluent_end'),
+            (int) $node->getAttribute('fluent_num'),
+            (int) $node->getAttribute('fluent_end'),
         );
         $this->pObjectProperty($node->name);
         $this->list[] = new P\InstancePropEnd(
             '->',
-            $node->getAttribute('fluent_num'),
-            $node->getAttribute('fluent_end'),
+            (int) $node->getAttribute('fluent_num'),
+            (int) $node->getAttribute('fluent_end'),
         );
     }
 
@@ -935,7 +935,7 @@ class Printer
     protected function pExpr_Ternary(Expr\Ternary $node) : void
     {
         if (! $node->if) {
-            $this->pInfixOp(Expr\Ternary::class, $node->cond, $node->else, true);
+            $this->pInfixOp(Expr\Ternary::class, $node->cond, $node->else);
             return;
         }
 

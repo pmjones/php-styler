@@ -173,7 +173,7 @@ class Code implements ArrayAccess
 
         foreach ($this->parts as $part) {
             if ($part instanceof Space\Space) {
-                $method = lcfirst(ltrim(strrchr(get_class($part), '\\'), '\\'));
+                $method = lcfirst(ltrim((string) strrchr(get_class($part), '\\'), '\\'));
                 $this->{$method}($part);
             } else {
                 $this->lines .= $part;
