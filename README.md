@@ -85,6 +85,16 @@ Safely preview how PHP-Styler will restructure a source PHP file:
 ./vendor/bin/php-styler preview ./src/My/Source/File.php
 ```
 
+Pass `-c` or `--config` to specify an alternative config file:
+
+```
+./vendor/bin/php-styler preview \
+    -c /path/to/other/php-styler.php \
+    ./src/My/Source/File.php
+```
+
+Pass `--debug-parser` to dump the PHP-Parser AST _Node_ objects into the preview, and/or `--debug-printer` to dump the PHP-Styler array of _Printable_ objects into the preview.
+
 ### Apply Formatting
 
 Apply PHP-Styler to all files identified in the `php-styler.php` config file, overwriting them with new formatting:
@@ -93,17 +103,12 @@ Apply PHP-Styler to all files identified in the `php-styler.php` config file, ov
 ./vendor/bin/php-styler apply
 ```
 
-Use `-c` or `--config` to specify an alternative config file:
+Pass `-c` or `--config` to specify an alternative config file:
 
 ```
 ./vendor/bin/php-styler apply -c /path/to/other/php-styler.php
 ```
 
-PHP-Styler will track the last time it was applied in `.php-styler.cache` and only apply styling to files modified since that time. Use `-f` or `--force` to force PHP-Styler to apply styling regardless of modification time:
-
-```
-./vendor/bin/php-styler apply -f
-```
 
 ### Configuration
 
@@ -116,13 +121,10 @@ use PhpStyler\Files;
 use PhpStyler\Styler;
 
 return new Config(
-    cache: __DIR__ . '/.php-styler.cache',
     files: new Files(__DIR__ . '/src'),
     styler: new Styler(),
 );
 ```
-
-The `cache` parameter specifies where the cache file is located; set to `null` to turn off caching.
 
 The `files` parameter is any `iterable` of file names to which PHP-Styler should be applied. (If the _Files_ object is not to your liking, try [Symfony Finder](https://symfony.com/doc/current/components/finder.html) instead.)
 
@@ -147,7 +149,6 @@ use PhpStyler\Files;
 use PhpStyler\Styler;
 
 return new Config(
-    cache: __DIR__ . '/.php-styler.cache',
     files: Files::find([
         __DIR__ . '/src',
     ]),
