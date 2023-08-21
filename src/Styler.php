@@ -173,21 +173,13 @@ class Styler
 
     protected function modifiers(?int $flags) : string
     {
-        return (
-            $flags & Stmt\Class_::MODIFIER_FINAL ? 'final ' : ''
-        ) . (
-            $flags & Stmt\Class_::MODIFIER_ABSTRACT ? 'abstract ' : ''
-        ) . (
-            $flags & Stmt\Class_::MODIFIER_PUBLIC ? 'public ' : ''
-        ) . (
-            $flags & Stmt\Class_::MODIFIER_PROTECTED ? 'protected ' : ''
-        ) . (
-            $flags & Stmt\Class_::MODIFIER_PRIVATE ? 'private ' : ''
-        ) . (
-            $flags & Stmt\Class_::MODIFIER_STATIC ? 'static ' : ''
-        ) . (
-            $flags & Stmt\Class_::MODIFIER_READONLY ? 'readonly ' : ''
-        );
+        return ($flags & Stmt\Class_::MODIFIER_FINAL ? 'final ' : '')
+            . ($flags & Stmt\Class_::MODIFIER_ABSTRACT ? 'abstract ' : '')
+            . ($flags & Stmt\Class_::MODIFIER_PUBLIC ? 'public ' : '')
+            . ($flags & Stmt\Class_::MODIFIER_PROTECTED ? 'protected ' : '')
+            . ($flags & Stmt\Class_::MODIFIER_PRIVATE ? 'private ' : '')
+            . ($flags & Stmt\Class_::MODIFIER_STATIC ? 'static ' : '')
+            . ($flags & Stmt\Class_::MODIFIER_READONLY ? 'readonly ' : '');
     }
 
     protected function maybeNewline(Printable $p) : void
@@ -1158,12 +1150,18 @@ class Styler
     protected function sPrecedence(P\Precedence $p) : void
     {
         $this->code[] = '(';
-        $this->split(P\Precedence::class, null, 'condense');
+
+        if (! $p->ternary) {
+            $this->split(P\Precedence::class, null, 'condense');
+        }
     }
 
-    protected function sPrecedenceEnd(P\End $p) : void
+    protected function sPrecedenceEnd(P\PrecedenceEnd $p) : void
     {
-        $this->split(P\Precedence::class, null, 'endCondense');
+        if (! $p->ternary) {
+            $this->split(P\Precedence::class, null, 'endCondense');
+        }
+
         $this->code[] = ')';
     }
 

@@ -39,6 +39,7 @@ class Code implements ArrayAccess
      */
     protected array $split = [
         'concat',
+        'ternary',
         'array_0',
         'array_1',
         'array_2',
@@ -50,7 +51,6 @@ class Code implements ArrayAccess
         'precedence',
         'bool_or',
         'bool_and',
-        'ternary',
         'instance_op_0',
         'instance_op_1',
         'instance_op_2',

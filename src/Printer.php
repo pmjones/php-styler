@@ -935,18 +935,18 @@ class Printer
     protected function pExpr_Ternary(Expr\Ternary $node) : void
     {
         if (! $node->if) {
-            $this->pInfixOp(Expr\Ternary::class, $node->cond, $node->else);
+            $this->pInfixOp(Expr\Ternary::class, $node->cond, $node->else, true);
             return;
         }
 
         // lifted from nInfixOp
         list($prec, $assoc) = $this->precedenceMap[Expr\Ternary::class];
-        $this->pPrec($node->cond, $prec, $assoc, -1);
+        $this->pPrec($node->cond, $prec, $assoc, -1, true);
         $this->list[] = new P\Ternary('?');
         $this->p($node->if);
         $this->list[] = new P\End('ternary');
         $this->list[] = new P\Ternary(':');
-        $this->pPrec($node->else, $prec, $assoc, 1);
+        $this->pPrec($node->else, $prec, $assoc, 1, true);
         $this->list[] = new P\End('ternary');
     }
 
@@ -1173,6 +1173,7 @@ class Printer
         int $parentPrecedence,
         int $parentAssociativity,
         int $childPosition,
+        bool $ternary = false,
     ) : void
     {
         $class = get_class($node);
@@ -1185,9 +1186,9 @@ class Printer
                 || $parentPrecedence === $childPrecedence
                 && $parentAssociativity !== $childPosition
             ) {
-                $this->list[] = new P\Precedence();
+                $this->list[] = new P\Precedence($ternary);
                 $this->p($node);
-                $this->list[] = new P\End('precedence');
+                $this->list[] = new P\PrecedenceEnd($ternary);
                 return;
             }
         }
@@ -1238,9 +1239,9 @@ class Printer
         $stringValue = str_replace(',', '.', $stringValue);
 
         // ensure that number is really printed as float
-        $this->list[] = preg_match('/^-?[0-9]+$/', $stringValue)
-            ? $stringValue . '.0'
-            : $stringValue;
+        $this->list[] = preg_match('/^-?[0-9]+$/', $stringValue) ? $stringValue
+            . '.0'
+         : $stringValue;
     }
 
     protected function pScalar_Encapsed(Scalar\Encapsed $node) : void
