@@ -38,6 +38,7 @@ class Code implements ArrayAccess
      * @var string[]
      */
     protected array $split = [
+        'concat',
         'array_0',
         'array_1',
         'array_2',
@@ -70,7 +71,6 @@ class Code implements ArrayAccess
         'attribute_args_3',
         'attribute_args_4',
         'attribute_args_5',
-        'concat',
     ];
 
     /**
