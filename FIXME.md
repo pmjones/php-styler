@@ -59,27 +59,6 @@ function (array $matches) : string {
    return $this->cssMatcher($matches);
 };
 
-// splits member instead of argument, when argument
-// makes more sense
--            $html .= $this->radio(
--                $name,
--                $value,
--                (string) $optionValue,
--                (string) $optionLabel,
--                $attr,
--                $__attr
--            );
-+            $html .= $this
-+                ->radio(
-+                    $name,
-+                    $value,
-+                    (string) $optionValue,
-+                    (string) $optionLabel,
-+                    $attr,
-+                    $__attr,
-+                );
-
-
 // do not break members (or array dim fetches) on left side of assignment.
 // can we set a node attr in the printer to state "i am on the left" (that
 // is, "i am the assignee") ?
@@ -91,8 +70,7 @@ return sprintf(
     $this->server->get('SERVER_PROTOCOL'),
 )
     . "\r\n"
-    . $this
-        ->headers
+    . $this->headers
     . $cookieHeader
     . "\r\n"
     . $content;
