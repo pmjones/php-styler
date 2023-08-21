@@ -23,6 +23,7 @@ class Split extends Space
         P\FunctionParams::class => 'function_params',
         P\InstanceCall::class => 'instance_op',
         P\InstanceProp::class => 'instance_op',
+        P\Implements_::class => 'implements',
         P\Precedence::class => 'precedence',
     ];
 

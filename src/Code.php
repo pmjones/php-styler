@@ -47,6 +47,7 @@ class Code implements ArrayAccess
         'array_4',
         'array_5',
         'function_params',
+        'implements',
         'cond',
         'precedence',
         'bool_or',

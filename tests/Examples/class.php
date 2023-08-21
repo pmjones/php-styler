@@ -67,3 +67,16 @@ class WithAttributesAndComments
 class Local extends \Global
 {
 }
+
+abstract class ValueCollection extends ValueObject implements
+    ArrayAccess,
+    Countable,
+    IteratorAggregate
+{
+    /**
+     * @param mixed[] $items
+     */
+    public function __construct(protected readonly array $items = [])
+    {
+    }
+}

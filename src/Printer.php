@@ -1046,6 +1046,7 @@ class Printer
         if ($node->implements ?? null) {
             $this->list[] = new P\Implements_();
             $this->pSeparate('implements', $node->implements);
+            $this->list[] = new P\End('implements');
         }
     }
 

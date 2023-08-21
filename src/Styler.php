@@ -829,9 +829,23 @@ class Styler
         $this->commit();
     }
 
-    protected function sImplements(P\Implements_ $implements) : void
+    protected function sImplements(P\Implements_ $p) : void
     {
         $this->code[] = ' implements ';
+        $this->split(P\Implements_::class, null, 'condense');
+    }
+
+    protected function sImplementsSeparator(P\Separator $p) : void
+    {
+        $this->clip();
+        $this->code[] = ', ';
+        $this->split(P\Implements_::class, null, 'mid');
+    }
+
+    protected function sImplementsEnd(P\End $p) : void
+    {
+        $this->split(P\Implements_::class, null, 'endCondense');
+        $this->clip();
     }
 
     protected function sInfix(P\Infix $p) : void
