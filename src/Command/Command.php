@@ -3,30 +3,13 @@ declare(strict_types=1);
 
 namespace PhpStyler\Command;
 
-use PhpParser\Node\Stmt;
-use PhpParser\NodeTraverser;
-use PhpParser\Parser;
-use PhpParser\ParserFactory;
 use PhpStyler\Config;
-use PhpStyler\Printer;
+use PhpStyler\Service;
 use PhpStyler\Styler;
-use PhpStyler\Visitor;
 use RuntimeException;
-use UnexpectedValueException;
 
 abstract class Command
 {
-    protected Parser $parser;
-
-    protected Printer $printer;
-
-    public function __construct()
-    {
-        $parserFactory = new ParserFactory();
-        $this->parser = $parserFactory->create(ParserFactory::ONLY_PHP7);
-        $this->printer = new Printer();
-    }
-
     protected function load(string $file) : mixed
     {
         return require $file;
@@ -55,30 +38,12 @@ abstract class Command
         PreviewOptions $options = null,
     ) : string
     {
-        /** @var string */
-        $code = file_get_contents($file);
-
-        /** @var Stmt[] */
-        $stmts = $this->parser->parse($code);
-
-        // additional information for styler
-        $visitor = new Visitor();
-        $traverser = new NodeTraverser();
-        $traverser->addVisitor($visitor);
-        $traverser->traverse($stmts);
-
-        if ($options?->debugParser) {
-            echo "Parser nodes: ";
-            var_dump($stmts);
-        }
-
-        $printables = $this->printer->__invoke($stmts);
-
-        if ($options?->debugPrinter) {
-            echo "Printables: ";
-            var_dump($printables);
-        }
-
-        return $styler->__invoke($printables);
+        $service = new Service(
+            $styler,
+            $options?->debugParser ?? false,
+            $options?->debugPrinter ?? false,
+        );
+        $code = (string) file_get_contents($file);
+        return $service($code);
     }
 }

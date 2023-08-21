@@ -6,7 +6,7 @@ namespace PhpStyler\Command;
 use AutoShell\Help;
 use PhpParser\ParserFactory;
 use PhpParser\Parser;
-use PhpStyler\Printer;
+use PhpStyler\Service;
 use PhpStyler\Styler;
 
 #[Help("Prints a preview of a styled source file.")]
@@ -19,7 +19,12 @@ class Preview extends Command
     {
         $configFile = $options->configFile ?? $this->findConfigFile();
         $config = $this->loadConfigFile($configFile);
-        echo $this->style($sourceFile, $config->styler, $options);
+        $service = new Service(
+            $config->styler,
+            $options->debugParser ?? false,
+            $options->debugPrinter ?? false,
+        );
+        echo $service((string) file_get_contents($sourceFile));
         return 0;
     }
 }

@@ -4,11 +4,8 @@ declare(strict_types=1);
 namespace PhpStyler\Command;
 
 use AutoShell\Help;
-use PhpParser\Parser;
-use PhpParser\ParserFactory;
 use PhpStyler\Config;
-use PhpStyler\Printer;
-use PhpStyler\Styler;
+use PhpStyler\Service;
 use PhpParser\Error as ParserError;
 
 #[Help("Applies styling to the configured files, rewriting them in place.")]
@@ -47,13 +44,15 @@ class Apply extends Command
 
     protected function apply(Config $config) : int
     {
+        $service = new Service($config->styler);
+
         foreach ($config->files as $file) {
             $file = (string) $file;
             $this->count ++;
             echo $file . PHP_EOL;
 
             try {
-                $code = $this->style($file, $config->styler);
+                $code = $service((string) file_get_contents($file));
             } catch (ParserError $e) {
                 echo $e->getMessage() . PHP_EOL;
                 return 1;

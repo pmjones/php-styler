@@ -7,7 +7,7 @@ class StylerTest extends TestCase
 {
     public function testStyle_empty() : void
     {
-        $actual = $this->styler->__invoke([]);
+        $actual = $this->service->__invoke('');
         $this->assertSame("<?php\n", $actual);
     }
 
