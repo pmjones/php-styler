@@ -7,8 +7,8 @@ class InstancePropEnd extends Printable
 {
     public function __construct(
         public readonly string $operator,
-        public readonly int $fluentNum,
-        public readonly int $fluentEnd,
+        public readonly mixed $fluentNum,
+        public readonly mixed $fluentEnd,
     ) {
     }
 
