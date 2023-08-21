@@ -12,7 +12,7 @@ class InstanceProp extends Printable
     ) {
     }
 
-    public function isFluent()
+    public function isFluent() : bool
     {
         return $this->fluentEnd > 1;
     }
