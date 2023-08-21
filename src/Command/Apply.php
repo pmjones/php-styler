@@ -6,7 +6,7 @@ namespace PhpStyler\Command;
 use AutoShell\Help;
 use PhpStyler\Config;
 use PhpStyler\Service;
-use PhpParser\Error as ParserError;
+use PhpParser\Error;
 
 #[Help("Applies styling to the configured files, rewriting them in place.")]
 class Apply extends Command
@@ -23,7 +23,7 @@ class Apply extends Command
         // apply styling
         try {
             $count = $this->style($config);
-        } catch (ParserError $e) {
+        } catch (Error $e) {
             echo $e->getMessage() . PHP_EOL;
             return 1;
         }

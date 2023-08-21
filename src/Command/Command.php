@@ -5,7 +5,6 @@ namespace PhpStyler\Command;
 
 use PhpStyler\Config;
 use PhpStyler\Service;
-use PhpStyler\Styler;
 use RuntimeException;
 
 abstract class Command
