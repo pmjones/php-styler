@@ -20,9 +20,9 @@ class Apply extends Command
         echo "Load config " . $configFile . PHP_EOL;
         $config = $this->loadConfigFile($configFile);
 
-        // set and apply styling
+        // apply styling
         try {
-            $count = $this->apply($config);
+            $count = $this->style($config);
         } catch (ParserError $e) {
             echo $e->getMessage() . PHP_EOL;
             return 1;
@@ -38,7 +38,7 @@ class Apply extends Command
         return 0;
     }
 
-    protected function apply(Config $config) : int
+    protected function style(Config $config) : int
     {
         $count = 0;
         $service = new Service($config->styler);

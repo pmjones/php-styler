@@ -10,15 +10,10 @@ use RuntimeException;
 
 abstract class Command
 {
-    protected function load(string $file) : mixed
-    {
-        return require $file;
-    }
-
     protected function loadConfigFile(string $configFile) : Config
     {
         /** @var Config */
-        return $this->load($configFile);
+        return require $configFile;
     }
 
     protected function findConfigFile() : string
@@ -30,20 +25,5 @@ abstract class Command
         }
 
         throw new RuntimeException("Could not find {$file}");
-    }
-
-    protected function style(
-        string $file,
-        Styler $styler,
-        PreviewOptions $options = null,
-    ) : string
-    {
-        $service = new Service(
-            $styler,
-            $options?->debugParser ?? false,
-            $options?->debugPrinter ?? false,
-        );
-        $code = (string) file_get_contents($file);
-        return $service($code);
     }
 }
