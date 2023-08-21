@@ -30,8 +30,14 @@ class Split extends Space
 
     public readonly ?string $type;
 
+    /**
+     * @var mixed[]
+     */
     public readonly array $args;
 
+    /**
+     * @param mixed[] $args
+     */
     public function __construct(
         string $class,
         int $level = null,

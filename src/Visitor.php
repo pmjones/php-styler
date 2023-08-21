@@ -8,11 +8,14 @@ use PhpParser\NodeVisitorAbstract;
 
 class Visitor extends NodeVisitorAbstract
 {
-    protected $fluent_idx = 0;
+    protected int $fluent_idx = 0;
 
-    protected $fluent_rev = [];
+    /**
+     * @var int[]
+     */
+    protected array $fluent_rev = [];
 
-    public function enterNode(Node $node) : void
+    public function enterNode(Node $node) : null|int|Node
     {
         if (
             $node instanceof Node\Expr\MethodCall
@@ -29,9 +32,14 @@ class Visitor extends NodeVisitorAbstract
         } else {
             $this->fluent_idx ++;
         }
+
+        return null;
     }
 
-    public function leaveNode(Node $node) : void
+    /**
+     * @return null|int|Node|Node[]
+     */
+    public function leaveNode(Node $node) : null|int|Node|array
     {
         if (
             $node instanceof Node\Expr\MethodCall
@@ -47,5 +55,7 @@ class Visitor extends NodeVisitorAbstract
             $node->setAttribute('fluent_end', $fluent_end);
             $node->setAttribute('fluent_num', $fluent_end - $fluent_rev + 1);
         }
+
+        return null;
     }
 }
