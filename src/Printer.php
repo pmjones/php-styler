@@ -172,9 +172,9 @@ class Printer
     protected function pArgs(Node $node) : void
     {
         $count = count($node->args ?? []);
-        $this->list[] = new P\Args($count);
+        $this->list[] = new P\Args($count, $node->getAttribute('has_closure_arg'));
         $this->pSeparate('arg', $node->args ?? null);
-        $this->list[] = new P\ArgsEnd($count);
+        $this->list[] = new P\ArgsEnd($count, $node->getAttribute('has_closure_arg'));
     }
 
     protected function pAttribute(Node\Attribute $node) : void
@@ -688,6 +688,14 @@ class Printer
         $this->p($node->var);
     }
 
+    protected function pClosureParams(Node $node) : void
+    {
+        $count = count($node->params ?? []);
+        $this->list[] = new P\ClosureParams($count);
+        $this->pSeparate('closureParam', $node->params ?? null);
+        $this->list[] = new P\ClosureParamsEnd($count);
+    }
+
     protected function pExpr_ConstFetch(Expr\ConstFetch $node) : void
     {
         $name = $this->name($node->name);
@@ -749,6 +757,14 @@ class Printer
         $this->pArgs($node);
     }
 
+    protected function pFunctionParams(Node $node) : void
+    {
+        $count = count($node->params ?? []);
+        $this->list[] = new P\FunctionParams($count);
+        $this->pSeparate('functionParam', $node->params ?? null);
+        $this->list[] = new P\FunctionParamsEnd($count);
+    }
+
     protected function pExpr_Include(Expr\Include_ $node) : void
     {
         static $map = [
@@ -766,7 +782,7 @@ class Printer
         list($prec, $assoc) = $this->precedenceMap[Expr\Instanceof_::class];
         $this->pPrec($node->expr, $prec, $assoc, -1);
         $this->list[] = new P\InfixOp(Expr\Instanceof_::class);
-        $this->pNewVariable($node->class);
+        $this->pNewVariable($node);
     }
 
     protected function pExpr_Isset(Expr\Isset_ $node) : void
@@ -817,9 +833,9 @@ class Printer
         $this->list[] = new P\New_();
 
         if ($node->class instanceof Stmt\Class_) {
-            $this->pNewAnonymous($node->class, $node->args);
+            $this->pNewAnonymous($node);
         } else {
-            $this->pNewVariable($node->class);
+            $this->pNewVariable($node);
             $this->pArgs($node);
         }
     }
@@ -1095,34 +1111,37 @@ class Printer
         $this->list[] = $this->name($node);
     }
 
-    /**
-     * @param Node[] $args
-     */
-    protected function pNewAnonymous(Stmt\Class_ $node, array $args) : void
+    protected function pNewAnonymous(Expr\New_ $node) : void
     {
+        /** @var Stmt\Class_ */
+        $class = $node->class;
+        $args = $node->args;
         $count = count($args);
-        $this->pAttributeGroups($node);
-        $this->pModifiers($node);
+        $this->pAttributeGroups($class);
+        $this->pModifiers($class);
         $this->list[] = new P\Class_(null, null);
-        $this->list[] = new P\Args($count);
+        $this->list[] = new P\Args($count, $node->getAttribute('has_closure_arg'));
         $this->pSeparate('arg', $args);
-        $this->list[] = new P\ArgsEnd($count);
-        $this->pExtends($node);
-        $this->pImplements($node);
+        $this->list[] = new P\ArgsEnd($count, $node->getAttribute('has_closure_arg'));
+        $this->pExtends($class);
+        $this->pImplements($class);
         $this->pBody('closure');
-        $this->p($node->stmts);
+        $this->p($class->stmts);
         $this->pBodyEnd('closure');
     }
 
-    protected function pNewVariable(Node $node) : void
+    protected function pNewVariable(Expr\New_|Expr\Instanceof_ $node) : void
     {
-        if (! $this->newOperandRequiresParens($node)) {
-            $this->p($node);
+        /** @var Stmt\Class_ */
+        $class = $node->class;
+
+        if (! $this->newOperandRequiresParens($class)) {
+            $this->p($class);
             return;
         }
 
         $this->list[] = '(';
-        $this->p($node);
+        $this->p($class);
         $this->list[] = ')';
     }
 
@@ -1144,22 +1163,6 @@ class Printer
         $this->pVariadic($node);
         $this->p($node->var);
         $this->pDefaultValue($node);
-    }
-
-    protected function pFunctionParams(Node $node) : void
-    {
-        $count = count($node->params ?? []);
-        $this->list[] = new P\FunctionParams($count);
-        $this->pSeparate('functionParam', $node->params ?? null);
-        $this->list[] = new P\FunctionParamsEnd($count);
-    }
-
-    protected function pClosureParams(Node $node) : void
-    {
-        $count = count($node->params ?? []);
-        $this->list[] = new P\ClosureParams($count);
-        $this->pSeparate('closureParam', $node->params ?? null);
-        $this->list[] = new P\ClosureParamsEnd($count);
     }
 
     protected function pPostfixOp(string $class, Node $node) : void
@@ -1814,7 +1817,7 @@ class Printer
     {
         $count = count($node->types);
         $this->list[] = new P\TryCatch();
-        $this->list[] = new P\Args($count);
+        $this->list[] = new P\Args($count, false);
         $types = [];
 
         foreach ($node->types as $type) {
@@ -1828,7 +1831,7 @@ class Printer
             $this->p($node->var);
         }
 
-        $this->list[] = new P\ArgsEnd($count);
+        $this->list[] = new P\ArgsEnd($count, false);
         $this->pBody('tryCatch');
         $this->p($node->stmts);
     }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace PhpStyler;
 
 use PhpParser\Node;
+use PhpParser\Node\Expr;
 use PhpParser\NodeVisitorAbstract;
 
 class Visitor extends NodeVisitorAbstract
@@ -18,10 +19,10 @@ class Visitor extends NodeVisitorAbstract
     public function enterNode(Node $node) : null|int|Node
     {
         if (
-            $node instanceof Node\Expr\MethodCall
-            || $node instanceof Node\Expr\NullsafeMethodCall
-            || $node instanceof Node\Expr\NullsafePropertyFetch
-            || $node instanceof Node\Expr\PropertyFetch
+            $node instanceof Expr\MethodCall
+            || $node instanceof Expr\NullsafeMethodCall
+            || $node instanceof Expr\NullsafePropertyFetch
+            || $node instanceof Expr\PropertyFetch
         ) {
             $this->fluent_rev[$this->fluent_idx] ??= 0;
             $this->fluent_rev[$this->fluent_idx] ++;
@@ -33,6 +34,25 @@ class Visitor extends NodeVisitorAbstract
             $this->fluent_idx ++;
         }
 
+        if (
+            $node instanceof Expr\FuncCall
+            || $node instanceof Expr\MethodCall
+            || $node instanceof Expr\NullsafeMethodCall
+            || $node instanceof Expr\New_
+            || $node instanceof Expr\StaticCall
+        ) {
+            $node->setAttribute('has_closure_arg', false);
+
+            foreach ($node->getArgs() as $arg) {
+                if (
+                    $arg->value instanceof Expr\Closure
+                    || $arg->value instanceof Expr\ArrowFunction
+                ) {
+                    $node->setAttribute('has_closure_arg', true);
+                }
+            }
+        }
+
         return null;
     }
 
@@ -42,10 +62,10 @@ class Visitor extends NodeVisitorAbstract
     public function leaveNode(Node $node) : null|int|Node|array
     {
         if (
-            $node instanceof Node\Expr\MethodCall
-            || $node instanceof Node\Expr\NullsafeMethodCall
-            || $node instanceof Node\Expr\NullsafePropertyFetch
-            || $node instanceof Node\Expr\PropertyFetch
+            $node instanceof Expr\MethodCall
+            || $node instanceof Expr\NullsafeMethodCall
+            || $node instanceof Expr\NullsafePropertyFetch
+            || $node instanceof Expr\PropertyFetch
         ) {
             // visitor encounters the nodes in reverse order, so reverse
             // the fluent_rev to get a count up instead of a count down

@@ -32,6 +32,11 @@ class Code implements ArrayAccess
      */
     protected array $splitCalls = [];
 
+    /**
+     * @var array<string, bool>
+     */
+    protected array $force = [];
+
     protected string $indent = '';
 
     /**
@@ -122,11 +127,24 @@ class Code implements ArrayAccess
         int $level = null,
         string $type = null,
         mixed ...$args,
-    ) : void
+    ) : Space\Split
     {
         $split = new Space\Split($class, $level, $type, ...$args);
         $this[] = $split;
         $this->splitCalls[$split->rule] = true;
+        return $split;
+    }
+
+    public function forceSplit(
+        string $class,
+        int $level = null,
+        string $type = null,
+        mixed ...$args,
+    ) : Space\Split
+    {
+        $split = $this->addSplit($class, $level, $type, ...$args);
+        $this->force[$split->rule] = true;
+        return $split;
     }
 
     public function commit() : void
@@ -136,16 +154,17 @@ class Code implements ArrayAccess
         $this->splitApply = [];
         $this->setLines();
         $this->multiline = true;
-        $atLeastOneLineTooLong = $this->atLeastOneLineTooLong();
 
-        while ($atLeastOneLineTooLong && $split) {
+        while ($this->keepSplitting() && $split) {
             $this->indent = $oldIndent;
             $rule = array_shift($split);
+            $applySplit = $this->splitCalls[$rule] ?? false;
+            $applyForce = $this->force[$rule] ?? false;
+            unset($this->force[$rule]);
 
-            if ($this->splitCalls[$rule] ?? false) {
+            if ($applySplit || $applyForce) {
                 $this->splitApply[] = $rule;
                 $this->setLines();
-                $atLeastOneLineTooLong = $this->atLeastOneLineTooLong();
             }
         }
 
@@ -154,11 +173,16 @@ class Code implements ArrayAccess
         // retain in file and reset for next round
         $this->file .= $this->lines;
         $this->splitCalls = [];
+        $this->force = [];
         $this->parts = [$this->eol . $this->indent];
     }
 
-    protected function atLeastOneLineTooLong() : bool
+    protected function keepSplitting() : bool
     {
+        if ($this->force) {
+            return true;
+        }
+
         foreach (explode($this->eol, $this->lines) as $line) {
             if (strlen($line) > $this->lineLen) {
                 return true;

@@ -171,6 +171,16 @@ class Styler
         }
     }
 
+    protected function force(
+        string $class,
+        int $level = null,
+        string $type = null,
+        mixed ...$args,
+    ) : void
+    {
+        $this->code->forceSplit($class, $level, $type, ...$args);
+    }
+
     protected function modifiers(?int $flags) : string
     {
         return ($flags & Stmt\Class_::MODIFIER_FINAL ? 'final ' : '')
@@ -237,7 +247,9 @@ class Styler
         $this->state->args ++;
         $this->code[] = '(';
 
-        if ($p->count) {
+        if ($p->hasClosureArg) {
+            $this->force(P\Args::class, $this->state->args);
+        } elseif ($p->count) {
             $this->split(P\Args::class, $this->state->args);
         }
     }
@@ -251,7 +263,9 @@ class Styler
 
     protected function sArgsEnd(P\ArgsEnd $p) : void
     {
-        if ($p->count) {
+        if ($p->hasClosureArg) {
+            $this->force(P\Args::class, $this->state->args, 'end', ',');
+        } elseif ($p->count) {
             $this->split(P\Args::class, $this->state->args, 'end', ',');
         }
 
@@ -471,11 +485,6 @@ class Styler
         $this->outdent();
         $this->condense();
         $this->code[] = '}';
-
-        if ($this->state->args) {
-            $this->commit();
-            $this->newline();
-        }
     }
 
     protected function sContinue(P\Continue_ $p) : void
