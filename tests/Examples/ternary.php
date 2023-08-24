@@ -22,7 +22,7 @@ $veryLongVariableName = is_array($veryLongVariableName)
     ? $veryLongVariableName[key($veryLongVariableName)]
     : $veryLongVariableName;
 
-// ternary in argument
+// ternary in new
 $useTraitAs = new P\UseTraitAs(
     $node->trait ? $this->name($node->trait) : null,
     $this->name($node->method),
@@ -30,10 +30,27 @@ $useTraitAs = new P\UseTraitAs(
     $node->newName ? $this->name($node->newName) : null,
 );
 
-// short ternary in argument
+// short ternary in new
 $useTraitAs = new P\UseTraitAs(
     $node->trait ?: $this->name($node->trait),
     $this->name($node->method),
     $node->newModifier,
     $node->newName ?: $this->name($node->newName),
 );
+
+// ternary in method
+$useTraitAs = $this->veryLongFunctionName(
+    $node->trait ? $this->name($node->trait) : null,
+    $this->name($node->method),
+    $node->newModifier,
+    $node->newName ? $this->name($node->newName) : null,
+);
+
+// short ternary in func
+$useTraitAs = $this->veryLongFunctionName(
+    $node->trait ?: $this->name($node->trait),
+    $this->name($node->method),
+    $node->newModifier,
+    $node->newName ?: $this->name($node->newName),
+);
+
