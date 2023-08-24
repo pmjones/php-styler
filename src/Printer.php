@@ -815,14 +815,14 @@ class Printer
     protected function pExpr_MethodCall(Expr\MethodCall $node) : void
     {
         $this->pDereferenceLhs($node->var);
-        $this->list[] = new P\InstanceCall(
+        $this->list[] = new P\InstanceOp(
             '->',
             $node->getAttribute('fluent_num'),
             $node->getAttribute('fluent_end'),
         );
         $this->pObjectProperty($node->name);
         $this->pArgs($node);
-        $this->list[] = new P\InstanceCallEnd(
+        $this->list[] = new P\InstanceOpEnd(
             '->',
             $node->getAttribute('fluent_num'),
             $node->getAttribute('fluent_end'),
@@ -844,14 +844,14 @@ class Printer
     protected function pExpr_NullsafeMethodCall(Expr\NullsafeMethodCall $node) : void
     {
         $this->pDereferenceLhs($node->var);
-        $this->list[] = new P\InstanceCall(
+        $this->list[] = new P\InstanceOp(
             '?->',
             $node->getAttribute('fluent_num'),
             $node->getAttribute('fluent_end'),
         );
         $this->pObjectProperty($node->name);
         $this->pArgs($node);
-        $this->list[] = new P\InstanceCallEnd(
+        $this->list[] = new P\InstanceOpEnd(
             '?->',
             $node->getAttribute('fluent_num'),
             $node->getAttribute('fluent_end'),
@@ -863,13 +863,13 @@ class Printer
     ) : void
     {
         $this->pDereferenceLhs($node->var);
-        $this->list[] = new P\InstanceProp(
+        $this->list[] = new P\InstanceOp(
             '?->',
             $node->getAttribute('fluent_num'),
             $node->getAttribute('fluent_end'),
         );
         $this->pObjectProperty($node->name);
-        $this->list[] = new P\InstancePropEnd(
+        $this->list[] = new P\InstanceOpEnd(
             '?->',
             $node->getAttribute('fluent_num'),
             $node->getAttribute('fluent_end'),
@@ -879,13 +879,13 @@ class Printer
     protected function pExpr_PropertyFetch(Expr\PropertyFetch $node) : void
     {
         $this->pDereferenceLhs($node->var);
-        $this->list[] = new P\InstanceProp(
+        $this->list[] = new P\InstanceOp(
             '->',
             $node->getAttribute('fluent_num'),
             $node->getAttribute('fluent_end'),
         );
         $this->pObjectProperty($node->name);
-        $this->list[] = new P\InstancePropEnd(
+        $this->list[] = new P\InstanceOpEnd(
             '->',
             $node->getAttribute('fluent_num'),
             $node->getAttribute('fluent_end'),

@@ -1005,47 +1005,21 @@ class Styler
         $this->code[] = $p->operator;
     }
 
-    protected function sInstanceCall(P\InstanceCall $p) : void
+    protected function sInstanceOp(P\InstanceOp $p) : void
     {
         if (! $this->state->inArgsOrArray() && $p->isFluent()) {
-            $this->state->instanceCall ++;
-            $this->split(P\InstanceCall::class, $this->state->instanceCall, 'condense');
+            $this->state->instanceOp ++;
+            $this->split(P\InstanceOp::class, $this->state->instanceOp, 'condense');
         }
 
-        $this->code[] = $p->operator;
+        $this->code[] = $p->str;
     }
 
-    protected function sInstanceCallEnd(P\InstanceCallEnd $p) : void
+    protected function sInstanceOpEnd(P\InstanceOpEnd $p) : void
     {
         if (! $this->state->inArgsOrArray() && $p->isFluent()) {
-            $this->split(
-                P\InstanceCall::class,
-                $this->state->instanceCall,
-                'endCondense',
-            );
-            $this->state->instanceCall --;
-        }
-    }
-
-    protected function sInstanceProp(P\InstanceProp $p) : void
-    {
-        if (! $this->state->inArgsOrArray() && $p->isFluent()) {
-            $this->state->instanceProp ++;
-            $this->split(P\InstanceProp::class, $this->state->instanceProp, 'condense');
-        }
-
-        $this->code[] = $p->operator;
-    }
-
-    protected function sInstancePropEnd(P\InstancePropEnd $p) : void
-    {
-        if (! $this->state->inArgsOrArray() && $p->isFluent()) {
-            $this->split(
-                P\InstanceProp::class,
-                $this->state->instanceProp,
-                'endCondense',
-            );
-            $this->state->instanceProp --;
+            $this->split(P\InstanceOp::class, $this->state->instanceOp, 'endCondense');
+            $this->state->instanceOp --;
         }
     }
 

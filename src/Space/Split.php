@@ -21,8 +21,7 @@ class Split extends Space
         P\ClosureParams::class => 'closure_params',
         P\Cond::class => 'cond',
         P\FunctionParams::class => 'function_params',
-        P\InstanceCall::class => 'instance_op',
-        P\InstanceProp::class => 'instance_op',
+        P\InstanceOp::class => 'instance_op',
         P\Implements_::class => 'implements',
         P\Precedence::class => 'precedence',
     ];

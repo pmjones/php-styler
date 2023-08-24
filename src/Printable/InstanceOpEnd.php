@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace PhpStyler\Printable;
 
-class InstanceCallEnd extends Printable
+class InstanceOpEnd extends Printable
 {
     public function __construct(
-        public readonly string $operator,
+        public readonly string $str,
         public readonly mixed $fluentNum,
         public readonly mixed $fluentEnd,
     ) {
