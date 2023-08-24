@@ -47,8 +47,8 @@ $sourceDirs = explode(
         : $basePath
 );
 
- // splits at precedence "too soon".
-// would prefer splits at booleans then ternary.
+// splits at precedence "too soon".
+// would prefer splits at boolean, then at ternary.
 return ! isset($path[0]) || '/' === $path[0] || false !== (
     $colonPos = strpos($path, ':')
 ) && (
@@ -56,4 +56,19 @@ return ! isset($path[0]) || '/' === $path[0] || false !== (
         $slashPos = strpos($path, '/')
     ) || false === $slashPos
 ) ? "./{$path}" : $path;
+
+// coalesce line split here messes up indents.
+function foo_broke()
+{
+    $maxlifetime = (int) (($this->ttl instanceof \Closure ? ($this->ttl)() : $this->ttl)
+        ?? \ini_get('session.gc_maxlifetime')
+);
+}
+
+// fix by moving a bit of code around.
+function foo_fixed()
+{
+    $ttl = $this->ttl instanceof \Closure ? ($this->ttl)() : $this->ttl;
+    $maxlifetime = (int) ($ttl ?? \ini_get('session.gc_maxlifetime'));
+}
 ```
