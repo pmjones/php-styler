@@ -1923,6 +1923,11 @@ class Printer
         }
     }
 
+    protected function pVariadicPlaceholder(Node $node) : void
+    {
+        $this->list[] = '...';
+    }
+
     protected function pVarLikeIdentifier(Node\VarLikeIdentifier $node) : void
     {
         $this->list[] = '$' . $node->name;
