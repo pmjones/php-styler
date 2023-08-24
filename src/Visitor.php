@@ -37,18 +37,20 @@ class Visitor extends NodeVisitorAbstract
 
         if (
             $node instanceof Expr\FuncCall
-            || $node instanceof Expr\New_
             || $node instanceof Expr\MethodCall
-            || $node instanceof Expr\NullsafeMethodCall
             || $node instanceof Expr\New_
+            || $node instanceof Expr\NullsafeMethodCall
+            || $node instanceof Expr\NullsafePropertyFetch
             || $node instanceof Expr\StaticCall
         ) {
             $node->setAttribute('has_closure_arg', false);
 
-            foreach ($node->getArgs() as $arg) {
+            foreach ($node->args ?? [] as $arg) {
                 if (
-                    $arg->value instanceof Expr\Closure
-                    || $arg->value instanceof Expr\ArrowFunction
+                    isset($arg->value) && (
+                        $arg->value instanceof Expr\Closure
+                        || $arg->value instanceof Expr\ArrowFunction
+                    )
                 ) {
                     $node->setAttribute('has_closure_arg', true);
                 }
