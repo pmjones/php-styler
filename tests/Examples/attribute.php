@@ -10,3 +10,24 @@
 function foo()
 {
 }
+
+function bar(#[MyAttribute] $bar)
+{
+}
+
+function baz(
+    #[MyVeryVeryVeryVeryLongAttribute] $bar,
+    #[MyVeryVeryVeryVeryLongAttribute] $baz,
+) {
+}
+
+function dib(
+    #[MyVeryVeryVeryVeryLongAttribute(
+        veryLongNamedProperty1: 'foo',
+        veryLongNamedProperty2: 'bar',
+    )]
+    $bar,
+    #[MyVeryVeryVeryVeryLongAttribute]
+    $baz,
+) {
+}

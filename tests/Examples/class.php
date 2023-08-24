@@ -22,7 +22,7 @@ abstract class Bar extends Baz implements Dib, Zim, Gir
         #[MyAttribute(
             foofofoo: 'barbarbar',
             bazbazbaz: 'dibdibdib',
-            zimzimzim: 'girgirgir'
+            zimzimzim: 'girgirgir',
         )]
         public readonly ?string $barbar,
         #[MyVeryVeryVeryVeryVeryVeryLongAttribute]
