@@ -43,6 +43,7 @@ class Code implements ArrayAccess
      * @var string[]
      */
     protected array $split = [
+        'coalesce',
         'concat',
         'ternary',
         'array_0',
@@ -69,7 +70,6 @@ class Code implements ArrayAccess
         'args_3',
         'args_4',
         'args_5',
-        'coalesce',
         'closure_params',
         'attribute_args_0',
         'attribute_args_1',

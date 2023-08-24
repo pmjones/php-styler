@@ -393,6 +393,7 @@ class Printer
         $this->pReturnType($node);
         $this->pDoubleArrow();
         $this->p($node->expr);
+        $this->list[] = new P\End('arrowFunction');
     }
 
     protected function pExpr_Assign(Expr\Assign $node) : void

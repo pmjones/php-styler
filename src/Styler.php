@@ -318,6 +318,11 @@ class Styler
         $this->code[] = $p->static ? 'static fn ' : 'fn ';
     }
 
+    protected function sArrowFunctionEnd(P\End $p) : void
+    {
+        $this->clip();
+    }
+
     protected function sAs(P\As_ $p) : void
     {
         $this->code[] = ' as ';
@@ -880,10 +885,14 @@ class Styler
                 break;
 
             case Expr\BinaryOp\Coalesce::class:
-            case Expr\BinaryOp\Concat::class:
-                $this->split($p->class, null, 'condense');
+                if (! $this->state->args) {
+                    $this->split($p->class, null, 'condense');
+                    $this->split($p->class, null, 'outdent');
+                }
+
                 break;
 
+            case Expr\BinaryOp\Concat::class:
             case Expr\Ternary::class:
                 if (! $this->state->args) {
                     $this->split($p->class, null, 'condense');
@@ -892,12 +901,9 @@ class Styler
                 break;
         }
 
+
         $this->code[] = $this->operator[$p->class];
         $this->code[] = ' ';
-
-        if ($p->class === Expr\BinaryOp\Coalesce::class) {
-            $this->split($p->class, null, 'outdent');
-        }
     }
 
     protected function sInfixEnd(P\InfixEnd $p) : void
@@ -911,10 +917,8 @@ class Styler
 
                 break;
 
+            case Expr\BinaryOp\Coalesce::class:
             case Expr\BinaryOp\Concat::class:
-                $this->split($p->class, null, 'endCondense');
-                break;
-
             case Expr\Ternary::class:
                 if (! $this->state->args) {
                     $this->split($p->class, null, 'endCondense');
