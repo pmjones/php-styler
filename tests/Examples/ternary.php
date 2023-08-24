@@ -53,4 +53,3 @@ $useTraitAs = $this->veryLongFunctionName(
     $node->newModifier,
     $node->newName ?: $this->name($node->newName),
 );
-
