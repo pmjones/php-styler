@@ -32,9 +32,11 @@ class Apply extends Command
         $time = (hrtime(true) - $start) / 1000000000;
         $sum = number_format($time, 3);
         $avg = $count ? number_format($time / $count, 4) : 'NAN';
+        $mem = number_format(memory_get_peak_usage() / 1000000, 2);
 
         // report
-        echo "Styled {$count} files in {$sum} seconds ({$avg} seconds/file)" . PHP_EOL;
+        echo "Styled {$count} files in {$sum} seconds ";
+        echo "({$avg} seconds/file, {$mem} MB peak memory usage)" . PHP_EOL;
         return 0;
     }
 
