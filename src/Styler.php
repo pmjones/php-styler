@@ -901,7 +901,6 @@ class Styler
                 break;
         }
 
-
         $this->code[] = $this->operator[$p->class];
         $this->code[] = ' ';
     }
@@ -1302,20 +1301,24 @@ class Styler
         $this->code[] = 'case ';
     }
 
-    protected function sSwitchCaseEnd(P\End $p) : void
-    {
-        $this->code[] = ':';
-        $this->commit();
-    }
-
     protected function sSwitchCaseDefault(P\SwitchCaseDefault $p) : void
     {
-        $this->code[] = 'default:';
+        $this->code[] = 'default';
+    }
+
+    protected function sSwitchCaseEnd(P\SwitchCaseEnd $p) : void
+    {
+        $this->code[] = ':';
+
+        if ($p->hasBody) {
+            $this->indent();
+        }
+
+        $this->commit();
     }
 
     protected function sSwitchCaseBody(P\Body $p) : void
     {
-        $this->indent();
         $this->condense();
     }
 

@@ -10,7 +10,7 @@ class ApplyOptions implements Options
         #[Option(
             'c,config',
             mode: Option::VALUE_REQUIRED,
-            help: 'Path to the config file.'
+            help: 'Path to the config file.',
         )]
         public readonly ?string $configFile,
     ) {

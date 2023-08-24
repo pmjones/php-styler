@@ -1730,9 +1730,10 @@ class Printer
         if ($node->cond) {
             $this->list[] = new P\SwitchCase();
             $this->p($node->cond);
-            $this->list[] = new P\End('switchCase');
+            $this->list[] = new P\SwitchCaseEnd((bool) $node->stmts);
         } else {
             $this->list[] = new P\SwitchCaseDefault();
+            $this->list[] = new P\SwitchCaseEnd((bool) $node->stmts);
         }
 
         if ($node->stmts) {
