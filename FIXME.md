@@ -19,8 +19,10 @@ function (array $matches) : string {
    return $this->cssMatcher($matches);
 };
 
-return sprintf(
-    '%s %s %s',
+// splits at args "too soon".
+// should double-indent args
+// to match with concats.
+return sprintf('%s %s %s',
     $this->getMethod(),
     $this->getRequestUri(),
     $this->server->get('SERVER_PROTOCOL'),
@@ -32,7 +34,8 @@ return sprintf(
     . $content;
 
 
-// something about ternaries?
+// splits at boolean "too soon".
+// would prefer split at args.
 $sourceDirs = explode('/', isset($basePath[0])
     && '/' === $basePath[0]
  ? substr($basePath, 1) : $basePath);
@@ -44,7 +47,8 @@ $sourceDirs = explode(
         : $basePath
 );
 
- // something about ternaries?
+ // splits at precedence "too soon".
+// would prefer splits at booleans then ternary.
 return ! isset($path[0]) || '/' === $path[0] || false !== (
     $colonPos = strpos($path, ':')
 ) && (
