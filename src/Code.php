@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace PhpStyler;
 
 use ArrayAccess;
-use BadMethodCallException;
+use RuntimeException;
 
 /**
  * @implements ArrayAccess<int, mixed>
@@ -296,6 +296,7 @@ class Code implements ArrayAccess
                 break;
 
             default:
+                throw new RuntimeException("No such split type: '{$split->type}'");
         }
     }
 }
