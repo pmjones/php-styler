@@ -20,6 +20,7 @@ class Visitor extends NodeVisitorAbstract
     {
         if (
             $node instanceof Expr\MethodCall
+            || $node instanceof Expr\New_
             || $node instanceof Expr\NullsafeMethodCall
             || $node instanceof Expr\NullsafePropertyFetch
             || $node instanceof Expr\PropertyFetch
@@ -36,6 +37,7 @@ class Visitor extends NodeVisitorAbstract
 
         if (
             $node instanceof Expr\FuncCall
+            || $node instanceof Expr\New_
             || $node instanceof Expr\MethodCall
             || $node instanceof Expr\NullsafeMethodCall
             || $node instanceof Expr\New_
