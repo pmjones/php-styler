@@ -365,7 +365,7 @@ class Styler
     protected function sAttributeArgsEnd(P\AttributeArgsEnd $p) : void
     {
         if ($p->count) {
-            $this->split(P\AttributeArgs::class, $this->state->attrArgs, 'end', '');
+            $this->split(P\AttributeArgs::class, $this->state->attrArgs, 'end', ',');
         }
 
         $this->code[] = ')';
