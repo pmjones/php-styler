@@ -206,19 +206,20 @@ These are not all-inclusive; see also [FIXME.md](./FIXME.md) for known issues to
 
 At first, PHP-Styler builds each statement/instruction as a single line. If that line is "too long" (88 characters by default) the _Styler_ reconstructs the code by trying to split it across multiple lines. It does so by applying one or more rules in order:
 
-- String concatenations are split at dots.
+- Coalesce `??` operators are split. *(1)*
+- String concatenations are split at dots. *(1)*
 - Ternaries are split at `?`, `:`, and `?:`. *(1)*
-- Array elements are split at commas.
 - Function and method parameters are split at commas.
+- `implements` are split at commas.
 - Conditions are split at parentheses.
 - Precedence-indicating parentheses are split.
 - Boolean `||` operators are split.
 - Boolean `&&` operators are split.
 - Object instance member operators are split at `->` and `?->`. *(1) (2)*
-- Function, method, and closure argument lists are split at commas.
-- Coalesce `??` operators are split.
+- Function-call and method-call argument lists are split at commas.
 - Closure parameters are split at commas.
 - Attribute arguments are split at commas.
+- Array elements are split at commas.
 
 > (1) Except when used as an argument.
 >
