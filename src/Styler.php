@@ -436,7 +436,7 @@ class Styler
             $this->maybeNewline($p);
         }
 
-        $name = $p->name ? ' ' . $p->name : '';
+        $name = $p->name ? ' ' . $p->name : ' ';
         $this->code[] = $this->modifiers($p->flags) . 'class' . $name;
     }
 

@@ -1,5 +1,5 @@
 <?php
-$foo = new class(10) extends SomeClass implements SomeInterface {
+$foo = new class (10) extends SomeClass implements SomeInterface {
     use SomeTrait;
 
     private int $num;
