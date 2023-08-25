@@ -18,12 +18,15 @@ class Visitor extends NodeVisitorAbstract
 
     public function enterNode(Node $node) : null|int|Node
     {
+        // fluent call?
         if (
             $node instanceof Expr\MethodCall
             || $node instanceof Expr\New_
             || $node instanceof Expr\NullsafeMethodCall
             || $node instanceof Expr\NullsafePropertyFetch
             || $node instanceof Expr\PropertyFetch
+            || $node instanceof Expr\StaticCall
+            || $node instanceof Expr\StaticPropertyFetch
         ) {
             $this->fluent_rev[$this->fluent_idx] ??= 0;
             $this->fluent_rev[$this->fluent_idx] ++;
@@ -35,6 +38,7 @@ class Visitor extends NodeVisitorAbstract
             $this->fluent_idx ++;
         }
 
+        // closure in argument?
         if (
             $node instanceof Expr\FuncCall
             || $node instanceof Expr\MethodCall
@@ -65,11 +69,14 @@ class Visitor extends NodeVisitorAbstract
      */
     public function leaveNode(Node $node) : null|int|Node|array
     {
+        // retain fluency info
         if (
             $node instanceof Expr\MethodCall
             || $node instanceof Expr\NullsafeMethodCall
             || $node instanceof Expr\NullsafePropertyFetch
             || $node instanceof Expr\PropertyFetch
+            || $node instanceof Expr\StaticCall
+            || $node instanceof Expr\StaticPropertyFetch
         ) {
             // visitor encounters the nodes in reverse order, so reverse
             // the fluent_rev to get a count up instead of a count down

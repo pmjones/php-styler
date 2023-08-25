@@ -28,3 +28,22 @@ $result = $this
         ),
     )
     ->veryLongPropertyName;
+
+// statics in fluent call
+function static_fluency()
+{
+    // static method
+    $result = DB::select()
+        ->where()
+        ->andWhere()
+        ->groupBy()
+        ->having()
+        ->orHaving()
+        ->orderBy()
+        ->limit();
+
+    // static property
+    $something = ClassName::$veryLongPropertyName
+        ->veryLongMethodName()
+        ->veryLongMethodName();
+}
