@@ -105,8 +105,7 @@ class Styler
         }
 
         $this->commit();
-        $file = "<?php" . $this->eol . ltrim($this->code->getFile());
-        return rtrim($file) . $this->eol;
+        return $this->finish($this->code->getFile());
     }
 
     protected function newCode() : Code
@@ -117,6 +116,11 @@ class Styler
             $this->indentStr,
             $this->indentLen ?? 0,
         );
+    }
+
+    protected function finish(string $code) : string
+    {
+        return "<?php" . $this->eol . trim($code) . $this->eol;
     }
 
     protected function newState() : State
