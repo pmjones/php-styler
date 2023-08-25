@@ -14,3 +14,16 @@ function foo()
         END;
     }
 }
+
+function bar()
+{
+    $query = <<<SQL
+        SELECT
+            *
+        FROM
+            table
+        WHERE
+            foo = bar
+    SQL;
+    return new Bar($query);
+}

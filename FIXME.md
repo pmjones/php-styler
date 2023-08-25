@@ -12,4 +12,16 @@ $this->htmlAttrMatcher =
 function (array $matches) : string {
    return $this->htmlAttrMatcher($matches);
 };
+
+// why the argument split?
+         return [
+-            'type' => get_class($exception),
++            'type' => get_class(
++                $exception,
++            ),
+             'code' => $code,
+             'message' => $exception->getMessage(),
+             'file' => $exception->getFile(),
+
 ```
+

@@ -1363,6 +1363,7 @@ class Printer
                     }
 
                     $this->list[] = new P\HeredocEnd($label);
+                    return;
                 }
 
             /* break missing intentionally */
@@ -1969,21 +1970,20 @@ class Printer
 
     protected function staticDereferenceLhsRequiresParens(Node $node) : bool
     {
-        return ! (
-            $node instanceof Expr\Variable
-                || $node instanceof Node\Name
-                || $node instanceof Expr\ArrayDimFetch
-                || $node instanceof Expr\PropertyFetch
-                || $node instanceof Expr\NullsafePropertyFetch
-                || $node instanceof Expr\StaticPropertyFetch
-                || $node instanceof Expr\FuncCall
-                || $node instanceof Expr\MethodCall
-                || $node instanceof Expr\NullsafeMethodCall
-                || $node instanceof Expr\StaticCall
-                || $node instanceof Expr\Array_
-                || $node instanceof Scalar\String_
-                || $node instanceof Expr\ClassConstFetch
-        );
+        $noParens = $node instanceof Expr\Variable
+            || $node instanceof Node\Name
+            || $node instanceof Expr\ArrayDimFetch
+            || $node instanceof Expr\PropertyFetch
+            || $node instanceof Expr\NullsafePropertyFetch
+            || $node instanceof Expr\StaticPropertyFetch
+            || $node instanceof Expr\FuncCall
+            || $node instanceof Expr\MethodCall
+            || $node instanceof Expr\NullsafeMethodCall
+            || $node instanceof Expr\StaticCall
+            || $node instanceof Expr\Array_
+            || $node instanceof Scalar\String_
+            || $node instanceof Expr\ClassConstFetch;
+        return ! $noParens;
     }
 
     /**
