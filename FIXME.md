@@ -37,29 +37,14 @@ return ! isset($path[0]) || '/' === $path[0] || false !== (
 ) ? "./{$path}" : $path;
 
 
-// should do instance_op before args?
--            return Payload::fromThrowable($e, DomainStatus::INVALID)
--                ->setError(self::ERROR_ALREADY_CONNECTED);
-+            return Payload::fromThrowable(
-+                $e,
-+                DomainStatus::INVALID,
-+            )->setError(
-+                self::ERROR_ALREADY_CONNECTED,
-+            );
 
-
-// something about the arry with the arrow function
--                return Payload::updated([
--                    'source' => $this->executeInTransaction(
--                        fn (): FieldedgeAutomationSettings => $this->refresh($source, $credentials)
--                    )
--                ]);
-+                return Payload::updated(
-+                    ['source' => $this->executeInTransaction(
-+                        fn (): FieldedgeAutomationSettings => $this->refresh(
-+                            $source,
-+                            $credentials,
-+                        ),
-+                    )],
-+                );
+// arrow in arg in array
+function foo()
+{
+    return Payload::updated(
+        ['source' => $this->veryLongMethodName(
+            fn () : string => $this->anotherMethodName($source, $target),
+        )],
+    );
+}
 ```
