@@ -18,11 +18,10 @@ class Split extends Space
         P\Args::class => 'args',
         P\Array_::class => 'array',
         P\AttributeArgs::class => 'attribute_args',
-        P\ClosureParams::class => 'closure_params',
         P\Cond::class => 'cond',
-        P\FunctionParams::class => 'function_params',
-        P\InstanceOp::class => 'instance_op',
         P\Implements_::class => 'implements',
+        P\InstanceOp::class => 'instance_op',
+        P\Params::class => 'params',
         P\Precedence::class => 'precedence',
     ];
 

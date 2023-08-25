@@ -84,3 +84,56 @@ class foo
         return $result;
     }
 }
+
+// long params, no uses
+$foo = function (
+    $veryVeryVeryVeryLongParameter,
+    $veryVeryVeryVeryLongerParameter,
+    $veryVeryVeryVeryMuchLongerParameter,
+) {
+    // body
+};
+
+// no params, long uses
+$foo = function () use (
+    $veryVeryVeryVeryLongVar1,
+    $veryVeryVeryVeryLongerVar2,
+    $veryVeryVeryVeryMuchLongerVar3,
+) {
+    // body
+};
+
+// long params, long uses
+$foo = function (
+    $veryVeryVeryVeryLongParameter,
+    $veryVeryVeryVeryLongerParameter,
+    $veryVeryVeryVeryMuchLongerParameter,
+) use (
+    $veryVeryVeryVeryLongVar1,
+    $veryVeryVeryVeryLongerVar2,
+    $veryVeryVeryVeryMuchLongerVar3,
+) {
+    // body
+};
+
+// long params, short uses
+$foo = function (
+    $veryVeryVeryVeryLongParameter,
+    $veryVeryVeryVeryLongerParameter,
+    $veryVeryVeryVeryMuchLongerParameter,
+) use (
+    $var1,
+) {
+    // body
+};
+
+// short params, long uses
+$foo = function (
+    $parameter,
+) use (
+    $veryVeryVeryVeryLongVar1,
+    $veryVeryVeryVeryLongerVar2,
+    $veryVeryVeryVeryMuchLongerVar3,
+) {
+    // body
+};

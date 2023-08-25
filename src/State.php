@@ -27,7 +27,7 @@ class State
 
     public int $instanceOp = 0;
 
-    public int $param = 0;
+    public int $params = 0;
 
     public function __get(string $key) : mixed
     {

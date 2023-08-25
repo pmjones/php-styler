@@ -340,7 +340,7 @@ class Styler
 
     protected function sAttributeGroups(P\AttributeGroups $p) : void
     {
-        if ($this->state->param) {
+        if ($this->state->params) {
             return;
         }
 
@@ -386,7 +386,7 @@ class Styler
     {
         $this->code[] = ']';
 
-        if ($this->state->param) {
+        if ($this->state->params) {
             $this->code[] = ' ';
             $this->split(P\AttributeArgs::class, $this->state->attrArgs, 'mid', '');
         } else {
@@ -465,22 +465,22 @@ class Styler
 
     protected function sClosureUse(P\ClosureUse $p) : void
     {
-        $this->state->param ++;
+        $this->state->params ++;
         $this->code[] = ' use (';
 
         if ($p->count) {
-            $this->split(P\ClosureParams::class);
+            $this->split(P\Params::class, $this->state->params);
         }
     }
 
     protected function sClosureUseEnd(P\ClosureUseEnd $p) : void
     {
         if ($p->count) {
-            $this->split(P\ClosureParams::class, null, 'end', ',');
+            $this->split(P\Params::class, $this->state->params, 'end', ',');
         }
 
         $this->code[] = ')';
-        $this->state->param --;
+        $this->state->params --;
     }
 
     protected function sClosureBody(P\Body $p) : void
@@ -1105,56 +1105,30 @@ class Styler
         $this->code[] = $p->name . ': ';
     }
 
-    protected function sFunctionParams(P\FunctionParams $p) : void
+    protected function sParams(P\Params $p) : void
     {
-        $this->state->param ++;
+        $this->state->params ++;
         $this->code[] = '(';
 
         if ($p->count) {
-            $this->split(P\FunctionParams::class);
+            $this->split(P\Params::class, $this->state->params);
         }
     }
 
-    protected function sFunctionParamsEnd(P\FunctionParamsEnd $p) : void
+    protected function sParamSeparator(P\Separator $p) : void
+    {
+        $this->code[] = ', ';
+        $this->split(P\Params::class, $this->state->params, 'mid');
+    }
+
+    protected function sParamsEnd(P\ParamsEnd $p) : void
     {
         if ($p->count) {
-            $this->split(P\FunctionParams::class, null, 'end', ',');
+            $this->split(P\Params::class, $this->state->params, 'end', ',');
         }
 
         $this->code[] = ')';
-        $this->state->param --;
-    }
-
-    protected function sFunctionParamSeparator(P\Separator $p) : void
-    {
-        $this->code[] = ', ';
-        $this->split(P\FunctionParams::class, null, 'mid');
-    }
-
-    protected function sClosureParams(P\ClosureParams $p) : void
-    {
-        $this->state->param ++;
-        $this->code[] = '(';
-
-        if ($p->count) {
-            $this->split(P\ClosureParams::class);
-        }
-    }
-
-    protected function sClosureParamsEnd(P\ClosureParamsEnd $p) : void
-    {
-        if ($p->count) {
-            $this->split(P\ClosureParams::class, null, 'end', ',');
-        }
-
-        $this->code[] = ')';
-        $this->state->param --;
-    }
-
-    protected function sClosureParamSeparator(P\Separator $p) : void
-    {
-        $this->code[] = ', ';
-        $this->split(P\ClosureParams::class, null, 'mid');
+        $this->state->params --;
     }
 
     protected function sPostfixOp(P\PostfixOp $p) : void
