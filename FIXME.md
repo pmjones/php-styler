@@ -12,33 +12,6 @@ $this->htmlAttrMatcher =
 function (array $matches) : string {
    return $this->htmlAttrMatcher($matches);
 };
-$this->jsMatcher =
-
-/** @param array<array-key, string> $matches */
-function (array $matches) : string {
-   return $this->jsMatcher($matches);
-};
-$this->cssMatcher =
-
-/** @param array<array-key, string> $matches */
-function (array $matches) : string {
-   return $this->cssMatcher($matches);
-};
-
-// splits at args "too soon".
-// should double-indent args
-// to match with concats.
-return sprintf('%s %s %s',
-    $this->getMethod(),
-    $this->getRequestUri(),
-    $this->server->get('SERVER_PROTOCOL'),
-)
-    . "\r\n"
-    . $this->headers
-    . $cookieHeader
-    . "\r\n"
-    . $content;
-
 
 // splits at boolean "too soon".
 // would prefer split at args.
@@ -63,18 +36,30 @@ return ! isset($path[0]) || '/' === $path[0] || false !== (
     ) || false === $slashPos
 ) ? "./{$path}" : $path;
 
-// coalesce line split here messes up indents.
-function foo_broke()
-{
-    $maxlifetime = (int) (($this->ttl instanceof \Closure ? ($this->ttl)() : $this->ttl)
-        ?? \ini_get('session.gc_maxlifetime')
-);
-}
 
-// fix by moving a bit of code around.
-function foo_fixed()
-{
-    $ttl = $this->ttl instanceof \Closure ? ($this->ttl)() : $this->ttl;
-    $maxlifetime = (int) ($ttl ?? \ini_get('session.gc_maxlifetime'));
-}
+// should do instance_op before args?
+-            return Payload::fromThrowable($e, DomainStatus::INVALID)
+-                ->setError(self::ERROR_ALREADY_CONNECTED);
++            return Payload::fromThrowable(
++                $e,
++                DomainStatus::INVALID,
++            )->setError(
++                self::ERROR_ALREADY_CONNECTED,
++            );
+
+
+// something about the arry with the arrow function
+-                return Payload::updated([
+-                    'source' => $this->executeInTransaction(
+-                        fn (): FieldedgeAutomationSettings => $this->refresh($source, $credentials)
+-                    )
+-                ]);
++                return Payload::updated(
++                    ['source' => $this->executeInTransaction(
++                        fn (): FieldedgeAutomationSettings => $this->refresh(
++                            $source,
++                            $credentials,
++                        ),
++                    )],
++                );
 ```
