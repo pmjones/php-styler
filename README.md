@@ -212,9 +212,9 @@ At first, PHP-Styler builds each statement/instruction as a single line. If that
 - Function and method parameters are split at commas.
 - `implements` are split at commas.
 - Conditions are split at parentheses.
-- Precedence-indicating parentheses are split.
 - Boolean `||` operators are split.
 - Boolean `&&` operators are split.
+- Precedence-indicating parentheses are split.
 - Object instance member operators are split at `->` and `?->`. *(1) (2)*
 - Function-call and method-call argument lists are split at commas.
 - Closure parameters are split at commas.

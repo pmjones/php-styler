@@ -66,13 +66,12 @@ $toExplode = isset($basePath[0]) && '/' === $basePath[0]
 $sourceDirs = explode('/', $toExplode);
 
 // embedded assignments look bad.
-$newPath = ! isset($path[0]) || '/' === $path[0] || false !== (
-    $colonPos = strpos($path, ':')
-) && (
-    $colonPos < (
-        $slashPos = strpos($path, '/')
-    ) || false === $slashPos
-)
+$newPath = ! isset($path[0])
+    || '/' === $path[0]
+    || false !== ($colonPos = strpos($path, ':'))
+        && ($colonPos < ($slashPos = strpos($path, '/'))
+            || false === $slashPos
+        )
     ? "./{$path}"
     : $path;
 
