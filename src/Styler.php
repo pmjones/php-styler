@@ -917,6 +917,12 @@ class Styler
                 break;
 
             case Expr\BinaryOp\Coalesce::class:
+                if (! $this->state->args) {
+                    $this->split($p->class, null, 'mid');
+                }
+
+                break;
+
             case Expr\BinaryOp\Concat::class:
             case Expr\Ternary::class:
                 if (! $this->state->args) {
