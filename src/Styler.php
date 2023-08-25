@@ -1227,12 +1227,11 @@ class Styler
 
     protected function sReservedFunc(P\ReservedFunc $p) : void
     {
-        $this->code[] = $p->name . '(';
+        $this->code[] = $p->name;
     }
 
     protected function sReservedFuncEnd(P\End $p) : void
     {
-        $this->code[] = ')';
     }
 
     protected function sReservedStmt(P\ReservedStmt $p) : void

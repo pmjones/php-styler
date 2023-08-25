@@ -169,11 +169,20 @@ class Printer
         $this->p($node->value);
     }
 
-    protected function pArgs(Node $node) : void
+    protected function pArgs(Node $node, string $prop = 'args') : void
     {
-        $count = count($node->args ?? []);
+        $args = $node->{$prop};
+
+        if (! is_array($args)) {
+            $this->list[] = new P\Args(1, false);
+            $this->p($args);
+            $this->list[] = new P\ArgsEnd(1, false);
+            return;
+        }
+
+        $count = count($node->{$prop} ?? []);
         $this->list[] = new P\Args($count, $node->getAttribute('has_closure_arg'));
-        $this->pSeparate('arg', $node->args ?? null);
+        $this->pSeparate('arg', $node->{$prop} ?? null);
         $this->list[] = new P\ArgsEnd($count, $node->getAttribute('has_closure_arg'));
     }
 
@@ -722,7 +731,7 @@ class Printer
     protected function pExpr_Empty(Expr\Empty_ $node) : void
     {
         $this->list[] = new P\ReservedFunc('empty');
-        $this->p($node->expr);
+        $this->pArgs($node, 'expr');
         $this->list[] = new P\End('reservedFunc');
     }
 
@@ -731,7 +740,7 @@ class Printer
         $kind = $node->getAttribute('kind', Expr\Exit_::KIND_DIE);
         $word = $kind === Expr\Exit_::KIND_EXIT ? 'exit' : 'die';
         $this->list[] = new P\ReservedFunc($word);
-        $this->p($node->expr);
+        $this->pArgs($node, 'expr');
         $this->list[] = new P\End('reservedFunc');
     }
 
@@ -748,7 +757,7 @@ class Printer
     protected function pExpr_Eval(Expr\Eval_ $node) : void
     {
         $this->list[] = new P\ReservedFunc('eval');
-        $this->p($node->expr);
+        $this->pArgs($node, 'expr');
         $this->list[] = new P\End('reservedFunc');
     }
 
@@ -789,17 +798,14 @@ class Printer
     protected function pExpr_Isset(Expr\Isset_ $node) : void
     {
         $this->list[] = new P\ReservedFunc('isset');
-        $this->pSeparate('arg', $node->vars);
+        $this->pArgs($node, 'vars');
         $this->list[] = new P\End('reservedFunc');
     }
 
     protected function pExpr_List(Expr\List_ $node) : void
     {
         $this->list[] = new P\ReservedFunc('list');
-
-        /** @var Node[] */
-        $items = $node->items;
-        $this->pSeparate('arg', $items);
+        $this->pArgs($node, 'items');
         $this->list[] = new P\End('reservedFunc');
     }
 
