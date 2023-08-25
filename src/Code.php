@@ -46,12 +46,6 @@ class Code implements ArrayAccess
         'coalesce',
         'concat',
         'ternary',
-        'array_0',
-        'array_1',
-        'array_2',
-        'array_3',
-        'array_4',
-        'array_5',
         'function_params',
         'implements',
         'cond',
@@ -77,6 +71,12 @@ class Code implements ArrayAccess
         'attribute_args_3',
         'attribute_args_4',
         'attribute_args_5',
+        'array_0',
+        'array_1',
+        'array_2',
+        'array_3',
+        'array_4',
+        'array_5',
     ];
 
     /**
