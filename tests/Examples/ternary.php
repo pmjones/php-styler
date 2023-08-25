@@ -53,3 +53,34 @@ $useTraitAs = $this->veryLongFunctionName(
     $node->newModifier,
     $node->newName ?: $this->name($node->newName),
 );
+
+// ternary embedded in argument with boolean looks bad.
+$sourceDirs = explode('/', isset($basePath[0])
+    && '/' === $basePath[0]
+ ? substr($basePath, 1) : $basePath);
+
+// instead, extract the condition.
+$toExplode = isset($basePath[0]) && '/' === $basePath[0]
+    ? substr($basePath, 1)
+    : $basePath;
+$sourceDirs = explode('/', $toExplode);
+
+// embedded assignments look bad.
+$newPath = ! isset($path[0]) || '/' === $path[0] || false !== (
+    $colonPos = strpos($path, ':')
+) && (
+    $colonPos < (
+        $slashPos = strpos($path, '/')
+    ) || false === $slashPos
+)
+    ? "./{$path}"
+    : $path;
+
+// instead, extract the assignments
+$colonPos = strpos($path, ':');
+$slashPos = strpos($path, '/');
+$cond = ! isset($path[0])
+    || '/' === $path[0]
+    || false !== $colonPos && $colonPos < $slashPos
+    || false === $slashPos;
+$path = $cond ? "./{$path}" : $path;
