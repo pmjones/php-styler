@@ -10,10 +10,12 @@ use PhpStyler\Printable as P;
 class Split extends Space
 {
     protected const CLASS_RULE = [
-        Expr\BinaryOp\BooleanAnd::class => 'bool_and',
-        Expr\BinaryOp\BooleanOr::class => 'bool_or',
+        Expr\BinaryOp\BooleanAnd::class => 'and',
+        Expr\BinaryOp\BooleanOr::class => 'or',
         Expr\BinaryOp\Coalesce::class => 'coalesce',
         Expr\BinaryOp\Concat::class => 'concat',
+        Expr\BinaryOp\LogicalAnd::class => 'and',
+        Expr\BinaryOp\LogicalOr::class => 'or',
         Expr\Ternary::class => 'ternary',
         P\Args::class => 'args',
         P\Array_::class => 'array',

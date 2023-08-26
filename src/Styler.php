@@ -886,6 +886,8 @@ class Styler
         switch ($p->class) {
             case Expr\BinaryOp\BooleanAnd::class:
             case Expr\BinaryOp\BooleanOr::class:
+            case Expr\BinaryOp\LogicalAnd::class:
+            case Expr\BinaryOp\LogicalOr::class:
                 if (! $this->state->cond) {
                     $this->split($p->class, null, 'condense');
                 } else {
@@ -919,6 +921,8 @@ class Styler
         switch ($p->class) {
             case Expr\BinaryOp\BooleanAnd::class:
             case Expr\BinaryOp\BooleanOr::class:
+            case Expr\BinaryOp\LogicalAnd::class:
+            case Expr\BinaryOp\LogicalOr::class:
                 if (! $this->state->cond) {
                     $this->split($p->class, null, 'endCondense');
                 }
