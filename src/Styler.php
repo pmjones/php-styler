@@ -1203,13 +1203,14 @@ class Styler
         $this->code[] = 'true';
     }
 
-    protected function sReservedFunc(P\ReservedFunc $p) : void
+    protected function sReservedArg(P\ReservedArg $p) : void
     {
-        $this->code[] = $p->name;
+        $this->code[] = '(';
     }
 
-    protected function sReservedFuncEnd(P\End $p) : void
+    protected function sReservedArgEnd(P\End $p) : void
     {
+        $this->code[] = ')';
     }
 
     protected function sReservedStmt(P\ReservedStmt $p) : void
