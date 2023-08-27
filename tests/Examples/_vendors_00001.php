@@ -11,6 +11,7 @@ function isFunctionCall(int $i) : bool
         ]);
 }
 
+// colaesce, ternary, and array
 if (true) {
     if (true) {
         if (true) {
@@ -40,6 +41,7 @@ if (true) {
     }
 }
 
+// expansive array
 if (true) {
     if (true) {
         $this->options = array_merge(
@@ -50,6 +52,11 @@ if (true) {
                 'expiry_field' => 'expires_at',
             ],
             $options,
+        );
+        $this->getCollection()->updateOne(
+            [$this->options['id_field'] => $sessionId],
+            ['$set' => $fields],
+            ['upsert' => true],
         );
     }
 }
