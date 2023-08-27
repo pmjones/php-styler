@@ -7,7 +7,7 @@ class Args extends Printable
 {
     public function __construct(
         public readonly int $count,
-        public readonly mixed $hasClosureArg,
+        public readonly mixed $hasNewOrClosure,
     ) {
     }
 }

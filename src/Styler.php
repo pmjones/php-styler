@@ -257,7 +257,7 @@ class Styler
         $this->state->args ++;
         $this->code[] = '(';
 
-        if ($p->hasClosureArg) {
+        if ($p->hasNewOrClosure) {
             $this->state->argsHaveNewOrClosure ++;
             $this->force(P\Args::class, -1 * $this->state->args);
         } elseif ($p->count) {
@@ -278,7 +278,7 @@ class Styler
 
     protected function sArgsEnd(P\ArgsEnd $p) : void
     {
-        if ($p->hasClosureArg) {
+        if ($p->hasNewOrClosure) {
             $this->force(P\Args::class, -1 * $this->state->args, 'end', ',');
             $this->state->argsHaveNewOrClosure --;
         } elseif ($p->count) {

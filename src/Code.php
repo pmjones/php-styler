@@ -56,6 +56,12 @@ class Code implements ArrayAccess
         'precedence',
         'or',
         'and',
+        'array_0',
+        'array_1',
+        'array_2',
+        'array_3',
+        'array_4',
+        'array_5',
         'instance_op_0',
         'instance_op_1',
         'instance_op_2',
@@ -80,12 +86,6 @@ class Code implements ArrayAccess
         'attribute_args_3',
         'attribute_args_4',
         'attribute_args_5',
-        'array_0',
-        'array_1',
-        'array_2',
-        'array_3',
-        'array_4',
-        'array_5',
     ];
 
     /**
@@ -174,6 +174,8 @@ class Code implements ArrayAccess
             if ($applySplit || $applyForce) {
                 $this->splitApply[] = $rule;
                 $this->setLines();
+                // var_dump($this->splitApply);
+                // var_dump($this->lines);
             }
         }
 
