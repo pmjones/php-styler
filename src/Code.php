@@ -43,6 +43,11 @@ class Code implements ArrayAccess
      * @var string[]
      */
     protected array $split = [
+        'args_-1',
+        'args_-2',
+        'args_-3',
+        'args_-4',
+        'args_-5',
         'coalesce',
         'concat',
         'ternary',

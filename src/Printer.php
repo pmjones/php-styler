@@ -181,9 +181,15 @@ class Printer
         }
 
         $count = count($node->{$prop} ?? []);
-        $this->list[] = new P\Args($count, $node->getAttribute('has_closure_arg'));
+        $this->list[] = new P\Args(
+            $count,
+            $node->getAttribute('has_new_or_closure_arg'),
+        );
         $this->pSeparate('arg', $node->{$prop} ?? null);
-        $this->list[] = new P\ArgsEnd($count, $node->getAttribute('has_closure_arg'));
+        $this->list[] = new P\ArgsEnd(
+            $count,
+            $node->getAttribute('has_new_or_closure_arg'),
+        );
     }
 
     protected function pAttribute(Node\Attribute $node) : void
@@ -1113,9 +1119,15 @@ class Printer
         $this->pAttributeGroups($class);
         $this->pModifiers($class);
         $this->list[] = new P\Class_(null, null);
-        $this->list[] = new P\Args($count, $node->getAttribute('has_closure_arg'));
+        $this->list[] = new P\Args(
+            $count,
+            $node->getAttribute('has_new_or_closure_arg'),
+        );
         $this->pSeparate('arg', $args);
-        $this->list[] = new P\ArgsEnd($count, $node->getAttribute('has_closure_arg'));
+        $this->list[] = new P\ArgsEnd(
+            $count,
+            $node->getAttribute('has_new_or_closure_arg'),
+        );
         $this->pExtends($class);
         $this->pImplements($class);
         $this->pBody('closure');

@@ -14,11 +14,9 @@ $veryLongVariableName = function (
 ) {
     $i ++;
 };
-foo(
-    function () {
-        /* code */
-    },
-);
+foo(function () {
+    /* code */
+});
 foo(
     $bar,
     function () {
@@ -38,23 +36,19 @@ foo(
     },
     $baz,
 );
-$result = $this
-    ->veryLongProperty
-    ->veryLongMethod(
-        $veryLongVariableName,
-        new VeryLongClassName(
-            static function () : void {
-                throw VeryLongException::create();
-            },
-            $this->veryLongVariableName,
-        ),
-    );
+$result = $this->veryLongProperty->veryLongMethod(
+    $veryLongVariableName,
+    new VeryLongClassName(
+        static function () : void {
+            throw VeryLongException::create();
+        },
+        $this->veryLongVariableName,
+    ),
+);
 $shortVar = array_reduce(
     $foo,
     function ($addr, $addrs) {
-        if (
-            'REMOTE_ADDR' !== $addr
-        ) {
+        if ('REMOTE_ADDR' !== $addr) {
             $addrs[] = $addr;
         } elseif (isset($_SERVER['REMOTE_ADDR'])) {
             $addrs[] = $_SERVER['REMOTE_ADDR'];
@@ -69,17 +63,15 @@ class foo
 {
     public function bar(baz $e)
     {
-        $result = $this
-            ->func
-            ->proc(
-                $psr7Request,
-                new VeryLongClassName(
-                    static function () : void {
-                        throw ReachedFinalHandlerException::create();
-                    },
-                    $this->veryLongProperty,
-                ),
-            );
+        $result = $this->func->proc(
+            $psr7Request,
+            new VeryLongClassName(
+                static function () : void {
+                    throw ReachedFinalHandlerException::create();
+                },
+                $this->veryLongProperty,
+            ),
+        );
         $e->setResult($result);
         return $result;
     }

@@ -38,7 +38,7 @@ class Visitor extends NodeVisitorAbstract
             $this->fluent_idx ++;
         }
 
-        // closure in argument?
+        // closure or new in argument?
         if (
             $node instanceof Expr\FuncCall
             || $node instanceof Expr\MethodCall
@@ -47,16 +47,22 @@ class Visitor extends NodeVisitorAbstract
             || $node instanceof Expr\NullsafePropertyFetch
             || $node instanceof Expr\StaticCall
         ) {
-            $node->setAttribute('has_closure_arg', false);
+            $node->setAttribute('has_new_or_closure_arg', false);
+            $args = $node->args ?? [];
 
-            foreach ($node->args ?? [] as $arg) {
-                if (
-                    isset($arg->value) && (
-                        $arg->value instanceof Expr\Closure
-                        || $arg->value instanceof Expr\ArrowFunction
-                    )
-                ) {
-                    $node->setAttribute('has_closure_arg', true);
+            // note the New or Closure args only if
+            // there are multiple args in the list.
+            if (count($args) > 1) {
+                foreach ($args as $arg) {
+                    if (
+                        isset($arg->value) && (
+                            $arg->value instanceof Expr\Closure
+                            || $arg->value instanceof Expr\ArrowFunction
+                            || $arg->value instanceof Expr\New_
+                        )
+                    ) {
+                        $node->setAttribute('has_new_or_closure_arg', true);
+                    }
                 }
             }
         }

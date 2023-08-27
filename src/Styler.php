@@ -258,23 +258,29 @@ class Styler
         $this->code[] = '(';
 
         if ($p->hasClosureArg) {
-            $this->force(P\Args::class, $this->state->args);
+            $this->state->argsHaveNewOrClosure ++;
+            $this->force(P\Args::class, -1 * $this->state->args);
         } elseif ($p->count) {
             $this->split(P\Args::class, $this->state->args);
         }
     }
 
+    // now the problem is, how so split on separator with `args_-1` et al?
+    // track in State? and then maybe we don't need to force at all.
     protected function sArgSeparator(P\Separator $p) : void
     {
         $this->clip();
         $this->code[] = ', ';
-        $this->split(P\Args::class, $this->state->args, 'mid');
+        $level = $this->state->args;
+        $level *= $this->state->argsHaveNewOrClosure ? -1 : 1;
+        $this->split(P\Args::class, $level, 'mid');
     }
 
     protected function sArgsEnd(P\ArgsEnd $p) : void
     {
         if ($p->hasClosureArg) {
-            $this->force(P\Args::class, $this->state->args, 'end', ',');
+            $this->force(P\Args::class, -1 * $this->state->args, 'end', ',');
+            $this->state->argsHaveNewOrClosure --;
         } elseif ($p->count) {
             $this->split(P\Args::class, $this->state->args, 'end', ',');
         }

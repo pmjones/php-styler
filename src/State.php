@@ -9,6 +9,8 @@ class State
 {
     public int $args = 0;
 
+    public int $argsHaveNewOrClosure = 0;
+
     public int $array = 0;
 
     public bool $atFirstInBody = false;
