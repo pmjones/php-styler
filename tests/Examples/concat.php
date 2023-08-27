@@ -8,8 +8,10 @@ $foo = $veryVeryLongVariable
     . $veryVeryLongVariable;
 
 // no splits in arguments
-$foo = foo(
-    $veryVeryLongVariable . $veryVeryLongVariable . $veryVeryLongVariable . $veryVeryLongVariable,
+$foo = foo($veryVeryLongVariable
+    . $veryVeryLongVariable
+    . $veryVeryLongVariable
+    . $veryVeryLongVariable
 );
 
 // function call after concat looks good ...

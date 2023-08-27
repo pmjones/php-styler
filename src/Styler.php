@@ -911,6 +911,9 @@ class Styler
                 break;
 
             case Expr\BinaryOp\Concat::class:
+                $this->split($p->class, null, 'condense');
+                break;
+
             case Expr\Ternary::class:
                 if (! $this->state->args) {
                     $this->split($p->class, null, 'condense');
@@ -943,6 +946,9 @@ class Styler
                 break;
 
             case Expr\BinaryOp\Concat::class:
+                $this->split($p->class, null, 'endCondense');
+                break;
+
             case Expr\Ternary::class:
                 if (! $this->state->args) {
                     $this->split($p->class, null, 'endCondense');
