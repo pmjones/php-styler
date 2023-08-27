@@ -174,6 +174,7 @@ class Code implements ArrayAccess
             if ($applySplit || $applyForce) {
                 $this->splitApply[] = $rule;
                 $this->setLines();
+
                 // var_dump($this->splitApply);
                 // var_dump($this->lines);
             }
