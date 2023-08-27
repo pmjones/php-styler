@@ -39,3 +39,17 @@ if (true) {
         }
     }
 }
+
+if (true) {
+    if (true) {
+        $this->options = array_merge(
+            [
+                'id_field' => '_id',
+                'data_field' => 'data',
+                'time_field' => 'time',
+                'expiry_field' => 'expires_at',
+            ],
+            $options,
+        );
+    }
+}

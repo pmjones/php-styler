@@ -47,10 +47,10 @@ class Visitor extends NodeVisitorAbstract
             || $node instanceof Expr\NullsafePropertyFetch
             || $node instanceof Expr\StaticCall
         ) {
-            $node->setAttribute('has_new_or_closure_arg', false);
+            $node->setAttribute('has_expansive_arg', false);
             $args = $node->args ?? [];
 
-            // note the New or Closure args only if
+            // note the possibly-expansive arg only if
             // there are multiple args in the list.
             if (count($args) > 1) {
                 foreach ($args as $arg) {
@@ -59,9 +59,10 @@ class Visitor extends NodeVisitorAbstract
                             $arg->value instanceof Expr\Closure
                             || $arg->value instanceof Expr\ArrowFunction
                             || $arg->value instanceof Expr\New_
+                            || $arg->value instanceof Expr\Array_
                         )
                     ) {
-                        $node->setAttribute('has_new_or_closure_arg', true);
+                        $node->setAttribute('has_expansive_arg', true);
                     }
                 }
             }
