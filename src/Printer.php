@@ -693,6 +693,12 @@ class Printer
         }
 
         $this->pReturnType($node);
+
+        if (! $node->stmts) {
+            $this->list[] = new P\BodyEmpty('closure');
+            return;
+        }
+
         $this->pBody('closure');
         $this->p($node->stmts);
         $this->pBodyEnd('closure');

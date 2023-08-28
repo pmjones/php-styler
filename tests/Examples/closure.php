@@ -59,6 +59,17 @@ $shortVar = array_reduce(
     [],
 );
 
+// expansive closure
+$foo = foo(
+    $value,
+    function ($value) {
+        // do whatever
+    },
+);
+
+// closure without body
+$foo = foo($value, function ($value) {});
+
 class foo
 {
     public function bar(baz $e)

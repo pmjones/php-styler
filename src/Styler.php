@@ -508,6 +508,11 @@ class Styler
         $this->code[] = '}';
     }
 
+    protected function sClosureBodyEmpty(P\BodyEmpty $p) : void
+    {
+        $this->code[] = ' {}';
+    }
+
     protected function sContinue(P\Continue_ $p) : void
     {
         $this->code[] = rtrim('continue ' . $p->num) . ';';

@@ -56,10 +56,10 @@ class Visitor extends NodeVisitorAbstract
                 foreach ($args as $arg) {
                     if (
                         isset($arg->value) && (
-                            $arg->value instanceof Expr\Closure
+                            ($arg->value instanceof Expr\Closure && $arg->value->stmts)
                             || $arg->value instanceof Expr\ArrowFunction
-                            || $arg->value instanceof Expr\New_
-                            || $arg->value instanceof Expr\Array_
+                            || ($arg->value instanceof Expr\New_ && $arg->value->args)
+                            || ($arg->value instanceof Expr\Array_ && $arg->value->items)
                         )
                     ) {
                         $node->setAttribute('has_expansive_arg', true);

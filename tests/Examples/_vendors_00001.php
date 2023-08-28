@@ -41,9 +41,10 @@ if (true) {
     }
 }
 
-// expansive array
+// expansives
 if (true) {
     if (true) {
+        $this->options = array_merge([], $options);
         $this->options = array_merge(
             [
                 'id_field' => '_id',
@@ -57,6 +58,11 @@ if (true) {
             [$this->options['id_field'] => $sessionId],
             ['$set' => $fields],
             ['upsert' => true],
+        );
+        $this->foobar($bar, new Foo());
+        $this->foobar(
+            $bar,
+            new Foo('bar', 'baz'),
         );
     }
 }
