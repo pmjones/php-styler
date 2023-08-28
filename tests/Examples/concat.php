@@ -67,3 +67,14 @@ function fix_concat_2()
     );
     return $statusLine . "\r\n" . $this->headers . $cookieHeader . "\r\n" . $content;
 }
+
+// no splits inside array elements
+if (true) {
+    if (true) {
+        $foo = [
+            'client' => 'required|numeric|model:' . Client::class,
+            'location' => 'numeric|model:' . Location::class,
+            'department' => 'numeric|model:' . Department::class,
+        ];
+    }
+}
