@@ -26,8 +26,8 @@ class Styler
     public function __construct(
         protected string $eol = "\n",
         protected int $lineLen = 88,
-        protected string $indentStr = "    ",
-        protected ?int $indentLen = null,
+        protected int $indentLen = 4,
+        protected bool $indentTab = false,
     ) {
         $this->setOperators();
     }
@@ -119,8 +119,8 @@ class Styler
         return new Code(
             $this->eol,
             $this->lineLen,
-            $this->indentStr,
-            $this->indentLen ?? 0,
+            $this->indentTab ? "\t" : str_pad('', $this->indentLen),
+            $this->indentLen,
         );
     }
 
