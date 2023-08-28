@@ -140,9 +140,9 @@ The _Styler_ instance can be configured with these constructor parameters:
 
 - `int $lineLen = 88`: The maximum line length before PHP-Styler tries to split lines automatically.
 
-- `string $indentStr = "    "`: The string used for one level of indentation; default is 4 spaces.
+- `int $indentLen = 4`: The indent length in spaces.
 
-- `int $indentLen`: When `$indentStr` is a tab (`"\t"`), use this value as the character length for the tab when calculating line length. Default is 4; i.e., a tab is counted as 4 spaces.
+- `bool $indentTab = false`: When `true`, use a tab (`"\t"`) for indenting instead of spaces; `$indentLen` is used as the tab widht when calculating line length.
 
 Here is a _Styler_ configured for Windows line endings on 120-character lines with tab indentation at 8 spaces wide:
 
@@ -159,8 +159,8 @@ return new Config(
     styler: new Styler(
         eol: "\r\n",
         lineLen: 120,
-        indentStr: "\t",
-        indentLen: 8
+        indentLen: 8,
+        indentTab: true,
     ),
 );
 ```
