@@ -95,14 +95,8 @@ function (array $matches) : string {
 +                );
 
 // treat concat as "expansive" ?
-
--            if (// Allow disabling rule by setting value to false since config
-+            if (
-+
-+                // Allow disabling rule by setting value to false since config
-                 // merging have no feature to remove entries
+             if (
 -                false == $replacement
--                // Match full class or full namespace
 -                || ! ($controller === $namespace || str_starts_with($controller, $namespace . '\\'))
 +                false == $replacement || ! (
 +                    $controller === $namespace || str_starts_with($controller, $namespace
@@ -121,35 +115,7 @@ function (array $matches) : string {
 +                ['PUT', 'DELETE', 'PATCH'],
 +            )
 
-// why is this splitting get_debug_type($options) ?
-
--            throw new ServiceNotCreatedException(sprintf(
-+            throw new ServiceNotCreatedException(
-+                sprintf(
-                     'Plugin manager configuration for "%s" is invalid; must be an array, received "%s"',
-                     $name,
--                (get_debug_type($options))
--            ));
-+                    get_debug_type(
-+                        $options,
-+                    ),
-+                ),
-+            );
-
-// Do not split concat inside arrays?
-
--        'client' => 'required|numeric|model:' . Client::class,
--        'location' => 'numeric|model:' . Location::class,
--        'department' => 'numeric|model:' . Department::class,
--
-+        'client' => 'required|numeric|model:'
-+            . Client::class,
-+        'location' => 'numeric|model:'
-+            . Location::class,
-+        'department' => 'numeric|model:'
-+            . Department::class,
-
-// split ternaries earlier? before concats?
+// breaks inside closures but not by itself
 
 -                return is_array($item)
 -                    ? [...$carry, ...self::flattenDeep($item)]
@@ -161,12 +127,6 @@ function (array $matches) : string {
 +                    ...$carry,
 +                    $item,
 +                ];
-
--        $uri = $queryString !== '' ? $endpoint->getUri() . $uriGlue . $queryString : $endpoint->getUri();
-+        $uri = $queryString !== '' ? $endpoint->getUri()
-+            . $uriGlue
-+            . $queryString
-+         : $endpoint->getUri();
 
 // loses indent because of line-too-long (array dim fetch)
 
@@ -242,21 +202,21 @@ function (array $matches) : string {
 
 // split on pipes?
 
--        $this->enabledDatasets = $this->enabledDatasets
--            | self::DATASET_BUSINESS_UNITS
--            | self::DATASET_CAMPAIGNS
--            | self::DATASET_JOB_TYPES
--            | self::DATASET_CUSTOMERS
--            | self::DATASET_MEMBERSHIPS
--            | self::DATASET_MEMBERSHIP_TYPES
--            | self::DATASET_INVOICES
--            | self::DATASET_TAGS
--            | self::DATASET_APPOINTMENTS
--            | self::DATASET_ESTIMATES
--            | self::DATASET_CUSTOMER_CONTACTS
--            | self::DATASET_TECHNICIANS;
+-        $this->enabled = $this->enabled
+-            | self::FOOBAR_BUSINESS_UNITS
+-            | self::FOOBAR_CAMPAIGNS
+-            | self::FOOBAR_JOB_TYPES
+-            | self::FOOBAR_CUSTOMERS
+-            | self::FOOBAR_MEMBERSHIPS
+-            | self::FOOBAR_MEMBERSHIP_TYPES
+-            | self::FOOBAR_INVOICES
+-            | self::FOOBAR_TAGS
+-            | self::FOOBAR_APPOINTMENTS
+-            | self::FOOBAR_ESTIMATES
+-            | self::FOOBAR_CUSTOMER_CONTACTS
+-            | self::FOOBAR_TECHNICIANS;
 -
-+        $this->enabledDatasets = $this->enabledDatasets | self::DATASET_BUSINESS_UNITS | self::DATASET_CAMPAIGNS | self::DATASET_JOB_TYPES | self::DATASET_CUSTOMERS | self::DATASET_MEMBERSHIPS | self::DATASET_MEMBERSHIP_TYPES | self::DATASET_INVOICES | self::DATASET_TAGS | self::DATASET_APPOINTMENTS | self::DATASET_ESTIMATES | self::DATASET_CUSTOMER_CONTACTS | self::DATASET_TECHNICIANS;
++        $this->enabled = $this->enabled | self::FOOBAR_BUSINESS_UNITS | self::FOOBAR_CAMPAIGNS | self::FOOBAR_JOB_TYPES | self::FOOBAR_CUSTOMERS | self::FOOBAR_MEMBERSHIPS | self::FOOBAR_MEMBERSHIP_TYPES | self::FOOBAR_INVOICES | self::FOOBAR_TAGS | self::FOOBAR_APPOINTMENTS | self::FOOBAR_ESTIMATES | self::FOOBAR_CUSTOMER_CONTACTS | self::FOOBAR_TECHNICIANS;
 
 
 // ???
@@ -278,4 +238,3 @@ function (array $matches) : string {
 +            ?? null;
 
 ```
-

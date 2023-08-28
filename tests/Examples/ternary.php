@@ -84,3 +84,12 @@ $cond = ! isset($path[0])
     || false !== $colonPos && $colonPos < $slashPos
     || false === $slashPos;
 $path = $cond ? "./{$path}" : $path;
+
+// split ternary before concat
+if (true) {
+    if (true) {
+        $uri = $queryString !== ''
+            ? $endpoint->getUri() . $uriGlue . $queryString
+            : $endpoint->getUri();
+    }
+}

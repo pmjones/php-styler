@@ -66,3 +66,20 @@ if (true) {
         );
     }
 }
+
+// splits get_debug_type() because literal string too long
+if (true) {
+    if (true) {
+        if (true) {
+            throw new ServiceNotCreatedException(
+                sprintf(
+                    'Plugin manager configuration for "%s" is invalid; must be an array, received "%s"',
+                    $name,
+                    get_debug_type(
+                        $options
+                    ),
+                )
+            );
+        }
+    }
+}
