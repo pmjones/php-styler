@@ -908,7 +908,7 @@ class Styler
                 break;
 
             case Expr\BinaryOp\Coalesce::class:
-                if (! $this->state->args) {
+                if (! $this->state->args && ! $this->state->array) {
                     $this->split($p->class, null, 'condense');
                     $this->split($p->class, null, 'outdent');
                 }
@@ -947,7 +947,7 @@ class Styler
                 break;
 
             case Expr\BinaryOp\Coalesce::class:
-                if (! $this->state->args) {
+                if (! $this->state->args && ! $this->state->array) {
                     $this->split($p->class, null, 'mid');
                 }
 
