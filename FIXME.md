@@ -5,26 +5,9 @@ switch ($foo) {
     // this comment will be completely removed
 }
 
-// no coalesce split inside array element?
--            $file = [
--                'name' => $nested['name'][$key] ?? null,
--                'full_path' => $nested['full_path'][$key] ?? null,
--                'type' => $nested['type'][$key] ?? null,
--                'size' => $nested['size'][$key] ?? null,
--                'tmp_name' => $nested['tmp_name'][$key] ?? null,
--                'error' => $nested['error'][$key] ?? null,
-+            $file = ['name' => $nested['name'][$key]
-+                ?? null, 'full_path' => $nested['full_path'][$key]
-+                ?? null, 'type' => $nested['type'][$key]
-+                ?? null, 'size' => $nested['size'][$key]
-+                ?? null, 'tmp_name' => $nested['tmp_name'][$key]
-+                ?? null, 'error' => $nested['error'][$key]
-+                ?? null
-             ];
-
-// losing indent -- it is because of the over-long array-dim-fetch line.
+// loses indent because of line-too-long (array dim fetch).
 // you can fix the line, but really, the outdenting should not happen merely
-// because of an over-long line.
+// because of an over-long line. alternatively, split array-dim-fetch.
 +            $data = array_reduce(
 +                $result['docs'],
 +                function (
@@ -72,7 +55,7 @@ function (array $matches) : string {
 +                ],
 +            );
 
-// splits weird inside closure body
+// splits weird inside closure body -- is OK when by itself
 -                return is_array($item)
 -                    ? [...$carry, ...self::flattenDeep($item)]
 -                    : [...$carry, $item];
@@ -94,7 +77,6 @@ function (array $matches) : string {
      }
 
 // array should nestle -- is only arg
-
 -                return Payload::updated([
 -                    'source' => $this->executeInTransaction(
 -                        fn (): FooBarBazAutomationSettings => $this->refresh($source, $credentials)
@@ -145,19 +127,6 @@ function (array $matches) : string {
 +                    $item,
 +                ];
 
-// loses indent because of line-too-long (array dim fetch)
-
-+            $data = array_reduce(
-+                $result['docs'],
-+                function (
-+                    $data,
-+                    $row,
-+                ) {
-+                    $data[$row['_id']] = $row['_source']['source']['data']['businessUnit']['name'];
-+            return $data;
-+        },
-+        $data,
-+    );
 
 // weird fluent-new split
 
