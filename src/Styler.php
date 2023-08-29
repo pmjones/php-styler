@@ -260,7 +260,6 @@ class Styler
             $this->state->increaseArgsLevel(expansive: true);
             $this->force(P\Args::class, $this->state->getArgsLevel());
             return;
-
         }
 
         $this->state->increaseArgsLevel();
