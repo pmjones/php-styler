@@ -76,9 +76,9 @@ if (true) {
                     'Plugin manager configuration for "%s" is invalid; must be an array, received "%s"',
                     $name,
                     get_debug_type(
-                        $options
+                        $options,
                     ),
-                )
+                ),
             );
         }
     }

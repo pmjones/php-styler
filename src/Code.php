@@ -97,9 +97,6 @@ class Code implements ArrayAccess
         protected string $indentStr,
         protected int $indentLen,
     ) {
-        if (! $this->indentLen) {
-            $this->indentLen = $this->indentStr === "\t" ? 4 : strlen($indentStr);
-        }
     }
 
     public function offsetSet(mixed $offset, mixed $value) : void
