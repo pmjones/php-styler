@@ -5,6 +5,23 @@ switch ($foo) {
     // this comment will be completely removed
 }
 
+// no coalesce split inside array element?
+-            $file = [
+-                'name' => $nested['name'][$key] ?? null,
+-                'full_path' => $nested['full_path'][$key] ?? null,
+-                'type' => $nested['type'][$key] ?? null,
+-                'size' => $nested['size'][$key] ?? null,
+-                'tmp_name' => $nested['tmp_name'][$key] ?? null,
+-                'error' => $nested['error'][$key] ?? null,
++            $file = ['name' => $nested['name'][$key]
++                ?? null, 'full_path' => $nested['full_path'][$key]
++                ?? null, 'type' => $nested['type'][$key]
++                ?? null, 'size' => $nested['size'][$key]
++                ?? null, 'tmp_name' => $nested['tmp_name'][$key]
++                ?? null, 'error' => $nested['error'][$key]
++                ?? null
+             ];
+
 // losing indent -- it is because of the over-long array-dim-fetch line.
 // you can fix the line, but really, the outdenting should not happen merely
 // because of an over-long line.

@@ -1249,9 +1249,9 @@ class Printer
         $stringValue = str_replace(',', '.', $stringValue);
 
         // ensure that number is really printed as float
-        $this->list[] = preg_match('/^-?[0-9]+$/', $stringValue) ? $stringValue
-            . '.0'
-         : $stringValue;
+        $this->list[] = preg_match('/^-?[0-9]+$/', $stringValue)
+            ? $stringValue . '.0'
+            : $stringValue;
     }
 
     protected function pScalar_Encapsed(Scalar\Encapsed $node) : void

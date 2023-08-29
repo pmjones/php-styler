@@ -193,13 +193,18 @@ class Styler
 
     protected function modifiers(?int $flags) : string
     {
-        return ($flags & Stmt\Class_::MODIFIER_FINAL ? 'final ' : '')
-            . ($flags & Stmt\Class_::MODIFIER_ABSTRACT ? 'abstract ' : '')
-            . ($flags & Stmt\Class_::MODIFIER_PUBLIC ? 'public ' : '')
-            . ($flags & Stmt\Class_::MODIFIER_PROTECTED ? 'protected ' : '')
-            . ($flags & Stmt\Class_::MODIFIER_PRIVATE ? 'private ' : '')
-            . ($flags & Stmt\Class_::MODIFIER_STATIC ? 'static ' : '')
-            . ($flags & Stmt\Class_::MODIFIER_READONLY ? 'readonly ' : '');
+        return implode(
+            '',
+            [
+                $flags & Stmt\Class_::MODIFIER_FINAL ? 'final ' : '',
+                $flags & Stmt\Class_::MODIFIER_ABSTRACT ? 'abstract ' : '',
+                $flags & Stmt\Class_::MODIFIER_PUBLIC ? 'public ' : '',
+                $flags & Stmt\Class_::MODIFIER_PROTECTED ? 'protected ' : '',
+                $flags & Stmt\Class_::MODIFIER_PRIVATE ? 'private ' : '',
+                $flags & Stmt\Class_::MODIFIER_STATIC ? 'static ' : '',
+                $flags & Stmt\Class_::MODIFIER_READONLY ? 'readonly ' : '',
+            ],
+        );
     }
 
     protected function maybeNewline(Printable $p) : void
@@ -919,6 +924,7 @@ class Styler
                 if (! $this->state->array) {
                     $this->split($p->class, null, 'condense');
                 }
+
                 break;
 
             case Expr\Ternary::class:
@@ -956,6 +962,7 @@ class Styler
                 if (! $this->state->array) {
                     $this->split($p->class, null, 'endCondense');
                 }
+
                 break;
 
             case Expr\Ternary::class:
