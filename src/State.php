@@ -7,9 +7,7 @@ use RuntimeException;
 
 class State
 {
-    public int $args = 0;
-
-    public int $argsHaveNewOrClosure = 0;
+    protected array $args = [];
 
     public int $array = 0;
 
@@ -51,8 +49,33 @@ class State
         throw new RuntimeException("No such property: {$key}");
     }
 
+    public function inArgs() : bool
+    {
+        return (bool) $this->args;
+    }
+
     public function inArgsOrArray() : bool
     {
         return $this->args || $this->array;
+    }
+
+    public function increaseArgsLevel($expansive = false) : void
+    {
+        $level = count($this->args) + 1;
+        $this->args[] = $level * ($expansive ? -1 : 1);
+    }
+
+    public function decreaseArgsLevel() : void
+    {
+        if (! $this->args) {
+            throw new \Exception("cannot decrease args level below zero");
+        }
+
+        array_pop($this->args);
+    }
+
+    public function getArgsLevel() : int
+    {
+        return $this->args ? end($this->args) : 0;
     }
 }

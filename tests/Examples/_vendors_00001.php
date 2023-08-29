@@ -83,3 +83,20 @@ if (true) {
         }
     }
 }
+
+// expansives mixed with non-expansives
+if (true) {
+    if (true) {
+        foreach ($this->paths as $collection => $paths) {
+            foreach ($paths as $path) {
+                $files = new RecursiveIteratorIterator(
+                    new RecursiveDirectoryIterator(
+                        $path,
+                        FilesystemIterator::SKIP_DOTS,
+                    ),
+                    RecursiveIteratorIterator::CHILD_FIRST,
+                );
+            }
+        }
+    }
+}

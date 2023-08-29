@@ -254,39 +254,39 @@ class Styler
 
     protected function sArgs(P\Args $p) : void
     {
-        $this->state->args ++;
         $this->code[] = '(';
 
         if ($p->hasExpansiveArg) {
-            $this->state->argsHaveNewOrClosure ++;
-            $this->force(P\Args::class, -1 * $this->state->args);
-        } elseif ($p->count) {
-            $this->split(P\Args::class, $this->state->args);
+            $this->state->increaseArgsLevel(expansive: true);
+            $this->force(P\Args::class, $this->state->getArgsLevel());
+            return;
+
+        }
+
+        $this->state->increaseArgsLevel();
+
+        if ($p->count) {
+            $this->split(P\Args::class, $this->state->getArgsLevel());
         }
     }
 
-    // now the problem is, how so split on separator with `args_-1` et al?
-    // track in State? and then maybe we don't need to force at all.
     protected function sArgSeparator(P\Separator $p) : void
     {
         $this->clip();
         $this->code[] = ', ';
-        $level = $this->state->args;
-        $level *= $this->state->argsHaveNewOrClosure ? -1 : 1;
-        $this->split(P\Args::class, $level, 'mid');
+        $this->split(P\Args::class, $this->state->getArgsLevel(), 'mid');
     }
 
     protected function sArgsEnd(P\ArgsEnd $p) : void
     {
         if ($p->hasExpansiveArg) {
-            $this->force(P\Args::class, -1 * $this->state->args, 'end', ',');
-            $this->state->argsHaveNewOrClosure --;
+            $this->force(P\Args::class, $this->state->getArgsLevel(), 'end', ',');
         } elseif ($p->count) {
-            $this->split(P\Args::class, $this->state->args, 'end', ',');
+            $this->split(P\Args::class, $this->state->getArgsLevel(), 'end', ',');
         }
 
+        $this->state->decreaseArgsLevel();
         $this->code[] = ')';
-        $this->state->args --;
     }
 
     protected function sArray(P\Array_ $p) : void
@@ -494,7 +494,7 @@ class Styler
         $this->code[] = ' {';
         $this->indent();
 
-        if ($this->state->args) {
+        if ($this->state->inArgs()) {
             $this->condense();
         } else {
             $this->commit();
@@ -537,7 +537,7 @@ class Styler
 
     protected function commentNewline() : void
     {
-        if ($this->state->cond || $this->state->args || $this->state->array) {
+        if ($this->state->cond || $this->state->inArgsOrArray()) {
             $this->newline();
         } else {
             $this->commit();
@@ -723,7 +723,7 @@ class Styler
     protected function sForExprSeparator(P\Separator $p) : void
     {
         $this->code[] = '; ';
-        $this->split(P\Args::class, $this->state->args, 'mid');
+        $this->split(P\Args::class, $this->state->getArgsLevel(), 'mid');
     }
 
     protected function sForeach(P\Foreach_ $p) : void
@@ -908,7 +908,7 @@ class Styler
                 break;
 
             case Expr\BinaryOp\Coalesce::class:
-                if (! $this->state->args && ! $this->state->array) {
+                if (! $this->state->inArgsOrArray()) {
                     $this->split($p->class, null, 'condense');
                     $this->split($p->class, null, 'outdent');
                 }
@@ -923,7 +923,7 @@ class Styler
                 break;
 
             case Expr\Ternary::class:
-                if (! $this->state->args) {
+                if (! $this->state->inArgs()) {
                     $this->split($p->class, null, 'condense');
                 }
 
@@ -947,7 +947,7 @@ class Styler
                 break;
 
             case Expr\BinaryOp\Coalesce::class:
-                if (! $this->state->args && ! $this->state->array) {
+                if (! $this->state->inArgsOrArray()) {
                     $this->split($p->class, null, 'mid');
                 }
 
@@ -961,7 +961,7 @@ class Styler
                 break;
 
             case Expr\Ternary::class:
-                if (! $this->state->args) {
+                if (! $this->state->inArgs()) {
                     $this->split($p->class, null, 'endCondense');
                 }
 
@@ -1026,7 +1026,7 @@ class Styler
     {
         $this->clip();
         $this->code[] = ', ';
-        $this->split(P\Args::class, $this->state->args, 'mid');
+        $this->split(P\Args::class, $this->state->getArgsLevel(), 'mid');
     }
 
     protected function sMatchArmEnd(P\End $p) : void
@@ -1329,7 +1329,7 @@ class Styler
     {
         $this->code[] = ' ';
 
-        if (! $this->state->args) {
+        if (! $this->state->inArgs()) {
             $this->split(Expr\Ternary::class, null, 'condense');
         }
 
@@ -1338,7 +1338,7 @@ class Styler
 
     protected function sTernaryEnd(P\End $p) : void
     {
-        if (! $this->state->args) {
+        if (! $this->state->inArgs()) {
             $this->split(Expr\Ternary::class, null, 'endCondense');
         }
     }
