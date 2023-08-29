@@ -37,6 +37,8 @@ class Code implements ArrayAccess
      */
     protected array $force = [];
 
+    protected $indentStr = '';
+
     protected string $indent = '';
 
     /**
@@ -94,9 +96,10 @@ class Code implements ArrayAccess
     public function __construct(
         protected string $eol,
         protected int $lineLen,
-        protected string $indentStr,
         protected int $indentLen,
+        bool $indentTab,
     ) {
+        $this->indentStr = $indentTab ? "\t" : str_pad('', $this->indentLen);
     }
 
     public function offsetSet(mixed $offset, mixed $value) : void

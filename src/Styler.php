@@ -119,8 +119,8 @@ class Styler
         return new Code(
             $this->eol,
             $this->lineLen,
-            $this->indentTab ? "\t" : str_pad('', $this->indentLen),
             $this->indentLen,
+            $this->indentTab,
         );
     }
 
