@@ -116,12 +116,7 @@ class Styler
 
     protected function newCode() : Code
     {
-        return new Code(
-            $this->eol,
-            $this->lineLen,
-            $this->indentLen,
-            $this->indentTab,
-        );
+        return new Code($this->eol, $this->lineLen, $this->indentLen, $this->indentTab);
     }
 
     protected function finish(string $code) : string

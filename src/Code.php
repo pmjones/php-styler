@@ -196,6 +196,19 @@ class Code implements ArrayAccess
         }
 
         foreach (explode($this->eol, $this->lines) as $line) {
+            // this is braindead but it will do for now
+            $firstTwoChars = substr(ltrim($line), 0, 2);
+
+            if (
+                $firstTwoChars === '//'
+                || $firstTwoChars === '/*'
+                || $firstTwoChars === '* '
+                || $firstTwoChars === '*/'
+            ) {
+                // do not count comment lines in length calculation
+                continue;
+            }
+
             if (strlen($line) > $this->lineLen) {
                 return true;
             }
