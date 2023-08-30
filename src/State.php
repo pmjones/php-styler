@@ -7,6 +7,9 @@ use RuntimeException;
 
 class State
 {
+    /**
+     * @var int[]
+     */
     protected array $args = [];
 
     public int $array = 0;
@@ -59,7 +62,7 @@ class State
         return $this->args || $this->array;
     }
 
-    public function increaseArgsLevel($expansive = false) : void
+    public function increaseArgsLevel(bool $expansive = false) : void
     {
         $level = count($this->args) + 1;
         $this->args[] = $level * ($expansive ? -1 : 1);

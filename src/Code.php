@@ -37,7 +37,7 @@ class Code implements ArrayAccess
      */
     protected array $force = [];
 
-    protected $indentStr = '';
+    protected string $indentStr = '';
 
     protected string $indent = '';
 

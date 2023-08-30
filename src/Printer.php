@@ -729,14 +729,14 @@ class Printer
     protected function pExpr_Empty(Expr\Empty_ $node) : void
     {
         $this->list[] = 'empty';
-        $this->pReservedArg($node);
+        $this->pReservedArg($node->expr);
     }
 
     protected function pExpr_Exit(Expr\Exit_ $node) : void
     {
         $kind = $node->getAttribute('kind', Expr\Exit_::KIND_DIE);
         $this->list[] = $kind === Expr\Exit_::KIND_EXIT ? 'exit' : 'die';
-        $this->pReservedArg($node);
+        $this->pReservedArg($node->expr);
     }
 
     protected function pExpr_Error(Expr\Error $node) : void
@@ -752,7 +752,7 @@ class Printer
     protected function pExpr_Eval(Expr\Eval_ $node) : void
     {
         $this->list[] = 'eval';
-        $this->pReservedArg($node);
+        $this->pReservedArg($node->expr);
     }
 
     protected function pExpr_FuncCall(Expr\FuncCall $node) : void
@@ -1206,10 +1206,10 @@ class Printer
         $this->pPrec($node, $prec, $assoc, 1);
     }
 
-    protected function pReservedArg(Node $node) : void
+    protected function pReservedArg(?Expr $node) : void
     {
         $this->list[] = new P\ReservedArg();
-        $this->p($node->expr);
+        $this->p($node);
         $this->list[] = new P\End('reservedArg');
     }
 

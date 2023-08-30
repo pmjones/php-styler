@@ -16,7 +16,7 @@ class Styler
     protected State $state;
 
     /**
-     * @var array<class-string, string>
+     * @var array<class-string, array{string, string, string}>
      */
     protected array $operators = [];
 
