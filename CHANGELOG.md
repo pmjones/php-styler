@@ -1,6 +1,6 @@
 # Change Log
 
-## NEXT
+## 0.2.0
 
 Roughly 8x speed improvement from removing `php -l` linting in favor of PHP-Parser linting.
 
