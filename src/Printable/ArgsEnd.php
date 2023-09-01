@@ -7,7 +7,7 @@ class ArgsEnd extends Printable
 {
     public function __construct(
         public readonly int $count,
-        public readonly mixed $hasExpansiveArg,
+        public readonly ?bool $expansive,
     ) {
     }
 }

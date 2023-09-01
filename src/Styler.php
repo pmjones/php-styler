@@ -20,6 +20,8 @@ class Styler
      */
     protected array $operators = [];
 
+    protected array $flyweight = [];
+
     /**
      * @param non-empty-string $eol
      */
@@ -30,6 +32,21 @@ class Styler
         protected bool $indentTab = false,
     ) {
         $this->setOperators();
+        $this->code = new Code(
+            $this->eol,
+            $this->lineLen,
+            $this->indentLen,
+            $this->indentTab,
+        );
+        $this->flyweight = [
+            'indent' => new Space\Indent(),
+            'outdent' => new Space\Outdent(),
+            'clip' => new Space\Clip(),
+            'condense' => new Space\Condense(),
+            'clipToParen' => new Space\ClipToParen(),
+            'newline' => new Space\Newline(),
+            'midline' => new Space\Midline(),
+        ];
     }
 
     protected function setOperators() : void
@@ -102,21 +119,15 @@ class Styler
             return "<?php" . $this->eol;
         }
 
-        $this->code = $this->newCode();
-        $this->state = $this->newState();
+        $this->state = new State();
 
         while ($list) {
             $p = array_shift($list);
             $this->s($p);
         }
 
-        $this->commit();
-        return $this->finish($this->code->getFile());
-    }
-
-    protected function newCode() : Code
-    {
-        return new Code($this->eol, $this->lineLen, $this->indentLen, $this->indentTab);
+        $this->newline();
+        return $this->finish($this->code->__invoke());
     }
 
     protected function finish(string $code) : string
@@ -124,44 +135,39 @@ class Styler
         return "<?php" . $this->eol . trim($code) . $this->eol;
     }
 
-    protected function newState() : State
-    {
-        return new State();
-    }
-
-    protected function commit() : void
-    {
-        $this->code->commit();
-    }
-
     protected function indent() : void
     {
-        $this->code[] = new Space\Indent();
+        $this->code[] = $this->flyweight[__FUNCTION__];
     }
 
     protected function outdent() : void
     {
-        $this->code[] = new Space\Outdent();
+        $this->code[] = $this->flyweight[__FUNCTION__];
     }
 
     protected function clip() : void
     {
-        $this->code[] = new Space\Clip();
+        $this->code[] = $this->flyweight[__FUNCTION__];
     }
 
     protected function condense() : void
     {
-        $this->code[] = new Space\Condense();
+        $this->code[] = $this->flyweight[__FUNCTION__];
     }
 
     protected function clipToParen() : void
     {
-        $this->code[] = new Space\ClipToParen();
+        $this->code[] = $this->flyweight[__FUNCTION__];
     }
 
     protected function newline() : void
     {
-        $this->code[] = new Space\Newline();
+        $this->code[] = $this->flyweight[__FUNCTION__];
+    }
+
+    protected function midline() : void
+    {
+        $this->code[] = $this->flyweight[__FUNCTION__];
     }
 
     protected function split(
@@ -172,7 +178,7 @@ class Styler
     ) : void
     {
         if (! $this->state->encapsed) {
-            $this->code->addSplit($class, $level, $type, ...$args);
+            $this->code[] = new Space\Split($class, $level, $type, ...$args);
         }
     }
 
@@ -183,7 +189,9 @@ class Styler
         mixed ...$args,
     ) : void
     {
-        $this->code->forceSplit($class, $level, $type, ...$args);
+        if (! $this->state->encapsed) {
+            $this->code[] = new Space\Force($class, $level, $type, ...$args);
+        }
     }
 
     protected function modifiers(?int $flags) : string
@@ -210,7 +218,7 @@ class Styler
 
         $this->condense();
         $this->newline();
-        $this->commit();
+        $this->newline();
     }
 
     protected function s(null|string|Printable $p) : void
@@ -256,7 +264,7 @@ class Styler
     {
         $this->code[] = '(';
 
-        if ($p->hasExpansiveArg) {
+        if ($p->expansive) {
             $this->state->increaseArgsLevel(expansive: true);
             $this->force(P\Args::class, $this->state->getArgsLevel());
             return;
@@ -273,12 +281,17 @@ class Styler
     {
         $this->clip();
         $this->code[] = ', ';
-        $this->split(P\Args::class, $this->state->getArgsLevel(), 'mid');
+
+        if ($p->expansive) {
+            $this->force(P\Args::class, $this->state->getArgsLevel(), 'mid');
+        } else {
+            $this->split(P\Args::class, $this->state->getArgsLevel(), 'mid');
+        }
     }
 
     protected function sArgsEnd(P\ArgsEnd $p) : void
     {
-        if ($p->hasExpansiveArg) {
+        if ($p->expansive) {
             $this->force(P\Args::class, $this->state->getArgsLevel(), 'end', ',');
         } elseif ($p->count) {
             $this->split(P\Args::class, $this->state->getArgsLevel(), 'end', ',');
@@ -294,7 +307,9 @@ class Styler
         $this->code[] = '[';
         $this->state->atFirstInBody = true;
 
-        if ($p->count) {
+        if ($p->expansive) {
+            $this->force(P\Array_::class, $this->state->array);
+        } elseif ($p->count) {
             $this->split(P\Array_::class, $this->state->array);
         }
     }
@@ -303,12 +318,19 @@ class Styler
     {
         $this->clip();
         $this->code[] = ', ';
-        $this->split(P\Array_::class, $this->state->array, 'mid');
+
+        if ($p->expansive) {
+            $this->force(P\Array_::class, $this->state->array, 'mid');
+        } else {
+            $this->split(P\Array_::class, $this->state->array, 'mid');
+        }
     }
 
     protected function sArrayEnd(P\ArrayEnd $p) : void
     {
-        if ($p->count) {
+        if ($p->expansive) {
+            $this->force(P\Array_::class, $this->state->array, 'end', ',');
+        } elseif ($p->count) {
             $this->split(P\Array_::class, $this->state->array, 'end', ',');
         }
 
@@ -353,6 +375,7 @@ class Styler
 
         if (! $p->hasComment()) {
             $this->newline();
+            $this->newline();
         }
     }
 
@@ -392,10 +415,9 @@ class Styler
         $this->code[] = ']';
 
         if ($this->state->params) {
-            $this->code[] = ' ';
-            $this->split(P\AttributeArgs::class, $this->state->attrArgs, 'mid', '');
+            $this->force(P\AttributeArgs::class, $this->state->attrArgs, 'mid', '');
         } else {
-            $this->commit();
+            $this->newline();
         }
     }
 
@@ -427,7 +449,7 @@ class Styler
     {
         $this->code[] = rtrim('break ' . $p->num) . ';';
         $this->newline();
-        $this->commit();
+        $this->newline();
     }
 
     protected function sCast(P\Cast $p) : void
@@ -450,7 +472,7 @@ class Styler
         $this->newline();
         $this->code[] = '{';
         $this->indent();
-        $this->commit();
+        $this->newline();
         $this->condense();
     }
 
@@ -460,7 +482,7 @@ class Styler
         $this->condense();
         $this->code[] = '}';
         $this->newline();
-        $this->commit();
+        $this->newline();
     }
 
     protected function sClosure(P\Closure $p) : void
@@ -496,7 +518,7 @@ class Styler
         if ($this->state->inArgs()) {
             $this->condense();
         } else {
-            $this->commit();
+            $this->newline();
         }
     }
 
@@ -515,7 +537,7 @@ class Styler
     protected function sContinue(P\Continue_ $p) : void
     {
         $this->code[] = rtrim('continue ' . $p->num) . ';';
-        $this->commit();
+        $this->newline();
     }
 
     protected function sComments(P\Comments $p) : void
@@ -523,24 +545,20 @@ class Styler
         $this->condense();
 
         if (! $p->isFirst()) {
-            $this->commentNewline();
+            $this->midline();
         }
     }
 
     protected function sComment(P\Comment $p) : void
     {
         $this->code[] = $p->text;
-        $this->state->hadComment = true;
-        $this->commentNewline();
+        $this->midline();
     }
 
-    protected function commentNewline() : void
+    protected function sCommentsEnd(P\End $p) : void
     {
-        if ($this->state->cond || $this->state->inArgsOrArray()) {
-            $this->newline();
-        } else {
-            $this->commit();
-        }
+        $this->newline();
+        $this->state->hadComment = true;
     }
 
     protected function sCond(P\Cond $p) : void
@@ -567,7 +585,7 @@ class Styler
         $this->clip();
         $this->code[] = ';';
         $this->newline();
-        $this->commit();
+        $this->newline();
     }
 
     public function sDeclare(P\Declare_ $p) : void
@@ -579,7 +597,7 @@ class Styler
     {
         $this->code[] = ' {';
         $this->indent();
-        $this->commit();
+        $this->newline();
     }
 
     public function sDeclareBodyEnd(P\BodyEnd $p) : void
@@ -587,14 +605,14 @@ class Styler
         $this->outdent();
         $this->condense();
         $this->code[] = '}';
-        $this->commit();
+        $this->newline();
     }
 
     public function sDeclareBodyEmpty(P\BodyEmpty $p) : void
     {
         $this->code[] = ';';
         $this->newline();
-        $this->commit();
+        $this->newline();
     }
 
     public function sDeclareDirective(P\DeclareDirective $p) : void
@@ -607,7 +625,7 @@ class Styler
         $this->maybeNewline($p);
         $this->code[] = 'do {';
         $this->indent();
-        $this->commit();
+        $this->newline();
     }
 
     protected function sDoBodyEnd(P\BodyEnd $p) : void
@@ -621,7 +639,7 @@ class Styler
     {
         $this->code[] = ';';
         $this->newline();
-        $this->commit();
+        $this->newline();
     }
 
     protected function sDoubleArrow(P\DoubleArrow $p) : void
@@ -656,7 +674,7 @@ class Styler
         $this->newline();
         $this->code[] = '{';
         $this->indent();
-        $this->commit();
+        $this->newline();
     }
 
     protected function sEnumCase(P\EnumCase $p) : void
@@ -668,7 +686,7 @@ class Styler
     {
         $this->code[] = ';';
         $this->newline();
-        $this->commit();
+        $this->newline();
     }
 
     protected function sEnumBodyEnd(P\BodyEnd $p) : void
@@ -677,14 +695,14 @@ class Styler
         $this->condense();
         $this->code[] = '}';
         $this->newline();
-        $this->commit();
+        $this->newline();
     }
 
     protected function sExprEnd(P\End $p) : void
     {
         $this->clip();
         $this->code[] = ';';
-        $this->commit();
+        $this->newline();
     }
 
     protected function sExtends(P\Extends_ $extends) : void
@@ -707,7 +725,7 @@ class Styler
     {
         $this->code[] = ' {';
         $this->indent();
-        $this->commit();
+        $this->newline();
     }
 
     protected function sForBodyEnd(P\BodyEnd $p) : void
@@ -716,7 +734,7 @@ class Styler
         $this->condense();
         $this->code[] = '}';
         $this->newline();
-        $this->commit();
+        $this->newline();
     }
 
     protected function sForExprSeparator(P\Separator $p) : void
@@ -735,7 +753,7 @@ class Styler
     {
         $this->code[] = ' {';
         $this->indent();
-        $this->commit();
+        $this->newline();
     }
 
     protected function sForeachBodyEnd(P\BodyEnd $p) : void
@@ -744,11 +762,12 @@ class Styler
         $this->condense();
         $this->code[] = '}';
         $this->newline();
-        $this->commit();
+        $this->newline();
     }
 
     protected function sFunction(P\Function_ $p) : void
     {
+        $this->maybeNewline($p);
         $this->code[] = $this->modifiers($p->flags) . 'function ';
     }
 
@@ -756,7 +775,7 @@ class Styler
     {
         $this->code[] = ';';
         $this->newline();
-        $this->commit();
+        $this->newline();
     }
 
     protected function sFunctionBody(P\Body $p) : void
@@ -765,7 +784,7 @@ class Styler
         $this->clipToParen();
         $this->code[] = '{';
         $this->indent();
-        $this->commit();
+        $this->newline();
     }
 
     protected function sFunctionBodyEnd(P\BodyEnd $p) : void
@@ -774,13 +793,13 @@ class Styler
         $this->condense();
         $this->code[] = '}';
         $this->newline();
-        $this->commit();
+        $this->newline();
     }
 
     protected function sGoto(P\Goto_ $p) : void
     {
         $this->code[] = "goto {$p->label};";
-        $this->commit();
+        $this->newline();
     }
 
     protected function sHaltCompiler(P\HaltCompiler $p) : void
@@ -823,7 +842,7 @@ class Styler
     {
         $this->code[] = ' {';
         $this->indent();
-        $this->commit();
+        $this->newline();
     }
 
     protected function sElseIf(P\ElseIf_ $p) : void
@@ -837,7 +856,7 @@ class Styler
     {
         $this->code[] = ' {';
         $this->indent();
-        $this->commit();
+        $this->newline();
     }
 
     protected function sElse(P\Else_ $p) : void
@@ -851,7 +870,7 @@ class Styler
     {
         $this->code[] = '{';
         $this->indent();
-        $this->commit();
+        $this->newline();
     }
 
     protected function sIfEnd(P\End $p) : void
@@ -860,7 +879,7 @@ class Styler
         $this->condense();
         $this->code[] = '}';
         $this->newline();
-        $this->commit();
+        $this->newline();
     }
 
     protected function sImplements(P\Implements_ $p) : void
@@ -990,7 +1009,7 @@ class Styler
         $this->newline();
         $this->code[] = '{';
         $this->indent();
-        $this->commit();
+        $this->newline();
     }
 
     protected function sInterfaceBodyEnd(P\BodyEnd $p) : void
@@ -999,14 +1018,14 @@ class Styler
         $this->condense();
         $this->code[] = '}';
         $this->newline();
-        $this->commit();
+        $this->newline();
     }
 
     protected function sLabel(P\Label $p) : void
     {
         $this->newline();
         $this->code[] = "{$p->name}:";
-        $this->commit();
+        $this->newline();
     }
 
     protected function sMatch(P\Match_ $p) : void
@@ -1018,7 +1037,7 @@ class Styler
     {
         $this->code[] = ' {';
         $this->indent();
-        $this->commit();
+        $this->newline();
     }
 
     protected function sMatchSeparator(P\Separator $p) : void
@@ -1031,7 +1050,7 @@ class Styler
     protected function sMatchArmEnd(P\End $p) : void
     {
         $this->code[] = ',';
-        $this->commit();
+        $this->newline();
     }
 
     protected function sMatchBodyEnd(P\BodyEnd $p) : void
@@ -1083,7 +1102,7 @@ class Styler
         $this->newline();
         $this->code[] = '{';
         $this->indent();
-        $this->commit();
+        $this->newline();
     }
 
     protected function sNamespaceBodyEnd(P\BodyEnd $p) : void
@@ -1092,14 +1111,14 @@ class Styler
         $this->condense();
         $this->code[] = '}';
         $this->newline();
-        $this->commit();
+        $this->newline();
     }
 
     protected function sNamespaceBodyEmpty(P\BodyEmpty $p) : void
     {
         $this->code[] = ';';
         $this->newline();
-        $this->commit();
+        $this->newline();
     }
 
     protected function sNew(P\New_ $p) : void
@@ -1136,7 +1155,9 @@ class Styler
         $this->state->params ++;
         $this->code[] = '(';
 
-        if ($p->count) {
+        if ($p->expansive) {
+            $this->force(P\Params::class, $this->state->params);
+        } elseif ($p->count) {
             $this->split(P\Params::class, $this->state->params);
         }
     }
@@ -1149,7 +1170,9 @@ class Styler
 
     protected function sParamsEnd(P\ParamsEnd $p) : void
     {
-        if ($p->count) {
+        if ($p->expansive) {
+            $this->force(P\Params::class, $this->state->params, 'end', ',');
+        } elseif ($p->count) {
             $this->split(P\Params::class, $this->state->params, 'end', ',');
         }
 
@@ -1200,7 +1223,6 @@ class Styler
         $this->clip();
         $this->code[] = ';';
         $this->newline();
-        $this->commit();
     }
 
     protected function sReturn(P\Return_ $p) : void
@@ -1212,7 +1234,7 @@ class Styler
     {
         $this->clip();
         $this->code[] = ';';
-        $this->commit();
+        $this->newline();
     }
 
     protected function sReturnType(P\ReturnType $p) : void
@@ -1244,7 +1266,7 @@ class Styler
     {
         $this->clip();
         $this->code[] = ';';
-        $this->commit();
+        $this->newline();
     }
 
     protected function sReservedWord(P\ReservedWord $p) : void
@@ -1274,7 +1296,7 @@ class Styler
     {
         $this->code[] = ' {';
         $this->indent();
-        $this->commit();
+        $this->newline();
     }
 
     protected function sSwitchCase(P\SwitchCase $p) : void
@@ -1295,7 +1317,7 @@ class Styler
             $this->indent();
         }
 
-        $this->commit();
+        $this->newline();
     }
 
     protected function sSwitchCaseBody(P\Body $p) : void
@@ -1307,7 +1329,8 @@ class Styler
     {
         $this->outdent();
         $this->condense();
-        $this->commit();
+        $this->newline();
+        $this->newline();
     }
 
     protected function sSwitchBodyEnd(P\BodyEnd $p) : void
@@ -1316,7 +1339,7 @@ class Styler
         $this->condense();
         $this->code[] = '}';
         $this->newline();
-        $this->commit();
+        $this->newline();
     }
 
     /**
@@ -1352,7 +1375,7 @@ class Styler
     {
         $this->clip();
         $this->code[] = ';';
-        $this->commit();
+        $this->newline();
     }
 
     protected function sTrait(P\Trait_ $p) : void
@@ -1366,7 +1389,7 @@ class Styler
         $this->newline();
         $this->code[] = '{';
         $this->indent();
-        $this->commit();
+        $this->newline();
     }
 
     protected function sTraitBodyEnd(P\BodyEnd $p) : void
@@ -1375,7 +1398,7 @@ class Styler
         $this->condense();
         $this->code[] = '}';
         $this->newline();
-        $this->commit();
+        $this->newline();
     }
 
     protected function sTry(P\Try_ $p) : void
@@ -1388,7 +1411,7 @@ class Styler
     {
         $this->code[] = ' {';
         $this->indent();
-        $this->commit();
+        $this->newline();
     }
 
     protected function sTryCatch(P\TryCatch $p) : void
@@ -1402,7 +1425,7 @@ class Styler
     {
         $this->code[] = ' {';
         $this->indent();
-        $this->commit();
+        $this->newline();
     }
 
     protected function sTryFinally(P\TryFinally $p) : void
@@ -1416,7 +1439,7 @@ class Styler
     {
         $this->code[] = '{';
         $this->indent();
-        $this->commit();
+        $this->newline();
     }
 
     protected function sTryEnd(P\End $p) : void
@@ -1425,7 +1448,7 @@ class Styler
         $this->condense();
         $this->code[] = '}';
         $this->newline();
-        $this->commit();
+        $this->newline();
     }
 
     protected function sUnset(P\Unset_ $unset) : void
@@ -1436,7 +1459,7 @@ class Styler
     protected function sUnsetEnd(P\End $end) : void
     {
         $this->code[] = ');';
-        $this->commit();
+        $this->newline();
     }
 
     protected function sUseImport(P\UseImport $p) : void
@@ -1456,7 +1479,7 @@ class Styler
 
         $this->clip();
         $this->code[] = ';';
-        $this->commit();
+        $this->newline();
     }
 
     protected function sUseTrait(P\UseTrait $p) : void
@@ -1468,7 +1491,7 @@ class Styler
     {
         $this->code[] = ' {';
         $this->indent();
-        $this->commit();
+        $this->newline();
     }
 
     protected function sUseTraitBodyEnd(P\BodyEnd $p) : void
@@ -1476,7 +1499,7 @@ class Styler
         $this->outdent();
         $this->condense();
         $this->code[] = '}';
-        $this->commit();
+        $this->newline();
     }
 
     protected function sUseTraitAs(P\UseTraitAs $p) : void
@@ -1496,7 +1519,7 @@ class Styler
         }
 
         $this->code[] = ';';
-        $this->commit();
+        $this->newline();
     }
 
     protected function sUseTraitInsteadof(P\UseTraitInsteadof $p) : void
@@ -1508,13 +1531,13 @@ class Styler
     protected function sUseTraitInsteadOfEnd(P\End $p) : void
     {
         $this->code[] = ';';
-        $this->commit();
+        $this->newline();
     }
 
     protected function sUseTraitEnd(P\End $p) : void
     {
         $this->code[] = ';';
-        $this->commit();
+        $this->newline();
     }
 
     protected function sWhile(P\While_ $p) : void
@@ -1527,7 +1550,7 @@ class Styler
     {
         $this->code[] = ' {';
         $this->indent();
-        $this->commit();
+        $this->newline();
     }
 
     protected function sWhileBodyEnd(P\BodyEnd $p) : void
@@ -1536,7 +1559,7 @@ class Styler
         $this->condense();
         $this->code[] = '}';
         $this->newline();
-        $this->commit();
+        $this->newline();
     }
 
     protected function sYield(P\Yield_ $p) : void

@@ -13,10 +13,7 @@ $result = $this
         $veryLongArg,
     )
     ->veryLongMethodName(
-        new VeryLongClassName(
-            $veryLongArg,
-            $veryLongArg,
-        ),
+        new VeryLongClassName($veryLongArg, $veryLongArg),
     )
     ->veryLongMethodName(
         new VeryLongClassName(

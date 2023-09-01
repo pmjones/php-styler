@@ -11,13 +11,17 @@ function foo()
 {
 }
 
-function bar(#[MyAttribute] $bar)
-{
+function bar(
+    #[MyAttribute]
+    $bar,
+) {
 }
 
 function baz(
-    #[MyVeryVeryVeryVeryLongAttribute] $bar,
-    #[MyVeryVeryVeryVeryLongAttribute] $baz,
+    #[MyVeryVeryVeryVeryLongAttribute]
+    $bar,
+    #[MyVeryVeryVeryVeryLongAttribute]
+    $baz,
 ) {
 }
 

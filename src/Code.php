@@ -16,26 +16,7 @@ class Code implements ArrayAccess
      */
     protected array $parts = [];
 
-    protected string $file = '';
-
-    protected string $lines = '';
-
-    protected bool $multiline = false;
-
-    /**
-     * @var string[]
-     */
-    protected array $splitApply = [];
-
-    /**
-     * @var array<string, bool>
-     */
-    protected array $splitCalls = [];
-
-    /**
-     * @var array<string, bool>
-     */
-    protected array $force = [];
+    protected string $output = '';
 
     protected string $indentStr = '';
 
@@ -44,7 +25,7 @@ class Code implements ArrayAccess
     /**
      * @var string[]
      */
-    protected array $split = [
+    protected array $rules = [
         'args_-1',
         'args_-2',
         'args_-3',
@@ -126,89 +107,73 @@ class Code implements ArrayAccess
         unset($this->parts[$offset]);
     }
 
-    public function getFile() : string
+    public function __invoke() : string
     {
-        return rtrim($this->file) . $this->eol;
+        $this->indent = '';
+        $this->output = '';
+        $this->render($this->parts);
+        $this->parts = [];
+        return $this->output;
     }
 
-    public function addSplit(
-        string $class,
-        int $level = null,
-        string $type = null,
-        mixed ...$args,
-    ) : Space\Split
+    protected function render(array $parts) : void
     {
-        $split = new Space\Split($class, $level, $type, ...$args);
-        $this[] = $split;
-        $this->splitCalls[$split->rule] = true;
-        return $split;
-    }
+        $chunk = [];
 
-    public function forceSplit(
-        string $class,
-        int $level = null,
-        string $type = null,
-        mixed ...$args,
-    ) : Space\Split
-    {
-        $split = $this->addSplit($class, $level, $type, ...$args);
-        $this->force[$split->rule] = true;
-        return $split;
-    }
+        foreach ($parts as $part) {
+            $chunk[] = $part;
 
-    public function commit() : void
-    {
-        $oldIndent = $this->indent;
-        $split = $this->split;
-        $this->splitApply = [];
-        $this->setLines();
-        $this->multiline = true;
-
-        while ($this->keepSplitting() && $split) {
-            $this->indent = $oldIndent;
-            $rule = array_shift($split);
-            $applySplit = $this->splitCalls[$rule] ?? false;
-            $applyForce = $this->force[$rule] ?? false;
-            unset($this->force[$rule]);
-
-            if ($applySplit || $applyForce) {
-                $this->splitApply[] = $rule;
-                $this->setLines();
-
-                // var_dump($this->splitApply);
-                // var_dump($this->lines);
+            if ($part instanceof Space\Newline) {
+                $this->append($chunk);
+                $chunk = [];
             }
         }
-
-        $this->multiline = false;
-
-        // retain in file and reset for next round
-        $this->file .= $this->lines;
-        $this->splitCalls = [];
-        $this->force = [];
-        $this->parts = [$this->eol . $this->indent];
     }
 
-    protected function keepSplitting() : bool
+    protected function append(array $chunk) : void
     {
-        if ($this->force) {
-            return true;
-        }
+        $oldIndent = $this->indent;
+        $rules = [];
 
-        foreach (explode($this->eol, $this->lines) as $line) {
-            // this is braindead but it will do for now
-            $firstTwoChars = substr(ltrim($line), 0, 2);
-
-            if (
-                $firstTwoChars === '//'
-                || $firstTwoChars === '/*'
-                || $firstTwoChars === '* '
-                || $firstTwoChars === '*/'
-            ) {
-                // do not count comment lines in length calculation
+        foreach ($chunk as $part) {
+            if (! $part instanceof Space\Split) {
                 continue;
             }
 
+            $rules[$part->rule] = true;
+            $force[$part->rule] = $part instanceof Space\Force;
+        }
+
+        $rules = array_intersect($this->rules, array_keys($rules));
+
+        if (! $rules) {
+            $this->output .= $this->combine($chunk);
+            return;
+        }
+
+        $rule = reset($rules);
+
+        if ($force[$rule]) {
+            $this->split($rule, $chunk);
+            return;
+        }
+
+        $lines = $this->combine($chunk);
+
+        if (! $this->tooLong($lines)) {
+            $this->output .= $lines;
+            return;
+        }
+
+        $this->indent = $oldIndent;
+        $this->split($rule, $chunk);
+    }
+
+    protected function tooLong(string $lines)
+    {
+        $exploded = explode($this->eol, $lines);
+
+        foreach ($exploded as $line) {
             if (strlen($line) > $this->lineLen) {
                 return true;
             }
@@ -217,111 +182,134 @@ class Code implements ArrayAccess
         return false;
     }
 
-    protected function setLines() : void
+    protected function split(string $rule, array $old) : void
     {
-        $this->lines = '';
+        $new = [];
 
-        foreach ($this->parts as $part) {
-            if ($part instanceof Space\Space) {
-                $method = lcfirst(
-                    ltrim((string) strrchr(get_class($part), '\\'), '\\'),
-                );
-                $this->{$method}($part);
-            } else {
-                $this->lines .= $part;
+        foreach ($old as $part) {
+            $split = $part instanceof Space\Split && $part->rule === $rule;
+
+            if (! $split) {
+                $new[] = $part;
+                continue;
+            }
+
+            switch ($part->type) {
+                case null:
+                    $new[] = new Space\Indent();
+                    $new[] = new Space\Newline();
+                    break;
+
+                case 'mid':
+                    $new[] = new Space\Clip();
+                    $new[] = new Space\Newline();
+                    break;
+
+                case 'end':
+                    $new[] = $part->args[0] ?? '';
+                    $new[] = new Space\Outdent();
+                    $new[] = new Space\Newline();
+                    break;
+
+                case 'condense':
+                    $new[] = new Space\Indent();
+                    $new[] = new Space\Condense();
+                    break;
+
+                case 'endCondense':
+                    $new[] = new Space\Outdent();
+                    $new[] = new Space\Condense();
+                    break;
+
+                case 'outdent':
+                    $new[] = new Space\Outdent();
+                    break;
+
+                default:
+                    throw new RuntimeException("No such split: '{$part->type}'");
             }
         }
 
-        $this->lines = (string) preg_replace("/\\s+\$/m", "\n", $this->lines);
+        $this->render($new);
     }
 
-    protected function newline(Space\Newline $newline = null) : void
+    protected function combine(array $chunk) : string
     {
-        $this->lines .= $this->eol . $this->indent;
+        $lines = $this->indent;
+
+        foreach ($chunk as $part) {
+            if (is_string($part)) {
+                $lines .= $part;
+            } elseif ($part instanceof Space\Space) {
+                $this->{$part->method}($lines);
+            }
+        }
+
+        $lines = (string) preg_replace("/\\s+\$/m", "\n", $lines);
+        return $lines;
     }
 
-    protected function clip(Space\Clip $clip = null) : void
+    protected function newline(string &$lines) : void
     {
-        $this->lines = rtrim($this->lines);
+        $lines .= $this->eol . $this->indent;
     }
 
-    protected function condense(Space\Condense $condense = null) : void
+    protected function midline(string &$lines) : void
     {
-        $trimmed = rtrim($this->lines);
+        $lines .= $this->eol . $this->indent;
+    }
+
+    protected function clip(string &$lines) : void
+    {
+        $lines = rtrim($lines);
+
+        if ($lines === '') {
+            $this->output = rtrim($this->output);
+        }
+    }
+
+    protected function condense(string &$lines) : void
+    {
+        $trimmed = rtrim($lines);
 
         if ($trimmed === '') {
-            $this->file = rtrim($this->file);
+            $this->output = rtrim($this->output);
         }
 
-        $this->lines = $trimmed . $this->eol . $this->indent;
+        $lines = $trimmed . $this->eol . $this->indent;
     }
 
-    // clips the line **only if** the last character is a paren.
-    protected function clipToParen(Space\ClipToParen $clipToParen = null) : void
+    // clips the line **only if** the last character is a paren on **its own line**.
+    protected function clipToParen(string &$lines) : void
     {
-        $trimmed = rtrim($this->lines);
-        $lines = explode($this->eol, $trimmed);
-        $last = end($lines);
+        if (rtrim($lines) === '') {
+            $trimmed = rtrim($this->output);
+            $exploded = explode($this->eol, $trimmed);
+            $last = end($exploded);
 
-        // can we just use $trimmed instead, and skip the explode()?
+            if (trim($last) === ')') {
+                $this->output = $trimmed . ' ';
+                $lines = rtrim($lines);
+                return;
+            }
+        }
+
+        $trimmed = rtrim($lines);
+        $exploded = explode($this->eol, $trimmed);
+        $last = end($exploded);
+
         if (trim($last) === ')') {
-            $this->lines = $trimmed . ' ';
+            $lines = $trimmed . ' ';
         }
     }
 
-    protected function indent(Space\Indent $indent = null) : void
+    protected function indent(&$lines) : void
     {
         $this->indent .= $this->indentStr;
     }
 
-    protected function outdent(Space\Outdent $outdent = null) : void
+    protected function outdent(&$lines) : void
     {
         $this->indent = substr($this->indent, 0, -1 * strlen($this->indentStr));
-    }
-
-    protected function split(Space\Split $split) : void
-    {
-        if (! $this->multiline) {
-            return;
-        }
-
-        if (! in_array($split->rule, $this->splitApply)) {
-            return;
-        }
-
-        switch ($split->type) {
-            case null:
-                $this->indent();
-                $this->newline();
-                break;
-
-            case 'mid':
-                $this->lines = rtrim($this->lines);
-                $this->newline();
-                break;
-
-            case 'end':
-                $this->lines .= $split->args[0] ?? '';
-                $this->outdent();
-                $this->newline();
-                break;
-
-            case 'condense':
-                $this->indent();
-                $this->condense();
-                break;
-
-            case 'endCondense':
-                $this->outdent();
-                $this->condense();
-                break;
-
-            case 'outdent':
-                $this->outdent();
-                break;
-
-            default:
-                throw new RuntimeException("No such split type: '{$split->type}'");
-        }
     }
 }

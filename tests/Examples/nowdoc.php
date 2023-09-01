@@ -4,6 +4,7 @@ more text
         with $vars
     and then the end
 END;
+
 function foo()
 {
     if ($bar) {

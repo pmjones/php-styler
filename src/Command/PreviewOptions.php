@@ -13,15 +13,9 @@ class PreviewOptions implements Options
             help: 'Path to the config file.',
         )]
         public readonly ?string $configFile,
-        #[Option(
-            'debug-parser',
-            help: "Dump parser nodes in output.",
-        )]
+        #[Option('debug-parser', help: "Dump parser nodes in output.")]
         public readonly ?bool $debugParser,
-        #[Option(
-            'debug-printer',
-            help: "Dump array of printables in output.",
-        )]
+        #[Option('debug-printer', help: "Dump array of printables in output.")]
         public readonly ?bool $debugPrinter,
     ) {
     }

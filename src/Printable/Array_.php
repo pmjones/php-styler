@@ -5,7 +5,9 @@ namespace PhpStyler\Printable;
 
 class Array_ extends Printable
 {
-    public function __construct(public readonly int $count)
-    {
+    public function __construct(
+        public readonly int $count,
+        public readonly ?bool $expansive,
+    ) {
     }
 }

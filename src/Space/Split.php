@@ -7,7 +7,7 @@ use PhpParser\Node\Expr;
 use PhpParser\Node\Stmt;
 use PhpStyler\Printable as P;
 
-class Split extends Space
+class Split
 {
     protected const CLASS_RULE = [
         Expr\BinaryOp\BooleanAnd::class => 'and',

@@ -180,10 +180,11 @@ class Printer
             return;
         }
 
-        $count = count($node->{$prop} ?? []);
-        $this->list[] = new P\Args($count, $node->getAttribute('has_expansive_arg'));
-        $this->pSeparate('arg', $node->{$prop} ?? null);
-        $this->list[] = new P\ArgsEnd($count, $node->getAttribute('has_expansive_arg'));
+        $count = count($args ?? []);
+        $expansive = $node->getAttribute('expansive');
+        $this->list[] = new P\Args($count, $expansive);
+        $this->pSeparate('arg', $args, $expansive);
+        $this->list[] = new P\ArgsEnd($count, $expansive);
     }
 
     protected function pAttribute(Node\Attribute $node) : void
@@ -293,6 +294,8 @@ class Printer
                 $this->list[] = new P\Comment($line);
             }
         }
+
+        $this->list[] = new P\End('comments');
     }
 
     protected function pCond(Node $node) : void
@@ -365,12 +368,13 @@ class Printer
     protected function pExpr_Array(Expr\Array_ $node) : void
     {
         $count = count($node->items);
-        $this->list[] = new P\Array_($count);
+        $expansive = $node->getAttribute('expansive');
+        $this->list[] = new P\Array_($count, $expansive);
 
         /** @var ArrayItem[] */
         $items = $node->items;
-        $this->pSeparate('array', $items);
-        $this->list[] = new P\ArrayEnd($count);
+        $this->pSeparate('array', $items, $expansive);
+        $this->list[] = new P\ArrayEnd($count, $expansive);
     }
 
     protected function pExpr_ArrayDimFetch(Expr\ArrayDimFetch $node) : void
@@ -764,9 +768,10 @@ class Printer
     protected function pParams(Node $node) : void
     {
         $count = count($node->params ?? []);
-        $this->list[] = new P\Params($count);
-        $this->pSeparate('param', $node->params ?? null);
-        $this->list[] = new P\ParamsEnd($count);
+        $expansive = $node->getAttribute('expansive');
+        $this->list[] = new P\Params($count, $expansive);
+        $this->pSeparate('param', $node->params ?? null, $expansive);
+        $this->list[] = new P\ParamsEnd($count, $expansive);
     }
 
     protected function pExpr_Include(Expr\Include_ $node) : void
@@ -812,19 +817,13 @@ class Printer
 
     protected function pExpr_MethodCall(Expr\MethodCall $node) : void
     {
+        $fluentNum = $node->getAttribute('fluentNum');
+        $fluentEnd = $node->getAttribute('fluentEnd');
         $this->pDereferenceLhs($node->var);
-        $this->list[] = new P\InstanceOp(
-            '->',
-            $node->getAttribute('fluent_num'),
-            $node->getAttribute('fluent_end'),
-        );
+        $this->list[] = new P\InstanceOp('->', $fluentNum, $fluentEnd);
         $this->pObjectProperty($node->name);
         $this->pArgs($node);
-        $this->list[] = new P\InstanceOpEnd(
-            '->',
-            $node->getAttribute('fluent_num'),
-            $node->getAttribute('fluent_end'),
-        );
+        $this->list[] = new P\InstanceOpEnd('->', $fluentNum, $fluentEnd);
     }
 
     protected function pExpr_New(Expr\New_ $node) : void
@@ -841,53 +840,35 @@ class Printer
 
     protected function pExpr_NullsafeMethodCall(Expr\NullsafeMethodCall $node) : void
     {
+        $fluentNum = $node->getAttribute('fluentNum');
+        $fluentEnd = $node->getAttribute('fluentEnd');
         $this->pDereferenceLhs($node->var);
-        $this->list[] = new P\InstanceOp(
-            '?->',
-            $node->getAttribute('fluent_num'),
-            $node->getAttribute('fluent_end'),
-        );
+        $this->list[] = new P\InstanceOp('?->', $fluentNum, $fluentEnd);
         $this->pObjectProperty($node->name);
         $this->pArgs($node);
-        $this->list[] = new P\InstanceOpEnd(
-            '?->',
-            $node->getAttribute('fluent_num'),
-            $node->getAttribute('fluent_end'),
-        );
+        $this->list[] = new P\InstanceOpEnd('?->', $fluentNum, $fluentEnd);
     }
 
     protected function pExpr_NullsafePropertyFetch(
         Expr\NullsafePropertyFetch $node,
     ) : void
     {
+        $fluentNum = $node->getAttribute('fluentNum');
+        $fluentEnd = $node->getAttribute('fluentEnd');
         $this->pDereferenceLhs($node->var);
-        $this->list[] = new P\InstanceOp(
-            '?->',
-            $node->getAttribute('fluent_num'),
-            $node->getAttribute('fluent_end'),
-        );
+        $this->list[] = new P\InstanceOp('?->', $fluentNum, $fluentEnd);
         $this->pObjectProperty($node->name);
-        $this->list[] = new P\InstanceOpEnd(
-            '?->',
-            $node->getAttribute('fluent_num'),
-            $node->getAttribute('fluent_end'),
-        );
+        $this->list[] = new P\InstanceOpEnd('?->', $fluentNum, $fluentEnd);
     }
 
     protected function pExpr_PropertyFetch(Expr\PropertyFetch $node) : void
     {
+        $fluentNum = $node->getAttribute('fluentNum');
+        $fluentEnd = $node->getAttribute('fluentEnd');
         $this->pDereferenceLhs($node->var);
-        $this->list[] = new P\InstanceOp(
-            '->',
-            $node->getAttribute('fluent_num'),
-            $node->getAttribute('fluent_end'),
-        );
+        $this->list[] = new P\InstanceOp('->', $fluentNum, $fluentEnd);
         $this->pObjectProperty($node->name);
-        $this->list[] = new P\InstanceOpEnd(
-            '->',
-            $node->getAttribute('fluent_num'),
-            $node->getAttribute('fluent_end'),
-        );
+        $this->list[] = new P\InstanceOpEnd('->', $fluentNum, $fluentEnd);
     }
 
     protected function pExpr_PostInc(Expr\PostInc $node) : void
@@ -954,7 +935,7 @@ class Printer
             return;
         }
 
-        // lifted from nInfixOp
+        // lifted from pInfixOp
         list($prec, $assoc) = $this->precedenceMap[Expr\Ternary::class];
         $this->pPrec($node->cond, $prec, $assoc, -1, true);
         $this->list[] = new P\Ternary('?');
@@ -1116,12 +1097,13 @@ class Printer
         $class = $node->class;
         $args = $node->args;
         $count = count($args);
+        $expansive = $node->getAttribute('expansive');
         $this->pAttributeGroups($class);
         $this->pModifiers($class);
         $this->list[] = new P\Class_(null, null);
-        $this->list[] = new P\Args($count, $node->getAttribute('has_expansive_arg'));
-        $this->pSeparate('arg', $args);
-        $this->list[] = new P\ArgsEnd($count, $node->getAttribute('has_expansive_arg'));
+        $this->list[] = new P\Args($count, $expansive);
+        $this->pSeparate('arg', $args, $expansive);
+        $this->list[] = new P\ArgsEnd($count, $expansive);
         $this->pExtends($class);
         $this->pImplements($class);
         $this->pBody('closure');
@@ -1385,7 +1367,11 @@ class Printer
     /**
      * @param null|Node[]|ArrayItem[] $nodes
      */
-    protected function pSeparate(string $type, ?array $nodes) : void
+    protected function pSeparate(
+        string $type,
+        ?array $nodes,
+        ?bool $expansive = null,
+    ) : void
     {
         if (! $nodes) {
             return;
@@ -1393,7 +1379,7 @@ class Printer
 
         foreach ($nodes as $node) {
             $this->p($node);
-            $this->list[] = new P\Separator($type);
+            $this->list[] = new P\Separator($type, $expansive);
         }
 
         // remove last separator
@@ -1475,9 +1461,9 @@ class Printer
     {
         $count = count($node->declares);
         $this->list[] = new P\Declare_();
-        $this->list[] = new P\Params($count);
+        $this->list[] = new P\Params($count, false);
         $this->pSeparate('functionParam', $node->declares);
-        $this->list[] = new P\ParamsEnd($count);
+        $this->list[] = new P\ParamsEnd($count, false);
 
         if ($node->stmts !== null) {
             $this->pBody('declare');
@@ -1550,9 +1536,9 @@ class Printer
         $this->list[] = new P\For_();
         $this->list[] = new P\Cond();
         $this->pSeparate('for', $node->init);
-        $this->list[] = new P\Separator('forExpr');
+        $this->list[] = new P\Separator('forExpr', false);
         $this->pSeparate('for', $node->cond);
-        $this->list[] = new P\Separator('forExpr');
+        $this->list[] = new P\Separator('forExpr', false);
         $this->pSeparate('for', $node->loop);
         $this->list[] = new P\End('cond');
         $this->pBody('for');
