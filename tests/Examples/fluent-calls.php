@@ -1,10 +1,7 @@
 <?php
 $result = $this
     ->veryLongPropertyName
-    ->veryLongMethodName(
-        $foo,
-        $bar,
-    )
+    ->veryLongMethodName($foo, $bar)
     ->veryLongMethodName(
         $veryLongArg,
         $veryLongArg,
@@ -12,9 +9,7 @@ $result = $this
         $veryLongArg,
         $veryLongArg,
     )
-    ->veryLongMethodName(
-        new VeryLongClassName($veryLongArg, $veryLongArg),
-    )
+    ->veryLongMethodName(new VeryLongClassName($veryLongArg, $veryLongArg))
     ->veryLongMethodName(
         new VeryLongClassName(
             $veryLongArg,

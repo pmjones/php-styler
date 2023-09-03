@@ -150,11 +150,6 @@ class Styler
         $this->code[] = $this->flyweight[__FUNCTION__];
     }
 
-    protected function condense() : void
-    {
-        $this->code[] = $this->flyweight[__FUNCTION__];
-    }
-
     protected function clipToParen() : void
     {
         $this->code[] = $this->flyweight[__FUNCTION__];
@@ -216,7 +211,7 @@ class Styler
             return;
         }
 
-        $this->condense();
+        $this->clip();
         $this->newline();
         $this->newline();
     }
@@ -371,10 +366,10 @@ class Styler
             return;
         }
 
-        $this->condense();
+        $this->clip();
+        $this->newline();
 
         if (! $p->hasComment()) {
-            $this->newline();
             $this->newline();
         }
     }
@@ -472,14 +467,15 @@ class Styler
         $this->newline();
         $this->code[] = '{';
         $this->indent();
+        $this->clip();
         $this->newline();
-        $this->condense();
     }
 
     protected function sClassBodyEnd(P\BodyEnd $p) : void
     {
         $this->outdent();
-        $this->condense();
+        $this->clip();
+        $this->newline();
         $this->code[] = '}';
         $this->newline();
         $this->newline();
@@ -516,16 +512,17 @@ class Styler
         $this->indent();
 
         if ($this->state->inArgs()) {
-            $this->condense();
-        } else {
-            $this->newline();
+            $this->clip();
         }
+
+        $this->newline();
     }
 
     protected function sClosureBodyEnd(P\BodyEnd $p) : void
     {
         $this->outdent();
-        $this->condense();
+        $this->clip();
+        $this->newline();
         $this->code[] = '}';
     }
 
@@ -542,7 +539,8 @@ class Styler
 
     protected function sComments(P\Comments $p) : void
     {
-        $this->condense();
+        $this->clip();
+        $this->midline();
 
         if (! $p->isFirst()) {
             $this->midline();
@@ -603,7 +601,8 @@ class Styler
     public function sDeclareBodyEnd(P\BodyEnd $p) : void
     {
         $this->outdent();
-        $this->condense();
+        $this->clip();
+        $this->newline();
         $this->code[] = '}';
         $this->newline();
     }
@@ -631,7 +630,8 @@ class Styler
     protected function sDoBodyEnd(P\BodyEnd $p) : void
     {
         $this->outdent();
-        $this->condense();
+        $this->clip();
+        $this->newline();
         $this->code[] = '} while ';
     }
 
@@ -692,7 +692,8 @@ class Styler
     protected function sEnumBodyEnd(P\BodyEnd $p) : void
     {
         $this->outdent();
-        $this->condense();
+        $this->clip();
+        $this->newline();
         $this->code[] = '}';
         $this->newline();
         $this->newline();
@@ -731,7 +732,8 @@ class Styler
     protected function sForBodyEnd(P\BodyEnd $p) : void
     {
         $this->outdent();
-        $this->condense();
+        $this->clip();
+        $this->newline();
         $this->code[] = '}';
         $this->newline();
         $this->newline();
@@ -759,7 +761,8 @@ class Styler
     protected function sForeachBodyEnd(P\BodyEnd $p) : void
     {
         $this->outdent();
-        $this->condense();
+        $this->clip();
+        $this->newline();
         $this->code[] = '}';
         $this->newline();
         $this->newline();
@@ -790,7 +793,8 @@ class Styler
     protected function sFunctionBodyEnd(P\BodyEnd $p) : void
     {
         $this->outdent();
-        $this->condense();
+        $this->clip();
+        $this->newline();
         $this->code[] = '}';
         $this->newline();
         $this->newline();
@@ -848,7 +852,8 @@ class Styler
     protected function sElseIf(P\ElseIf_ $p) : void
     {
         $this->outdent();
-        $this->condense();
+        $this->clip();
+        $this->newline();
         $this->code[] = '} elseif ';
     }
 
@@ -862,7 +867,8 @@ class Styler
     protected function sElse(P\Else_ $p) : void
     {
         $this->outdent();
-        $this->condense();
+        $this->clip();
+        $this->newline();
         $this->code[] = '} else ';
     }
 
@@ -876,7 +882,8 @@ class Styler
     protected function sIfEnd(P\End $p) : void
     {
         $this->outdent();
-        $this->condense();
+        $this->clip();
+        $this->newline();
         $this->code[] = '}';
         $this->newline();
         $this->newline();
@@ -1015,7 +1022,8 @@ class Styler
     protected function sInterfaceBodyEnd(P\BodyEnd $p) : void
     {
         $this->outdent();
-        $this->condense();
+        $this->clip();
+        $this->newline();
         $this->code[] = '}';
         $this->newline();
         $this->newline();
@@ -1056,7 +1064,8 @@ class Styler
     protected function sMatchBodyEnd(P\BodyEnd $p) : void
     {
         $this->outdent();
-        $this->condense();
+        $this->clip();
+        $this->newline();
         $this->code[] = '}';
     }
 
@@ -1108,7 +1117,8 @@ class Styler
     protected function sNamespaceBodyEnd(P\BodyEnd $p) : void
     {
         $this->outdent();
-        $this->condense();
+        $this->clip();
+        $this->newline();
         $this->code[] = '}';
         $this->newline();
         $this->newline();
@@ -1322,13 +1332,14 @@ class Styler
 
     protected function sSwitchCaseBody(P\Body $p) : void
     {
-        $this->condense();
+        $this->clip();
+        $this->newline();
     }
 
     protected function sSwitchCaseBodyEnd(P\BodyEnd $p) : void
     {
         $this->outdent();
-        $this->condense();
+        $this->clip();
         $this->newline();
         $this->newline();
     }
@@ -1336,7 +1347,8 @@ class Styler
     protected function sSwitchBodyEnd(P\BodyEnd $p) : void
     {
         $this->outdent();
-        $this->condense();
+        $this->clip();
+        $this->newline();
         $this->code[] = '}';
         $this->newline();
         $this->newline();
@@ -1395,7 +1407,8 @@ class Styler
     protected function sTraitBodyEnd(P\BodyEnd $p) : void
     {
         $this->outdent();
-        $this->condense();
+        $this->clip();
+        $this->newline();
         $this->code[] = '}';
         $this->newline();
         $this->newline();
@@ -1417,7 +1430,8 @@ class Styler
     protected function sTryCatch(P\TryCatch $p) : void
     {
         $this->outdent();
-        $this->condense();
+        $this->clip();
+        $this->newline();
         $this->code[] = '} catch ';
     }
 
@@ -1431,7 +1445,8 @@ class Styler
     protected function sTryFinally(P\TryFinally $p) : void
     {
         $this->outdent();
-        $this->condense();
+        $this->clip();
+        $this->newline();
         $this->code[] = '} finally ';
     }
 
@@ -1445,7 +1460,8 @@ class Styler
     protected function sTryEnd(P\End $p) : void
     {
         $this->outdent();
-        $this->condense();
+        $this->clip();
+        $this->newline();
         $this->code[] = '}';
         $this->newline();
         $this->newline();
@@ -1497,7 +1513,8 @@ class Styler
     protected function sUseTraitBodyEnd(P\BodyEnd $p) : void
     {
         $this->outdent();
-        $this->condense();
+        $this->clip();
+        $this->newline();
         $this->code[] = '}';
         $this->newline();
     }
@@ -1556,7 +1573,8 @@ class Styler
     protected function sWhileBodyEnd(P\BodyEnd $p) : void
     {
         $this->outdent();
-        $this->condense();
+        $this->clip();
+        $this->newline();
         $this->code[] = '}';
         $this->newline();
         $this->newline();

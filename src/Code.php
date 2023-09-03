@@ -39,12 +39,6 @@ class Code implements ArrayAccess
         'precedence',
         'or',
         'and',
-        'array_0',
-        'array_1',
-        'array_2',
-        'array_3',
-        'array_4',
-        'array_5',
         'instance_op_0',
         'instance_op_1',
         'instance_op_2',
@@ -63,6 +57,12 @@ class Code implements ArrayAccess
         'params_3',
         'params_4',
         'params_5',
+        'array_0',
+        'array_1',
+        'array_2',
+        'array_3',
+        'array_4',
+        'array_5',
         'attribute_args_0',
         'attribute_args_1',
         'attribute_args_2',
@@ -222,13 +222,15 @@ class Code implements ArrayAccess
                     break;
 
                 case 'condense':
+                    $new[] = new Space\Clip();
                     $new[] = new Space\Indent();
-                    $new[] = new Space\Condense();
+                    $new[] = new Space\Newline();
                     break;
 
                 case 'endCondense':
+                    $new[] = new Space\Clip();
                     $new[] = new Space\Outdent();
-                    $new[] = new Space\Condense();
+                    $new[] = new Space\Newline();
                     break;
 
                 case 'outdent':
@@ -276,17 +278,6 @@ class Code implements ArrayAccess
         if ($lines === '') {
             $this->output = rtrim($this->output);
         }
-    }
-
-    protected function condense(string &$lines) : void
-    {
-        $trimmed = rtrim($lines);
-
-        if ($trimmed === '') {
-            $this->output = rtrim($this->output);
-        }
-
-        $lines = $trimmed . $this->eol . $this->indent;
     }
 
     // clips the line **only if** the last character is a paren on **its own line**.

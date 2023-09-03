@@ -1,5 +1,17 @@
 <?php
 if (true) {
+    if (true) {
+        try {
+            $pipe = $this->createPipeFromSpec(
+                $foo,
+                is_array($middleware) ? $middleware : [$middleware],
+            );
+        } catch (InvalidMiddlewareException $invalidMiddlewareException) {
+        }
+    }
+}
+
+if (true) {
     if (
         in_array(
             $veryVeryVeryveryVeryVeryVeryLongerParameterveryVeryVeryVeryLongerParameter,
@@ -16,12 +28,16 @@ function isFunctionCall(int $i) : bool
 {
     return $this->phpTokens[$i]->is(T_STRING)
         && $this->nextSignificantToken($i)?->is('(')
-        && ! $this->prevSignificantToken($i)?->is([
-            T_OBJECT_OPERATOR,
-            T_NULLSAFE_OBJECT_OPERATOR,
-            T_DOUBLE_COLON,
-            T_FUNCTION,
-        ]);
+        && ! $this
+            ->prevSignificantToken($i)
+            ?->is(
+                [
+                    T_OBJECT_OPERATOR,
+                    T_NULLSAFE_OBJECT_OPERATOR,
+                    T_DOUBLE_COLON,
+                    T_FUNCTION,
+                ],
+            );
 }
 
 // colaesce, ternary, and array
