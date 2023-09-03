@@ -26,6 +26,7 @@ class Code implements ArrayAccess
      * @var string[]
      */
     protected array $rules = [
+        'cond',
         'args_-1',
         'args_-2',
         'args_-3',
@@ -35,7 +36,6 @@ class Code implements ArrayAccess
         'ternary',
         'concat',
         'implements',
-        'cond',
         'precedence',
         'or',
         'and',
@@ -133,6 +133,7 @@ class Code implements ArrayAccess
     protected function append(array $chunk) : void
     {
         $oldIndent = $this->indent;
+        $force = [];
         $rules = [];
 
         foreach ($chunk as $part) {
@@ -140,33 +141,41 @@ class Code implements ArrayAccess
                 continue;
             }
 
+            if ($part instanceof Space\Force) {
+                $force[$part->rule] = true;
+            }
+
             $rules[$part->rule] = true;
-            $force[$part->rule] = $part instanceof Space\Force;
         }
 
         $rules = array_intersect($this->rules, array_keys($rules));
-
-        if (! $rules) {
-            $this->output .= $this->combine($chunk);
-            return;
-        }
-
         $rule = reset($rules);
 
-        if ($force[$rule]) {
-            $this->split($rule, $chunk);
+        if ($force[$rule] ?? false) {
+            $this->split($oldIndent, $rule, $chunk);
             return;
         }
 
         $lines = $this->combine($chunk);
 
-        if (! $this->tooLong($lines)) {
+        if (! $rules) {
             $this->output .= $lines;
             return;
         }
 
-        $this->indent = $oldIndent;
-        $this->split($rule, $chunk);
+        if ($this->tooLong($lines)) {
+            $this->split($oldIndent, $rule, $chunk);
+            return;
+        }
+
+        if (! $force) {
+            $this->output .= $lines;
+            return;
+        }
+
+        $force = array_intersect($this->rules, array_keys($force));
+        $rule = reset($force);
+        $this->split($oldIndent, $rule, $chunk);
     }
 
     protected function tooLong(string $lines)
@@ -182,8 +191,9 @@ class Code implements ArrayAccess
         return false;
     }
 
-    protected function split(string $rule, array $old) : void
+    protected function split(string $oldIndent, string $rule, array $old) : void
     {
+        $this->indent = $oldIndent;
         $new = [];
 
         foreach ($old as $part) {

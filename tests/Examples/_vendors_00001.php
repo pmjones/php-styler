@@ -1,4 +1,17 @@
 <?php
+if (true) {
+    if (
+        in_array(
+            $veryVeryVeryveryVeryVeryVeryLongerParameterveryVeryVeryVeryLongerParameter,
+            ['foo', 'bar', 'baz'],
+        )
+        && $veryVeryVeryVeryLongerParameterveryVeryVeryVeryLongerParameter
+        && $veryVeryVeryVeryLongerParameterveryVeryVeryVeryLongerParameter
+    ) {
+        // whatever
+    }
+}
+
 function isFunctionCall(int $i) : bool
 {
     return $this->phpTokens[$i]->is(T_STRING)

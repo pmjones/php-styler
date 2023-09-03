@@ -57,17 +57,12 @@ class State
         return (bool) $this->args;
     }
 
-    public function inExpansiveArgs() : bool
-    {
-        return $this->getArgsLevel() < 0;
-    }
-
     public function inArgsOrArray() : bool
     {
         return $this->args || $this->array;
     }
 
-    public function increaseArgsLevel(bool $expansive = false) : void
+    public function increaseArgsLevel(?bool $expansive = false) : void
     {
         $level = count($this->args) + 1;
         $this->args[] = $level * ($expansive ? -1 : 1);
