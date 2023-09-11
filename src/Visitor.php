@@ -69,8 +69,12 @@ class Visitor extends NodeVisitorAbstract
             }
         }
 
-        // attributes in params? expansive.
+        // attributes or comments in params? expansive.
         foreach ($node->params ?? [] as $param) {
+            if ($param->getComments()) {
+                $node->setAttribute('expansive', true);
+            }
+
             if ($param->attrGroups ?? []) {
                 $node->setAttribute('expansive', true);
             }

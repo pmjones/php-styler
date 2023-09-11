@@ -43,4 +43,15 @@ class Whatever
     public function bar()
     {
     }
+
+    /**
+     * Comment in parameter
+     */
+    public function addHttpMethodHandler(
+        $method,
+
+        /* Callable */
+        $handler,
+    ) {
+    }
 }
