@@ -61,6 +61,7 @@ class Visitor extends NodeVisitorAbstract
                         || $arg->value instanceof Expr\ArrowFunction
                         || $arg->value instanceof Expr\New_ && $arg->value->args
                         || $arg->value instanceof Expr\Array_ && $arg->value->items
+                        || $arg->value instanceof Expr\Ternary
                     ) {
                         $node->setAttribute('expansive', true);
                         break;

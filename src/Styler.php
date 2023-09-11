@@ -922,32 +922,30 @@ class Styler
             case Expr\BinaryOp\BooleanOr::class:
             case Expr\BinaryOp\LogicalAnd::class:
             case Expr\BinaryOp\LogicalOr::class:
-                if (! $this->state->cond) {
-                    $this->split($p->class);
-                } else {
+                if ($this->state->cond) {
                     $this->split($p->class, null, 'same');
+                } else {
+                    $this->split($p->class);
                 }
 
                 break;
 
             case Expr\BinaryOp\Coalesce::class:
-                if (! $this->state->inArgsOrArray()) {
-                    $this->split($p->class);
-                }
+                $this->split($p->class);
 
                 break;
 
             case Expr\BinaryOp\Concat::class:
-                if (! $this->state->array) {
+                if ($this->state->inArgs()) {
+                    $this->split($p->class, null, 'same');
+                } else {
                     $this->split($p->class);
                 }
 
                 break;
 
             case Expr\Ternary::class:
-                if (! $this->state->inArgs()) {
-                    $this->split($p->class);
-                }
+                $this->split($p->class);
 
                 break;
         }
@@ -958,20 +956,9 @@ class Styler
     protected function sInfixEnd(P\Infix $p) : void
     {
         switch ($p->class) {
-            case Expr\BinaryOp\BooleanAnd::class:
-            case Expr\BinaryOp\BooleanOr::class:
-            case Expr\BinaryOp\LogicalAnd::class:
-            case Expr\BinaryOp\LogicalOr::class:
-                break;
-
             case Expr\BinaryOp\Coalesce::class:
-                if (! $this->state->inArgsOrArray()) {
-                    $this->split($p->class, null, 'clip');
-                }
+                $this->split($p->class, null, 'clip');
 
-                break;
-
-            case Expr\Ternary::class:
                 break;
         }
     }
@@ -1355,9 +1342,9 @@ class Styler
     {
         $this->line[] = ' ';
 
-        if (! $this->state->inArgs()) {
+        // if (! $this->state->inArgs()) {
             $this->split(Expr\Ternary::class);
-        }
+        // }
 
         $this->line[] = $p->operator . ' ';
     }

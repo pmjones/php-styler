@@ -69,3 +69,21 @@ function () {
         whatever();
     }
 };
+
+if (true) {
+    if (true) {
+        foreach ($controllerMap as $namespace => $replacement) {
+            if (
+
+                // Allow disabling rule by setting value to false since config
+                // merging have no feature to remove entries
+                false == $replacement || ! (
+                    $controller === $namespace
+                    || str_starts_with($controller, $namespace . '\\')
+                )
+            ) {
+                // whatever
+            }
+        }
+    }
+}
