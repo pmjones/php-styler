@@ -79,7 +79,7 @@ class Visitor extends NodeVisitorAbstract
         // comments in array? expansive.
         if ($node instanceof Expr\Array_) {
             foreach ($node->items as $item) {
-                if ($item->getComments()) {
+                if ($item?->getComments() ?? false) {
                     $node->setAttribute('expansive', true);
                     break;
                 }

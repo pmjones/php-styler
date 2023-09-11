@@ -8,9 +8,15 @@ return $this->veryLongMethod()
 // coalesce with ternary
 function foo()
 {
-    $maxlifetime = (int) (($this->ttl instanceof \Closure ? ($this->ttl)() : $this->ttl)
-        ?? \ini_get('session.gc_maxlifetime')
-    );
+    // looks wrong
+    $maxlifetime = (int) (($this->ttl instanceof \Closure
+        ? ($this->ttl)()
+        : $this->ttl)
+        ?? \ini_get('session.gc_maxlifetime'));
+
+    // fix by separating
+    $ttl = $this->ttl instanceof \Closure ? ($this->ttl)() : $this->ttl;
+    $maxlifetime = (int) $ttl ?? \ini_get('session.gc_maxlifetime');
 }
 
 class foo

@@ -9,6 +9,8 @@ abstract class Printable
 
     protected bool $hasComment = false;
 
+    protected bool $isExpansive = false;
+
     protected bool $isFirst = false;
 
     public function hasAttribute(bool $hasAttribute = null) : ?bool
@@ -28,6 +30,16 @@ abstract class Printable
         }
 
         $this->hasComment = $hasComment;
+        return null;
+    }
+
+    public function isExpansive(bool $isExpansive = null) : ?bool
+    {
+        if ($isExpansive === null) {
+            return $this->isExpansive;
+        }
+
+        $this->isExpansive = $isExpansive;
         return null;
     }
 

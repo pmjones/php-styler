@@ -3,6 +3,6 @@ declare(strict_types=1);
 
 namespace PhpStyler\Printable;
 
-class StmtEnd extends Printable
+class MatchArm extends Printable
 {
 }

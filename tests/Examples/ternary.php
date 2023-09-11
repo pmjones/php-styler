@@ -56,8 +56,7 @@ $useTraitAs = $this->veryLongFunctionName(
 
 // ternary embedded in argument with boolean looks bad.
 $sourceDirs = explode('/', isset($basePath[0])
-    && '/' === $basePath[0]
- ? substr($basePath, 1) : $basePath);
+    && '/' === $basePath[0] ? substr($basePath, 1) : $basePath);
 
 // instead, extract the condition.
 $toExplode = isset($basePath[0]) && '/' === $basePath[0]
@@ -70,8 +69,8 @@ $newPath = ! isset($path[0]) || '/' === $path[0] || false !== (
     $colonPos = strpos($path, ':')
 ) && (
     $colonPos < (
-        $slashPos = strpos($path, '/')
-    ) || false === $slashPos
+    $slashPos = strpos($path, '/')
+) || false === $slashPos
 )
     ? "./{$path}"
     : $path;

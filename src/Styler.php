@@ -11,7 +11,14 @@ use PhpStyler\Printable\Printable;
 
 class Styler
 {
-    protected Code $code;
+    protected int $indentNum = 0;
+
+    protected Line $line;
+
+    /**
+     * @var Line[]
+     */
+    protected array $lines = [];
 
     protected State $state;
 
@@ -19,8 +26,6 @@ class Styler
      * @var array<class-string, array{string, string, string}>
      */
     protected array $operators = [];
-
-    protected array $flyweight = [];
 
     /**
      * @param non-empty-string $eol
@@ -32,21 +37,6 @@ class Styler
         protected bool $indentTab = false,
     ) {
         $this->setOperators();
-        $this->code = new Code(
-            $this->eol,
-            $this->lineLen,
-            $this->indentLen,
-            $this->indentTab,
-        );
-        $this->flyweight = [
-            'indent' => new Space\Indent(),
-            'outdent' => new Space\Outdent(),
-            'clip' => new Space\Clip(),
-            'condense' => new Space\Condense(),
-            'clipToParen' => new Space\ClipToParen(),
-            'newline' => new Space\Newline(),
-            'midline' => new Space\Midline(),
-        ];
     }
 
     protected function setOperators() : void
@@ -119,6 +109,15 @@ class Styler
             return "<?php" . $this->eol;
         }
 
+        $this->indentNum = 0;
+        $this->line = new Line(
+            $this->eol,
+            $this->indentNum,
+            $this->indentLen,
+            $this->indentTab,
+            $this->lineLen,
+        );
+        $this->lines = [];
         $this->state = new State();
 
         while ($list) {
@@ -127,7 +126,13 @@ class Styler
         }
 
         $this->newline();
-        return $this->finish($this->code->__invoke());
+        $output = '';
+
+        foreach ($this->lines as $line) {
+            $line->append($output);
+        }
+
+        return $this->finish($output);
     }
 
     protected function finish(string $code) : string
@@ -135,34 +140,38 @@ class Styler
         return "<?php" . $this->eol . trim($code) . $this->eol;
     }
 
+    protected function newline() : void
+    {
+        $this->lines[] = $this->line;
+        $this->line = new Line(
+            $this->eol,
+            $this->indentNum,
+            $this->indentLen,
+            $this->indentTab,
+            $this->lineLen,
+        );
+    }
+
     protected function indent() : void
     {
-        $this->code[] = $this->flyweight[__FUNCTION__];
+        $this->indentNum ++;
+        $this->line->indent();
     }
 
     protected function outdent() : void
     {
-        $this->code[] = $this->flyweight[__FUNCTION__];
+        $this->indentNum --;
+        $this->line->outdent();
     }
 
     protected function clip() : void
     {
-        $this->code[] = $this->flyweight[__FUNCTION__];
+        $this->line[] = new Space\Clip();
     }
 
     protected function clipToParen() : void
     {
-        $this->code[] = $this->flyweight[__FUNCTION__];
-    }
-
-    protected function newline() : void
-    {
-        $this->code[] = $this->flyweight[__FUNCTION__];
-    }
-
-    protected function midline() : void
-    {
-        $this->code[] = $this->flyweight[__FUNCTION__];
+        $this->line[] = new Space\ClipToParen();
     }
 
     protected function split(
@@ -173,19 +182,7 @@ class Styler
     ) : void
     {
         if (! $this->state->encapsed) {
-            $this->code[] = new Space\Split($class, $level, $type, ...$args);
-        }
-    }
-
-    protected function force(
-        string $class,
-        int $level = null,
-        string $type = null,
-        mixed ...$args,
-    ) : void
-    {
-        if (! $this->state->encapsed) {
-            $this->code[] = new Space\Force($class, $level, $type, ...$args);
+            $this->line[] = new Space\Split($class, $level, $type, ...$args);
         }
     }
 
@@ -207,12 +204,13 @@ class Styler
 
     protected function maybeNewline(Printable $p) : void
     {
+        $this->clip();
+        $this->newline();
+
         if ($p->isFirst() || $p->hasComment() || $p->hasAttribute()) {
             return;
         }
 
-        $this->clip();
-        $this->newline();
         $this->newline();
     }
 
@@ -232,7 +230,7 @@ class Styler
             return;
         }
 
-        $this->code[] = $p;
+        $this->line[] = $p;
     }
 
     protected function sPrintable(Printable $p) : void
@@ -257,11 +255,12 @@ class Styler
 
     protected function sArgs(P\Args $p) : void
     {
-        $this->code[] = '(';
+        $this->line[] = '(';
 
-        if ($p->expansive) {
+        if ($p->isExpansive()) {
             $this->state->increaseArgsLevel(expansive: true);
-            $this->force(P\Args::class, $this->state->getArgsLevel());
+            $this->newline();
+            $this->indent();
             return;
         }
 
@@ -274,36 +273,38 @@ class Styler
 
     protected function sArgSeparator(P\Separator $p) : void
     {
-        $this->clip();
-        $this->code[] = ', ';
-
-        if ($p->expansive) {
-            $this->force(P\Args::class, $this->state->getArgsLevel(), 'mid');
+        if ($p->isExpansive()) {
+            $this->line[] = ',';
+            $this->newline();
         } else {
-            $this->split(P\Args::class, $this->state->getArgsLevel(), 'mid');
+            $this->line[] = ', ';
+            $this->split(P\Args::class, $this->state->getArgsLevel());
         }
     }
 
-    protected function sArgsEnd(P\ArgsEnd $p) : void
+    protected function sArgsEnd(P\Args $p) : void
     {
-        if ($p->expansive) {
-            $this->force(P\Args::class, $this->state->getArgsLevel(), 'end', ',');
+        if ($p->isExpansive()) {
+            $this->line[] = ',';
+            $this->newline();
+            $this->outdent();
         } elseif ($p->count) {
             $this->split(P\Args::class, $this->state->getArgsLevel(), 'end', ',');
         }
 
         $this->state->decreaseArgsLevel();
-        $this->code[] = ')';
+        $this->line[] = ')';
     }
 
     protected function sArray(P\Array_ $p) : void
     {
         $this->state->array ++;
-        $this->code[] = '[';
+        $this->line[] = '[';
         $this->state->atFirstInBody = true;
 
-        if ($p->expansive) {
-            $this->force(P\Array_::class, $this->state->array);
+        if ($p->isExpansive()) {
+            $this->newline();
+            $this->indent();
         } elseif ($p->count) {
             $this->split(P\Array_::class, $this->state->array);
         }
@@ -311,53 +312,53 @@ class Styler
 
     protected function sArraySeparator(P\Separator $p) : void
     {
-        $this->clip();
-        $this->code[] = ', ';
-
-        if ($p->expansive) {
-            $this->force(P\Array_::class, $this->state->array, 'mid');
+        if ($p->isExpansive()) {
+            $this->line[] = ',';
+            $this->newline();
         } else {
-            $this->split(P\Array_::class, $this->state->array, 'mid');
+            $this->line[] = ', ';
+            $this->split(P\Array_::class, $this->state->array);
         }
     }
 
-    protected function sArrayEnd(P\ArrayEnd $p) : void
+    protected function sArrayEnd(P\Array_ $p) : void
     {
-        if ($p->expansive) {
-            $this->force(P\Array_::class, $this->state->array, 'end', ',');
+        if ($p->isExpansive()) {
+            $this->line[] = ',';
+            $this->newline();
+            $this->outdent();
         } elseif ($p->count) {
             $this->split(P\Array_::class, $this->state->array, 'end', ',');
         }
 
-        $this->code[] = ']';
+        $this->line[] = ']';
         $this->state->array --;
     }
 
     protected function sArrayDim(P\ArrayDim $p) : void
     {
         $this->state->array ++;
-        $this->code[] = '[';
+        $this->line[] = '[';
     }
 
-    protected function sArrayDimEnd(P\End $p) : void
+    protected function sArrayDimEnd(P\ArrayDim $p) : void
     {
-        $this->code[] = ']';
+        $this->line[] = ']';
         $this->state->array --;
     }
 
     protected function sArrowFunction(P\ArrowFunction $p) : void
     {
-        $this->code[] = $p->static ? 'static fn ' : 'fn ';
+        $this->line[] = $p->static ? 'static fn ' : 'fn ';
     }
 
-    protected function sArrowFunctionEnd(P\End $p) : void
+    protected function sArrowFunctionEnd(P\ArrowFunction $p) : void
     {
-        $this->clip();
     }
 
     protected function sAs(P\As_ $p) : void
     {
-        $this->code[] = ' as ';
+        $this->line[] = ' as ';
     }
 
     protected function sAttributeGroups(P\AttributeGroups $p) : void
@@ -366,9 +367,6 @@ class Styler
             return;
         }
 
-        $this->clip();
-        $this->newline();
-
         if (! $p->hasComment()) {
             $this->newline();
         }
@@ -376,13 +374,13 @@ class Styler
 
     protected function sAttributeGroup(P\AttributeGroup $p) : void
     {
-        $this->code[] = '#[';
+        $this->line[] = '#[';
     }
 
     protected function sAttributeArgs(P\AttributeArgs $p) : void
     {
         $this->state->attrArgs ++;
-        $this->code[] = '(';
+        $this->line[] = '(';
 
         if ($p->count) {
             $this->split(P\AttributeArgs::class, $this->state->attrArgs);
@@ -391,32 +389,27 @@ class Styler
 
     protected function sAttributeArgSeparator(P\Separator $p) : void
     {
-        $this->code[] = ', ';
-        $this->split(P\AttributeArgs::class, $this->state->attrArgs, 'mid', ', ');
+        $this->line[] = ', ';
+        $this->split(P\AttributeArgs::class, $this->state->attrArgs, null, ', ');
     }
 
-    protected function sAttributeArgsEnd(P\AttributeArgsEnd $p) : void
+    protected function sAttributeArgsEnd(P\AttributeArgs $p) : void
     {
         if ($p->count) {
             $this->split(P\AttributeArgs::class, $this->state->attrArgs, 'end', ',');
         }
 
-        $this->code[] = ')';
+        $this->line[] = ')';
         $this->state->attrArgs --;
     }
 
-    protected function sAttributeGroupEnd(P\End $p) : void
+    protected function sAttributeGroupEnd(P\AttributeGroup $p) : void
     {
-        $this->code[] = ']';
-
-        if ($this->state->params) {
-            $this->force(P\AttributeArgs::class, $this->state->attrArgs, 'mid', '');
-        } else {
-            $this->newline();
-        }
+        $this->line[] = ']';
+        $this->newline();
     }
 
-    protected function sAttributeGroupsEnd(P\End $p) : void
+    protected function sAttributeGroupsEnd(P\AttributeGroups $p) : void
     {
         $this->state->hadAttribute = true;
     }
@@ -428,7 +421,7 @@ class Styler
         $this->{$method}($p);
     }
 
-    protected function sBodyEnd(P\BodyEnd $p) : void
+    protected function sBodyEnd(P\Body $p) : void
     {
         $method = 's' . ucfirst($p->type) . 'BodyEnd';
         $this->{$method}($p);
@@ -442,14 +435,13 @@ class Styler
 
     protected function sBreak(P\Break_ $p) : void
     {
-        $this->code[] = rtrim('break ' . $p->num) . ';';
-        $this->newline();
+        $this->line[] = rtrim('break ' . $p->num) . ';';
         $this->newline();
     }
 
     protected function sCast(P\Cast $p) : void
     {
-        $this->code[] = '(' . $p->type . ') ';
+        $this->line[] = '(' . $p->type . ') ';
     }
 
     protected function sClass(P\Class_ $p) : void
@@ -459,192 +451,200 @@ class Styler
         }
 
         $name = $p->name ? ' ' . $p->name : ' ';
-        $this->code[] = $this->modifiers($p->flags) . 'class' . $name;
+        $this->line[] = $this->modifiers($p->flags) . 'class' . $name;
     }
 
     protected function sClassBody(P\Body $p) : void
     {
         $this->newline();
-        $this->code[] = '{';
-        $this->indent();
-        $this->clip();
+        $this->line[] = '{';
         $this->newline();
+        $this->indent();
     }
 
-    protected function sClassBodyEnd(P\BodyEnd $p) : void
+    protected function sClassBodyEnd(P\Body $p) : void
     {
-        $this->outdent();
         $this->clip();
+        $this->outdent();
         $this->newline();
-        $this->code[] = '}';
-        $this->newline();
+        $this->line[] = '}';
         $this->newline();
     }
 
     protected function sClosure(P\Closure $p) : void
     {
-        $this->code[] = $p->static ? 'static function ' : 'function ';
+        $this->line[] = $p->static ? 'static function ' : 'function ';
     }
 
     protected function sClosureUse(P\ClosureUse $p) : void
     {
         $this->state->params ++;
-        $this->code[] = ' use (';
+        $this->line[] = ' use (';
 
         if ($p->count) {
             $this->split(P\Params::class, $this->state->params);
         }
     }
 
-    protected function sClosureUseEnd(P\ClosureUseEnd $p) : void
+    protected function sClosureUseEnd(P\ClosureUse $p) : void
     {
         if ($p->count) {
             $this->split(P\Params::class, $this->state->params, 'end', ',');
         }
 
-        $this->code[] = ')';
+        $this->line[] = ')';
         $this->state->params --;
     }
 
     protected function sClosureBody(P\Body $p) : void
     {
-        $this->code[] = ' {';
-        $this->indent();
-
-        if ($this->state->inArgs()) {
-            $this->clip();
-        }
-
+        $this->line[] = ' {';
         $this->newline();
+        $this->indent();
     }
 
-    protected function sClosureBodyEnd(P\BodyEnd $p) : void
+    protected function sClosureBodyEnd(P\Body $p) : void
     {
-        $this->outdent();
         $this->clip();
+        $this->outdent();
         $this->newline();
-        $this->code[] = '}';
+        $this->line[] = '}';
     }
 
     protected function sClosureBodyEmpty(P\BodyEmpty $p) : void
     {
-        $this->code[] = ' {}';
+        $this->line[] = ' {}';
     }
 
     protected function sContinue(P\Continue_ $p) : void
     {
-        $this->code[] = rtrim('continue ' . $p->num) . ';';
+        $this->line[] = rtrim('continue ' . $p->num) . ';';
         $this->newline();
     }
 
     protected function sComments(P\Comments $p) : void
     {
         $this->clip();
-        $this->midline();
+        $this->newline();
 
         if (! $p->isFirst()) {
-            $this->midline();
+            $this->newline();
         }
     }
 
     protected function sComment(P\Comment $p) : void
     {
-        $this->code[] = $p->text;
-        $this->midline();
+        $this->line[] = $p->text;
+        $this->newline();
     }
 
-    protected function sCommentsEnd(P\End $p) : void
+    protected function sCommentsEnd(P\Comments $p) : void
     {
-        $this->newline();
         $this->state->hadComment = true;
     }
 
     protected function sCond(P\Cond $p) : void
     {
         $this->state->cond ++;
-        $this->code[] = '(';
-        $this->split(P\Cond::class);
+        $this->line[] = '(';
+
+        if ($p->isExpansive()) {
+            $this->newline();
+            $this->indent();
+        } else {
+            $this->split(P\Cond::class);
+        }
     }
 
-    protected function sCondEnd(P\End $p) : void
+    protected function sCondEnd(P\Cond $p) : void
     {
-        $this->split(P\Cond::class, null, 'end');
-        $this->code[] = ')';
+        if ($p->isExpansive()) {
+            $this->newline();
+            $this->outdent();
+        } else {
+            $this->split(P\Cond::class, null, 'end');
+        }
+
+        $this->line[] = ')';
         $this->state->cond --;
     }
 
     protected function sConst(P\Const_ $p) : void
     {
-        $this->code[] = 'const ';
+        $this->line[] = 'const ';
     }
 
-    protected function sConstEnd(P\End $p) : void
+    protected function sConstEnd(P\Const_ $p) : void
     {
-        $this->clip();
-        $this->code[] = ';';
-        $this->newline();
+        $this->line[] = ';';
         $this->newline();
     }
 
     public function sDeclare(P\Declare_ $p) : void
     {
-        $this->code[] = 'declare';
+        $this->line[] = 'declare';
     }
 
     public function sDeclareBody(P\Body $p) : void
     {
-        $this->code[] = ' {';
-        $this->indent();
+        $this->line[] = ' {';
         $this->newline();
+        $this->indent();
     }
 
-    public function sDeclareBodyEnd(P\BodyEnd $p) : void
+    public function sDeclareBodyEnd(P\Body $p) : void
     {
-        $this->outdent();
         $this->clip();
+        $this->outdent();
         $this->newline();
-        $this->code[] = '}';
+        $this->line[] = '}';
+        $this->newline();
         $this->newline();
     }
 
     public function sDeclareBodyEmpty(P\BodyEmpty $p) : void
     {
-        $this->code[] = ';';
+        $this->line[] = ';';
         $this->newline();
         $this->newline();
     }
 
     public function sDeclareDirective(P\DeclareDirective $p) : void
     {
-        $this->code[] = $p->name . '=';
+        $this->line[] = $p->name . '=';
+    }
+
+    protected function sDo(P\Do_ $p) : void
+    {
+        $this->maybeNewline($p);
+        $this->line[] = 'do ';
     }
 
     protected function sDoBody(P\Body $p) : void
     {
-        $this->maybeNewline($p);
-        $this->code[] = 'do {';
+        $this->line[] = '{';
+        $this->newline();
         $this->indent();
-        $this->newline();
     }
 
-    protected function sDoBodyEnd(P\BodyEnd $p) : void
+    protected function sDoBodyEnd(P\Body $p) : void
     {
-        $this->outdent();
         $this->clip();
+        $this->outdent();
         $this->newline();
-        $this->code[] = '} while ';
+        $this->line[] = '} while ';
     }
 
-    protected function sDoEnd(P\End $p) : void
+    protected function sDoEnd(P\Do_ $p) : void
     {
-        $this->code[] = ';';
+        $this->line[] = ';';
         $this->newline();
         $this->newline();
     }
 
     protected function sDoubleArrow(P\DoubleArrow $p) : void
     {
-        $this->code[] = ' => ';
+        $this->line[] = ' => ';
     }
 
     protected function sEncapsed(P\Encapsed $p) : void
@@ -652,118 +652,120 @@ class Styler
         $this->state->encapsed ++;
     }
 
-    protected function sEncapsedEnd(P\End $p) : void
+    protected function sEncapsedEnd(P\Encapsed $p) : void
     {
         $this->state->encapsed --;
     }
 
     protected function sEnd(P\End $p) : void
     {
-        $method = 's' . ucfirst($p->type) . 'End';
-        $this->{$method}($p);
+        $method = "s{$p->type}End";
+        $this->{$method}($p->orig);
     }
 
     protected function sEnum(P\Enum_ $p) : void
     {
         $this->maybeNewline($p);
-        $this->code[] = 'enum ' . $p->name;
+        $this->line[] = 'enum ' . $p->name;
     }
 
     protected function sEnumBody(P\Body $p) : void
     {
         $this->newline();
-        $this->code[] = '{';
-        $this->indent();
+        $this->line[] = '{';
         $this->newline();
+        $this->indent();
     }
 
     protected function sEnumCase(P\EnumCase $p) : void
     {
-        $this->code[] = 'case ' . $p->name;
+        $this->maybeNewline($p);
+        $this->line[] = 'case ' . $p->name;
     }
 
-    protected function sEnumCaseEnd(P\End $p) : void
+    protected function sEnumCaseEnd(P\EnumCase $p) : void
     {
-        $this->code[] = ';';
-        $this->newline();
+        $this->line[] = ';';
         $this->newline();
     }
 
-    protected function sEnumBodyEnd(P\BodyEnd $p) : void
+    protected function sEnumBodyEnd(P\Body $p) : void
     {
+        $this->clip();
         $this->outdent();
-        $this->clip();
         $this->newline();
-        $this->code[] = '}';
-        $this->newline();
+        $this->line[] = '}';
         $this->newline();
     }
 
-    protected function sExprEnd(P\End $p) : void
+    protected function sExpr(P\Expr $p) : void
     {
-        $this->clip();
-        $this->code[] = ';';
+    }
+
+    protected function sExprEnd(P\Expr $p) : void
+    {
+        $this->line[] = ';';
         $this->newline();
     }
 
     protected function sExtends(P\Extends_ $extends) : void
     {
-        $this->code[] = ' extends ' . $extends->name;
+        $this->line[] = ' extends ' . $extends->name;
     }
 
     protected function sFalse(P\False_ $p) : void
     {
-        $this->code[] = 'false';
+        $this->line[] = 'false';
     }
 
     protected function sFor(P\For_ $p) : void
     {
         $this->maybeNewline($p);
-        $this->code[] = 'for ';
+        $this->line[] = 'for ';
     }
 
     protected function sForBody(P\Body $p) : void
     {
-        $this->code[] = ' {';
-        $this->indent();
+        $this->line[] = ' {';
         $this->newline();
+        $this->indent();
     }
 
-    protected function sForBodyEnd(P\BodyEnd $p) : void
+    protected function sForBodyEnd(P\Body $p) : void
     {
-        $this->outdent();
         $this->clip();
+        $this->outdent();
         $this->newline();
-        $this->code[] = '}';
+        $this->line[] = '}';
         $this->newline();
         $this->newline();
     }
 
     protected function sForExprSeparator(P\Separator $p) : void
     {
-        $this->code[] = '; ';
-        $this->split(P\Args::class, $this->state->getArgsLevel(), 'mid');
+        $this->line[] = '; ';
+        $this->split(P\Args::class, $this->state->getArgsLevel(), 'same');
     }
 
     protected function sForeach(P\Foreach_ $p) : void
     {
         $this->maybeNewline($p);
-        $this->code[] = 'foreach ';
+        $this->line[] = 'foreach ';
     }
 
     protected function sForeachBody(P\Body $p) : void
     {
-        $this->code[] = ' {';
-        $this->indent();
+        $this->line[] = ' {';
         $this->newline();
+        $this->indent();
     }
 
-    protected function sForeachBodyEnd(P\BodyEnd $p) : void
+    protected function sForeachBodyEnd(P\Body $p) : void
     {
-        $this->outdent();
         $this->clip();
+        $this->outdent();
         $this->newline();
-        $this->code[] = '}';
+        $this->line[] = '}';
         $this->newline();
         $this->newline();
     }
@@ -771,13 +773,12 @@ class Styler
     protected function sFunction(P\Function_ $p) : void
     {
         $this->maybeNewline($p);
-        $this->code[] = $this->modifiers($p->flags) . 'function ';
+        $this->line[] = $this->modifiers($p->flags) . 'function ';
     }
 
     protected function sFunctionBodyEmpty(P\BodyEmpty $p) : void
     {
-        $this->code[] = ';';
-        $this->newline();
+        $this->line[] = ';';
         $this->newline();
     }
 
@@ -785,35 +786,35 @@ class Styler
     {
         $this->newline();
         $this->clipToParen();
-        $this->code[] = '{';
-        $this->indent();
+        $this->line[] = '{';
         $this->newline();
+        $this->indent();
     }
 
-    protected function sFunctionBodyEnd(P\BodyEnd $p) : void
+    protected function sFunctionBodyEnd(P\Body $p) : void
     {
-        $this->outdent();
         $this->clip();
+        $this->outdent();
         $this->newline();
-        $this->code[] = '}';
+        $this->line[] = '}';
         $this->newline();
         $this->newline();
     }
 
     protected function sGoto(P\Goto_ $p) : void
     {
-        $this->code[] = "goto {$p->label};";
+        $this->line[] = "goto {$p->label};";
         $this->newline();
     }
 
     protected function sHaltCompiler(P\HaltCompiler $p) : void
     {
-        $this->code[] = '__halt_compiler();';
+        $this->line[] = '__halt_compiler();';
     }
 
     protected function sHeredoc(P\Heredoc $p) : void
     {
-        $this->code[] = "<<<{$p->label}";
+        $this->line[] = "<<<{$p->label}";
         $this->state->heredoc ++;
         $this->newline();
     }
@@ -821,91 +822,88 @@ class Styler
     protected function sHeredocBody(string $p) : void
     {
         $lines = explode($this->eol, $p);
-        $this->code[] = array_shift($lines);
+        $this->line[] = array_shift($lines);
 
         foreach ($lines as $line) {
             $this->newline();
-            $this->code[] = $line;
+            $this->line[] = $line;
         }
     }
 
-    protected function sHeredocEnd(P\HeredocEnd $p) : void
+    protected function sHeredocEnd(P\Heredoc $p) : void
     {
         $this->newline();
         $this->state->heredoc --;
-        $this->code[] = $p->label;
+        $this->line[] = $p->label;
     }
 
     protected function sIf(P\If_ $p) : void
     {
         $this->maybeNewline($p);
-        $this->code[] = 'if ';
+        $this->line[] = 'if ';
     }
 
     protected function sIfBody(P\Body $p) : void
     {
-        $this->code[] = ' {';
-        $this->indent();
+        $this->line[] = ' {';
         $this->newline();
+        $this->indent();
     }
 
     protected function sElseIf(P\ElseIf_ $p) : void
     {
-        $this->outdent();
         $this->clip();
+        $this->outdent();
         $this->newline();
-        $this->code[] = '} elseif ';
+        $this->line[] = '} elseif ';
     }
 
     protected function sElseIfBody(P\Body $p) : void
     {
-        $this->code[] = ' {';
-        $this->indent();
+        $this->line[] = ' {';
         $this->newline();
+        $this->indent();
     }
 
     protected function sElse(P\Else_ $p) : void
     {
-        $this->outdent();
         $this->clip();
+        $this->outdent();
         $this->newline();
-        $this->code[] = '} else ';
+        $this->line[] = '} else ';
     }
 
     protected function sElseBody(P\Body $p) : void
     {
-        $this->code[] = '{';
-        $this->indent();
+        $this->line[] = '{';
         $this->newline();
+        $this->indent();
     }
 
-    protected function sIfEnd(P\End $p) : void
+    protected function sIfEnd(P\If_ $p) : void
     {
-        $this->outdent();
         $this->clip();
+        $this->outdent();
         $this->newline();
-        $this->code[] = '}';
+        $this->line[] = '}';
         $this->newline();
         $this->newline();
     }
 
     protected function sImplements(P\Implements_ $p) : void
     {
-        $this->code[] = ' implements ';
-        $this->split(P\Implements_::class, null, 'condense');
+        $this->line[] = ' implements ';
+        $this->split(P\Implements_::class);
     }
 
     protected function sImplementsSeparator(P\Separator $p) : void
     {
-        $this->clip();
-        $this->code[] = ', ';
-        $this->split(P\Implements_::class, null, 'mid');
+        $this->line[] = ', ';
+        $this->split(P\Implements_::class);
     }
 
-    protected function sImplementsEnd(P\End $p) : void
+    protected function sImplementsEnd(P\Implements_ $p) : void
     {
-        $this->split(P\Implements_::class, null, 'endCondense');
-        $this->clip();
     }
 
     protected function sInfix(P\Infix $p) : void
@@ -917,7 +915,7 @@ class Styler
      */
     protected function sInfixOp(P\InfixOp $p) : void
     {
-        $this->code[] = $this->operators[$p->class][0];
+        $this->line[] = $this->operators[$p->class][0];
 
         switch ($p->class) {
             case Expr\BinaryOp\BooleanAnd::class:
@@ -925,248 +923,233 @@ class Styler
             case Expr\BinaryOp\LogicalAnd::class:
             case Expr\BinaryOp\LogicalOr::class:
                 if (! $this->state->cond) {
-                    $this->split($p->class, null, 'condense');
+                    $this->split($p->class);
                 } else {
-                    $this->split($p->class, null, 'mid');
+                    $this->split($p->class, null, 'same');
                 }
 
                 break;
 
             case Expr\BinaryOp\Coalesce::class:
                 if (! $this->state->inArgsOrArray()) {
-                    $this->split($p->class, null, 'condense');
-                    $this->split($p->class, null, 'outdent');
+                    $this->split($p->class);
                 }
 
                 break;
 
             case Expr\BinaryOp\Concat::class:
                 if (! $this->state->array) {
-                    $this->split($p->class, null, 'condense');
+                    $this->split($p->class);
                 }
 
                 break;
 
             case Expr\Ternary::class:
                 if (! $this->state->inArgs()) {
-                    $this->split($p->class, null, 'condense');
+                    $this->split($p->class);
                 }
 
                 break;
         }
 
-        $this->code[] = $this->operators[$p->class][1] . $this->operators[$p->class][2];
+        $this->line[] = $this->operators[$p->class][1] . $this->operators[$p->class][2];
     }
 
-    protected function sInfixEnd(P\InfixEnd $p) : void
+    protected function sInfixEnd(P\Infix $p) : void
     {
         switch ($p->class) {
             case Expr\BinaryOp\BooleanAnd::class:
             case Expr\BinaryOp\BooleanOr::class:
             case Expr\BinaryOp\LogicalAnd::class:
             case Expr\BinaryOp\LogicalOr::class:
-                if (! $this->state->cond) {
-                    $this->split($p->class, null, 'endCondense');
-                }
-
                 break;
 
             case Expr\BinaryOp\Coalesce::class:
                 if (! $this->state->inArgsOrArray()) {
-                    $this->split($p->class, null, 'mid');
-                }
-
-                break;
-
-            case Expr\BinaryOp\Concat::class:
-                if (! $this->state->array) {
-                    $this->split($p->class, null, 'endCondense');
+                    $this->split($p->class, null, 'clip');
                 }
 
                 break;
 
             case Expr\Ternary::class:
-                if (! $this->state->inArgs()) {
-                    $this->split($p->class, null, 'endCondense');
-                }
-
                 break;
         }
     }
 
     protected function sInlineHtml(P\InlineHtml $p) : void
     {
-        $this->code[] = '?>' . ($p->newline ? $this->eol : '');
+        $this->line[] = '?>' . ($p->newline ? $this->eol : '');
     }
 
-    protected function sInlineHtmlEnd(P\End $p) : void
+    protected function sInlineHtmlEnd(P\InlineHtml $p) : void
     {
-        $this->code[] = '<?php';
+        $this->line[] = '<?php';
         $this->newline();
     }
 
     protected function sInterface(P\Interface_ $p) : void
     {
         $this->maybeNewline($p);
-        $this->code[] = 'interface ' . $p->name;
+        $this->line[] = 'interface ' . $p->name;
     }
 
     protected function sInterfaceBody(P\Body $p) : void
     {
         $this->newline();
-        $this->code[] = '{';
-        $this->indent();
+        $this->line[] = '{';
         $this->newline();
+        $this->indent();
     }
 
-    protected function sInterfaceBodyEnd(P\BodyEnd $p) : void
+    protected function sInterfaceBodyEnd(P\Body $p) : void
     {
-        $this->outdent();
         $this->clip();
+        $this->outdent();
         $this->newline();
-        $this->code[] = '}';
-        $this->newline();
+        $this->line[] = '}';
         $this->newline();
     }
 
     protected function sLabel(P\Label $p) : void
     {
         $this->newline();
-        $this->code[] = "{$p->name}:";
+        $this->line[] = "{$p->name}:";
         $this->newline();
     }
 
     protected function sMatch(P\Match_ $p) : void
     {
-        $this->code[] = 'match ';
+        $this->line[] = 'match ';
     }
 
     protected function sMatchBody(P\Body $p) : void
     {
-        $this->code[] = ' {';
-        $this->indent();
+        $this->line[] = ' {';
         $this->newline();
+        $this->indent();
     }
 
     protected function sMatchSeparator(P\Separator $p) : void
     {
-        $this->clip();
-        $this->code[] = ', ';
-        $this->split(P\Args::class, $this->state->getArgsLevel(), 'mid');
+        $this->line[] = ', ';
+        $this->split(P\Args::class, $this->state->getArgsLevel(), 'same');
     }
 
-    protected function sMatchArmEnd(P\End $p) : void
+    protected function sMatchArm(P\MatchArm $p) : void
     {
-        $this->code[] = ',';
+    }
+
+    protected function sMatchArmEnd(P\MatchArm $p) : void
+    {
+        $this->line[] = ',';
         $this->newline();
     }
 
-    protected function sMatchBodyEnd(P\BodyEnd $p) : void
+    protected function sMatchBodyEnd(P\Body $p) : void
     {
+        $this->clip();
         $this->outdent();
-        $this->clip();
         $this->newline();
-        $this->code[] = '}';
+        $this->line[] = '}';
     }
 
     protected function sStaticMember(P\StaticMember $p) : void
     {
-        $this->code[] = $p->operator;
+        $this->line[] = $p->operator;
     }
 
     protected function sInstanceOp(P\InstanceOp $p) : void
     {
         if (! $this->state->inArgsOrArray() && $p->isFluent()) {
             $this->state->instanceOp ++;
-            $this->split(P\InstanceOp::class, $this->state->instanceOp, 'condense');
+            $this->split(P\InstanceOp::class, $this->state->instanceOp);
         }
 
-        $this->code[] = $p->str;
+        $this->line[] = $p->str;
     }
 
-    protected function sInstanceOpEnd(P\InstanceOpEnd $p) : void
+    protected function sInstanceOpEnd(P\InstanceOp $p) : void
     {
         if (! $this->state->inArgsOrArray() && $p->isFluent()) {
-            $this->split(P\InstanceOp::class, $this->state->instanceOp, 'endCondense');
             $this->state->instanceOp --;
         }
     }
 
     protected function sModifiers(P\Modifiers $modifiers) : void
     {
-        $this->code[] = $this->modifiers($modifiers->flags);
+        $this->line[] = $this->modifiers($modifiers->flags);
     }
 
     protected function sNamespace(P\Namespace_ $p) : void
     {
-        $this->code[] = 'namespace';
+        $this->line[] = 'namespace';
 
         if ($p->name) {
-            $this->code[] = ' ' . $p->name;
+            $this->line[] = ' ' . $p->name;
         }
     }
 
     protected function sNamespaceBody(P\Body $p) : void
     {
         $this->newline();
-        $this->code[] = '{';
-        $this->indent();
+        $this->line[] = '{';
         $this->newline();
+        $this->indent();
     }
 
-    protected function sNamespaceBodyEnd(P\BodyEnd $p) : void
+    protected function sNamespaceBodyEnd(P\Body $p) : void
     {
-        $this->outdent();
         $this->clip();
+        $this->outdent();
         $this->newline();
-        $this->code[] = '}';
+        $this->line[] = '}';
         $this->newline();
         $this->newline();
     }
 
     protected function sNamespaceBodyEmpty(P\BodyEmpty $p) : void
     {
-        $this->code[] = ';';
+        $this->line[] = ';';
         $this->newline();
         $this->newline();
     }
 
     protected function sNew(P\New_ $p) : void
     {
-        $this->code[] = 'new ';
+        $this->line[] = 'new ';
     }
 
     protected function sNowdoc(P\Nowdoc $p) : void
     {
-        $this->code[] = "<<<'{$p->label}'";
+        $this->line[] = "<<<'{$p->label}'";
         $this->newline();
 
         foreach (explode($this->eol, $p->value) as $line) {
-            $this->code[] = $line;
+            $this->line[] = $line;
             $this->newline();
         }
 
-        $this->code[] = $p->label;
-        $this->newline();
+        $this->line[] = $p->label;
     }
 
     protected function sNull(P\Null_ $p) : void
     {
-        $this->code[] = 'null';
+        $this->line[] = 'null';
     }
 
     protected function sParamName(P\ParamName $p) : void
     {
-        $this->code[] = $p->name . ': ';
+        $this->line[] = $p->name . ': ';
     }
 
     protected function sParams(P\Params $p) : void
     {
         $this->state->params ++;
-        $this->code[] = '(';
+        $this->line[] = '(';
 
-        if ($p->expansive) {
-            $this->force(P\Params::class, $this->state->params);
+        if ($p->isExpansive()) {
+            $this->newline();
+            $this->indent();
         } elseif ($p->count) {
             $this->split(P\Params::class, $this->state->params);
         }
@@ -1174,50 +1157,51 @@ class Styler
 
     protected function sParamSeparator(P\Separator $p) : void
     {
-        $this->code[] = ', ';
-        $this->split(P\Params::class, $this->state->params, 'mid');
+        if ($p->isExpansive()) {
+            $this->line[] = ',';
+            $this->newline();
+        } else {
+            $this->line[] = ', ';
+            $this->split(P\Params::class, $this->state->params);
+        }
     }
 
-    protected function sParamsEnd(P\ParamsEnd $p) : void
+    protected function sParamsEnd(P\Params $p) : void
     {
-        if ($p->expansive) {
-            $this->force(P\Params::class, $this->state->params, 'end', ',');
+        if ($p->isExpansive()) {
+            $this->line[] = ',';
+            $this->newline();
+            $this->outdent();
         } elseif ($p->count) {
             $this->split(P\Params::class, $this->state->params, 'end', ',');
         }
 
-        $this->code[] = ')';
+        $this->line[] = ')';
         $this->state->params --;
     }
 
     protected function sPostfixOp(P\PostfixOp $p) : void
     {
-        $this->code[] = $this->operators[$p->class][0]
+        $this->line[] = $this->operators[$p->class][0]
             . $this->operators[$p->class][1]
             . $this->operators[$p->class][2];
     }
 
     protected function sPrecedence(P\Precedence $p) : void
     {
-        $this->code[] = '(';
-
-        if (! $p->ternary) {
-            $this->split(P\Precedence::class, null, 'condense');
-        }
+        $this->line[] = '(';
+        $this->split(P\Precedence::class);
     }
 
-    protected function sPrecedenceEnd(P\PrecedenceEnd $p) : void
+    protected function sPrecedenceEnd(P\Precedence $p) : void
     {
-        if (! $p->ternary) {
-            $this->split(P\Precedence::class, null, 'endCondense');
-        }
-
-        $this->code[] = ')';
+        $this->split(P\Precedence::class, null, 'end');
+        $this->line[] = ')';
     }
 
     protected function sPrefixOp(P\PrefixOp $p) : void
     {
-        $this->code[] = $this->operators[$p->class][0]
+        $this->line[] = $this->operators[$p->class][0]
             . $this->operators[$p->class][1]
             . $this->operators[$p->class][2];
     }
@@ -1225,63 +1209,60 @@ class Styler
     protected function sProperty(P\Property $p) : void
     {
         $this->maybeNewline($p);
-        $this->code[] = $this->modifiers($p->flags);
+        $this->line[] = $this->modifiers($p->flags);
     }
 
-    protected function sPropertyEnd(P\End $end) : void
+    protected function sPropertyEnd(P\Property $end) : void
     {
-        $this->clip();
-        $this->code[] = ';';
+        $this->line[] = ';';
         $this->newline();
     }
 
     protected function sReturn(P\Return_ $p) : void
     {
-        $this->code[] = $p->isEmpty ? 'return' : 'return ';
+        $this->line[] = $p->isEmpty ? 'return' : 'return ';
     }
 
-    protected function sReturnEnd(P\End $p) : void
+    protected function sReturnEnd(P\Return_ $p) : void
     {
-        $this->clip();
-        $this->code[] = ';';
+        $this->line[] = ';';
         $this->newline();
     }
 
     protected function sReturnType(P\ReturnType $p) : void
     {
-        $this->code[] = ' : ';
+        $this->line[] = ' : ';
     }
 
     protected function sTrue(P\True_ $p) : void
     {
-        $this->code[] = 'true';
+        $this->line[] = 'true';
     }
 
     protected function sReservedArg(P\ReservedArg $p) : void
     {
-        $this->code[] = '(';
+        $this->line[] = '(';
     }
 
-    protected function sReservedArgEnd(P\End $p) : void
+    protected function sReservedArgEnd(P\ReservedArg $p) : void
     {
-        $this->code[] = ')';
+        $this->line[] = ')';
     }
 
     protected function sReservedStmt(P\ReservedStmt $p) : void
     {
-        $this->code[] = $p->name . ' ';
+        $this->line[] = $p->name . ' ';
     }
 
-    protected function sReservedStmtEnd(P\End $p) : void
+    protected function sReservedStmtEnd(P\ReservedStmt $p) : void
     {
-        $this->clip();
-        $this->code[] = ';';
+        $this->line[] = ';';
         $this->newline();
     }
 
     protected function sReservedWord(P\ReservedWord $p) : void
     {
-        $this->code[] = $p->name . ' ';
+        $this->line[] = $p->name . ' ';
     }
 
     protected function sSeparator(P\Separator $p) : void
@@ -1293,63 +1274,74 @@ class Styler
             return;
         }
 
-        $this->code[] = ', ';
+        $this->line[] = ', ';
     }
 
     protected function sSwitch(P\Switch_ $p) : void
     {
         $this->maybeNewline($p);
-        $this->code[] = 'switch ';
+        $this->line[] = 'switch ';
     }
 
     protected function sSwitchBody(P\Body $p) : void
     {
-        $this->code[] = ' {';
-        $this->indent();
+        $this->line[] = ' {';
         $this->newline();
+        $this->indent();
     }
 
     protected function sSwitchCase(P\SwitchCase $p) : void
     {
-        $this->code[] = 'case ';
+        $this->line[] = 'case ';
+    }
+
+    protected function sSwitchCaseEnd(P\SwitchCase $p) : void
+    {
+        $this->line[] = ':';
+
+        if ($p->hasBody) {
+            $this->newline();
+            $this->indent();
+        } else {
+            $this->newline();
+        }
     }
 
     protected function sSwitchCaseDefault(P\SwitchCaseDefault $p) : void
     {
-        $this->code[] = 'default';
+        $this->line[] = 'default';
     }
 
-    protected function sSwitchCaseEnd(P\SwitchCaseEnd $p) : void
+    protected function sSwitchCaseDefaultEnd(P\SwitchCaseDefault $p) : void
     {
-        $this->code[] = ':';
+        $this->line[] = ':';
 
         if ($p->hasBody) {
+            $this->newline();
             $this->indent();
+        } else {
+            $this->newline();
         }
-
-        $this->newline();
     }
 
     protected function sSwitchCaseBody(P\Body $p) : void
     {
+    }
+
+    protected function sSwitchCaseBodyEnd(P\Body $p) : void
+    {
         $this->clip();
+        $this->outdent();
+        $this->newline();
         $this->newline();
     }
 
-    protected function sSwitchCaseBodyEnd(P\BodyEnd $p) : void
+    protected function sSwitchBodyEnd(P\Body $p) : void
     {
-        $this->outdent();
         $this->clip();
-        $this->newline();
-        $this->newline();
-    }
-
-    protected function sSwitchBodyEnd(P\BodyEnd $p) : void
-    {
         $this->outdent();
-        $this->clip();
         $this->newline();
-        $this->code[] = '}';
+        $this->line[] = '}';
         $this->newline();
         $this->newline();
     }
@@ -1361,227 +1353,215 @@ class Styler
      */
     protected function sTernary(P\Ternary $p) : void
     {
-        $this->code[] = ' ';
+        $this->line[] = ' ';
 
         if (! $this->state->inArgs()) {
-            $this->split(Expr\Ternary::class, null, 'condense');
+            $this->split(Expr\Ternary::class);
         }
 
-        $this->code[] = $p->operator . ' ';
+        $this->line[] = $p->operator . ' ';
     }
 
-    protected function sTernaryEnd(P\End $p) : void
+    protected function sTernaryEnd(P\Ternary $p) : void
     {
-        if (! $this->state->inArgs()) {
-            $this->split(Expr\Ternary::class, null, 'endCondense');
-        }
     }
 
     protected function sThrow(P\Throw_ $p) : void
     {
         $this->maybeNewline($p);
-        $this->code[] = 'throw ';
+        $this->line[] = 'throw ';
     }
 
-    protected function sThrowEnd(P\End $p) : void
+    protected function sThrowEnd(P\Throw_ $p) : void
     {
-        $this->clip();
-        $this->code[] = ';';
+        $this->line[] = ';';
         $this->newline();
     }
 
     protected function sTrait(P\Trait_ $p) : void
     {
         $this->maybeNewline($p);
-        $this->code[] = 'trait ' . $p->name;
+        $this->line[] = 'trait ' . $p->name;
     }
 
     protected function sTraitBody(P\Body $p) : void
     {
         $this->newline();
-        $this->code[] = '{';
-        $this->indent();
+        $this->line[] = '{';
         $this->newline();
+        $this->indent();
     }
 
-    protected function sTraitBodyEnd(P\BodyEnd $p) : void
+    protected function sTraitBodyEnd(P\Body $p) : void
     {
-        $this->outdent();
         $this->clip();
+        $this->outdent();
         $this->newline();
-        $this->code[] = '}';
-        $this->newline();
+        $this->line[] = '}';
         $this->newline();
     }
 
     protected function sTry(P\Try_ $p) : void
     {
         $this->maybeNewline($p);
-        $this->code[] = 'try';
+        $this->line[] = 'try';
     }
 
     protected function sTryBody(P\Body $p) : void
     {
-        $this->code[] = ' {';
-        $this->indent();
+        $this->line[] = ' {';
         $this->newline();
+        $this->indent();
     }
 
     protected function sTryCatch(P\TryCatch $p) : void
     {
         $this->outdent();
-        $this->clip();
-        $this->newline();
-        $this->code[] = '} catch ';
+        $this->line[] = '} catch ';
     }
 
     protected function sTryCatchBody(P\Body $p) : void
     {
-        $this->code[] = ' {';
-        $this->indent();
+        $this->line[] = ' {';
         $this->newline();
+        $this->indent();
     }
 
     protected function sTryFinally(P\TryFinally $p) : void
     {
         $this->outdent();
-        $this->clip();
-        $this->newline();
-        $this->code[] = '} finally ';
+        $this->line[] = '} finally ';
     }
 
     protected function sTryFinallyBody(P\Body $p) : void
     {
-        $this->code[] = '{';
-        $this->indent();
+        $this->line[] = '{';
         $this->newline();
+        $this->indent();
     }
 
-    protected function sTryEnd(P\End $p) : void
+    protected function sTryEnd(P\Try_ $p) : void
     {
-        $this->outdent();
         $this->clip();
+        $this->outdent();
         $this->newline();
-        $this->code[] = '}';
+        $this->line[] = '}';
         $this->newline();
         $this->newline();
     }
 
     protected function sUnset(P\Unset_ $unset) : void
     {
-        $this->code[] = 'unset(';
+        $this->line[] = 'unset(';
     }
 
-    protected function sUnsetEnd(P\End $end) : void
+    protected function sUnsetEnd(P\Unset_ $end) : void
     {
-        $this->code[] = ');';
+        $this->line[] = ');';
         $this->newline();
     }
 
     protected function sUseImport(P\UseImport $p) : void
     {
-        $this->code[] = 'use ' . ($p->type ? $p->type . ' ' : '');
+        $this->line[] = 'use ' . ($p->type ? $p->type . ' ' : '');
 
         if ($p->prefix) {
-            $this->code[] = $p->prefix . '\\{';
+            $this->line[] = $p->prefix . '\\{';
         }
     }
 
-    protected function sUseImportEnd(P\UseImportEnd $p) : void
+    protected function sUseImportEnd(P\UseImport $p) : void
     {
         if ($p->prefix) {
-            $this->code[] = '}';
+            $this->line[] = '}';
         }
 
-        $this->clip();
-        $this->code[] = ';';
+        $this->line[] = ';';
         $this->newline();
     }
 
     protected function sUseTrait(P\UseTrait $p) : void
     {
-        $this->code[] = 'use ';
+        $this->line[] = 'use ';
     }
 
     protected function sUseTraitBody(P\Body $p) : void
     {
-        $this->code[] = ' {';
-        $this->indent();
+        $this->line[] = ' {';
         $this->newline();
+        $this->indent();
     }
 
-    protected function sUseTraitBodyEnd(P\BodyEnd $p) : void
+    protected function sUseTraitBodyEnd(P\Body $p) : void
     {
         $this->outdent();
-        $this->clip();
-        $this->newline();
-        $this->code[] = '}';
+        $this->line[] = '}';
         $this->newline();
     }
 
     protected function sUseTraitAs(P\UseTraitAs $p) : void
     {
         if ($p->trait) {
-            $this->code[] = $p->trait . '::';
+            $this->line[] = $p->trait . '::';
         }
 
-        $this->code[] = $p->oldName . ' as';
+        $this->line[] = $p->oldName . ' as';
 
         if ($p->flags) {
-            $this->code[] = ' ' . rtrim($this->modifiers($p->flags), ' ');
+            $this->line[] = ' ' . rtrim($this->modifiers($p->flags), ' ');
         }
 
         if ($p->newName) {
-            $this->code[] = ' ' . $p->newName;
+            $this->line[] = ' ' . $p->newName;
         }
 
-        $this->code[] = ';';
+        $this->line[] = ';';
         $this->newline();
     }
 
     protected function sUseTraitInsteadof(P\UseTraitInsteadof $p) : void
     {
-        $this->code[] = $p->trait;
-        $this->code[] = '::' . $p->method . ' insteadof ';
+        $this->line[] = $p->trait;
+        $this->line[] = '::' . $p->method . ' insteadof ';
     }
 
-    protected function sUseTraitInsteadOfEnd(P\End $p) : void
+    protected function sUseTraitInsteadOfEnd(P\UseTraitInsteadof $p) : void
     {
-        $this->code[] = ';';
+        $this->line[] = ';';
         $this->newline();
     }
 
-    protected function sUseTraitEnd(P\End $p) : void
+    protected function sUseTraitEnd(P\UseTrait $p) : void
     {
-        $this->code[] = ';';
+        $this->line[] = ';';
         $this->newline();
     }
 
     protected function sWhile(P\While_ $p) : void
     {
         $this->maybeNewline($p);
-        $this->code[] = 'while ';
+        $this->line[] = 'while ';
     }
 
     protected function sWhileBody(P\Body $p) : void
     {
-        $this->code[] = ' {';
-        $this->indent();
+        $this->line[] = ' {';
         $this->newline();
+        $this->indent();
     }
 
-    protected function sWhileBodyEnd(P\BodyEnd $p) : void
+    protected function sWhileBodyEnd(P\Body $p) : void
     {
-        $this->outdent();
         $this->clip();
+        $this->outdent();
         $this->newline();
-        $this->code[] = '}';
+        $this->line[] = '}';
         $this->newline();
         $this->newline();
     }
 
     protected function sYield(P\Yield_ $p) : void
     {
-        $this->code[] = $p->isEmpty ? 'yield' : 'yield ';
+        $this->line[] = $p->isEmpty ? 'yield' : 'yield ';
     }
 }

@@ -64,8 +64,7 @@ if (true) {
                 . print_r($this->paths[$collection], true)
                 . PHP_EOL
                 . "Catalog class: "
-                . print_r(get_class($this), true)
-            );
+                . print_r(get_class($this), true));
         }
     }
 }

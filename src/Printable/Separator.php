@@ -5,9 +5,7 @@ namespace PhpStyler\Printable;
 
 class Separator extends Printable
 {
-    public function __construct(
-        public readonly string $type,
-        public readonly ?bool $expansive,
-    ) {
+    public function __construct(public readonly string $type)
+    {
     }
 }

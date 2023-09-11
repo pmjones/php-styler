@@ -5,7 +5,10 @@ namespace PhpStyler\Printable;
 
 class End extends Printable
 {
-    public function __construct(public readonly string $type)
+    public readonly string $type;
+
+    public function __construct(public readonly Printable $orig)
     {
+        $this->type = rtrim(substr((string) strrchr(get_class($orig), '\\'), 1), '_');
     }
 }

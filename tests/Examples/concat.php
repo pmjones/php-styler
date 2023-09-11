@@ -7,12 +7,11 @@ $foo = $veryVeryLongVariable
     . $veryVeryLongVariable
     . $veryVeryLongVariable;
 
-// no splits in arguments
+// concat in argument
 $foo = foo($veryVeryLongVariable
     . $veryVeryLongVariable
     . $veryVeryLongVariable
-    . $veryVeryLongVariable
-);
+    . $veryVeryLongVariable);
 
 // function call after concat looks good ...
 $something = $veryLongVariable
