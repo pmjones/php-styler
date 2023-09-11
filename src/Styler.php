@@ -578,6 +578,7 @@ class Styler
     {
         $this->line[] = ';';
         $this->newline();
+        $this->newline();
     }
 
     public function sDeclare(P\Declare_ $p) : void
