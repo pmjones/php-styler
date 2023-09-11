@@ -38,3 +38,15 @@ $veryVeryVeryVeryVeryVeryLongVariableName = [
     60 => 'lt',
     62 => 'gt',
 ];
+
+if (true) {
+    if (true) {
+        if (true) {
+            $buckets[$quality][] = [
+                'value' => trim($value),
+                'quality' => $quality,
+                'params' => $params,
+            ];
+        }
+    }
+}

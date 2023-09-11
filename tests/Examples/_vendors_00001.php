@@ -30,14 +30,12 @@ function isFunctionCall(int $i) : bool
         && $this->nextSignificantToken($i)?->is('(')
         && ! $this
             ->prevSignificantToken($i)
-            ?->is(
-                [
-                    T_OBJECT_OPERATOR,
-                    T_NULLSAFE_OBJECT_OPERATOR,
-                    T_DOUBLE_COLON,
-                    T_FUNCTION,
-                ],
-            );
+            ?->is([
+                T_OBJECT_OPERATOR,
+                T_NULLSAFE_OBJECT_OPERATOR,
+                T_DOUBLE_COLON,
+                T_FUNCTION,
+            ]);
 }
 
 // colaesce, ternary, and array

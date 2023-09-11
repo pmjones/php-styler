@@ -11,9 +11,9 @@ $veryVeryVeryVeryVeryVeryLongVariableName = array_filter(
 // arrow as arg in method call in array in method call
 function foo()
 {
-    $payload = Payload::updated(
-        ['result' => $this->veryLongMethodName(
+    $payload = Payload::updated([
+        'result' => $this->veryLongMethodName(
             fn () : string => $this->anotherMethodName($source, $target),
-        )],
-    );
+        ),
+    ]);
 }
