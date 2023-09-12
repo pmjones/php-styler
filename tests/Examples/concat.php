@@ -10,9 +10,9 @@ $foo = $veryVeryLongVariable
 // concat in argument
 $foo = foo(
     $veryVeryLongVariable
-    . $veryVeryLongVariable
-    . $veryVeryLongVariable
-    . $veryVeryLongVariable,
+        . $veryVeryLongVariable
+        . $veryVeryLongVariable
+        . $veryVeryLongVariable,
 );
 
 // function call after concat

@@ -941,12 +941,7 @@ class Styler
                 break;
 
             case Expr\BinaryOp\Concat::class:
-                if (! $this->state->inArgsOrArray()) {
-                    $this->split($p->class);
-                } else {
-                    $this->split($p->class, null, 'same');
-                }
-
+                $this->split($p->class);
                 break;
 
             case Expr\Ternary::class:
