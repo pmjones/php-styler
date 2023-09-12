@@ -12,13 +12,13 @@ use ArrayAccess;
 class Line implements ArrayAccess
 {
     protected const RULES = [
-        'cond',
-        'coalesce',
-        'ternary',
         'implements',
+        'cond',
         'precedence',
+        'ternary',
         'or',
         'and',
+        'coalesce',
         'instance_op_0',
         'array_0',
         'args_0',

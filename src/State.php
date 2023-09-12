@@ -32,6 +32,8 @@ class State
 
     public int $params = 0;
 
+    public int $ternary = 0;
+
     public function __get(string $key) : mixed
     {
         throw new RuntimeException("No such property: {$key}");

@@ -941,10 +941,14 @@ class Styler
                 break;
 
             case Expr\BinaryOp\Concat::class:
-                $this->split($p->class);
+                if (! $this->state->array && ! $this->state->ternary) {
+                    $this->split($p->class);
+                }
                 break;
 
             case Expr\Ternary::class:
+                $this->state->ternary ++;
+
                 if (! $this->state->inArgsOrArray()) {
                     $this->split($p->class);
                 }
@@ -963,6 +967,10 @@ class Styler
                     $this->split($p->class, null, 'clip');
                 }
 
+                break;
+
+            case Expr\Ternary::class:
+                $this->state->ternary --;
                 break;
         }
     }
@@ -1345,6 +1353,7 @@ class Styler
     protected function sTernary(P\Ternary $p) : void
     {
         $this->line[] = ' ';
+        $this->state->ternary ++;
 
         if (! $this->state->inArgsOrArray()) {
             $this->split(Expr\Ternary::class);
@@ -1355,6 +1364,7 @@ class Styler
 
     protected function sTernaryEnd(P\Ternary $p) : void
     {
+        $this->state->ternary --;
     }
 
     protected function sThrow(P\Throw_ $p) : void
