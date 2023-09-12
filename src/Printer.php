@@ -172,19 +172,21 @@ class Printer
     protected function pArgs(Node $node, string $prop = 'args') : void
     {
         $args = $node->{$prop};
+        $start = count($this->list);
 
         if (! is_array($args)) {
             $this->list[] = $orig = new P\Args(1);
             $this->p($args);
-            $this->list[] = new P\End($orig);
-            return;
+        } else {
+            $count = count($args);
+            $expansive = (bool) $node->getAttribute('expansive');
+            $this->list[] = $orig = new P\Args($count);
+            $orig->isExpansive($expansive);
+            $this->pSeparate('arg', $args, $expansive);
         }
 
-        $count = count($args);
-        $expansive = (bool) $node->getAttribute('expansive');
-        $this->list[] = $orig = new P\Args($count);
-        $orig->isExpansive($expansive);
-        $this->pSeparate('arg', $args, $expansive);
+        $end = count($this->list);
+        $this->maybeExpansive($orig, $start, $end);
         $this->list[] = new P\End($orig);
     }
 
@@ -286,25 +288,18 @@ class Printer
 
     protected function pCond(Node $node) : void
     {
-        if ($node->cond ?? null) {
-            $this->list[] = $orig = new P\Cond();
-            $start = count($this->list);
-            $this->p($node->cond);
-            $end = count($this->list);
+        $cond = $node->cond ?? null;
 
-            for ($i = $start; $i < $end; $i ++) {
-                if (
-                    $this->list[$i] instanceof Printable
-                    && $this->list[$i]->isExpansive()
-                    || $this->list[$i] instanceof P\Comments
-                ) {
-                    $orig->isExpansive(true);
-                    break;
-                }
-            }
-
-            $this->list[] = new P\End($orig);
+        if (! $cond) {
+            return;
         }
+
+        $this->list[] = $orig = new P\Cond();
+        $start = count($this->list);
+        $this->p($cond);
+        $end = count($this->list);
+        $this->maybeExpansive($orig, $start, $end);
+        $this->list[] = new P\End($orig);
     }
 
     protected function pConst(Node\Const_ $node) : void
@@ -2177,6 +2172,20 @@ class Printer
 
             default:
                 return '';
+        }
+    }
+
+    protected function maybeExpansive(Printable $orig, int $start, int $end) : void
+    {
+        for ($i = $start; $i < $end; $i ++) {
+            if (
+                $this->list[$i] instanceof Printable
+                && $this->list[$i]->isExpansive()
+                || $this->list[$i] instanceof P\Comments
+            ) {
+                $orig->isExpansive(true);
+                return;
+            }
         }
     }
 }
