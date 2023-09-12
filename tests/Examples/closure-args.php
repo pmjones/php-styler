@@ -1,7 +1,9 @@
 <?php
-foo(function () {
-    /* code */
-});
+foo(
+    function () {
+        /* code */
+    },
+);
 foo(
     $bar,
     function () {

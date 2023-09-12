@@ -941,9 +941,12 @@ class Styler
                 break;
 
             case Expr\BinaryOp\Concat::class:
+                $this->state->concat ++;
+
                 if (! $this->state->array && ! $this->state->ternary) {
-                    $this->split($p->class);
+                    $this->split($p->class, $this->state->concat);
                 }
+
                 break;
 
             case Expr\Ternary::class:
@@ -967,6 +970,10 @@ class Styler
                     $this->split($p->class, null, 'clip');
                 }
 
+                break;
+
+            case Expr\BinaryOp\Concat::class:
+                $this->state->concat --;
                 break;
 
             case Expr\Ternary::class:
@@ -1189,12 +1196,18 @@ class Styler
     protected function sPrecedence(P\Precedence $p) : void
     {
         $this->line[] = '(';
-        $this->split(P\Precedence::class);
+
+        if (! $this->state->concat) {
+            $this->split(P\Precedence::class);
+        }
     }
 
     protected function sPrecedenceEnd(P\Precedence $p) : void
     {
-        $this->split(P\Precedence::class, null, 'end');
+        if (! $this->state->concat) {
+            $this->split(P\Precedence::class, null, 'end');
+        }
+
         $this->line[] = ')';
     }
 
