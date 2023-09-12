@@ -54,7 +54,7 @@ $useTraitAs = $this->veryLongFunctionName(
     $node->newName ?: $this->name($node->newName),
 );
 
-// ternary embedded in argument with boolean looks bad.
+// ternary embedded in argument with boolean looks off
 $sourceDirs = explode(
     '/',
     isset($basePath[0]) && '/' === $basePath[0] ? substr($basePath, 1) : $basePath,
@@ -65,6 +65,42 @@ $toExplode = isset($basePath[0]) && '/' === $basePath[0]
     ? substr($basePath, 1)
     : $basePath;
 $sourceDirs = explode('/', $toExplode);
+
+// ternaries in arrays do not get split
+if (true) {
+    if (true) {
+        return implode(
+            '',
+            [
+                $flags & Stmt\Class_::MODIFIER_FINAL ? 'final ' : '',
+                $flags & Stmt\Class_::MODIFIER_ABSTRACT ? 'abstract ' : '',
+                $flags & Stmt\Class_::MODIFIER_PUBLIC ? 'public ' : '',
+                $flags & Stmt\Class_::MODIFIER_PROTECTED ? 'protected ' : '',
+                $flags & Stmt\Class_::MODIFIER_PRIVATE ? 'private ' : '',
+                $flags & Stmt\Class_::MODIFIER_STATIC ? 'static ' : '',
+                $flags & Stmt\Class_::MODIFIER_READONLY ? 'readonly ' : '',
+            ],
+        );
+    }
+}
+
+// nor do short ternaries
+if (true) {
+    if (true) {
+        return implode(
+            '',
+            [
+                $flags & Stmt\Class_::MODIFIER_FINAL ?: 'final ',
+                $flags & Stmt\Class_::MODIFIER_ABSTRACT ?: 'abstract ',
+                $flags & Stmt\Class_::MODIFIER_PUBLIC ?: 'public ',
+                $flags & Stmt\Class_::MODIFIER_PROTECTED ?: 'protected ',
+                $flags & Stmt\Class_::MODIFIER_PRIVATE ?: 'private ',
+                $flags & Stmt\Class_::MODIFIER_STATIC ?: 'static ',
+                $flags & Stmt\Class_::MODIFIER_READONLY ?: 'readonly ',
+            ],
+        );
+    }
+}
 
 // embedded assignments look bad.
 $newPath = ! isset($path[0]) || '/' === $path[0] || false !== (

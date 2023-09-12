@@ -913,6 +913,8 @@ class Styler
 
     /**
      * Handles line split for `&&`, `||`, `.`, and `?:`.
+     *
+     * For `? ... :` ternaries, see sTernary().
      */
     protected function sInfixOp(P\InfixOp $p) : void
     {
@@ -932,21 +934,25 @@ class Styler
                 break;
 
             case Expr\BinaryOp\Coalesce::class:
-                $this->split($p->class);
-
-                break;
-
-            case Expr\BinaryOp\Concat::class:
-                if ($this->state->inArgs()) {
-                    $this->split($p->class, null, 'same');
-                } else {
+                if (! $this->state->inArgsOrArray()) {
                     $this->split($p->class);
                 }
 
                 break;
 
+            case Expr\BinaryOp\Concat::class:
+                if (! $this->state->inArgsOrArray()) {
+                    $this->split($p->class);
+                } else {
+                    $this->split($p->class, null, 'same');
+                }
+
+                break;
+
             case Expr\Ternary::class:
-                $this->split($p->class);
+                if (! $this->state->inArgsOrArray()) {
+                    $this->split($p->class);
+                }
 
                 break;
         }
@@ -958,7 +964,9 @@ class Styler
     {
         switch ($p->class) {
             case Expr\BinaryOp\Coalesce::class:
-                $this->split($p->class, null, 'clip');
+                if (! $this->state->inArgsOrArray()) {
+                    $this->split($p->class, null, 'clip');
+                }
 
                 break;
         }
@@ -1343,9 +1351,9 @@ class Styler
     {
         $this->line[] = ' ';
 
-        // if (! $this->state->inArgs()) {
+        if (! $this->state->inArgsOrArray()) {
             $this->split(Expr\Ternary::class);
-        // }
+        }
 
         $this->line[] = $p->operator . ' ';
     }
@@ -1404,7 +1412,9 @@ class Styler
 
     protected function sTryCatch(P\TryCatch $p) : void
     {
+        $this->clip();
         $this->outdent();
+        $this->newline();
         $this->line[] = '} catch ';
     }
 
@@ -1417,7 +1427,9 @@ class Styler
 
     protected function sTryFinally(P\TryFinally $p) : void
     {
+        $this->clip();
         $this->outdent();
+        $this->newline();
         $this->line[] = '} finally ';
     }
 
