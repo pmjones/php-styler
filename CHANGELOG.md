@@ -1,6 +1,6 @@
 # Change Log
 
-## NEXT
+## 0.3.0
 
 Complete rewrite of code reassembly process using a Line object that splits into sub-Line objects, and applies splits to each Line independently.
 
