@@ -155,7 +155,7 @@ class Line implements ArrayAccess
         $this->lines[] = $this->line;
         $this->line = $this->newline();
         $this->line->indentNum ++;
-        $this->line[] = new Space\Clip();
+        $this->line[] = new Clip();
     }
 
     protected function sameSplit(Split $part) : void
@@ -178,9 +178,8 @@ class Line implements ArrayAccess
         $oldOutput = $output;
 
         foreach ($this->parts as $part) {
-            if ($part instanceof Space\Space) {
-                $this->{$part->method}($output);
-                continue;
+            if ($part instanceof Clip) {
+                $this->clip($part, $output);
             } elseif (is_string($part)) {
                 $this->append .= $part;
             }
@@ -224,8 +223,13 @@ class Line implements ArrayAccess
         return [$level, $rule];
     }
 
-    protected function clip(string &$output) : void
+    protected function clip(Clip $clip, string &$output) : void
     {
+        if ($clip->toParen) {
+            $this->clipToParen($output);
+            return;
+        }
+
         $this->append = ltrim($this->append);
         $output = rtrim($output);
     }

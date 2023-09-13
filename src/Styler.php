@@ -170,12 +170,12 @@ class Styler
 
     protected function clip() : void
     {
-        $this->line[] = new Space\Clip();
+        $this->line[] = new Clip();
     }
 
     protected function clipToParen() : void
     {
-        $this->line[] = new Space\ClipToParen();
+        $this->line[] = new Clip(toParen: true);
     }
 
     protected function split(string $class, string $type = null, mixed ...$args) : void
