@@ -225,19 +225,14 @@ class Line implements ArrayAccess
 
     protected function clip(Clip $clip, string &$output) : void
     {
-        if ($clip->toParen) {
-            $this->clipToParen($output);
+        if (! $clip->toParen) {
+            $this->append = ltrim($this->append);
+            $output = rtrim($output);
             return;
         }
 
-        $this->append = ltrim($this->append);
-        $output = rtrim($output);
-    }
-
-    // clips the line **only if** the last character
-    // is a paren on **its own line**.
-    protected function clipToParen(string &$output) : void
-    {
+        // clips the line **only if** the last character
+        // is a paren on **its own line**.
         $trimmed = rtrim($output);
         $exploded = explode(PHP_EOL, $trimmed);
         $last = end($exploded);
