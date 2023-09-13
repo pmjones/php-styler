@@ -173,18 +173,10 @@ class Printer
     {
         $args = $node->{$prop};
         $start = count($this->list);
-
-        if (! is_array($args)) {
-            $this->list[] = $orig = new P\Args(1);
-            $this->p($args);
-        } else {
-            $count = count($args);
-            $expansive = (bool) $node->getAttribute('expansive');
-            $this->list[] = $orig = new P\Args($count);
-            $orig->isExpansive($expansive);
-            $this->pSeparate('arg', $args, $expansive);
-        }
-
+        $this->list[] = $orig = $this->args($args);
+        $expansive = (bool) $node->getAttribute('expansive');
+        $orig->isExpansive($expansive);
+        $this->pSeparate('arg', $args, $expansive);
         $end = count($this->list);
         $this->maybeExpansive($orig, $start, $end);
         $this->list[] = new P\End($orig);
@@ -1095,12 +1087,11 @@ class Printer
         /** @var Stmt\Class_ */
         $class = $node->class;
         $args = $node->args;
-        $count = count($args);
-        $expansive = (bool) $node->getAttribute('expansive');
         $this->pAttributeGroups($class);
         $this->pModifiers($class);
         $this->list[] = new P\Class_(null, null);
-        $this->list[] = $orig = new P\Args($count);
+        $this->list[] = $orig = $this->args($args);
+        $expansive = (bool) $node->getAttribute('expansive');
         $orig->isExpansive($expansive);
         $this->pSeparate('arg', $args, $expansive);
         $this->list[] = new P\End($orig);
@@ -1815,7 +1806,7 @@ class Printer
     {
         $count = count($node->types);
         $this->list[] = new P\TryCatch();
-        $this->list[] = $orig = new P\Args($count);
+        $this->list[] = $orig = new P\Args($count, false);
         $types = [];
 
         foreach ($node->types as $type) {
@@ -1931,7 +1922,14 @@ class Printer
         $this->list[] = '$' . $node->name;
     }
 
-    // Helpers
+    protected function args(array $args) : P\Args
+    {
+        $count = count($args);
+        $value = $args[0]?->value ?? null;
+        $isSingleArray = $count === 1 && $value instanceof Expr\Array_;
+        return new P\Args($count, $isSingleArray);
+    }
+
     protected function callLhsRequiresParens(Node $node) : bool
     {
         return ! (

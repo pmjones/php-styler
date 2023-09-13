@@ -268,7 +268,7 @@ class Styler
             return;
         }
 
-        if ($p->count) {
+        if ($p->count && ! $p->isSingleArray) {
             $this->split(P\Args::class);
         }
     }
@@ -290,7 +290,7 @@ class Styler
             $this->line[] = ',';
             $this->newline();
             $this->outdent();
-        } elseif ($p->count) {
+        } elseif ($p->count && ! $p->isSingleArray) {
             $this->split(P\Args::class, 'end', ',');
         }
 
