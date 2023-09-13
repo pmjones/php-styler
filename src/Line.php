@@ -112,7 +112,7 @@ class Line implements ArrayAccess
 
         foreach ($this->parts as $part) {
             if (
-                $part instanceof Space\Split
+                $part instanceof Split
                 && $part->level === $level
                 && $part->rule === $rule
             ) {
@@ -143,14 +143,14 @@ class Line implements ArrayAccess
         );
     }
 
-    protected function split(Space\Split $part) : void
+    protected function split(Split $part) : void
     {
         $this->lines[] = $this->line;
         $this->line = $this->newline();
         $this->line->indentNum ++;
     }
 
-    protected function clipSplit(Space\Split $part) : void
+    protected function clipSplit(Split $part) : void
     {
         $this->lines[] = $this->line;
         $this->line = $this->newline();
@@ -158,13 +158,13 @@ class Line implements ArrayAccess
         $this->line[] = new Space\Clip();
     }
 
-    protected function sameSplit(Space\Split $part) : void
+    protected function sameSplit(Split $part) : void
     {
         $this->lines[] = $this->line;
         $this->line = $this->newline();
     }
 
-    protected function endSplit(Space\Split $part) : void
+    protected function endSplit(Split $part) : void
     {
         $this->line[] = $part->args[0] ?? '';
         $this->lines[] = $this->line;
@@ -202,7 +202,7 @@ class Line implements ArrayAccess
         $rules = [];
 
         foreach ($this->parts as $part) {
-            if ($part instanceof Space\Split) {
+            if ($part instanceof Split) {
                 if (! in_array($part->rule, static::RULES)) {
                     throw new RuntimeException("No such split rule: {$part->rule}");
                 }

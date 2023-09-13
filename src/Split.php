@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace PhpStyler\Space;
+namespace PhpStyler;
 
 use PhpParser\Node\Expr;
 use PhpParser\Node\Stmt;
