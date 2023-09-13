@@ -194,6 +194,9 @@ class Line implements ArrayAccess
         return false;
     }
 
+    /**
+     * @return array{int, string}
+     */
     protected function listLevelRule() : array
     {
         $rules = [];

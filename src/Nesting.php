@@ -9,6 +9,9 @@ class Nesting
 {
     protected int $level = 0;
 
+    /**
+     * @var array<string, int>
+     */
     protected array $types = [];
 
     public function incr(string $type) : void
