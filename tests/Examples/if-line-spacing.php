@@ -77,7 +77,8 @@ if (true) {
 
                 // Allow disabling rule by setting value to false since config
                 // merging have no feature to remove entries
-                false == $replacement || ! (
+                false == $replacement
+                || ! (
                     $controller === $namespace
                     || str_starts_with($controller, $namespace . '\\')
                 )

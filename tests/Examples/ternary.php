@@ -55,18 +55,13 @@ $useTraitAs = $this->veryLongFunctionName(
 );
 
 // ternary embedded in argument with boolean looks off
-$sourceDirs = explode(
-    '/',
-    isset($basePath[0]) && '/' === $basePath[0] ? substr($basePath, 1) : $basePath,
-);
+$sourceDirs = explode('/', isset($basePath[0])
+    && '/' === $basePath[0] ? substr($basePath, 1) : $basePath);
 
-// instead, extract the condition.
-$toExplode = isset($basePath[0]) && '/' === $basePath[0]
-    ? substr($basePath, 1)
-    : $basePath;
-$sourceDirs = explode('/', $toExplode);
+// fix by extracting the condition
+$condition = isset($basePath[0]) && '/' === $basePath[0];
+$sourceDirs = explode('/', $condition ? substr($basePath, 1) : $basePath);
 
-// ternaries in arrays do not get split
 if (true) {
     if (true) {
         return implode(
@@ -84,7 +79,6 @@ if (true) {
     }
 }
 
-// nor do short ternaries
 if (true) {
     if (true) {
         return implode(
@@ -102,18 +96,15 @@ if (true) {
     }
 }
 
-// embedded assignments look bad.
-$newPath = ! isset($path[0]) || '/' === $path[0] || false !== (
-    $colonPos = strpos($path, ':')
-) && (
-    $colonPos < (
-    $slashPos = strpos($path, '/')
-) || false === $slashPos
-)
-    ? "./{$path}"
-    : $path;
+// embedded assignments look off
+$newPath = ! isset($path[0])
+    || '/' === $path[0]
+    || false !== ($colonPos = strpos($path, ':'))
+        && (
+            $colonPos < ($slashPos = strpos($path, '/')) || false === $slashPos
+        ) ? "./{$path}" : $path;
 
-// instead, extract the assignments
+// fix by extracting the assignments
 $colonPos = strpos($path, ':');
 $slashPos = strpos($path, '/');
 $cond = ! isset($path[0])

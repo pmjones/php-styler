@@ -16,27 +16,30 @@ $foo = foo(
 );
 
 // function call after concat
-$something = $veryLongVariable . sprintf(
-    '%s %s %s',
-    $this->getMethod(),
-    $this->getRequestUri(),
-    $this->server->get('SERVER_PROTOCOL'),
-);
+$something = $veryLongVariable
+    . sprintf(
+        '%s %s %s',
+        $this->getMethod(),
+        $this->getRequestUri(),
+        $this->server->get('SERVER_PROTOCOL'),
+    );
 
-// concat after function call
-function off_concat()
+function concat_after_function()
 {
+    // concat after function call looks off
     $message = sprintf(
         '%s %s %s',
         $this->getMethod(),
         $this->getRequestUri(),
         $this->server->get('SERVER_PROTOCOL'),
-    ) . "\r\n" . $this->headers . $cookieHeader . "\r\n" . $content;
-}
+    )
+        . "\r\n"
+        . $this->headers
+        . $cookieHeader
+        . "\r\n"
+        . $content;
 
-// split out the function call
-function fix_concat_2()
-{
+    // fix by extracting the function call
     $statusLine = sprintf(
         '%s %s %s',
         $this->getMethod(),
@@ -46,7 +49,6 @@ function fix_concat_2()
     return $statusLine . "\r\n" . $this->headers . $cookieHeader . "\r\n" . $content;
 }
 
-// no splits inside array elements
 if (true) {
     if (true) {
         $foo = [

@@ -34,10 +34,12 @@ class Files implements IteratorAggregate
                 continue;
             }
 
-            $files = new RecursiveIteratorIterator(new RecursiveCallbackFilterIterator(
-                new RecursiveDirectoryIterator($path),
-                fn ($c, $k, $i) => $this->filter($c, $k, $i),
-            ));
+            $files = new RecursiveIteratorIterator(
+                new RecursiveCallbackFilterIterator(
+                    new RecursiveDirectoryIterator($path),
+                    fn ($c, $k, $i) => $this->filter($c, $k, $i),
+                ),
+            );
 
             /** @var SplFileInfo $file */
             foreach ($files as $file) {

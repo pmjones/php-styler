@@ -2179,8 +2179,7 @@ class Printer
     {
         for ($i = $start; $i < $end; $i ++) {
             if (
-                $this->list[$i] instanceof Printable
-                && $this->list[$i]->isExpansive()
+                $this->list[$i] instanceof Printable && $this->list[$i]->isExpansive()
                 || $this->list[$i] instanceof P\Comments
             ) {
                 $orig->isExpansive(true);

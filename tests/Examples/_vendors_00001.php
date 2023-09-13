@@ -30,12 +30,14 @@ function isFunctionCall(int $i) : bool
         && $this->nextSignificantToken($i)?->is('(')
         && ! $this
             ->prevSignificantToken($i)
-            ?->is([
-                T_OBJECT_OPERATOR,
-                T_NULLSAFE_OBJECT_OPERATOR,
-                T_DOUBLE_COLON,
-                T_FUNCTION,
-            ]);
+            ?->is(
+                [
+                    T_OBJECT_OPERATOR,
+                    T_NULLSAFE_OBJECT_OPERATOR,
+                    T_DOUBLE_COLON,
+                    T_FUNCTION,
+                ],
+            );
 }
 
 // colaesce, ternary, and array
@@ -49,20 +51,21 @@ if (true) {
                 'selected' => $selected == $default,
             ];
 
-            throw new Exception\FileNotFound(''
-                . PHP_EOL
-                . "File: {$name}"
-                . PHP_EOL
-                . "Extension: {$this->extension}"
-                . PHP_EOL
-                . "Collection: "
-                . ($collection === '' ? '(default)' : $collection)
-                . PHP_EOL
-                . "Paths: "
-                . print_r($this->paths[$collection], true)
-                . PHP_EOL
-                . "Catalog class: "
-                . print_r(get_class($this), true));
+            throw new Exception\FileNotFound(
+                PHP_EOL
+                    . "File: {$name}"
+                    . PHP_EOL
+                    . "Extension: {$this->extension}"
+                    . PHP_EOL
+                    . "Collection: "
+                    . ($collection === '' ? '(default)' : $collection)
+                    . PHP_EOL
+                    . "Paths: "
+                    . print_r($this->paths[$collection], true)
+                    . PHP_EOL
+                    . "Catalog class: "
+                    . print_r(get_class($this), true),
+            );
         }
     }
 }
@@ -80,11 +83,13 @@ if (true) {
             ],
             $options,
         );
-        $this->getCollection()->updateOne(
-            [$this->options['id_field'] => $sessionId],
-            ['$set' => $fields],
-            ['upsert' => true],
-        );
+        $this
+            ->getCollection()
+            ->updateOne(
+                [$this->options['id_field'] => $sessionId],
+                ['$set' => $fields],
+                ['upsert' => true],
+            );
         $this->foobar($bar, new Foo());
         $this->foobar(
             $bar,
@@ -93,7 +98,6 @@ if (true) {
     }
 }
 
-// splits get_debug_type() because literal string too long
 if (true) {
     if (true) {
         if (true) {
@@ -108,7 +112,6 @@ if (true) {
     }
 }
 
-// expansives mixed with non-expansives
 if (true) {
     if (true) {
         foreach ($this->paths as $collection => $paths) {

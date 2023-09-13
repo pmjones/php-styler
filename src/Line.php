@@ -3,8 +3,11 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
-use RuntimeException;
 use ArrayAccess;
+use PhpParser\Node\Expr;
+use PhpParser\Node\Stmt;
+use PhpStyler\Printable as P;
+use RuntimeException;
 
 /**
  * @implements ArrayAccess<int, mixed>
@@ -12,49 +15,21 @@ use ArrayAccess;
 class Line implements ArrayAccess
 {
     protected const RULES = [
-        'implements',
-        'cond',
-        'precedence',
-        'ternary',
-        'or',
-        'and',
-        'coalesce',
-        'instance_op_0',
-        'concat_0',
-        'array_0',
-        'args_0',
-        'concat_1',
-        'instance_op_1',
-        'array_1',
-        'args_1',
-        'concat_2',
-        'instance_op_2',
-        'array_2',
-        'args_2',
-        'concat_3',
-        'instance_op_3',
-        'array_3',
-        'args_3',
-        'concat_4',
-        'instance_op_4',
-        'array_4',
-        'args_4',
-        'concat_5',
-        'instance_op_5',
-        'array_5',
-        'args_5',
-        'params_0',
-        'params_1',
-        'params_2',
-        'params_3',
-        'params_4',
-        'params_5',
-        'attribute_args_0',
-        'attribute_args_1',
-        'attribute_args_2',
-        'attribute_args_3',
-        'attribute_args_4',
-        'attribute_args_5',
+        P\Implements_::class,
+        Expr\BinaryOp\Concat::class,
+        P\Cond::class,
+        P\Precedence::class,
+        Expr\Ternary::class,
+        Expr\BinaryOp\BooleanOr::class,
+        Expr\BinaryOp\LogicalOr::class,
+        Expr\BinaryOp\BooleanAnd::class,
+        Expr\BinaryOp\LogicalAnd::class,
+        P\Array_::class,
+        P\Args::class,
+        Expr\BinaryOp\Coalesce::class,
+        P\InstanceOp::class,
+        P\Params::class,
+        P\AttributeArgs::class,
     ];
 
     /**
@@ -65,11 +40,6 @@ class Line implements ArrayAccess
     protected string $indent = '';
 
     protected string $append = '';
-
-    /**
-     * @var string[]
-     */
-    protected array $rules = [];
 
     /**
      * @var Line[]
@@ -125,28 +95,27 @@ class Line implements ArrayAccess
 
     public function append(string &$output) : void
     {
-        $this->findRules();
+        list($level, $rule) = $this->listLevelRule();
 
-        if ($this->force) {
-            $this->splitLines($output, (string) reset($this->rules));
-            return;
-        }
-
-        if ($this->fitsOnSingleLine($output) || ! $this->rules) {
+        if ($this->fitsOnSingleLine($output) || ! $rule) {
             $output .= rtrim($this->append) . $this->eol;
             return;
         }
 
-        $this->splitLines($output, reset($this->rules));
+        $this->splitLines($output, $level, $rule);
     }
 
-    protected function splitLines(string &$output, string $rule) : void
+    protected function splitLines(string &$output, int $level, string $rule) : void
     {
         $this->lines = [];
         $this->line = $this->newline();
 
         foreach ($this->parts as $part) {
-            if ($part instanceof Space\Split && $part->rule === $rule) {
+            if (
+                $part instanceof Space\Split
+                && $part->level === $level
+                && $part->rule === $rule
+            ) {
                 $method = lcfirst($part->type . 'Split');
                 $this->{$method}($part);
             } else {
@@ -176,13 +145,16 @@ class Line implements ArrayAccess
 
     protected function split(Space\Split $part) : void
     {
-        $this->sameSplit($part);
+        $this->lines[] = $this->line;
+        $this->line = $this->newline();
         $this->line->indentNum ++;
     }
 
     protected function clipSplit(Space\Split $part) : void
     {
-        $this->split($part);
+        $this->lines[] = $this->line;
+        $this->line = $this->newline();
+        $this->line->indentNum ++;
         $this->line[] = new Space\Clip();
     }
 
@@ -195,7 +167,8 @@ class Line implements ArrayAccess
     protected function endSplit(Space\Split $part) : void
     {
         $this->line[] = $part->args[0] ?? '';
-        $this->sameSplit($part);
+        $this->lines[] = $this->line;
+        $this->line = $this->newline();
     }
 
     protected function fitsOnSingleLine(string &$output) : bool
@@ -221,18 +194,31 @@ class Line implements ArrayAccess
         return false;
     }
 
-    protected function findRules() : void
+    protected function listLevelRule() : array
     {
-        $this->force = false;
         $rules = [];
 
         foreach ($this->parts as $part) {
             if ($part instanceof Space\Split) {
-                $rules[] = $part->rule;
+                if (! in_array($part->rule, static::RULES)) {
+                    throw new RuntimeException("No such split rule: {$part->rule}");
+                }
+
+                $rules[$part->level][] = $part->rule;
             }
         }
 
-        $this->rules = array_intersect(self::RULES, $rules);
+        if (! $rules) {
+            return [0, ''];
+        }
+
+        // get the highest-priority rule at the earliest level
+        ksort($rules);
+        $level = key($rules);
+        $rules = current($rules);
+        $rules = array_intersect(static::RULES, $rules);
+        $rule = current($rules);
+        return [$level, $rule];
     }
 
     protected function clip(string &$output) : void

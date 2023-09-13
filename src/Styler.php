@@ -20,12 +20,18 @@ class Styler
      */
     protected array $lines = [];
 
-    protected State $state;
+    protected Nesting $nesting;
 
     /**
      * @var array<class-string, array{string, string, string}>
      */
     protected array $operators = [];
+
+    public bool $atFirstInBody = false;
+
+    public bool $hadAttribute = false;
+
+    public bool $hadComment = false;
 
     /**
      * @param non-empty-string $eol
@@ -118,7 +124,7 @@ class Styler
             $this->lineLen,
         );
         $this->lines = [];
-        $this->state = new State();
+        $this->nesting = new Nesting();
 
         while ($list) {
             $p = array_shift($list);
@@ -174,15 +180,15 @@ class Styler
         $this->line[] = new Space\ClipToParen();
     }
 
-    protected function split(
-        string $class,
-        int $level = null,
-        string $type = null,
-        mixed ...$args,
-    ) : void
+    protected function split(string $class, string $type = null, mixed ...$args) : void
     {
-        if (! $this->state->encapsed) {
-            $this->line[] = new Space\Split($class, $level, $type, ...$args);
+        if ($this->nesting->notIn('encapsed')) {
+            $this->line[] = new Space\Split(
+                $this->nesting->level(),
+                $class,
+                $type,
+                ...$args,
+            );
         }
     }
 
@@ -225,7 +231,7 @@ class Styler
             return;
         }
 
-        if ($this->state->heredoc) {
+        if ($this->nesting->in('heredoc')) {
             $this->sHeredocBody($p);
             return;
         }
@@ -236,16 +242,16 @@ class Styler
     protected function sPrintable(Printable $p) : void
     {
         // first printable in body?
-        $p->isFirst($this->state->atFirstInBody);
-        $this->state->atFirstInBody = false;
+        $p->isFirst($this->atFirstInBody);
+        $this->atFirstInBody = false;
 
         // has comment?
-        $p->hasComment($this->state->hadComment);
-        $this->state->hadComment = false;
+        $p->hasComment($this->hadComment);
+        $this->hadComment = false;
 
         // has attribute?
-        $p->hasAttribute($this->state->hadAttribute);
-        $this->state->hadAttribute = false;
+        $p->hasAttribute($this->hadAttribute);
+        $this->hadAttribute = false;
 
         // add the printable to the code
         $last = (string) strrchr(get_class($p), '\\');
@@ -256,18 +262,16 @@ class Styler
     protected function sArgs(P\Args $p) : void
     {
         $this->line[] = '(';
+        $this->nesting->incr('args');
 
         if ($p->isExpansive()) {
-            $this->state->increaseArgsLevel(expansive: true);
             $this->newline();
             $this->indent();
             return;
         }
 
-        $this->state->increaseArgsLevel();
-
         if ($p->count) {
-            $this->split(P\Args::class, $this->state->getArgsLevel());
+            $this->split(P\Args::class);
         }
     }
 
@@ -278,7 +282,7 @@ class Styler
             $this->newline();
         } else {
             $this->line[] = ', ';
-            $this->split(P\Args::class, $this->state->getArgsLevel());
+            $this->split(P\Args::class);
         }
     }
 
@@ -289,24 +293,24 @@ class Styler
             $this->newline();
             $this->outdent();
         } elseif ($p->count) {
-            $this->split(P\Args::class, $this->state->getArgsLevel(), 'end', ',');
+            $this->split(P\Args::class, 'end', ',');
         }
 
-        $this->state->decreaseArgsLevel();
         $this->line[] = ')';
+        $this->nesting->decr('args');
     }
 
     protected function sArray(P\Array_ $p) : void
     {
-        $this->state->array ++;
+        $this->nesting->incr('array');
         $this->line[] = '[';
-        $this->state->atFirstInBody = true;
+        $this->atFirstInBody = true;
 
         if ($p->isExpansive()) {
             $this->newline();
             $this->indent();
         } elseif ($p->count) {
-            $this->split(P\Array_::class, $this->state->array);
+            $this->split(P\Array_::class);
         }
     }
 
@@ -317,7 +321,7 @@ class Styler
             $this->newline();
         } else {
             $this->line[] = ', ';
-            $this->split(P\Array_::class, $this->state->array);
+            $this->split(P\Array_::class);
         }
     }
 
@@ -328,23 +332,23 @@ class Styler
             $this->newline();
             $this->outdent();
         } elseif ($p->count) {
-            $this->split(P\Array_::class, $this->state->array, 'end', ',');
+            $this->split(P\Array_::class, 'end', ',');
         }
 
         $this->line[] = ']';
-        $this->state->array --;
+        $this->nesting->decr('array');
     }
 
     protected function sArrayDim(P\ArrayDim $p) : void
     {
-        $this->state->array ++;
+        $this->nesting->incr('array');
         $this->line[] = '[';
     }
 
     protected function sArrayDimEnd(P\ArrayDim $p) : void
     {
         $this->line[] = ']';
-        $this->state->array --;
+        $this->nesting->decr('array');
     }
 
     protected function sArrowFunction(P\ArrowFunction $p) : void
@@ -363,7 +367,7 @@ class Styler
 
     protected function sAttributeGroups(P\AttributeGroups $p) : void
     {
-        if ($this->state->params) {
+        if ($this->nesting->in('params')) {
             return;
         }
 
@@ -379,28 +383,28 @@ class Styler
 
     protected function sAttributeArgs(P\AttributeArgs $p) : void
     {
-        $this->state->attrArgs ++;
+        $this->nesting->incr('attribute_args');
         $this->line[] = '(';
 
         if ($p->count) {
-            $this->split(P\AttributeArgs::class, $this->state->attrArgs);
+            $this->split(P\AttributeArgs::class);
         }
     }
 
     protected function sAttributeArgSeparator(P\Separator $p) : void
     {
         $this->line[] = ', ';
-        $this->split(P\AttributeArgs::class, $this->state->attrArgs, null, ', ');
+        $this->split(P\AttributeArgs::class);
     }
 
     protected function sAttributeArgsEnd(P\AttributeArgs $p) : void
     {
         if ($p->count) {
-            $this->split(P\AttributeArgs::class, $this->state->attrArgs, 'end', ',');
+            $this->split(P\AttributeArgs::class, 'end', ',');
         }
 
         $this->line[] = ')';
-        $this->state->attrArgs --;
+        $this->nesting->decr('attribute_args');
     }
 
     protected function sAttributeGroupEnd(P\AttributeGroup $p) : void
@@ -411,12 +415,12 @@ class Styler
 
     protected function sAttributeGroupsEnd(P\AttributeGroups $p) : void
     {
-        $this->state->hadAttribute = true;
+        $this->hadAttribute = true;
     }
 
     protected function sBody(P\Body $p) : void
     {
-        $this->state->atFirstInBody = true;
+        $this->atFirstInBody = true;
         $method = 's' . ucfirst($p->type) . 'Body';
         $this->{$method}($p);
     }
@@ -478,22 +482,22 @@ class Styler
 
     protected function sClosureUse(P\ClosureUse $p) : void
     {
-        $this->state->params ++;
+        $this->nesting->incr('params');
         $this->line[] = ' use (';
 
         if ($p->count) {
-            $this->split(P\Params::class, $this->state->params);
+            $this->split(P\Params::class);
         }
     }
 
     protected function sClosureUseEnd(P\ClosureUse $p) : void
     {
         if ($p->count) {
-            $this->split(P\Params::class, $this->state->params, 'end', ',');
+            $this->split(P\Params::class, 'end', ',');
         }
 
         $this->line[] = ')';
-        $this->state->params --;
+        $this->nesting->decr('params');
     }
 
     protected function sClosureBody(P\Body $p) : void
@@ -540,12 +544,12 @@ class Styler
 
     protected function sCommentsEnd(P\Comments $p) : void
     {
-        $this->state->hadComment = true;
+        $this->hadComment = true;
     }
 
     protected function sCond(P\Cond $p) : void
     {
-        $this->state->cond ++;
+        $this->nesting->incr('cond');
         $this->line[] = '(';
 
         if ($p->isExpansive()) {
@@ -562,11 +566,11 @@ class Styler
             $this->newline();
             $this->outdent();
         } else {
-            $this->split(P\Cond::class, null, 'end');
+            $this->split(P\Cond::class, 'end');
         }
 
         $this->line[] = ')';
-        $this->state->cond --;
+        $this->nesting->decr('cond');
     }
 
     protected function sConst(P\Const_ $p) : void
@@ -650,12 +654,12 @@ class Styler
 
     protected function sEncapsed(P\Encapsed $p) : void
     {
-        $this->state->encapsed ++;
+        $this->nesting->incr('encapsed');
     }
 
     protected function sEncapsedEnd(P\Encapsed $p) : void
     {
-        $this->state->encapsed --;
+        $this->nesting->decr('encapsed');
     }
 
     protected function sEnd(P\End $p) : void
@@ -745,7 +749,7 @@ class Styler
     protected function sForExprSeparator(P\Separator $p) : void
     {
         $this->line[] = '; ';
-        $this->split(P\Args::class, $this->state->getArgsLevel(), 'same');
+        $this->split(P\Args::class, 'same');
     }
 
     protected function sForeach(P\Foreach_ $p) : void
@@ -816,7 +820,7 @@ class Styler
     protected function sHeredoc(P\Heredoc $p) : void
     {
         $this->line[] = "<<<{$p->label}";
-        $this->state->heredoc ++;
+        $this->nesting->incr('heredoc');
         $this->newline();
     }
 
@@ -834,7 +838,7 @@ class Styler
     protected function sHeredocEnd(P\Heredoc $p) : void
     {
         $this->newline();
-        $this->state->heredoc --;
+        $this->nesting->decr('heredoc');
         $this->line[] = $p->label;
     }
 
@@ -925,8 +929,8 @@ class Styler
             case Expr\BinaryOp\BooleanOr::class:
             case Expr\BinaryOp\LogicalAnd::class:
             case Expr\BinaryOp\LogicalOr::class:
-                if ($this->state->cond) {
-                    $this->split($p->class, null, 'same');
+                if ($this->nesting->in('cond')) {
+                    $this->split($p->class, 'same');
                 } else {
                     $this->split($p->class);
                 }
@@ -934,28 +938,17 @@ class Styler
                 break;
 
             case Expr\BinaryOp\Coalesce::class:
-                if (! $this->state->inArgsOrArray()) {
-                    $this->split($p->class);
-                }
-
+                $this->split($p->class);
                 break;
 
             case Expr\BinaryOp\Concat::class:
-                $this->state->concat ++;
-
-                if (! $this->state->array && ! $this->state->ternary) {
-                    $this->split($p->class, $this->state->concat);
-                }
-
+                $this->nesting->incr('concat');
+                $this->split($p->class);
                 break;
 
             case Expr\Ternary::class:
-                $this->state->ternary ++;
-
-                if (! $this->state->inArgsOrArray()) {
-                    $this->split($p->class);
-                }
-
+                $this->nesting->incr('ternary');
+                $this->split($p->class);
                 break;
         }
 
@@ -966,18 +959,15 @@ class Styler
     {
         switch ($p->class) {
             case Expr\BinaryOp\Coalesce::class:
-                if (! $this->state->inArgsOrArray()) {
-                    $this->split($p->class, null, 'clip');
-                }
-
+                $this->split($p->class, 'clip');
                 break;
 
             case Expr\BinaryOp\Concat::class:
-                $this->state->concat --;
+                $this->nesting->decr('concat');
                 break;
 
             case Expr\Ternary::class:
-                $this->state->ternary --;
+                $this->nesting->decr('ternary');
                 break;
         }
     }
@@ -1038,7 +1028,7 @@ class Styler
     protected function sMatchSeparator(P\Separator $p) : void
     {
         $this->line[] = ', ';
-        $this->split(P\Args::class, $this->state->getArgsLevel(), 'same');
+        $this->split(P\Args::class, 'same');
     }
 
     protected function sMatchArm(P\MatchArm $p) : void
@@ -1066,9 +1056,9 @@ class Styler
 
     protected function sInstanceOp(P\InstanceOp $p) : void
     {
-        if (! $this->state->inArgsOrArray() && $p->isFluent()) {
-            $this->state->instanceOp ++;
-            $this->split(P\InstanceOp::class, $this->state->instanceOp);
+        if ($p->isFluent()) {
+            $this->nesting->incr('instance_op');
+            $this->split(P\InstanceOp::class);
         }
 
         $this->line[] = $p->str;
@@ -1076,8 +1066,8 @@ class Styler
 
     protected function sInstanceOpEnd(P\InstanceOp $p) : void
     {
-        if (! $this->state->inArgsOrArray() && $p->isFluent()) {
-            $this->state->instanceOp --;
+        if ($p->isFluent()) {
+            $this->nesting->decr('instance_op');
         }
     }
 
@@ -1150,14 +1140,14 @@ class Styler
 
     protected function sParams(P\Params $p) : void
     {
-        $this->state->params ++;
+        $this->nesting->incr('params');
         $this->line[] = '(';
 
         if ($p->isExpansive()) {
             $this->newline();
             $this->indent();
         } elseif ($p->count) {
-            $this->split(P\Params::class, $this->state->params);
+            $this->split(P\Params::class);
         }
     }
 
@@ -1168,7 +1158,7 @@ class Styler
             $this->newline();
         } else {
             $this->line[] = ', ';
-            $this->split(P\Params::class, $this->state->params);
+            $this->split(P\Params::class);
         }
     }
 
@@ -1179,11 +1169,11 @@ class Styler
             $this->newline();
             $this->outdent();
         } elseif ($p->count) {
-            $this->split(P\Params::class, $this->state->params, 'end', ',');
+            $this->split(P\Params::class, 'end', ',');
         }
 
         $this->line[] = ')';
-        $this->state->params --;
+        $this->nesting->decr('params');
     }
 
     protected function sPostfixOp(P\PostfixOp $p) : void
@@ -1196,19 +1186,15 @@ class Styler
     protected function sPrecedence(P\Precedence $p) : void
     {
         $this->line[] = '(';
-
-        if (! $this->state->concat) {
-            $this->split(P\Precedence::class);
-        }
+        $this->nesting->incr('precedence');
+        $this->split(P\Precedence::class);
     }
 
     protected function sPrecedenceEnd(P\Precedence $p) : void
     {
-        if (! $this->state->concat) {
-            $this->split(P\Precedence::class, null, 'end');
-        }
-
+        $this->split(P\Precedence::class, 'end');
         $this->line[] = ')';
+        $this->nesting->decr('precedence');
     }
 
     protected function sPrefixOp(P\PrefixOp $p) : void
@@ -1366,18 +1352,14 @@ class Styler
     protected function sTernary(P\Ternary $p) : void
     {
         $this->line[] = ' ';
-        $this->state->ternary ++;
-
-        if (! $this->state->inArgsOrArray()) {
-            $this->split(Expr\Ternary::class);
-        }
-
+        $this->nesting->incr('ternary');
+        $this->split(Expr\Ternary::class);
         $this->line[] = $p->operator . ' ';
     }
 
     protected function sTernaryEnd(P\Ternary $p) : void
     {
-        $this->state->ternary --;
+        $this->nesting->decr('ternary');
     }
 
     protected function sThrow(P\Throw_ $p) : void
