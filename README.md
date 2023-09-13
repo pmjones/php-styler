@@ -113,7 +113,6 @@ Pass `-c` or `--config` to specify an alternative config file:
 ./vendor/bin/php-styler apply -c /path/to/other/php-styler.php
 ```
 
-
 ### Configuration
 
 The default config file looks like this:
@@ -206,26 +205,29 @@ These are not all-inclusive; see also [FIXME.md](./FIXME.md) for known issues to
 
 At first, PHP-Styler builds each statement/instruction as a single line. If that line is "too long" (88 characters by default) the _Styler_ reconstructs the code by trying to split it across multiple lines. It does so by applying one or more rules in order:
 
-- Coalesce `??` operators are split. *(1)*
-- String concatenations are split at dots. *(1)*
-- Ternaries are split at `?`, `:`, and `?:`. *(1)*
-- Function and method parameters are split at commas.
 - `implements` are split at commas.
+- String concatenations are split at dots.
 - Conditions are split at parentheses.
 - Precedence-indicating parentheses are split.
-- Boolean `||` operators are split.
-- Boolean `&&` operators are split.
-- Object instance member operators are split at `->` and `?->`. *(1) (2)*
-- Function-call and method-call argument lists are split at commas.
-- Closure parameters are split at commas.
-- Attribute arguments are split at commas.
+- Ternaries are split at `?`, `:`, and `?:`.
+- Boolean `||` and logical `or` operators are split.
+- Boolean `&&` and logical `and` operators are split.
 - Array elements are split at commas.
-
-> (1) Except when used as an argument.
->
-> (2) Except when used as an array element, or when the operation is non-fluent.
+- Argument lists are split at commas.
+- Coalesce `??` operators are split.
+- Object instance member operators are split at `->` and `?->`.
+- Parameter lists are split at commas.
+- Attribute arguments are split at commas.
 
 If the first rule does not make the line short enough, the second rule is applied in addition, then the third, and so on.
+
+The line splitting logic attempts to be idiomatic; that is, PHP-Styler tries to take common line-splitting idioms into account, rather than making weighted calculations of elements. Reference projects were:
+
+- Qiq
+- Sapien
+- Laminas MVC
+- Slim
+- Symfony Http-Foundation
 
 ### Line Length
 
