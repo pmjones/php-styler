@@ -654,7 +654,7 @@ class Printer
     protected function pExpr_ClassConstFetch(Expr\ClassConstFetch $node) : void
     {
         $this->pStaticDereferenceLhs($node->class);
-        $this->list[] = new P\StaticMember('::');
+        $this->list[] = new P\StaticOp('::', 0, 0);
         $this->p($node->name);
     }
 
@@ -895,14 +895,19 @@ class Printer
     protected function pExpr_StaticPropertyFetch(Expr\StaticPropertyFetch $node) : void
     {
         $this->pStaticDereferenceLhs($node->class);
-        $this->list[] = new P\StaticMember('::$');
+        $fluentNum = $node->getAttribute('fluentNum');
+        $fluentEnd = $node->getAttribute('fluentEnd');
+        $this->list[] = $orig = new P\StaticOp('::$', $fluentNum, $fluentEnd);
         $this->pObjectProperty($node->name);
+        $this->list[] = new P\End($orig);
     }
 
     protected function pExpr_StaticCall(Expr\StaticCall $node) : void
     {
         $this->pStaticDereferenceLhs($node->class);
-        $this->list[] = new P\StaticMember('::');
+        $fluentNum = $node->getAttribute('fluentNum');
+        $fluentEnd = $node->getAttribute('fluentEnd');
+        $this->list[] = $orig = new P\StaticOp('::', $fluentNum, $fluentEnd);
 
         if ($node->name instanceof Expr) {
             if ($node->name instanceof Expr\Variable) {
@@ -915,6 +920,7 @@ class Printer
         }
 
         $this->pArgs($node);
+        $this->list[] = new P\End($orig);
     }
 
     protected function pExpr_Ternary(Expr\Ternary $node) : void

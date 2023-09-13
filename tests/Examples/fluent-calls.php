@@ -21,6 +21,15 @@ $result = $this
     )
     ->veryLongPropertyName;
 
+if (true) {
+    if (true) {
+        if (true) {
+            return FooBar::fromGlobals($veryVeryLongVariable, ResponseStatus::INVALID)
+                ->setError(self::ERROR_ALREADY_RESPONDED);
+        }
+    }
+}
+
 // statics in fluent call
 function static_fluency()
 {

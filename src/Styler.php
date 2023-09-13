@@ -981,6 +981,23 @@ class Styler
         $this->newline();
     }
 
+    protected function sInstanceOp(P\InstanceOp $p) : void
+    {
+        if ($p->isFluent()) {
+            $this->nesting->incr(P\MemberOp::class);
+            $this->split(P\MemberOp::class);
+        }
+
+        $this->line[] = $p->str;
+    }
+
+    protected function sInstanceOpEnd(P\InstanceOp $p) : void
+    {
+        if ($p->isFluent()) {
+            $this->nesting->decr(P\MemberOp::class);
+        }
+    }
+
     protected function sInterface(P\Interface_ $p) : void
     {
         $this->maybeNewline($p);
@@ -1045,28 +1062,6 @@ class Styler
         $this->outdent();
         $this->newline();
         $this->line[] = '}';
-    }
-
-    protected function sStaticMember(P\StaticMember $p) : void
-    {
-        $this->line[] = $p->operator;
-    }
-
-    protected function sInstanceOp(P\InstanceOp $p) : void
-    {
-        if ($p->isFluent()) {
-            $this->nesting->incr(P\InstanceOp::class);
-            $this->split(P\InstanceOp::class);
-        }
-
-        $this->line[] = $p->str;
-    }
-
-    protected function sInstanceOpEnd(P\InstanceOp $p) : void
-    {
-        if ($p->isFluent()) {
-            $this->nesting->decr(P\InstanceOp::class);
-        }
     }
 
     protected function sModifiers(P\Modifiers $modifiers) : void
@@ -1228,6 +1223,22 @@ class Styler
     protected function sReturnType(P\ReturnType $p) : void
     {
         $this->line[] = ' : ';
+    }
+
+    protected function sStaticOp(P\StaticOp $p) : void
+    {
+        if ($p->isFluent()) {
+            $this->nesting->incr(P\MemberOp::class);
+        }
+
+        $this->line[] = $p->str;
+    }
+
+    protected function sStaticOpEnd(P\StaticOp $p) : void
+    {
+        if ($p->isFluent()) {
+            $this->nesting->decr(P\MemberOp::class);
+        }
     }
 
     protected function sTrue(P\True_ $p) : void

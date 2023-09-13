@@ -27,7 +27,7 @@ class Line implements ArrayAccess
         P\Array_::class,
         P\Args::class,
         Expr\BinaryOp\Coalesce::class,
-        P\InstanceOp::class,
+        P\MemberOp::class,
         P\Params::class,
         P\AttributeArgs::class,
     ];
