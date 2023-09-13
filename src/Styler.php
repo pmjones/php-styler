@@ -180,7 +180,7 @@ class Styler
 
     protected function split(string $class, string $type = null, mixed ...$args) : void
     {
-        if ($this->nesting->notIn('encapsed')) {
+        if ($this->nesting->notIn(P\Encapsed::class)) {
             $this->line[] = new Split(
                 $this->nesting->level(),
                 $class,
@@ -229,7 +229,7 @@ class Styler
             return;
         }
 
-        if ($this->nesting->in('heredoc')) {
+        if ($this->nesting->in(P\Heredoc::class)) {
             $this->sHeredocBody($p);
             return;
         }
@@ -260,7 +260,7 @@ class Styler
     protected function sArgs(P\Args $p) : void
     {
         $this->line[] = '(';
-        $this->nesting->incr('args');
+        $this->nesting->incr(P\Args::class);
 
         if ($p->isExpansive()) {
             $this->newline();
@@ -295,12 +295,12 @@ class Styler
         }
 
         $this->line[] = ')';
-        $this->nesting->decr('args');
+        $this->nesting->decr(P\Args::class);
     }
 
     protected function sArray(P\Array_ $p) : void
     {
-        $this->nesting->incr('array');
+        $this->nesting->incr(P\Array_::class);
         $this->line[] = '[';
         $this->atFirstInBody = true;
 
@@ -334,19 +334,19 @@ class Styler
         }
 
         $this->line[] = ']';
-        $this->nesting->decr('array');
+        $this->nesting->decr(P\Array_::class);
     }
 
     protected function sArrayDim(P\ArrayDim $p) : void
     {
-        $this->nesting->incr('array');
+        $this->nesting->incr(P\Array_::class);
         $this->line[] = '[';
     }
 
     protected function sArrayDimEnd(P\ArrayDim $p) : void
     {
         $this->line[] = ']';
-        $this->nesting->decr('array');
+        $this->nesting->decr(P\Array_::class);
     }
 
     protected function sArrowFunction(P\ArrowFunction $p) : void
@@ -365,7 +365,7 @@ class Styler
 
     protected function sAttributeGroups(P\AttributeGroups $p) : void
     {
-        if ($this->nesting->in('params')) {
+        if ($this->nesting->in(P\Params::class)) {
             return;
         }
 
@@ -381,7 +381,7 @@ class Styler
 
     protected function sAttributeArgs(P\AttributeArgs $p) : void
     {
-        $this->nesting->incr('attribute_args');
+        $this->nesting->incr(P\AttributeArgs::class);
         $this->line[] = '(';
 
         if ($p->count) {
@@ -402,7 +402,7 @@ class Styler
         }
 
         $this->line[] = ')';
-        $this->nesting->decr('attribute_args');
+        $this->nesting->decr(P\AttributeArgs::class);
     }
 
     protected function sAttributeGroupEnd(P\AttributeGroup $p) : void
@@ -480,7 +480,7 @@ class Styler
 
     protected function sClosureUse(P\ClosureUse $p) : void
     {
-        $this->nesting->incr('params');
+        $this->nesting->incr(P\Params::class);
         $this->line[] = ' use (';
 
         if ($p->count) {
@@ -495,7 +495,7 @@ class Styler
         }
 
         $this->line[] = ')';
-        $this->nesting->decr('params');
+        $this->nesting->decr(P\Params::class);
     }
 
     protected function sClosureBody(P\Body $p) : void
@@ -547,7 +547,7 @@ class Styler
 
     protected function sCond(P\Cond $p) : void
     {
-        $this->nesting->incr('cond');
+        $this->nesting->incr(P\Cond::class);
         $this->line[] = '(';
 
         if ($p->isExpansive()) {
@@ -568,7 +568,7 @@ class Styler
         }
 
         $this->line[] = ')';
-        $this->nesting->decr('cond');
+        $this->nesting->decr(P\Cond::class);
     }
 
     protected function sConst(P\Const_ $p) : void
@@ -652,12 +652,12 @@ class Styler
 
     protected function sEncapsed(P\Encapsed $p) : void
     {
-        $this->nesting->incr('encapsed');
+        $this->nesting->incr(P\Encapsed::class);
     }
 
     protected function sEncapsedEnd(P\Encapsed $p) : void
     {
-        $this->nesting->decr('encapsed');
+        $this->nesting->decr(P\Encapsed::class);
     }
 
     protected function sEnd(P\End $p) : void
@@ -818,7 +818,7 @@ class Styler
     protected function sHeredoc(P\Heredoc $p) : void
     {
         $this->line[] = "<<<{$p->label}";
-        $this->nesting->incr('heredoc');
+        $this->nesting->incr(P\Heredoc::class);
         $this->newline();
     }
 
@@ -836,7 +836,7 @@ class Styler
     protected function sHeredocEnd(P\Heredoc $p) : void
     {
         $this->newline();
-        $this->nesting->decr('heredoc');
+        $this->nesting->decr(P\Heredoc::class);
         $this->line[] = $p->label;
     }
 
@@ -927,7 +927,7 @@ class Styler
             case Expr\BinaryOp\BooleanOr::class:
             case Expr\BinaryOp\LogicalAnd::class:
             case Expr\BinaryOp\LogicalOr::class:
-                if ($this->nesting->in('cond')) {
+                if ($this->nesting->in(P\Cond::class)) {
                     $this->split($p->class, 'same');
                 } else {
                     $this->split($p->class);
@@ -940,12 +940,12 @@ class Styler
                 break;
 
             case Expr\BinaryOp\Concat::class:
-                $this->nesting->incr('concat');
+                $this->nesting->incr(Expr\BinaryOp\Concat::class);
                 $this->split($p->class);
                 break;
 
             case Expr\Ternary::class:
-                $this->nesting->incr('ternary');
+                $this->nesting->incr(Expr\Ternary::class);
                 $this->split($p->class);
                 break;
         }
@@ -961,11 +961,11 @@ class Styler
                 break;
 
             case Expr\BinaryOp\Concat::class:
-                $this->nesting->decr('concat');
+                $this->nesting->decr(Expr\BinaryOp\Concat::class);
                 break;
 
             case Expr\Ternary::class:
-                $this->nesting->decr('ternary');
+                $this->nesting->decr(Expr\Ternary::class);
                 break;
         }
     }
@@ -1055,7 +1055,7 @@ class Styler
     protected function sInstanceOp(P\InstanceOp $p) : void
     {
         if ($p->isFluent()) {
-            $this->nesting->incr('instance_op');
+            $this->nesting->incr(P\InstanceOp::class);
             $this->split(P\InstanceOp::class);
         }
 
@@ -1065,7 +1065,7 @@ class Styler
     protected function sInstanceOpEnd(P\InstanceOp $p) : void
     {
         if ($p->isFluent()) {
-            $this->nesting->decr('instance_op');
+            $this->nesting->decr(P\InstanceOp::class);
         }
     }
 
@@ -1138,7 +1138,7 @@ class Styler
 
     protected function sParams(P\Params $p) : void
     {
-        $this->nesting->incr('params');
+        $this->nesting->incr(P\Params::class);
         $this->line[] = '(';
 
         if ($p->isExpansive()) {
@@ -1171,7 +1171,7 @@ class Styler
         }
 
         $this->line[] = ')';
-        $this->nesting->decr('params');
+        $this->nesting->decr(P\Params::class);
     }
 
     protected function sPostfixOp(P\PostfixOp $p) : void
@@ -1184,7 +1184,7 @@ class Styler
     protected function sPrecedence(P\Precedence $p) : void
     {
         $this->line[] = '(';
-        $this->nesting->incr('precedence');
+        $this->nesting->incr(P\Precedence::class);
         $this->split(P\Precedence::class);
     }
 
@@ -1192,7 +1192,7 @@ class Styler
     {
         $this->split(P\Precedence::class, 'end');
         $this->line[] = ')';
-        $this->nesting->decr('precedence');
+        $this->nesting->decr(P\Precedence::class);
     }
 
     protected function sPrefixOp(P\PrefixOp $p) : void
@@ -1350,14 +1350,14 @@ class Styler
     protected function sTernary(P\Ternary $p) : void
     {
         $this->line[] = ' ';
-        $this->nesting->incr('ternary');
+        $this->nesting->incr(Expr\Ternary::class);
         $this->split(Expr\Ternary::class);
         $this->line[] = $p->operator . ' ';
     }
 
     protected function sTernaryEnd(P\Ternary $p) : void
     {
-        $this->nesting->decr('ternary');
+        $this->nesting->decr(Expr\Ternary::class);
     }
 
     protected function sThrow(P\Throw_ $p) : void
