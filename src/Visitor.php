@@ -38,7 +38,7 @@ class Visitor extends NodeVisitorAbstract
             $this->fluentIdx ++;
         }
 
-        // closure, new, or array in arguments? expansive.
+        // expansives within calls
         if (
             $node instanceof Expr\FuncCall
             || $node instanceof Expr\MethodCall
@@ -68,7 +68,7 @@ class Visitor extends NodeVisitorAbstract
             }
         }
 
-        // attributes or comments in params? expansive.
+        // expansives within params
         foreach ($node->params ?? [] as $param) {
             if ($param->getComments()) {
                 $node->setAttribute('expansive', true);
@@ -79,10 +79,19 @@ class Visitor extends NodeVisitorAbstract
             }
         }
 
-        // comments in array? expansive.
+        // expansives within arrays
         if ($node instanceof Expr\Array_) {
             foreach ($node->items as $item) {
                 if ($item?->getComments() ?? false) {
+                    $node->setAttribute('expansive', true);
+                    break;
+                }
+
+                if (
+                    $item->value instanceof Expr\ArrowFunction
+                    || $item->value instanceof Expr\Closure && $item->value->stmts
+                    || $item->value instanceof Expr\New_ && $item->value->args
+                ) {
                     $node->setAttribute('expansive', true);
                     break;
                 }

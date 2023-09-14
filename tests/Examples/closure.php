@@ -72,3 +72,17 @@ $foo = function (
 ) {
     // body
 };
+
+if (true) {
+    $config = [
+        Gateway::class => function (DatabaseConnection $db) : Gateway {
+            return new Gateway($db);
+        },
+    ];
+}
+
+if (true) {
+    $config = [
+        Gateway::class => fn (DatabaseConnection $db) : Gateway => new Gateway($db),
+    ];
+}
