@@ -39,6 +39,7 @@ abstract class Bar extends Baz implements Dib, Zim, Gir
 
 abstract class VeryLongClassname extends VeryLongBaseClass implements VeryLongInterface
 {
+    #[MyAttribute]
     public function __construct()
     {
     }

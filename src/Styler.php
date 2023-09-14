@@ -369,9 +369,7 @@ class Styler
             return;
         }
 
-        if (! $p->hasComment()) {
-            $this->newline();
-        }
+        $this->maybeNewline($p);
     }
 
     protected function sAttributeGroup(P\AttributeGroup $p) : void
