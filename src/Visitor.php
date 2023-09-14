@@ -52,6 +52,11 @@ class Visitor extends NodeVisitorAbstract
             // expansive only if multiple args.
             if (count($args) > 1) {
                 foreach ($args as $arg) {
+                    if ($arg?->getComments() ?? false) {
+                        $node->setAttribute('expansive', true);
+                        break;
+                    }
+
                     if (! isset($arg->value)) {
                         continue;
                     }
@@ -70,7 +75,7 @@ class Visitor extends NodeVisitorAbstract
 
         // expansives within params
         foreach ($node->params ?? [] as $param) {
-            if ($param->getComments()) {
+            if ($param?->getComments()) {
                 $node->setAttribute('expansive', true);
             }
 
@@ -85,6 +90,10 @@ class Visitor extends NodeVisitorAbstract
                 if ($item?->getComments() ?? false) {
                     $node->setAttribute('expansive', true);
                     break;
+                }
+
+                if (! isset($item->value)) {
+                    continue;
                 }
 
                 if (

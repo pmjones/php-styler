@@ -80,9 +80,3 @@ if (true) {
         },
     ];
 }
-
-if (true) {
-    $config = [
-        Gateway::class => fn (DatabaseConnection $db) : Gateway => new Gateway($db),
-    ];
-}

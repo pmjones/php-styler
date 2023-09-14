@@ -42,6 +42,12 @@ class Whatever
     // method
     public function bar()
     {
+        foo(
+            $bar,
+
+            /* comment makes expansive */
+            $baz,
+        );
     }
 
     /**
