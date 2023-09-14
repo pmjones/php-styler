@@ -174,9 +174,8 @@ class Printer
         $args = $node->{$prop};
         $start = count($this->list);
         $this->list[] = $orig = $this->args($args);
-        $expansive = (bool) $node->getAttribute('expansive');
-        $orig->isExpansive($expansive);
-        $this->pSeparate('arg', $args, $expansive);
+        $orig->isExpansive((bool) $node->getAttribute('expansive'));
+        $this->pSeparate('arg', $args, $orig);
         $end = count($this->list);
         $this->maybeExpansive($orig, $start, $end);
         $this->list[] = new P\End($orig);
@@ -192,14 +191,14 @@ class Printer
 
         $count = count($node->args);
         $this->list[] = $orig = new P\AttributeArgs($count);
-        $this->pSeparate('attributeArg', $node->args);
+        $this->pSeparate('attributeArg', $node->args, $orig);
         $this->list[] = new P\End($orig);
     }
 
     protected function pAttributeGroup(Node\AttributeGroup $node) : void
     {
         $this->list[] = $orig = new P\AttributeGroup();
-        $this->pSeparate('attribute', $node->attrs);
+        $this->pSeparate('attribute', $node->attrs, $orig);
         $this->list[] = new P\End($orig);
     }
 
@@ -355,13 +354,12 @@ class Printer
     protected function pExpr_Array(Expr\Array_ $node) : void
     {
         $count = count($node->items);
-        $expansive = (bool) $node->getAttribute('expansive');
         $this->list[] = $orig = new P\Array_($count);
-        $orig->isExpansive($expansive);
+        $orig->isExpansive((bool) $node->getAttribute('expansive'));
 
         /** @var ArrayItem[] */
         $items = $node->items;
-        $this->pSeparate('array', $items, $expansive);
+        $this->pSeparate('array', $items, $orig);
         $this->list[] = new P\End($orig);
     }
 
@@ -674,7 +672,7 @@ class Printer
         if ($node->uses) {
             $count = count($node->uses);
             $this->list[] = $orig = new P\ClosureUse($count);
-            $this->pSeparate('param', $node->uses);
+            $this->pSeparate('param', $node->uses, $orig);
             $this->list[] = new P\End($orig);
         }
 
@@ -756,10 +754,9 @@ class Printer
     protected function pParams(Node $node) : void
     {
         $count = count($node->params ?? []);
-        $expansive = (bool) $node->getAttribute('expansive');
         $this->list[] = $orig = new P\Params($count);
-        $orig->isExpansive($expansive);
-        $this->pSeparate('param', $node->params ?? null, $expansive);
+        $orig->isExpansive((bool) $node->getAttribute('expansive'));
+        $this->pSeparate('param', $node->params ?? null, $orig);
         $this->list[] = new P\End($orig);
     }
 
@@ -1036,7 +1033,7 @@ class Printer
     {
         if ($node->implements ?? null) {
             $this->list[] = $orig = new P\Implements_();
-            $this->pSeparate('implements', $node->implements);
+            $this->pSeparate('implements', $node->implements, $orig);
             $this->list[] = new P\End($orig);
         }
     }
@@ -1056,7 +1053,7 @@ class Printer
         $this->list[] = $orig = new P\MatchArm();
 
         if ($node->conds) {
-            $this->pSeparate('match', $node->conds);
+            $this->pSeparate('match', $node->conds, $orig);
         } else {
             $this->list[] = 'default';
         }
@@ -1097,9 +1094,8 @@ class Printer
         $this->pModifiers($class);
         $this->list[] = new P\Class_(null, null);
         $this->list[] = $orig = $this->args($args);
-        $expansive = (bool) $node->getAttribute('expansive');
-        $orig->isExpansive($expansive);
-        $this->pSeparate('arg', $args, $expansive);
+        $orig->isExpansive((bool) $node->getAttribute('expansive'));
+        $this->pSeparate('arg', $args, $orig);
         $this->list[] = new P\End($orig);
         $this->pExtends($class);
         $this->pImplements($class);
@@ -1364,11 +1360,7 @@ class Printer
     /**
      * @param null|Node[]|ArrayItem[] $nodes
      */
-    protected function pSeparate(
-        string $type,
-        ?array $nodes,
-        bool $expansive = false,
-    ) : void
+    protected function pSeparate(string $type, ?array $nodes, Printable $orig) : void
     {
         if (! $nodes) {
             return;
@@ -1376,12 +1368,9 @@ class Printer
 
         foreach ($nodes as $node) {
             $this->p($node);
-            $orig = new P\Separator($type);
-            $this->list[] = $orig;
-            $orig->isExpansive($expansive);
+            $this->list[] = new P\Separator($type, $orig);
         }
 
-        // remove last separator
         array_pop($this->list);
     }
 
@@ -1422,7 +1411,7 @@ class Printer
             $this->p($node->type);
         }
 
-        $this->pSeparate('const', $node->consts);
+        $this->pSeparate('const', $node->consts, $orig);
         $this->list[] = new P\End($orig);
     }
 
@@ -1447,7 +1436,7 @@ class Printer
     protected function pStmt_Const(Stmt\Const_ $node) : void
     {
         $this->list[] = $orig = new P\Const_();
-        $this->pSeparate('const', $node->consts);
+        $this->pSeparate('const', $node->consts, $orig);
         $this->list[] = new P\End($orig);
     }
 
@@ -1461,7 +1450,7 @@ class Printer
         $count = count($node->declares);
         $this->list[] = new P\Declare_();
         $this->list[] = $orig = new P\Params($count);
-        $this->pSeparate('functionParam', $node->declares);
+        $this->pSeparate('functionParam', $node->declares, $orig);
         $this->list[] = new P\End($orig);
 
         if ($node->stmts !== null) {
@@ -1492,7 +1481,7 @@ class Printer
     protected function pStmt_Echo(Stmt\Echo_ $node) : void
     {
         $this->list[] = $orig = new P\ReservedStmt('echo');
-        $this->pSeparate('reservedStmt', $node->exprs);
+        $this->pSeparate('reservedStmt', $node->exprs, $orig);
         $this->list[] = new P\End($orig);
     }
 
@@ -1536,11 +1525,11 @@ class Printer
     {
         $this->list[] = new P\For_();
         $this->list[] = $orig = new P\Cond();
-        $this->pSeparate('for', $node->init);
-        $this->list[] = new P\Separator('forExpr');
-        $this->pSeparate('for', $node->cond);
-        $this->list[] = new P\Separator('forExpr');
-        $this->pSeparate('for', $node->loop);
+        $this->pSeparate('for', $node->init, $orig);
+        $this->list[] = new P\Separator('forExpr', $orig);
+        $this->pSeparate('for', $node->cond, $orig);
+        $this->list[] = new P\Separator('forExpr', $orig);
+        $this->pSeparate('for', $node->loop, $orig);
         $this->list[] = new P\End($orig);
         $this->list[] = $orig = new P\Body('for');
         $this->p($node->stmts);
@@ -1583,7 +1572,7 @@ class Printer
     protected function pStmt_Global(Stmt\Global_ $node) : void
     {
         $this->list[] = $orig = new P\ReservedStmt('global');
-        $this->pSeparate('reservedStmt', $node->vars);
+        $this->pSeparate('reservedStmt', $node->vars, $orig);
         $this->list[] = new P\End($orig);
     }
 
@@ -1674,7 +1663,7 @@ class Printer
         $this->pAttributeGroups($node);
         $this->list[] = $orig = new P\Property($node->flags);
         $this->pType($node);
-        $this->pSeparate('property', $node->props);
+        $this->pSeparate('property', $node->props, $orig);
         $this->list[] = new P\End($orig);
     }
 
@@ -1695,7 +1684,7 @@ class Printer
     protected function pStmt_Static(Stmt\Static_ $node) : void
     {
         $this->list[] = $orig = new P\ReservedStmt('static');
-        $this->pSeparate('reservedStmt', $node->vars);
+        $this->pSeparate('reservedStmt', $node->vars, $orig);
         $this->list[] = new P\End($orig);
     }
 
@@ -1755,7 +1744,7 @@ class Printer
     protected function pStmt_TraitUse(Stmt\TraitUse $node) : void
     {
         $this->list[] = $orig = new P\UseTrait();
-        $this->pSeparate('useTrait', $node->traits);
+        $this->pSeparate('useTrait', $node->traits, $orig);
 
         if (! $node->adaptations) {
             $this->list[] = new P\End($orig);
@@ -1787,7 +1776,7 @@ class Printer
         $trait = $this->name($node->trait ?? null);
         $method = $this->name($node->method);
         $this->list[] = $orig = new P\UseTraitInsteadof($trait, $method);
-        $this->pSeparate('insteadof', $node->insteadof);
+        $this->pSeparate('insteadof', $node->insteadof, $orig);
         $this->list[] = new P\End($orig);
     }
 
@@ -1841,7 +1830,7 @@ class Printer
     protected function pStmt_Use(Stmt\Use_ $node) : void
     {
         $this->list[] = $orig = new P\UseImport($this->useType($node), null);
-        $this->pSeparate('use', $node->uses);
+        $this->pSeparate('use', $node->uses, $orig);
         $this->list[] = new P\End($orig);
     }
 
@@ -1849,7 +1838,7 @@ class Printer
     {
         $prefix = $this->name($node->prefix);
         $this->list[] = $orig = new P\UseImport($this->useType($node), $prefix);
-        $this->pSeparate('use', $node->uses);
+        $this->pSeparate('use', $node->uses, $orig);
         $this->list[] = new P\End($orig);
     }
 
@@ -1867,7 +1856,7 @@ class Printer
     protected function pStmt_Unset(Stmt\Unset_ $node) : void
     {
         $this->list[] = $orig = new P\Unset_();
-        $this->pSeparate('arg', $node->vars);
+        $this->pSeparate('arg', $node->vars, $orig);
         $this->list[] = new P\End($orig);
     }
 
@@ -2186,6 +2175,10 @@ class Printer
 
     protected function maybeExpansive(Printable $orig, int $start, int $end) : void
     {
+        if ($orig->isExpansive()) {
+            return;
+        }
+
         for ($i = $start; $i < $end; $i ++) {
             if (
                 $this->list[$i] instanceof Printable && $this->list[$i]->isExpansive()

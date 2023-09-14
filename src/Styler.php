@@ -270,7 +270,7 @@ class Styler
 
     protected function sArgSeparator(P\Separator $p) : void
     {
-        if ($p->isExpansive()) {
+        if ($p->isExpansive() || $p->orig->isExpansive()) {
             $this->line[] = ',';
             $this->newline();
         } else {
@@ -309,7 +309,7 @@ class Styler
 
     protected function sArraySeparator(P\Separator $p) : void
     {
-        if ($p->isExpansive()) {
+        if ($p->isExpansive() || $p->orig->isExpansive()) {
             $this->line[] = ',';
             $this->newline();
         } else {
@@ -1149,7 +1149,7 @@ class Styler
 
     protected function sParamSeparator(P\Separator $p) : void
     {
-        if ($p->isExpansive()) {
+        if ($p->isExpansive() || $p->orig->isExpansive()) {
             $this->line[] = ',';
             $this->newline();
         } else {
