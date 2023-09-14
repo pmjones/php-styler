@@ -20,6 +20,16 @@ if (true) {
                 && false === stripos($headers->get('Content-Type') ?? '', 'charset')
             ) {
             }
+
+            return Payload::created([
+                'source' => $this->executeVeryLongMethodName(
+                    fn () : VeryLongClassName => $this->activate(
+                        $source,
+                        $target,
+                        $user,
+                    ),
+                ),
+            ]);
         }
     }
 }

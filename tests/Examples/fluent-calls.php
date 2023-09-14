@@ -21,15 +21,6 @@ $result = $this
     )
     ->veryLongPropertyName;
 
-if (true) {
-    if (true) {
-        if (true) {
-            return FooBar::fromGlobals($veryVeryLongVariable, ResponseStatus::INVALID)
-                ->setError(self::ERROR_ALREADY_RESPONDED);
-        }
-    }
-}
-
 // statics in fluent call
 function static_fluency()
 {
@@ -47,4 +38,24 @@ function static_fluency()
     $something = ClassName::$veryLongPropertyName
         ->veryLongMethodName()
         ->veryLongMethodName();
+
+    if (true) {
+        if (true) {
+            $foo = FooBar::fromFoo($veryVeryLongVariable, ResponseStatus::INVALID)
+                ->setError(Error::ALREADY_RESPONDED);
+            $bar = FooBar::fromBar($e->getResponse())
+                ->setRequest($e->getRequest())
+                ->setError((string) $e->getResponse()->getBody())
+                ->setException($e);
+            $baz = FooBar::fromBaz(
+                $response,
+                $overrideStatus ?? DomainStatus::UNAUTHORIZED,
+            )
+                ->setException($e);
+            $payload = FooBar::fromResponse($e->getResponse())
+                ->setRequest($e->getRequest())
+                ->setError((string) $e->getResponse()->getBody())
+                ->setException($e);
+        }
+    }
 }
