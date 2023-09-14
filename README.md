@@ -60,7 +60,7 @@ Other PHP code fixers include [PHP_CodeSniffer](https://github.com/squizlabs/PHP
 
 The [Black](https://black.readthedocs.io/en/stable/) formatter for Python appears to have similar design goals and operation as PHP-Styler.
 
-Likewise, [dart_style](https://pub.dev/packages/dart_style) is a formatter for Dart. (Read more baout how it works [here](https://journal.stuffwithstuff.com/2015/09/08/the-hardest-program-ive-ever-written/).)
+Likewise, [dart_style](https://pub.dev/packages/dart_style) is a formatter for Dart. (Read more about how it works [here](https://journal.stuffwithstuff.com/2015/09/08/the-hardest-program-ive-ever-written/).)
 
 Finally, there is a [PHP plugin for Prettier](https://github.com/prettier/plugin-php) that uses JavaScript to replace all PHP code formatting using its own rules.
 
