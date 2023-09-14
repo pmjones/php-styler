@@ -123,3 +123,18 @@ if (true) {
         groupParts($matches, $separators);
     }
 }
+
+if (1) {
+    if (1) {
+        $query
+            ->select([
+                '_very_long_element_' => new UnaryExpression(
+                    'ROW_NUMBER() OVER',
+                    $order,
+                ),
+            ])
+            ->limit(null)
+            ->offset(null)
+            ->order([], true);
+    }
+}

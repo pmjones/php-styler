@@ -89,10 +89,7 @@ if (true) {
                 ['upsert' => true],
             );
         $this->foobar($bar, new Foo());
-        $this->foobar(
-            $bar,
-            new Foo('bar', 'baz'),
-        );
+        $this->foobar($bar, new Foo('bar', 'baz'));
     }
 }
 

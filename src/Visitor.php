@@ -64,7 +64,6 @@ class Visitor extends NodeVisitorAbstract
                     if (
                         $arg->value instanceof Expr\ArrowFunction
                         || $arg->value instanceof Expr\Closure && $arg->value->stmts
-                        || $arg->value instanceof Expr\New_ && $arg->value->args
                     ) {
                         $node->setAttribute('expansive', true);
                         break;
@@ -99,7 +98,6 @@ class Visitor extends NodeVisitorAbstract
                 if (
                     $item->value instanceof Expr\ArrowFunction
                     || $item->value instanceof Expr\Closure && $item->value->stmts
-                    || $item->value instanceof Expr\New_ && $item->value->args
                 ) {
                     $node->setAttribute('expansive', true);
                     break;
