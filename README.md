@@ -141,7 +141,7 @@ The _Styler_ instance can be configured with these constructor parameters:
 
 - `int $indentLen = 4`: The indent length in spaces.
 
-- `bool $indentTab = false`: When `true`, use a tab (`"\t"`) for indenting instead of spaces; `$indentLen` is used as the tab widht when calculating line length.
+- `bool $indentTab = false`: When `true`, use a tab (`"\t"`) for indenting instead of spaces; `$indentLen` is used as the tab width when calculating line length.
 
 Here is a _Styler_ configured for Windows line endings on 120-character lines with tab indentation at 8 spaces wide:
 
