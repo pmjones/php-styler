@@ -252,18 +252,20 @@ At first, PHP-Styler builds each statement/instruction as a single line. If that
 - Array elements are split at commas.
 - Argument lists are split at commas.
 - Coalesce `??` operators are split.
-- Member operators are split at `::`, '::$', `->` and `?->`.
+- Member operators are split at `::`, `::$`, `->` and `?->`.
 - Parameter lists are split at commas.
 
 If the first rule does not make the line short enough, the second rule is applied in addition, then the third, and so on.
 
 The line splitting logic attempts to be idiomatic; that is, PHP-Styler tries to take common line-splitting idioms into account, rather than making weighted calculations of elements. Reference projects were:
 
-- Qiq
-- Sapien
-- Laminas MVC
-- Slim
-- Symfony Http-Foundation
+- cakephp/database
+- laminas/laminas-mvc
+- nette/application
+- qiq/qiq
+- sapien/sapien
+- slim/slim
+- symfony/http-foundation
 
 ### Line Length
 
