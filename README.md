@@ -152,9 +152,7 @@ use PhpStyler\Files;
 use PhpStyler\Styler;
 
 return new Config(
-    files: Files::find([
-        __DIR__ . '/src',
-    ]),
+    files: new Files(__DIR__ . '\\src'),
     styler: new Styler(
         eol: "\r\n",
         lineLen: 120,
