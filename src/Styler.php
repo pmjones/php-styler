@@ -572,7 +572,7 @@ class Styler
             $this->newline();
             $this->outdent();
         } else {
-            $this->split(P\Cond::class, 'end');
+            $this->split(P\Cond::class, 'same');
         }
 
         $this->line[] = ')';
@@ -1193,7 +1193,7 @@ class Styler
 
     protected function sPrecedenceEnd(P\Precedence $p) : void
     {
-        $this->split(P\Precedence::class, 'end');
+        $this->split(P\Precedence::class, 'same');
         $this->line[] = ')';
         $this->nesting->decr(P\Precedence::class);
     }
