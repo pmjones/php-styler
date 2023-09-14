@@ -199,6 +199,40 @@ Alternatively, it may be an indication that the source line(s) should be refacto
 
 - Assign multiple ternaries embedded in a single statement to separate variables.
 
+Unfortunately, because of how PHP-Parser handles quoted strings, newlines may be rendered as a literal `\n` within the string. For example, this code ...
+
+```php
+$sql = "
+    SELECT TABLE_NAME
+    FROM INFORMATION_SCHEMA.TABLES
+    WHERE TABLE_SCHEMA = ?
+    AND (TABLE_TYPE = 'BASE TABLE' OR TABLE_TYPE = 'VIEW')
+    ORDER BY TABLE_NAME;
+";
+```
+
+... will be rendered as ...
+
+```php
+$sql = "\n    SELECT TABLE_NAME\n    FROM INFORMATION_SCHEMA.TABLES\n    WHERE TABLE_SCHEMA = ?\n    AND (TABLE_TYPE = 'BASE TABLE' OR TABLE_TYPE = 'VIEW')\n    ORDER BY TABLE_NAME;\n";
+```
+
+... which is not at all what we want.
+
+Until there is a change to how PHP-Parser works, the only solution I can think of is to use heredoc or nowdoc strings instead. Then this code ...
+
+```php
+$sql = <<<SQL
+    SELECT TABLE_NAME
+    FROM INFORMATION_SCHEMA.TABLES
+    WHERE TABLE_SCHEMA = ?
+    AND (TABLE_TYPE = 'BASE TABLE' OR TABLE_TYPE = 'VIEW')
+    ORDER BY TABLE_NAME;
+SQL;
+```
+... will be rendered exactly as provided.
+
+
 ## Caveats
 
 These are not all-inclusive; see also [FIXME.md](./FIXME.md) for known issues to be addressed.
