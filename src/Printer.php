@@ -388,11 +388,11 @@ class Printer
     protected function pExpr_ArrowFunction(Expr\ArrowFunction $node) : void
     {
         $this->pAttributeGroups($node);
-        $this->list[] = $orig = new P\ArrowFunction($node->static);
+        $this->list[] = new P\ArrowFunction($node->static);
         $this->pByRef($node);
         $this->pParams($node);
         $this->pReturnType($node);
-        $this->pDoubleArrow();
+        $this->list[] = $orig = new P\Body('arrowFunction');
         $this->p($node->expr);
         $this->list[] = new P\End($orig);
     }

@@ -16,6 +16,7 @@ class Line implements ArrayAccess
 {
     protected const RULES = [
         P\Implements_::class,
+        P\ArrowFunction::class,
         Expr\BinaryOp\Concat::class,
         P\Cond::class,
         P\Precedence::class,

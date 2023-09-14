@@ -23,11 +23,8 @@ if (true) {
 
             return Payload::created([
                 'source' => $this->executeVeryLongMethodName(
-                    fn () : VeryLongClassName => $this->activate(
-                        $source,
-                        $target,
-                        $user,
-                    ),
+                    fn () : VeryLongClassName
+                        => $this->activate($source, $target, $user),
                 ),
             ]);
         }

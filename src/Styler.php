@@ -354,8 +354,18 @@ class Styler
         $this->line[] = $p->static ? 'static fn ' : 'fn ';
     }
 
-    protected function sArrowFunctionEnd(P\ArrowFunction $p) : void
+    protected function sArrowFunctionBody(P\Body $p) : void
     {
+        $this->line[] = ' ';
+        $this->nesting->incr(P\ArrowFunction::class);
+        $this->split(P\ArrowFunction::class);
+        $this->line[] = '=> ';
+    }
+
+    protected function sArrowFunctionBodyEnd(P\Body $p) : void
+    {
+        $this->split(P\ArrowFunction::class, 'clip');
+        $this->nesting->decr(P\ArrowFunction::class);
     }
 
     protected function sAs(P\As_ $p) : void

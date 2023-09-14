@@ -3,9 +3,10 @@ $foo = fn (array $x) => $x;
 $bar = static fn () : int => $x;
 $veryVeryVeryVeryVeryVeryLongVariableName = array_filter(
     $cookies,
-    fn (Cookie $cookie) => $cookie->getName() === $this->name
-        && $cookie->getPath() === $this->path
-        && $cookie->getDomain() === $this->domain,
+    fn (Cookie $cookie)
+        => $cookie->getName() === $this->name
+            && $cookie->getPath() === $this->path
+            && $cookie->getDomain() === $this->domain,
 );
 
 // arrow as arg in method call in array in method call
@@ -23,3 +24,6 @@ if (true) {
         Gateway::class => fn (DatabaseConnection $db) : Gateway => new Gateway($db),
     ];
 }
+
+$longArrowFunctionName = fn (LongParam $longVar1, LongParam $longVar2) : ReturnType
+    => foo('bar');
