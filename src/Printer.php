@@ -1928,10 +1928,15 @@ class Printer
         $this->list[] = '$' . $node->name;
     }
 
+    /**
+     * @param mixed[] $args
+     */
     protected function args(array $args) : P\Args
     {
         $count = count($args);
-        $value = $args[0]?->value ?? null;
+
+        /** @phpstan-ignore-next-line */
+        $value = $args ? $args[0]->value ?? null : null;
         $isSingleArray = $count === 1 && $value instanceof Expr\Array_;
         return new P\Args($count, $isSingleArray);
     }

@@ -52,7 +52,7 @@ class Visitor extends NodeVisitorAbstract
             // expansive only if multiple args.
             if (count($args) > 1) {
                 foreach ($args as $arg) {
-                    if ($arg?->getComments() ?? false) {
+                    if ($arg->getComments()) {
                         $node->setAttribute('expansive', true);
                         break;
                     }

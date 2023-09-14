@@ -181,12 +181,7 @@ class Styler
     protected function split(string $class, string $type = null, mixed ...$args) : void
     {
         if ($this->nesting->notIn(P\Encapsed::class)) {
-            $this->line[] = new Split(
-                $this->nesting->level(),
-                $class,
-                $type,
-                ...$args,
-            );
+            $this->line[] = new Split($this->nesting->level(), $class, $type, ...$args);
         }
     }
 
