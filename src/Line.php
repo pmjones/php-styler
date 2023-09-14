@@ -30,7 +30,6 @@ class Line implements ArrayAccess
         Expr\BinaryOp\Coalesce::class,
         P\MemberOp::class,
         P\Params::class,
-        P\AttributeArgs::class,
     ];
 
     /**

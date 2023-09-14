@@ -382,32 +382,6 @@ class Styler
         $this->line[] = '#[';
     }
 
-    protected function sAttributeArgs(P\AttributeArgs $p) : void
-    {
-        $this->nesting->incr(P\AttributeArgs::class);
-        $this->line[] = '(';
-
-        if ($p->count) {
-            $this->split(P\AttributeArgs::class);
-        }
-    }
-
-    protected function sAttributeArgSeparator(P\Separator $p) : void
-    {
-        $this->line[] = ', ';
-        $this->split(P\AttributeArgs::class);
-    }
-
-    protected function sAttributeArgsEnd(P\AttributeArgs $p) : void
-    {
-        if ($p->count) {
-            $this->split(P\AttributeArgs::class, 'last');
-        }
-
-        $this->line[] = ')';
-        $this->nesting->decr(P\AttributeArgs::class);
-    }
-
     protected function sAttributeGroupEnd(P\AttributeGroup $p) : void
     {
         $this->line[] = ']';

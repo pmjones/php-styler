@@ -220,7 +220,6 @@ At first, PHP-Styler builds each statement/instruction as a single line. If that
 - Coalesce `??` operators are split.
 - Member operators are split at `::`, '::$', `->` and `?->`.
 - Parameter lists are split at commas.
-- Attribute argument lists are split at commas.
 
 If the first rule does not make the line short enough, the second rule is applied in addition, then the third, and so on.
 

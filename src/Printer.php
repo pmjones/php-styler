@@ -189,10 +189,7 @@ class Printer
             return;
         }
 
-        $count = count($node->args);
-        $this->list[] = $orig = new P\AttributeArgs($count);
-        $this->pSeparate('attributeArg', $node->args, $orig);
-        $this->list[] = new P\End($orig);
+        $this->pArgs($node, 'args');
     }
 
     protected function pAttributeGroup(Node\AttributeGroup $node) : void
