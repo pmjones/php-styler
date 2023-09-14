@@ -187,15 +187,17 @@ Alternatively, it may be an indication that the source line(s) should be refacto
 
 - Increase the maximum line length. The default length is 88 characters (10% more than the commonly-suggested 80-character length to allow some wiggle room). However, some codebases tend to prefer much longer lines, so increasing the line length may result in more-agreeable line splits.
 
-- Break up a single long line into multiple shorter lines.
+- Remove comments from within parameter and argument lists.
 
 - Move inline comments from the beginning or end of the line to *above* the line.
+
+- Break up a single long line into multiple shorter lines.
 
 - Assign closures embedded in arguments to separate variables.
 
 - Assign function calls embedded in concatenations to separate variables.
 
-- Assign ternaries embedded in a single statement to separate variables.
+- Assign multiple ternaries embedded in a single statement to separate variables.
 
 ## Caveats
 
@@ -206,6 +208,7 @@ These are not all-inclusive; see also [FIXME.md](./FIXME.md) for known issues to
 At first, PHP-Styler builds each statement/instruction as a single line. If that line is "too long" (88 characters by default) the _Styler_ reconstructs the code by trying to split it across multiple lines. It does so by applying one or more rules in order:
 
 - `implements` are split at commas.
+- Arrow functions are split at `=>`.
 - String concatenations are split at dots.
 - Conditions are split at parentheses.
 - Precedence-indicating parentheses are split.
@@ -215,9 +218,9 @@ At first, PHP-Styler builds each statement/instruction as a single line. If that
 - Array elements are split at commas.
 - Argument lists are split at commas.
 - Coalesce `??` operators are split.
-- Object instance member operators are split at `->` and `?->`.
+- Member operators are split at `::`, '::$', `->` and `?->`.
 - Parameter lists are split at commas.
-- Attribute arguments are split at commas.
+- Attribute argument lists are split at commas.
 
 If the first rule does not make the line short enough, the second rule is applied in addition, then the third, and so on.
 
@@ -298,9 +301,11 @@ PHP-Styler does not reformat comment line contents.
 
 Comment lines are always attached to the following line, not the same or previous line. That is, leading or trailing comments *on the same line* may not appear where you expect. Likewise, comments intended to be attached to the *previous* line may end up attached to the *following* line. (This is a limitation of PHP-Parser.)
 
-Inline comments after array elements will mess up indenting; consider placing the comment on the line above that element instead.
+Comments within argument or parameter lists may mess up indenting; consider removing them.
 
-Comments on closure signatures will mess up indenting. For example, the following is how PHP-Styler reformats one part of Laminas Escaper:
+Inline comments within array elements may mess up indenting; consider placing the comment on the line above that element instead.
+
+Comments on closure signatures may mess up indenting. For example, the following is how PHP-Styler reformats one part of Laminas Escaper:
 
 ```php
 $this->htmlAttrMatcher =
