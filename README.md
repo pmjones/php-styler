@@ -166,7 +166,7 @@ return new Config(
 
 Applying PHP-Styler to your source files for the first time may introduce a volume of changes that will make it difficult to track authorship via `git blame`.
 
-You can tell Git ignore this initial reformatting pass by adding a `.git-blame-ignore-revs` file to your repository, and adding the full hash of the initial reformatting commit to it.
+You can tell Git to overlook this initial reformatting pass by adding a `.git-blame-ignore-revs` file to your repository, and adding the full hash of the initial reformatting commit to it.
 
 1. Issue `php-styler apply` to your codebase.
 2. Issue `git log` and copy the full 40-character hash string.
