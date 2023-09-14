@@ -165,9 +165,15 @@ class Line implements ArrayAccess
         $this->line = $this->newline();
     }
 
+    protected function lastSplit(Split $part) : void
+    {
+        $this->line[] = ',';
+        $this->lines[] = $this->line;
+        $this->line = $this->newline();
+    }
+
     protected function endSplit(Split $part) : void
     {
-        $this->line[] = $part->args[0] ?? '';
         $this->lines[] = $this->line;
         $this->line = $this->newline();
     }

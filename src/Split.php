@@ -9,17 +9,10 @@ use PhpStyler\Printable as P;
 
 class Split
 {
-    /**
-     * @var mixed[]
-     */
-    public readonly array $args;
-
     public function __construct(
         public readonly int $level,
         public readonly string $rule,
         public readonly ?string $type = null,
-        mixed ...$args,
     ) {
-        $this->args = $args;
     }
 }

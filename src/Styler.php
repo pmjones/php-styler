@@ -291,7 +291,7 @@ class Styler
             $this->newline();
             $this->outdent();
         } elseif ($p->count && ! $p->isSingleArray) {
-            $this->split(P\Args::class, 'end', ',');
+            $this->split(P\Args::class, 'last');
         }
 
         $this->line[] = ')';
@@ -330,7 +330,7 @@ class Styler
             $this->newline();
             $this->outdent();
         } elseif ($p->count) {
-            $this->split(P\Array_::class, 'end', ',');
+            $this->split(P\Array_::class, 'last');
         }
 
         $this->line[] = ']';
@@ -406,7 +406,7 @@ class Styler
     protected function sAttributeArgsEnd(P\AttributeArgs $p) : void
     {
         if ($p->count) {
-            $this->split(P\AttributeArgs::class, 'end', ',');
+            $this->split(P\AttributeArgs::class, 'last');
         }
 
         $this->line[] = ')';
@@ -499,7 +499,7 @@ class Styler
     protected function sClosureUseEnd(P\ClosureUse $p) : void
     {
         if ($p->count) {
-            $this->split(P\Params::class, 'end', ',');
+            $this->split(P\Params::class, 'last');
         }
 
         $this->line[] = ')';
@@ -1170,7 +1170,7 @@ class Styler
             $this->newline();
             $this->outdent();
         } elseif ($p->count) {
-            $this->split(P\Params::class, 'end', ',');
+            $this->split(P\Params::class, 'last');
         }
 
         $this->line[] = ')';
