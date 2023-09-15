@@ -1,5 +1,31 @@
 # Change Log
 
+## NEXT
+
+- Moved spacing classes to main namespace
+
+- Use class names, not other strings, for nesting identifiers
+
+- A single array argument now nestles up with parentheses
+
+- Improved fluency on statics, and initial fluent property is not split
+
+- Consolidate types of splits.
+
+- Clip newline above attributes
+
+- Mark expansives within arrays
+
+- Comments in arguments make arguments expansive
+
+- Consolidate attribute arguments into general arguments
+
+- Split arrow functions at `=>`
+
+- `new` is no longer expansive
+
+- Address some addcslashes() handling of newlines when escaping strings
+
 ## 0.3.0
 
 Complete rewrite of code reassembly process using a Line object that splits into sub-Line objects, and applies splits to each Line independently.
