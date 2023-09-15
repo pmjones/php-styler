@@ -803,7 +803,12 @@ class Printer
         $fluentNum = $node->getAttribute('fluentNum');
         $fluentEnd = $node->getAttribute('fluentEnd');
         $this->pDereferenceLhs($node->var);
-        $this->list[] = $orig = new P\InstanceOp('->', 'method', $fluentNum, $fluentEnd);
+        $this->list[] = $orig = new P\InstanceOp(
+            '->',
+            'method',
+            $fluentNum,
+            $fluentEnd,
+        );
         $this->pObjectProperty($node->name);
         $this->pArgs($node);
         $this->list[] = new P\End($orig);
@@ -826,7 +831,12 @@ class Printer
         $fluentNum = $node->getAttribute('fluentNum');
         $fluentEnd = $node->getAttribute('fluentEnd');
         $this->pDereferenceLhs($node->var);
-        $this->list[] = $orig = new P\InstanceOp('?->', 'method', $fluentNum, $fluentEnd);
+        $this->list[] = $orig = new P\InstanceOp(
+            '?->',
+            'method',
+            $fluentNum,
+            $fluentEnd,
+        );
         $this->pObjectProperty($node->name);
         $this->pArgs($node);
         $this->list[] = new P\End($orig);
@@ -839,7 +849,12 @@ class Printer
         $fluentNum = $node->getAttribute('fluentNum');
         $fluentEnd = $node->getAttribute('fluentEnd');
         $this->pDereferenceLhs($node->var);
-        $this->list[] = $orig = new P\InstanceOp('?->', 'property', $fluentNum, $fluentEnd);
+        $this->list[] = $orig = new P\InstanceOp(
+            '?->',
+            'property',
+            $fluentNum,
+            $fluentEnd,
+        );
         $this->pObjectProperty($node->name);
         $this->list[] = new P\End($orig);
     }
@@ -849,7 +864,12 @@ class Printer
         $fluentNum = $node->getAttribute('fluentNum');
         $fluentEnd = $node->getAttribute('fluentEnd');
         $this->pDereferenceLhs($node->var);
-        $this->list[] = $orig = new P\InstanceOp('->', 'property', $fluentNum, $fluentEnd);
+        $this->list[] = $orig = new P\InstanceOp(
+            '->',
+            'property',
+            $fluentNum,
+            $fluentEnd,
+        );
         $this->pObjectProperty($node->name);
         $this->list[] = new P\End($orig);
     }
@@ -891,7 +911,12 @@ class Printer
         $this->pStaticDereferenceLhs($node->class);
         $fluentNum = $node->getAttribute('fluentNum');
         $fluentEnd = $node->getAttribute('fluentEnd');
-        $this->list[] = $orig = new P\StaticOp('::$', 'property', $fluentNum, $fluentEnd);
+        $this->list[] = $orig = new P\StaticOp(
+            '::$',
+            'property',
+            $fluentNum,
+            $fluentEnd,
+        );
         $this->pObjectProperty($node->name);
         $this->list[] = new P\End($orig);
     }
@@ -2007,7 +2032,7 @@ class Printer
     protected function escapeString(
         string $string,
         ?string $quote,
-        ?string $rawValue = null,
+        mixed $rawValue = null,
     ) : ?string
     {
         $chars = [
@@ -2023,7 +2048,7 @@ class Printer
         if ($quote === null) {
             // For doc strings, don't escape newlines
             $chars = ["\\", "\t", "\f", "\v", "\$"];
-        } elseif ($rawValue !== null) {
+        } elseif (is_string($rawValue)) {
             // escape only chars present in raw value
             foreach ($chars as $key => $val) {
                 if (strpos($rawValue, $key) === false) {
