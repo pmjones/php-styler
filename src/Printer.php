@@ -649,7 +649,7 @@ class Printer
     protected function pExpr_ClassConstFetch(Expr\ClassConstFetch $node) : void
     {
         $this->pStaticDereferenceLhs($node->class);
-        $this->list[] = new P\StaticOp('::', 0, 0);
+        $this->list[] = new P\StaticOp('::', 'constant', 0, 0);
         $this->p($node->name);
     }
 
@@ -803,7 +803,7 @@ class Printer
         $fluentNum = $node->getAttribute('fluentNum');
         $fluentEnd = $node->getAttribute('fluentEnd');
         $this->pDereferenceLhs($node->var);
-        $this->list[] = $orig = new P\InstanceOp('->', $fluentNum, $fluentEnd);
+        $this->list[] = $orig = new P\InstanceOp('->', 'method', $fluentNum, $fluentEnd);
         $this->pObjectProperty($node->name);
         $this->pArgs($node);
         $this->list[] = new P\End($orig);
@@ -826,7 +826,7 @@ class Printer
         $fluentNum = $node->getAttribute('fluentNum');
         $fluentEnd = $node->getAttribute('fluentEnd');
         $this->pDereferenceLhs($node->var);
-        $this->list[] = $orig = new P\InstanceOp('?->', $fluentNum, $fluentEnd);
+        $this->list[] = $orig = new P\InstanceOp('?->', 'method', $fluentNum, $fluentEnd);
         $this->pObjectProperty($node->name);
         $this->pArgs($node);
         $this->list[] = new P\End($orig);
@@ -839,7 +839,7 @@ class Printer
         $fluentNum = $node->getAttribute('fluentNum');
         $fluentEnd = $node->getAttribute('fluentEnd');
         $this->pDereferenceLhs($node->var);
-        $this->list[] = $orig = new P\InstanceOp('?->', $fluentNum, $fluentEnd);
+        $this->list[] = $orig = new P\InstanceOp('?->', 'property', $fluentNum, $fluentEnd);
         $this->pObjectProperty($node->name);
         $this->list[] = new P\End($orig);
     }
@@ -849,7 +849,7 @@ class Printer
         $fluentNum = $node->getAttribute('fluentNum');
         $fluentEnd = $node->getAttribute('fluentEnd');
         $this->pDereferenceLhs($node->var);
-        $this->list[] = $orig = new P\InstanceOp('->', $fluentNum, $fluentEnd);
+        $this->list[] = $orig = new P\InstanceOp('->', 'property', $fluentNum, $fluentEnd);
         $this->pObjectProperty($node->name);
         $this->list[] = new P\End($orig);
     }
@@ -891,7 +891,7 @@ class Printer
         $this->pStaticDereferenceLhs($node->class);
         $fluentNum = $node->getAttribute('fluentNum');
         $fluentEnd = $node->getAttribute('fluentEnd');
-        $this->list[] = $orig = new P\StaticOp('::$', $fluentNum, $fluentEnd);
+        $this->list[] = $orig = new P\StaticOp('::$', 'property', $fluentNum, $fluentEnd);
         $this->pObjectProperty($node->name);
         $this->list[] = new P\End($orig);
     }
@@ -901,7 +901,7 @@ class Printer
         $this->pStaticDereferenceLhs($node->class);
         $fluentNum = $node->getAttribute('fluentNum');
         $fluentEnd = $node->getAttribute('fluentEnd');
-        $this->list[] = $orig = new P\StaticOp('::', $fluentNum, $fluentEnd);
+        $this->list[] = $orig = new P\StaticOp('::', 'method', $fluentNum, $fluentEnd);
 
         if ($node->name instanceof Expr) {
             if ($node->name instanceof Expr\Variable) {

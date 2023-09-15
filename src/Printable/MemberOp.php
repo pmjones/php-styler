@@ -7,6 +7,7 @@ class MemberOp extends Printable
 {
     public function __construct(
         public readonly string $str,
+        public readonly string $type,
         public readonly mixed $fluentNum,
         public readonly mixed $fluentEnd,
     ) {

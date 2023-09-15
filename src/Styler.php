@@ -960,7 +960,12 @@ class Styler
 
     protected function sInstanceOp(P\InstanceOp $p) : void
     {
-        if ($p->isFluent()) {
+        if (! $p->isFluent()) {
+            $this->line[] = $p->str;
+            return;
+        }
+
+        if ($p->type === 'method' || $p->type === 'property' && $p->fluentNum > 1) {
             $this->nesting->incr(P\MemberOp::class);
             $this->split(P\MemberOp::class);
         }
@@ -970,7 +975,11 @@ class Styler
 
     protected function sInstanceOpEnd(P\InstanceOp $p) : void
     {
-        if ($p->isFluent()) {
+        if (! $p->isFluent()) {
+            return;
+        }
+
+        if ($p->type === 'method' || $p->type === 'property' && $p->fluentNum > 1) {
             $this->nesting->decr(P\MemberOp::class);
         }
     }

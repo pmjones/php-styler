@@ -62,8 +62,7 @@ if (true) {
 
 if (true) {
     if (true) {
-        $this
-            ->language
+        $this->language
             ->evaluate(
                 $this->expression,
                 [
