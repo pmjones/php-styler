@@ -341,7 +341,7 @@ class Printer
         /** @var Node|string $element */
         foreach ($encapsList as $element) {
             if ($element instanceof Scalar\EncapsedStringPart) {
-                $this->list[] = $this->escapeString($element->value, $quote, $element->value);
+                $this->list[] = $this->escapeString($element->value, $quote);
             } else {
                 $this->pEmbrace($element);
             }

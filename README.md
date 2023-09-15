@@ -197,6 +197,34 @@ Alternatively, it may be an indication that the source line(s) should be refacto
 
 - Assign multiple ternaries embedded in a single statement to separate variables.
 
+Unfortunately, because of how PHP-Parser handles double-quoted strings with interpolated variables ("encapsed" strings), newlines and some other whitespace characters (`\f`, `\r`, `\t`, `\v`) render as a literal `\n` (etc.) within the string. For example, this code ...
+
+```php
+$sql = "
+    SELECT *
+    FROM {$table}
+";
+```
+
+... will be rendered as ...
+
+```php
+$sql = "\n    SELECT TABLE_NAME\n    FROM {$table}\n";
+```
+
+... which is not what I would expect to see.
+
+Until there is a change to how PHP-Parser works, the only solution I can think of is to use heredoc syntax instead. Then this code ...
+
+```php
+$sql = <<<SQL
+    SELECT *
+    FROM {$table}
+SQL;
+```
+... will be rendered exactly as provided.
+
+
 ## Caveats
 
 These are not all-inclusive; see also [FIXME.md](./FIXME.md) for known issues to be addressed.
