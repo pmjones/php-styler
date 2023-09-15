@@ -1,6 +1,6 @@
 # Change Log
 
-## NEXT
+## 0.4.0
 
 - Moved spacing classes to main namespace
 
