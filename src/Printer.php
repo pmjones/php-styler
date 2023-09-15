@@ -341,7 +341,7 @@ class Printer
         /** @var Node|string $element */
         foreach ($encapsList as $element) {
             if ($element instanceof Scalar\EncapsedStringPart) {
-                $this->list[] = $this->escapeString($element->value, $quote);
+                $this->list[] = $this->escapeString($element->value, $quote, $element->value);
             } else {
                 $this->pEmbrace($element);
             }
@@ -1347,7 +1347,13 @@ class Printer
 
             /* break missing intentionally */
             case Scalar\String_::KIND_DOUBLE_QUOTED:
-                $this->list[] = '"' . $this->escapeString($node->value, '"') . '"';
+                $this->list[] = '"'
+                    . $this->escapeString(
+                        $node->value,
+                        '"',
+                        $node->getAttribute('rawValue'),
+                    )
+                    . '"';
                 return;
         }
 
@@ -1998,14 +2004,40 @@ class Printer
         return false;
     }
 
-    protected function escapeString(string $string, ?string $quote) : ?string
+    protected function escapeString(
+        string $string,
+        ?string $quote,
+        ?string $rawValue = null,
+    ) : ?string
     {
+        $chars = [
+            '\\\\' => "\\",
+            '\\n' => "\n",
+            '\\r' => "\r",
+            '\\t' => "\t",
+            '\\f' => "\f",
+            '\\v' => "\v",
+            '$' => "\$",
+        ];
+
         if ($quote === null) {
             // For doc strings, don't escape newlines
-            $escaped = addcslashes($string, "\t\f\v\$\\");
+            $chars = ["\\", "\t", "\f", "\v", "\$"];
+        } elseif ($rawValue !== null) {
+            // escape only chars present in raw value
+            foreach ($chars as $key => $val) {
+                if (strpos($rawValue, $key) === false) {
+                    unset($chars[$key]);
+                }
+            }
+
+            $chars[] = $quote;
         } else {
-            $escaped = addcslashes($string, "\n\r\t\f\v\$" . $quote . "\\");
+            $chars[] = $quote;
         }
+
+        $chars = implode('', $chars);
+        $escaped = addcslashes($string, $chars);
 
         // Escape control characters and non-UTF-8 characters.
         // Regex based on https://stackoverflow.com/a/11709412/385378.
