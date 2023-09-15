@@ -20,13 +20,19 @@ class Apply extends Command
         echo "Load config " . $configFile . PHP_EOL;
         $config = $this->loadConfigFile($configFile);
 
+        // load cache time
+        $filemtime = $options->force ? 0 : filemtime($configFile);
+
         // apply styling
         try {
-            $count = $this->style($config);
+            $count = $this->style($config, $filemtime);
         } catch (Error $e) {
             echo $e->getMessage() . PHP_EOL;
             return 1;
         }
+
+        // update cache time
+        touch($configFile);
 
         // statistics
         $time = (hrtime(true) - $start) / 1000000000;
@@ -40,12 +46,16 @@ class Apply extends Command
         return 0;
     }
 
-    protected function style(Config $config) : int
+    protected function style(Config $config, int $filemtime) : int
     {
         $count = 0;
         $service = new Service($config->styler);
 
         foreach ($config->files as $file) {
+            if ($filemtime && filemtime($file) < $filemtime) {
+                continue;
+            }
+
             $count ++;
             $file = (string) $file;
             echo $file . PHP_EOL;

@@ -101,7 +101,7 @@ Pass `--debug-parser` to dump the PHP-Parser AST _Node_ objects into the preview
 
 ### Apply Formatting
 
-Apply PHP-Styler to all files identified in the `php-styler.php` config file, overwriting them with new formatting:
+Apply PHP-Styler to all files identified in the config file, overwriting them with new formatting:
 
 ```
 ./vendor/bin/php-styler apply
@@ -113,9 +113,17 @@ Pass `-c` or `--config` to specify an alternative config file:
 ./vendor/bin/php-styler apply -c /path/to/other/php-styler.php
 ```
 
+PHP-Styler will only apply formatting to files with a modification time *later* than the config file. To force formatting on all files regardless of modification time, pass the `--force` option:
+
+```
+./vendor/bin/php-styler apply --force
+```
+
+The `apply` command will `touch()` the config file each time it runs, thereby noting the most-recent modification time. Further, this means that any changes to the config file will trigger formatting of all files on the next invocation of `apply`.
+
 ### Configuration
 
-The default config file looks like this:
+The default `php-styler.php` config file looks like this:
 
 ```php
 <?php
