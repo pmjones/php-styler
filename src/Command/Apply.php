@@ -46,7 +46,7 @@ class Apply extends Command
         return 0;
     }
 
-    protected function style(Config $config, int $filemtime) : int
+    protected function style(Config $config, int|false $filemtime) : int
     {
         $count = 0;
         $service = new Service($config->styler);

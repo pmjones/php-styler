@@ -40,3 +40,14 @@ switch ($foo) {
         $j ++;
         break;
 }
+
+// empty default
+switch ($foo) {
+    case 'dib':
+    case 'zim':
+    case 'gir':
+        $j ++;
+        break;
+
+    default:
+}

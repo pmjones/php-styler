@@ -28,37 +28,17 @@ class Nesting
 
         if (! $this->types[$type]) {
             throw new RuntimeException(
-                "cannot decrease {$type} nesting level below zero",
+                "Cannot decrease {$type} nesting level below zero",
             );
         }
 
         $this->types[$type] --;
     }
 
-    public function in(string ...$types) : bool
+    public function in(string $type) : bool
     {
-        foreach ($types as $type) {
-            $this->types[$type] ??= 0;
-
-            if ($this->types[$type]) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public function notIn(string ...$types) : bool
-    {
-        foreach ($types as $type) {
-            $this->types[$type] ??= 0;
-
-            if ($this->types[$type]) {
-                return false;
-            }
-        }
-
-        return true;
+        $this->types[$type] ??= 0;
+        return (bool) $this->types[$type];
     }
 
     public function level(string $type = null) : int

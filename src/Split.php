@@ -12,7 +12,7 @@ class Split
     public function __construct(
         public readonly int $level,
         public readonly string $rule,
-        public readonly ?string $type = null,
+        public readonly ?string $type,
     ) {
     }
 }

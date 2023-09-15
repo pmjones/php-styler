@@ -32,23 +32,21 @@ class Line implements ArrayAccess
         P\Params::class,
     ];
 
+    protected string $append = '';
+
+    protected string $indent = '';
+
     /**
      * @var mixed[]
      */
     protected array $parts = [];
 
-    protected string $indent = '';
-
-    protected string $append = '';
+    protected Line $line;
 
     /**
      * @var Line[]
      */
     protected array $lines = [];
-
-    protected Line $line;
-
-    protected bool $force = false;
 
     public function __construct(
         protected string $eol,
@@ -61,16 +59,16 @@ class Line implements ArrayAccess
 
     public function offsetSet(mixed $offset, mixed $value) : void
     {
-        if ($offset === null) {
-            $this->parts[] = $value;
-        } else {
-            $this->parts[$offset] = $value;
+        if ($offset !== null) {
+            throw new RuntimeException(__CLASS__ . ' is append-only.');
         }
+
+        $this->parts[] = $value;
     }
 
     public function offsetGet(mixed $offset) : mixed
     {
-        return $this->parts[$offset];
+        throw new RuntimeException(__CLASS__ . ' is write-only.');
     }
 
     public function offsetExists(mixed $offset) : bool
@@ -80,7 +78,7 @@ class Line implements ArrayAccess
 
     public function offsetUnset(mixed $offset) : void
     {
-        unset($this->parts[$offset]);
+        throw new RuntimeException(__CLASS__ . ' is append-only.');
     }
 
     public function indent() : void
@@ -143,7 +141,7 @@ class Line implements ArrayAccess
         );
     }
 
-    protected function split(Split $part) : void
+    protected function incrSplit(Split $part) : void
     {
         $this->lines[] = $this->line;
         $this->line = $this->newline();

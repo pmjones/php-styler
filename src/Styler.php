@@ -126,7 +126,7 @@ class Styler
 
         while ($list) {
             $p = array_shift($list);
-            $this->s($p);
+            $this->s($p ?? '');
         }
 
         $this->newline();
@@ -178,10 +178,10 @@ class Styler
         $this->line[] = new Clip(toParen: true);
     }
 
-    protected function split(string $class, string $type = null, mixed ...$args) : void
+    protected function split(string $class, string $type) : void
     {
-        if ($this->nesting->notIn(P\Encapsed::class)) {
-            $this->line[] = new Split($this->nesting->level(), $class, $type, ...$args);
+        if (! $this->nesting->in(P\Encapsed::class)) {
+            $this->line[] = new Split($this->nesting->level(), $class, $type);
         }
     }
 
@@ -213,12 +213,8 @@ class Styler
         $this->newline();
     }
 
-    protected function s(null|string|Printable $p) : void
+    protected function s(string|Printable $p) : void
     {
-        if ($p === null) {
-            return;
-        }
-
         if ($p instanceof Printable) {
             $this->sPrintable($p);
             return;
@@ -264,7 +260,7 @@ class Styler
         }
 
         if ($p->count && ! $p->isSingleArray) {
-            $this->split(P\Args::class);
+            $this->split(P\Args::class, 'incr');
         }
     }
 
@@ -275,7 +271,7 @@ class Styler
             $this->newline();
         } else {
             $this->line[] = ', ';
-            $this->split(P\Args::class);
+            $this->split(P\Args::class, 'incr');
         }
     }
 
@@ -303,7 +299,7 @@ class Styler
             $this->newline();
             $this->indent();
         } elseif ($p->count) {
-            $this->split(P\Array_::class);
+            $this->split(P\Array_::class, 'incr');
         }
     }
 
@@ -314,7 +310,7 @@ class Styler
             $this->newline();
         } else {
             $this->line[] = ', ';
-            $this->split(P\Array_::class);
+            $this->split(P\Array_::class, 'incr');
         }
     }
 
@@ -353,7 +349,7 @@ class Styler
     {
         $this->line[] = ' ';
         $this->nesting->incr(P\ArrowFunction::class);
-        $this->split(P\ArrowFunction::class);
+        $this->split(P\ArrowFunction::class, 'incr');
         $this->line[] = '=> ';
     }
 
@@ -461,7 +457,7 @@ class Styler
         $this->line[] = ' use (';
 
         if ($p->count) {
-            $this->split(P\Params::class);
+            $this->split(P\Params::class, 'incr');
         }
     }
 
@@ -531,7 +527,7 @@ class Styler
             $this->newline();
             $this->indent();
         } else {
-            $this->split(P\Cond::class);
+            $this->split(P\Cond::class, 'incr');
         }
     }
 
@@ -873,13 +869,13 @@ class Styler
     protected function sImplements(P\Implements_ $p) : void
     {
         $this->line[] = ' implements ';
-        $this->split(P\Implements_::class);
+        $this->split(P\Implements_::class, 'incr');
     }
 
     protected function sImplementsSeparator(P\Separator $p) : void
     {
         $this->line[] = ', ';
-        $this->split(P\Implements_::class);
+        $this->split(P\Implements_::class, 'incr');
     }
 
     protected function sImplementsEnd(P\Implements_ $p) : void
@@ -907,23 +903,23 @@ class Styler
                 if ($this->nesting->in(P\Cond::class)) {
                     $this->split($p->class, 'same');
                 } else {
-                    $this->split($p->class);
+                    $this->split($p->class, 'incr');
                 }
 
                 break;
 
             case Expr\BinaryOp\Coalesce::class:
-                $this->split($p->class);
+                $this->split($p->class, 'incr');
                 break;
 
             case Expr\BinaryOp\Concat::class:
                 $this->nesting->incr(Expr\BinaryOp\Concat::class);
-                $this->split($p->class);
+                $this->split($p->class, 'incr');
                 break;
 
             case Expr\Ternary::class:
                 $this->nesting->incr(Expr\Ternary::class);
-                $this->split($p->class);
+                $this->split($p->class, 'incr');
                 break;
         }
 
@@ -967,7 +963,7 @@ class Styler
 
         if ($p->type === 'method' || $p->type === 'property' && $p->fluentNum > 1) {
             $this->nesting->incr(P\MemberOp::class);
-            $this->split(P\MemberOp::class);
+            $this->split(P\MemberOp::class, 'incr');
         }
 
         $this->line[] = $p->str;
@@ -1126,7 +1122,7 @@ class Styler
             $this->newline();
             $this->indent();
         } elseif ($p->count) {
-            $this->split(P\Params::class);
+            $this->split(P\Params::class, 'incr');
         }
     }
 
@@ -1137,7 +1133,7 @@ class Styler
             $this->newline();
         } else {
             $this->line[] = ', ';
-            $this->split(P\Params::class);
+            $this->split(P\Params::class, 'incr');
         }
     }
 
@@ -1166,7 +1162,7 @@ class Styler
     {
         $this->line[] = '(';
         $this->nesting->incr(P\Precedence::class);
-        $this->split(P\Precedence::class);
+        $this->split(P\Precedence::class, 'incr');
     }
 
     protected function sPrecedenceEnd(P\Precedence $p) : void
@@ -1348,7 +1344,7 @@ class Styler
     {
         $this->line[] = ' ';
         $this->nesting->incr(Expr\Ternary::class);
-        $this->split(Expr\Ternary::class);
+        $this->split(Expr\Ternary::class, 'incr');
         $this->line[] = $p->operator . ' ';
     }
 
