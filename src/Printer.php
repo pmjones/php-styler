@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
-use Exception;
-use LogicException;
 use PhpParser\Comment;
 use PhpParser\Internal\DiffElem;
 use PhpParser\Internal\PrintableNewAnonClassNode;
@@ -728,7 +726,7 @@ class Printer
 
     protected function pExpr_Error(Expr\Error $node) : void
     {
-        throw new LogicException('Cannot pretty-print AST with Error nodes');
+        throw new Exception('Cannot pretty-print AST with Error nodes');
     }
 
     protected function pExpr_ErrorSuppress(Expr\ErrorSuppress $node) : void
@@ -1288,7 +1286,7 @@ class Printer
         Scalar\EncapsedStringPart $node,
     ) : void
     {
-        throw new LogicException('Cannot directly print EncapsedStringPart');
+        throw new Exception('Cannot directly print EncapsedStringPart');
     }
 
     protected function pScalar_LNumber(Scalar\LNumber $node) : void

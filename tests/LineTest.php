@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
-use RuntimeException;
-
 class LineTest extends TestCase
 {
     protected Line $line;
@@ -23,7 +21,7 @@ class LineTest extends TestCase
     public function testOffsetSet() : void
     {
         $this->line[] = 'foo';
-        $this->expectException(RuntimeException::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage(Line::class . ' is append-only.');
         $this->line[1] = 'baz';
     }
@@ -31,7 +29,7 @@ class LineTest extends TestCase
     public function testOffsetGet() : void
     {
         $this->line[] = 'foo';
-        $this->expectException(RuntimeException::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage(Line::class . ' is write-only.');
         $foo = $this->line[0];
     }
@@ -46,7 +44,7 @@ class LineTest extends TestCase
     public function testOffsetUnset() : void
     {
         $this->line[] = 'foo';
-        $this->expectException(RuntimeException::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage(Line::class . ' is append-only.');
         unset($this->line[0]);
     }
@@ -56,7 +54,7 @@ class LineTest extends TestCase
         $this->line[] = 'fake fake fake fake fake fake fake fake fake fake fake fake fake fake fake fake fake fake ';
         $this->line[] = new Split(0, 'fake', 'fake');
         $output = '';
-        $this->expectException(RuntimeException::class);
+        $this->expectException(Exception::class);
         $this->expectExceptionMessage('No such split rule: fake');
         $this->line->append($output);
     }

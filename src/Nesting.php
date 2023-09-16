@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
-use RuntimeException;
-
 class Nesting
 {
     protected int $level = 0;
@@ -27,9 +25,7 @@ class Nesting
         $this->types[$type] ??= 0;
 
         if (! $this->types[$type]) {
-            throw new RuntimeException(
-                "Cannot decrease {$type} nesting level below zero",
-            );
+            throw new Exception("Cannot decrease {$type} nesting level below zero");
         }
 
         $this->types[$type] --;

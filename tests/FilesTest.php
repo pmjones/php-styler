@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
-use RuntimeException;
-
 class FilesTest extends TestCase
 {
     /**
@@ -18,6 +16,7 @@ class FilesTest extends TestCase
         'Command/Preview.php',
         'Command/PreviewOptions.php',
         'Config.php',
+        'Exception.php',
         'Files.php',
         'Line.php',
         'Nesting.php',

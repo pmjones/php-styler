@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
-use RuntimeException;
-
 class ConfigTest extends TestCase
 {
     public function test() : void

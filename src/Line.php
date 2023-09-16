@@ -7,7 +7,6 @@ use ArrayAccess;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Stmt;
 use PhpStyler\Printable as P;
-use RuntimeException;
 
 /**
  * @implements ArrayAccess<int, mixed>
@@ -60,7 +59,7 @@ class Line implements ArrayAccess
     public function offsetSet(mixed $offset, mixed $value) : void
     {
         if ($offset !== null) {
-            throw new RuntimeException(__CLASS__ . ' is append-only.');
+            throw new Exception(__CLASS__ . ' is append-only.');
         }
 
         $this->parts[] = $value;
@@ -68,7 +67,7 @@ class Line implements ArrayAccess
 
     public function offsetGet(mixed $offset) : mixed
     {
-        throw new RuntimeException(__CLASS__ . ' is write-only.');
+        throw new Exception(__CLASS__ . ' is write-only.');
     }
 
     public function offsetExists(mixed $offset) : bool
@@ -78,7 +77,7 @@ class Line implements ArrayAccess
 
     public function offsetUnset(mixed $offset) : void
     {
-        throw new RuntimeException(__CLASS__ . ' is append-only.');
+        throw new Exception(__CLASS__ . ' is append-only.');
     }
 
     public function indent() : void
@@ -201,7 +200,7 @@ class Line implements ArrayAccess
         foreach ($this->parts as $part) {
             if ($part instanceof Split) {
                 if (! in_array($part->rule, static::RULES)) {
-                    throw new RuntimeException("No such split rule: {$part->rule}");
+                    throw new Exception("No such split rule: {$part->rule}");
                 }
 
                 $rules[$part->level][] = $part->rule;

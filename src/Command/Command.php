@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace PhpStyler\Command;
 
 use PhpStyler\Config;
+use PhpStyler\Exception;
 use PhpStyler\Service;
-use RuntimeException;
 
 abstract class Command
 {
@@ -23,6 +23,6 @@ abstract class Command
             return $file;
         }
 
-        throw new RuntimeException("Could not find {$file}");
+        throw new Exception("Could not find {$file}");
     }
 }
