@@ -8,7 +8,6 @@ class AltStylerTest extends TestCase
     public function test() : void
     {
         $this->service = new Service(new AltStyler());
-
         $code = <<<'CODE'
         <?php
         function foo()
@@ -40,7 +39,6 @@ class AltStylerTest extends TestCase
         }
 
         CODE;
-
         $this->assertPrint($code, $code);
     }
 }
