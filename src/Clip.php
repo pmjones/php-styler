@@ -9,7 +9,7 @@ class Clip
      * @param callable $condition
      */
     public function __construct(
-        public readonly mixed $condition = null,
+        public readonly mixed $when = null,
         public readonly string $append = '',
     ) {
     }

@@ -11,7 +11,7 @@ class AltStyler extends Styler
     {
         $this->newline();
         $this->clip(
-            condition: fn (string $lastLine) : bool
+            when: fn (string $lastLine) : bool
                 => str_starts_with(trim($lastLine), ')'),
             append: ' ',
         );

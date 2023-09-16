@@ -168,9 +168,9 @@ class Styler
         $this->line->outdent();
     }
 
-    protected function clip(callable $condition = null, string $append = '') : void
+    protected function clip(callable $when = null, string $append = '') : void
     {
-        $this->line[] = new Clip($condition, $append);
+        $this->line[] = new Clip($when, $append);
     }
 
     protected function split(string $class, string $type) : void
@@ -757,7 +757,7 @@ class Styler
     {
         $this->newline();
         $this->clip(
-            condition: fn (string $lastLine) : bool => trim($lastLine) === ')',
+            when: fn (string $lastLine) : bool => trim($lastLine) === ')',
             append: ' ',
         );
         $this->line[] = '{';

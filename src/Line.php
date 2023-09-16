@@ -222,7 +222,7 @@ class Line implements ArrayAccess
 
     protected function clip(Clip $clip, string &$output) : void
     {
-        if ($clip->condition === null) {
+        if ($clip->when === null) {
             $this->append = ltrim($this->append) . $clip->append;
             $output = rtrim($output);
             return;
@@ -233,7 +233,7 @@ class Line implements ArrayAccess
         $len = strlen($this->eol);
         $lastLine = substr($trimmed, $pos + $len);
 
-        if (call_user_func($clip->condition, $lastLine)) {
+        if (call_user_func($clip->when, $lastLine)) {
             $this->append = ltrim($this->append) . $clip->append;
             $output = rtrim($output);
         }
