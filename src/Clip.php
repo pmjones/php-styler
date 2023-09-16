@@ -5,7 +5,12 @@ namespace PhpStyler;
 
 class Clip
 {
-    public function __construct(public readonly bool $toParen = false)
-    {
+    /**
+     * @param callable $condition
+     */
+    public function __construct(
+        public readonly mixed $condition = null,
+        public readonly string $append = '',
+    ) {
     }
 }

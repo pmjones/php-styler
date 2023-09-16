@@ -168,14 +168,9 @@ class Styler
         $this->line->outdent();
     }
 
-    protected function clip() : void
+    protected function clip(callable $condition = null, string $append = '') : void
     {
-        $this->line[] = new Clip();
-    }
-
-    protected function clipToParen() : void
-    {
-        $this->line[] = new Clip(toParen: true);
+        $this->line[] = new Clip($condition, $append);
     }
 
     protected function split(string $class, string $type) : void
@@ -761,7 +756,10 @@ class Styler
     protected function sFunctionBody(P\Body $p) : void
     {
         $this->newline();
-        $this->clipToParen();
+        $this->clip(
+            condition: fn (string $lastLine) : bool => trim($lastLine) === ')',
+            append: ' ',
+        );
         $this->line[] = '{';
         $this->newline();
         $this->indent();

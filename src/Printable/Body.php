@@ -5,7 +5,12 @@ namespace PhpStyler\Printable;
 
 class Body extends Printable
 {
-    public function __construct(public readonly string $type)
-    {
+    /**
+     * @param mixed[] $info
+     */
+    public function __construct(
+        public readonly string $type,
+        public readonly array $info = [],
+    ) {
     }
 }
