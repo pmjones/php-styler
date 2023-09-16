@@ -168,6 +168,36 @@ class Styler
         $this->line->outdent();
     }
 
+    protected function blockFlow() : void
+    {
+        $this->blockSame();
+    }
+
+    protected function blockNext() : void
+    {
+        $this->newline();
+        $this->line[] = '{';
+        $this->newline();
+        $this->indent();
+    }
+
+    protected function blockSame() : void
+    {
+        $this->line[] = ' {';
+        $this->newline();
+        $this->indent();
+    }
+
+    protected function blockEnd() : void
+    {
+        $this->clip();
+        $this->newline();
+        $this->outdent();
+        $this->line[] = '}';
+        $this->newline();
+        $this->newline();
+    }
+
     protected function clip(callable $when = null, string $append = '') : void
     {
         $this->line[] = new Clip($when, $append);
@@ -426,19 +456,12 @@ class Styler
 
     protected function sClassBody(P\Body $p) : void
     {
-        $this->newline();
-        $this->line[] = '{';
-        $this->newline();
-        $this->indent();
+        $this->blockNext();
     }
 
     protected function sClassBodyEnd(P\Body $p) : void
     {
-        $this->clip();
-        $this->newline();
-        $this->outdent();
-        $this->line[] = '}';
-        $this->newline();
+        $this->blockEnd();
     }
 
     protected function sClosure(P\Closure $p) : void
@@ -468,9 +491,7 @@ class Styler
 
     protected function sClosureBody(P\Body $p) : void
     {
-        $this->line[] = ' {';
-        $this->newline();
-        $this->indent();
+        $this->blockSame();
     }
 
     protected function sClosureBodyEnd(P\Body $p) : void
@@ -558,19 +579,12 @@ class Styler
 
     public function sDeclareBody(P\Body $p) : void
     {
-        $this->line[] = ' {';
-        $this->newline();
-        $this->indent();
+        $this->blockSame();
     }
 
     public function sDeclareBodyEnd(P\Body $p) : void
     {
-        $this->clip();
-        $this->newline();
-        $this->outdent();
-        $this->line[] = '}';
-        $this->newline();
-        $this->newline();
+        $this->blockEnd();
     }
 
     public function sDeclareBodyEmpty(P\BodyEmpty $p) : void
@@ -642,10 +656,7 @@ class Styler
 
     protected function sEnumBody(P\Body $p) : void
     {
-        $this->newline();
-        $this->line[] = '{';
-        $this->newline();
-        $this->indent();
+        $this->blockNext();
     }
 
     protected function sEnumCase(P\EnumCase $p) : void
@@ -662,11 +673,7 @@ class Styler
 
     protected function sEnumBodyEnd(P\Body $p) : void
     {
-        $this->clip();
-        $this->newline();
-        $this->outdent();
-        $this->line[] = '}';
-        $this->newline();
+        $this->blockEnd();
     }
 
     protected function sExpr(P\Expr $p) : void
@@ -697,19 +704,12 @@ class Styler
 
     protected function sForBody(P\Body $p) : void
     {
-        $this->line[] = ' {';
-        $this->newline();
-        $this->indent();
+        $this->blockSame();
     }
 
     protected function sForBodyEnd(P\Body $p) : void
     {
-        $this->clip();
-        $this->newline();
-        $this->outdent();
-        $this->line[] = '}';
-        $this->newline();
-        $this->newline();
+        $this->blockEnd();
     }
 
     protected function sForExprSeparator(P\Separator $p) : void
@@ -726,19 +726,12 @@ class Styler
 
     protected function sForeachBody(P\Body $p) : void
     {
-        $this->line[] = ' {';
-        $this->newline();
-        $this->indent();
+        $this->blockSame();
     }
 
     protected function sForeachBodyEnd(P\Body $p) : void
     {
-        $this->clip();
-        $this->newline();
-        $this->outdent();
-        $this->line[] = '}';
-        $this->newline();
-        $this->newline();
+        $this->blockEnd();
     }
 
     protected function sFunction(P\Function_ $p) : void
@@ -767,12 +760,7 @@ class Styler
 
     protected function sFunctionBodyEnd(P\Body $p) : void
     {
-        $this->clip();
-        $this->newline();
-        $this->outdent();
-        $this->line[] = '}';
-        $this->newline();
-        $this->newline();
+        $this->blockEnd();
     }
 
     protected function sGoto(P\Goto_ $p) : void
@@ -819,9 +807,7 @@ class Styler
 
     protected function sIfBody(P\Body $p) : void
     {
-        $this->line[] = ' {';
-        $this->newline();
-        $this->indent();
+        $this->blockSame();
     }
 
     protected function sElseIf(P\ElseIf_ $p) : void
@@ -834,9 +820,7 @@ class Styler
 
     protected function sElseIfBody(P\Body $p) : void
     {
-        $this->line[] = ' {';
-        $this->newline();
-        $this->indent();
+        $this->blockSame();
     }
 
     protected function sElse(P\Else_ $p) : void
@@ -856,12 +840,7 @@ class Styler
 
     protected function sIfEnd(P\If_ $p) : void
     {
-        $this->clip();
-        $this->newline();
-        $this->outdent();
-        $this->line[] = '}';
-        $this->newline();
-        $this->newline();
+        $this->blockEnd();
     }
 
     protected function sImplements(P\Implements_ $p) : void
@@ -986,19 +965,12 @@ class Styler
 
     protected function sInterfaceBody(P\Body $p) : void
     {
-        $this->newline();
-        $this->line[] = '{';
-        $this->newline();
-        $this->indent();
+        $this->blockNext();
     }
 
     protected function sInterfaceBodyEnd(P\Body $p) : void
     {
-        $this->clip();
-        $this->newline();
-        $this->outdent();
-        $this->line[] = '}';
-        $this->newline();
+        $this->blockEnd();
     }
 
     protected function sLabel(P\Label $p) : void
@@ -1015,9 +987,7 @@ class Styler
 
     protected function sMatchBody(P\Body $p) : void
     {
-        $this->line[] = ' {';
-        $this->newline();
-        $this->indent();
+        $this->blockSame();
     }
 
     protected function sMatchSeparator(P\Separator $p) : void
@@ -1060,20 +1030,12 @@ class Styler
 
     protected function sNamespaceBody(P\Body $p) : void
     {
-        $this->newline();
-        $this->line[] = '{';
-        $this->newline();
-        $this->indent();
+        $this->blockNext();
     }
 
     protected function sNamespaceBodyEnd(P\Body $p) : void
     {
-        $this->clip();
-        $this->newline();
-        $this->outdent();
-        $this->line[] = '}';
-        $this->newline();
-        $this->newline();
+        $this->blockEnd();
     }
 
     protected function sNamespaceBodyEmpty(P\BodyEmpty $p) : void
@@ -1272,9 +1234,7 @@ class Styler
 
     protected function sSwitchBody(P\Body $p) : void
     {
-        $this->line[] = ' {';
-        $this->newline();
-        $this->indent();
+        $this->blockSame();
     }
 
     protected function sSwitchCase(P\SwitchCase $p) : void
@@ -1325,12 +1285,7 @@ class Styler
 
     protected function sSwitchBodyEnd(P\Body $p) : void
     {
-        $this->clip();
-        $this->newline();
-        $this->outdent();
-        $this->line[] = '}';
-        $this->newline();
-        $this->newline();
+        $this->blockEnd();
     }
 
     /**
@@ -1371,19 +1326,12 @@ class Styler
 
     protected function sTraitBody(P\Body $p) : void
     {
-        $this->newline();
-        $this->line[] = '{';
-        $this->newline();
-        $this->indent();
+        $this->blockNext();
     }
 
     protected function sTraitBodyEnd(P\Body $p) : void
     {
-        $this->clip();
-        $this->newline();
-        $this->outdent();
-        $this->line[] = '}';
-        $this->newline();
+        $this->blockEnd();
     }
 
     protected function sTry(P\Try_ $p) : void
@@ -1394,9 +1342,7 @@ class Styler
 
     protected function sTryBody(P\Body $p) : void
     {
-        $this->line[] = ' {';
-        $this->newline();
-        $this->indent();
+        $this->blockSame();
     }
 
     protected function sTryCatch(P\TryCatch $p) : void
@@ -1409,9 +1355,7 @@ class Styler
 
     protected function sTryCatchBody(P\Body $p) : void
     {
-        $this->line[] = ' {';
-        $this->newline();
-        $this->indent();
+        $this->blockSame();
     }
 
     protected function sTryFinally(P\TryFinally $p) : void
@@ -1431,12 +1375,7 @@ class Styler
 
     protected function sTryEnd(P\Try_ $p) : void
     {
-        $this->clip();
-        $this->newline();
-        $this->outdent();
-        $this->line[] = '}';
-        $this->newline();
-        $this->newline();
+        $this->blockEnd();
     }
 
     protected function sUnset(P\Unset_ $unset) : void
@@ -1476,9 +1415,7 @@ class Styler
 
     protected function sUseTraitBody(P\Body $p) : void
     {
-        $this->line[] = ' {';
-        $this->newline();
-        $this->indent();
+        $this->blockSame();
     }
 
     protected function sUseTraitBodyEnd(P\Body $p) : void
@@ -1534,19 +1471,12 @@ class Styler
 
     protected function sWhileBody(P\Body $p) : void
     {
-        $this->line[] = ' {';
-        $this->newline();
-        $this->indent();
+        $this->blockSame();
     }
 
     protected function sWhileBodyEnd(P\Body $p) : void
     {
-        $this->clip();
-        $this->newline();
-        $this->outdent();
-        $this->line[] = '}';
-        $this->newline();
-        $this->newline();
+        $this->blockEnd();
     }
 
     protected function sYield(P\Yield_ $p) : void
