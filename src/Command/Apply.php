@@ -21,11 +21,11 @@ class Apply extends Command
         $config = $this->loadConfigFile($configFile);
 
         // load cache time
-        $filemtime = $options->force ? 0 : filemtime($configFile);
+        $cacheTime = $options->force ? 0 : filemtime($configFile);
 
         // apply styling
         try {
-            $count = $this->style($config, $filemtime);
+            $count = $this->style($config, $cacheTime);
         } catch (Error $e) {
             echo $e->getMessage() . PHP_EOL;
             return 1;
@@ -41,18 +41,26 @@ class Apply extends Command
         $mem = number_format(memory_get_peak_usage() / 1000000, 2);
 
         // report
-        echo "Styled {$count} files in {$sum} seconds ";
-        echo "({$avg} seconds/file, {$mem} MB peak memory usage)" . PHP_EOL;
+        $noun = $count === 1 ? 'file' : 'files';
+        echo "Styled {$count} {$noun} in {$sum} seconds";
+
+        if ($count) {
+            echo " ({$avg} seconds/{$noun}, {$mem} MB peak memory usage)";
+        }
+
+        echo '.' . PHP_EOL;
         return 0;
     }
 
-    protected function style(Config $config, int|false $filemtime) : int
+    protected function style(Config $config, int|false $cacheTime) : int
     {
         $count = 0;
         $service = new Service($config->styler);
 
         foreach ($config->files as $file) {
-            if ($filemtime && filemtime($file) < $filemtime) {
+            $fileTime = filemtime($file);
+
+            if ($cacheTime && $fileTime <= $cacheTime) {
                 continue;
             }
 
