@@ -6,8 +6,8 @@ use PhpStyler\Styler;
 return new Config(
     files: new Files(
         __DIR__ . '/src',
-        __DIR__ . '/tests/AltStyler.php',
-        __DIR__ . '/tests/AltStylerTest.php',
+        __DIR__ . '/tests/ExtStyler.php',
+        __DIR__ . '/tests/ExtStylerTest.php',
         __DIR__ . '/tests/ConfigTest.php',
         __DIR__ . '/tests/ExamplesTest.php',
         __DIR__ . '/tests/FilesTest.php',

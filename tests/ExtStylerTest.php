@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
-class AltStylerTest extends TestCase
+class ExtStylerTest extends TestCase
 {
     public function test() : void
     {
-        $this->service = new Service(new AltStyler());
+        $this->service = new Service(new ExtStyler());
         $code = <<<'CODE'
         <?php
         function foo()

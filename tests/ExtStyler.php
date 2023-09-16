@@ -5,7 +5,7 @@ namespace PhpStyler;
 
 use PhpStyler\Printable as P;
 
-class AltStyler extends Styler
+class ExtStyler extends Styler
 {
     protected function sFunctionBody(P\Body $p) : void
     {
