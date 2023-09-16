@@ -1,6 +1,6 @@
 # Change Log
 
-## NEXT
+## 0.5.0
 
 - Re-enable caching.
 
