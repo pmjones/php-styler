@@ -6,7 +6,7 @@ namespace PhpStyler;
 class Clip
 {
     /**
-     * @param callable $condition
+     * @param callable $when
      */
     public function __construct(
         public readonly mixed $when = null,
