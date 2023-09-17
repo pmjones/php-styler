@@ -612,14 +612,12 @@ class Styler
     protected function sDo(P\Do_ $p) : void
     {
         $this->maybeNewline($p);
-        $this->line[] = 'do ';
+        $this->line[] = 'do';
     }
 
     protected function sDoBody(P\Body $p) : void
     {
-        $this->line[] = '{';
-        $this->newline();
-        $this->indent();
+        $this->controlBrace();
     }
 
     protected function sDoBodyEnd(P\Body $p) : void
