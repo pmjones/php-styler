@@ -20,7 +20,7 @@ PHP-Styler will **completely reformat** your PHP code, discarding any previous f
 
 PHP-Styler is a companion to [PHP-Parser](https://github.com/nikic/PHP-Parser) for reconstructing PHP code after it has been deconstructed into an abstract syntax tree.
 
-Whereas the PHP-Parser pretty printer does not have output customization as a main design goal, PHP-Styler does.
+Whereas the PHP-Parser pretty printer does not have output customization as a main design goal, PHP-Styler does. (Please review [README-CUSTOM.md](./README-CUSTOM.md) for more information.)
 
 PHP-Styler is targeted toward declaration/definition files (class, interface, enum, trait) and script files.
 
@@ -32,7 +32,7 @@ PHP-Styler uses a 3-pass system to reformat and style PHP code:
 
 1. _PHPParser\Parser_ converts the code to an abstract syntax tree of _Node_ elements.
 2. _PHPStyler\Printer_ flattens the _Node_ tree into a list of _Printable_ elements.
-3. _PHPStyler\Styler_ converts each _Printable_ back into text; it applies horizontal spacing, vertical spacing, and line-splitting rules as it goes.
+3. _PHPStyler\Styler_ converts each _Printable_ back into text using a series of _Line_ objects; it applies horizontal spacing, vertical spacing, and line-splitting rules as it goes.
 
 ### Design Goals
 

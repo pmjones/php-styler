@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
-use BadMethodCallException;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Stmt;
 use PhpStyler\Printable as P;
