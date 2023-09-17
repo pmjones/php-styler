@@ -836,14 +836,12 @@ class Styler
         $this->clip();
         $this->newline();
         $this->outdent();
-        $this->line[] = '} else ';
+        $this->line[] = '} else';
     }
 
     protected function sElseBody(P\Body $p) : void
     {
-        $this->line[] = '{';
-        $this->newline();
-        $this->indent();
+        $this->controlBrace();
     }
 
     protected function sIfEnd(P\If_ $p) : void
@@ -1371,14 +1369,12 @@ class Styler
         $this->clip();
         $this->newline();
         $this->outdent();
-        $this->line[] = '} finally ';
+        $this->line[] = '} finally';
     }
 
     protected function sTryFinallyBody(P\Body $p) : void
     {
-        $this->line[] = '{';
-        $this->newline();
-        $this->indent();
+        $this->controlBrace();
     }
 
     protected function sTryEnd(P\Try_ $p) : void
