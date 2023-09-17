@@ -168,12 +168,7 @@ class Styler
         $this->line->outdent();
     }
 
-    protected function blockFlow() : void
-    {
-        $this->blockSame();
-    }
-
-    protected function blockNext() : void
+    protected function braceOnNextLine() : void
     {
         $this->newline();
         $this->line[] = '{';
@@ -181,14 +176,14 @@ class Styler
         $this->indent();
     }
 
-    protected function blockSame() : void
+    protected function braceOnSameLine() : void
     {
         $this->line[] = ' {';
         $this->newline();
         $this->indent();
     }
 
-    protected function blockEnd() : void
+    protected function braceEnd() : void
     {
         $this->clip();
         $this->newline();
@@ -196,6 +191,22 @@ class Styler
         $this->line[] = '}';
         $this->newline();
         $this->newline();
+    }
+
+    /**
+     * Opening brace for class, interface, trait, enum, etc.
+     */
+    protected function classBrace() : void
+    {
+        $this->braceOnNextLine();
+    }
+
+    /**
+     * Opening brace for if, for, foreach, do, match, switch, try, while, etc.
+     */
+    protected function controlBrace() : void
+    {
+        $this->braceOnSameLine();
     }
 
     protected function clip(callable $when = null, string $append = '') : void
@@ -456,12 +467,12 @@ class Styler
 
     protected function sClassBody(P\Body $p) : void
     {
-        $this->blockNext();
+        $this->classBrace();
     }
 
     protected function sClassBodyEnd(P\Body $p) : void
     {
-        $this->blockEnd();
+        $this->braceEnd();
     }
 
     protected function sClosure(P\Closure $p) : void
@@ -491,7 +502,7 @@ class Styler
 
     protected function sClosureBody(P\Body $p) : void
     {
-        $this->blockSame();
+        $this->braceOnSameLine();
     }
 
     protected function sClosureBodyEnd(P\Body $p) : void
@@ -579,12 +590,12 @@ class Styler
 
     public function sDeclareBody(P\Body $p) : void
     {
-        $this->blockSame();
+        $this->braceOnSameLine();
     }
 
     public function sDeclareBodyEnd(P\Body $p) : void
     {
-        $this->blockEnd();
+        $this->braceEnd();
     }
 
     public function sDeclareBodyEmpty(P\BodyEmpty $p) : void
@@ -656,7 +667,7 @@ class Styler
 
     protected function sEnumBody(P\Body $p) : void
     {
-        $this->blockNext();
+        $this->classBrace();
     }
 
     protected function sEnumCase(P\EnumCase $p) : void
@@ -673,7 +684,7 @@ class Styler
 
     protected function sEnumBodyEnd(P\Body $p) : void
     {
-        $this->blockEnd();
+        $this->braceEnd();
     }
 
     protected function sExpr(P\Expr $p) : void
@@ -704,12 +715,12 @@ class Styler
 
     protected function sForBody(P\Body $p) : void
     {
-        $this->blockSame();
+        $this->controlBrace();
     }
 
     protected function sForBodyEnd(P\Body $p) : void
     {
-        $this->blockEnd();
+        $this->braceEnd();
     }
 
     protected function sForExprSeparator(P\Separator $p) : void
@@ -726,12 +737,12 @@ class Styler
 
     protected function sForeachBody(P\Body $p) : void
     {
-        $this->blockSame();
+        $this->controlBrace();
     }
 
     protected function sForeachBodyEnd(P\Body $p) : void
     {
-        $this->blockEnd();
+        $this->braceEnd();
     }
 
     protected function sFunction(P\Function_ $p) : void
@@ -760,7 +771,7 @@ class Styler
 
     protected function sFunctionBodyEnd(P\Body $p) : void
     {
-        $this->blockEnd();
+        $this->braceEnd();
     }
 
     protected function sGoto(P\Goto_ $p) : void
@@ -807,7 +818,7 @@ class Styler
 
     protected function sIfBody(P\Body $p) : void
     {
-        $this->blockSame();
+        $this->controlBrace();
     }
 
     protected function sElseIf(P\ElseIf_ $p) : void
@@ -820,7 +831,7 @@ class Styler
 
     protected function sElseIfBody(P\Body $p) : void
     {
-        $this->blockSame();
+        $this->controlBrace();
     }
 
     protected function sElse(P\Else_ $p) : void
@@ -840,7 +851,7 @@ class Styler
 
     protected function sIfEnd(P\If_ $p) : void
     {
-        $this->blockEnd();
+        $this->braceEnd();
     }
 
     protected function sImplements(P\Implements_ $p) : void
@@ -965,12 +976,12 @@ class Styler
 
     protected function sInterfaceBody(P\Body $p) : void
     {
-        $this->blockNext();
+        $this->classBrace();
     }
 
     protected function sInterfaceBodyEnd(P\Body $p) : void
     {
-        $this->blockEnd();
+        $this->braceEnd();
     }
 
     protected function sLabel(P\Label $p) : void
@@ -987,7 +998,7 @@ class Styler
 
     protected function sMatchBody(P\Body $p) : void
     {
-        $this->blockSame();
+        $this->controlBrace();
     }
 
     protected function sMatchSeparator(P\Separator $p) : void
@@ -1030,12 +1041,12 @@ class Styler
 
     protected function sNamespaceBody(P\Body $p) : void
     {
-        $this->blockNext();
+        $this->braceOnNextLine();
     }
 
     protected function sNamespaceBodyEnd(P\Body $p) : void
     {
-        $this->blockEnd();
+        $this->braceEnd();
     }
 
     protected function sNamespaceBodyEmpty(P\BodyEmpty $p) : void
@@ -1234,7 +1245,7 @@ class Styler
 
     protected function sSwitchBody(P\Body $p) : void
     {
-        $this->blockSame();
+        $this->controlBrace();
     }
 
     protected function sSwitchCase(P\SwitchCase $p) : void
@@ -1285,7 +1296,7 @@ class Styler
 
     protected function sSwitchBodyEnd(P\Body $p) : void
     {
-        $this->blockEnd();
+        $this->braceEnd();
     }
 
     /**
@@ -1326,12 +1337,12 @@ class Styler
 
     protected function sTraitBody(P\Body $p) : void
     {
-        $this->blockNext();
+        $this->classBrace();
     }
 
     protected function sTraitBodyEnd(P\Body $p) : void
     {
-        $this->blockEnd();
+        $this->braceEnd();
     }
 
     protected function sTry(P\Try_ $p) : void
@@ -1342,7 +1353,7 @@ class Styler
 
     protected function sTryBody(P\Body $p) : void
     {
-        $this->blockSame();
+        $this->controlBrace();
     }
 
     protected function sTryCatch(P\TryCatch $p) : void
@@ -1355,7 +1366,7 @@ class Styler
 
     protected function sTryCatchBody(P\Body $p) : void
     {
-        $this->blockSame();
+        $this->controlBrace();
     }
 
     protected function sTryFinally(P\TryFinally $p) : void
@@ -1375,7 +1386,7 @@ class Styler
 
     protected function sTryEnd(P\Try_ $p) : void
     {
-        $this->blockEnd();
+        $this->braceEnd();
     }
 
     protected function sUnset(P\Unset_ $unset) : void
@@ -1415,7 +1426,7 @@ class Styler
 
     protected function sUseTraitBody(P\Body $p) : void
     {
-        $this->blockSame();
+        $this->braceOnSameLine();
     }
 
     protected function sUseTraitBodyEnd(P\Body $p) : void
@@ -1471,12 +1482,12 @@ class Styler
 
     protected function sWhileBody(P\Body $p) : void
     {
-        $this->blockSame();
+        $this->controlBrace();
     }
 
     protected function sWhileBodyEnd(P\Body $p) : void
     {
-        $this->blockEnd();
+        $this->braceEnd();
     }
 
     protected function sYield(P\Yield_ $p) : void
