@@ -14,6 +14,8 @@ PHP-Styler will **completely reformat** your PHP code, discarding any previous f
 >
 > -- *Star Trek II: The Wrath of Khan* (paraphrased)
 
+You can try an online demonstration of PHP-Styler at <http://64.227.98.80/>.
+
 * * *
 
 ## Introduction
