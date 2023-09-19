@@ -121,7 +121,7 @@ PHP-Styler will only apply formatting to files with a modification time *later* 
 ./vendor/bin/php-styler apply --force
 ```
 
-The `apply` command will `touch()` the config file each time it runs, thereby noting the most-recent modification time. Further, this means that any changes to the config file will trigger formatting of all files on the next invocation of `apply`.
+The `apply` command will `touch()` the config file each time it runs, thereby noting the most-recent modification time. If you make changes to the config file, use `--force` to apply the new config.
 
 ### Configuration
 

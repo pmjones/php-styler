@@ -16,5 +16,7 @@ return new Config(
         __DIR__ . '/tests/StylerTest.php',
         __DIR__ . '/tests/TestCase.php',
     ),
-    styler: new Styler(),
+    styler: new Styler(
+        eol: "\n",
+    ),
 );
