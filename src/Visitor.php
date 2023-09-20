@@ -11,6 +11,8 @@ class Visitor extends NodeVisitorAbstract
 {
     protected int $fluentIdx = 0;
 
+    protected int $expansive = 0;
+
     /**
      * @var int[]
      */
@@ -18,7 +20,13 @@ class Visitor extends NodeVisitorAbstract
 
     public function enterNode(Node $node) : null|int|Node
     {
-        // fluent call?
+        $this->enterNodeFluency($node);
+        $this->enterNodeExpansive($node);
+        return null;
+    }
+
+    protected function enterNodeFluency(Node $node) : void
+    {
         if (
             $node instanceof Expr\MethodCall
             || $node instanceof Expr\New_
@@ -37,8 +45,18 @@ class Visitor extends NodeVisitorAbstract
         } else {
             $this->fluentIdx ++;
         }
+    }
 
-        // expansives within calls
+    protected function enterNodeExpansive(Node $node) : ?bool
+    {
+        return $this->enterNodeExpansiveCall($node)
+            ?? $this->enterNodeExpansiveParams($node)
+            ?? $this->enterNodeExpansiveArray($node)
+            ?? null;
+    }
+
+    protected function enterNodeExpansiveCall(Node $node) : ?bool
+    {
         if (
             $node instanceof Expr\FuncCall
             || $node instanceof Expr\MethodCall
@@ -54,7 +72,7 @@ class Visitor extends NodeVisitorAbstract
                 foreach ($args as $arg) {
                     if ($arg->getComments()) {
                         $node->setAttribute('expansive', true);
-                        break;
+                        return true;
                     }
 
                     if (! isset($arg->value)) {
@@ -66,42 +84,54 @@ class Visitor extends NodeVisitorAbstract
                         || $arg->value instanceof Expr\Closure && $arg->value->stmts
                     ) {
                         $node->setAttribute('expansive', true);
-                        break;
+                        return true;
                     }
                 }
             }
         }
 
-        // expansives within params
+        return null;
+    }
+
+    protected function enterNodeExpansiveParams(Node $node) : ?bool
+    {
         foreach ($node->params ?? [] as $param) {
             if ($param?->getComments()) {
                 $node->setAttribute('expansive', true);
+                return true;
             }
 
             if ($param->attrGroups ?? []) {
                 $node->setAttribute('expansive', true);
+                return true;
             }
         }
 
-        // expansives within arrays
-        if ($node instanceof Expr\Array_) {
-            foreach ($node->items as $item) {
-                if ($item?->getComments() ?? false) {
-                    $node->setAttribute('expansive', true);
-                    break;
-                }
+        return null;
+    }
 
-                if (! isset($item->value)) {
-                    continue;
-                }
+    protected function enterNodeExpansiveArray(Node $node) : ?bool
+    {
+        if (! $node instanceof Expr\Array_) {
+            return null;
+        }
 
-                if (
-                    $item->value instanceof Expr\ArrowFunction
-                    || $item->value instanceof Expr\Closure && $item->value->stmts
-                ) {
-                    $node->setAttribute('expansive', true);
-                    break;
-                }
+        foreach ($node->items as $item) {
+            if ($item?->getComments() ?? false) {
+                $node->setAttribute('expansive', true);
+                return true;
+            }
+
+            if (! isset($item->value)) {
+                continue;
+            }
+
+            if (
+                $item->value instanceof Expr\ArrowFunction
+                || $item->value instanceof Expr\Closure && $item->value->stmts
+            ) {
+                $node->setAttribute('expansive', true);
+                return true;
             }
         }
 
@@ -113,7 +143,12 @@ class Visitor extends NodeVisitorAbstract
      */
     public function leaveNode(Node $node) : null|int|Node|array
     {
-        // retain fluency info
+        $this->leaveNodeFluency($node);
+        return null;
+    }
+
+    protected function leaveNodeFluency(Node $node) : void
+    {
         if (
             $node instanceof Expr\MethodCall
             || $node instanceof Expr\NullsafeMethodCall
@@ -130,7 +165,5 @@ class Visitor extends NodeVisitorAbstract
             $node->setAttribute('fluentEnd', $fluentEnd);
             $node->setAttribute('fluentNum', $fluentEnd - $fluentRev + 1);
         }
-
-        return null;
     }
 }
