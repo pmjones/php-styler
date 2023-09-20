@@ -11,7 +11,7 @@ class Visitor extends NodeVisitorAbstract
 {
     protected int $fluentIdx = 0;
 
-    protected int $expansive = 0;
+    protected int $expansiveAnnotation = 0;
 
     /**
      * @var int[]
@@ -49,10 +49,52 @@ class Visitor extends NodeVisitorAbstract
 
     protected function enterNodeExpansive(Node $node) : ?bool
     {
-        return $this->enterNodeExpansiveCall($node)
+        return $this->enterNodeExpansiveAnnotation($node)
+            ?? $this->enterNodeExpansiveCall($node)
             ?? $this->enterNodeExpansiveParams($node)
             ?? $this->enterNodeExpansiveArray($node)
             ?? null;
+    }
+
+    protected function enterNodeExpansiveAnnotation(Node $node) : ?bool
+    {
+        if ($this->expansiveAnnotation) {
+            $this->expansiveAnnotation ++;
+            return $this->setExpansive($node);
+        }
+
+        $comments = $node->getComments();
+
+        if (! $comments) {
+            return null;
+        }
+
+        $oneLiners = [
+            '/^\\/\\*+\\s*@php-styler-expansive\\s?/',
+            '/^\\/\\/+\\s+@php-styler-expansive\\s?/',
+        ];
+
+        foreach ($comments as $comment) {
+            $text = trim($comment->getText());
+
+            foreach ($oneLiners as $regex) {
+                if (preg_match($regex, $text)) {
+                    $this->expansiveAnnotation ++;
+                    return $this->setExpansive($node);
+                }
+            }
+
+            if (! str_starts_with($text, '/**')) {
+                return null;
+            }
+
+            if (preg_match('/^\s*\*\s*@php-styler-expansive\\s?/m', $text)) {
+                $this->expansiveAnnotation ++;
+                return $this->setExpansive($node);
+            }
+        }
+
+        return null;
     }
 
     protected function enterNodeExpansiveCall(Node $node) : ?bool
@@ -71,8 +113,7 @@ class Visitor extends NodeVisitorAbstract
             if (count($args) > 1) {
                 foreach ($args as $arg) {
                     if ($arg->getComments()) {
-                        $node->setAttribute('expansive', true);
-                        return true;
+                        return $this->setExpansive($node);
                     }
 
                     if (! isset($arg->value)) {
@@ -83,8 +124,7 @@ class Visitor extends NodeVisitorAbstract
                         $arg->value instanceof Expr\ArrowFunction
                         || $arg->value instanceof Expr\Closure && $arg->value->stmts
                     ) {
-                        $node->setAttribute('expansive', true);
-                        return true;
+                        return $this->setExpansive($node);
                     }
                 }
             }
@@ -97,13 +137,11 @@ class Visitor extends NodeVisitorAbstract
     {
         foreach ($node->params ?? [] as $param) {
             if ($param?->getComments()) {
-                $node->setAttribute('expansive', true);
-                return true;
+                return $this->setExpansive($node);
             }
 
             if ($param->attrGroups ?? []) {
-                $node->setAttribute('expansive', true);
-                return true;
+                return $this->setExpansive($node);
             }
         }
 
@@ -118,8 +156,7 @@ class Visitor extends NodeVisitorAbstract
 
         foreach ($node->items as $item) {
             if ($item?->getComments() ?? false) {
-                $node->setAttribute('expansive', true);
-                return true;
+                return $this->setExpansive($node);
             }
 
             if (! isset($item->value)) {
@@ -130,8 +167,7 @@ class Visitor extends NodeVisitorAbstract
                 $item->value instanceof Expr\ArrowFunction
                 || $item->value instanceof Expr\Closure && $item->value->stmts
             ) {
-                $node->setAttribute('expansive', true);
-                return true;
+                return $this->setExpansive($node);
             }
         }
 
@@ -144,6 +180,7 @@ class Visitor extends NodeVisitorAbstract
     public function leaveNode(Node $node) : null|int|Node|array
     {
         $this->leaveNodeFluency($node);
+        $this->leaveNodeExpansive($node);
         return null;
     }
 
@@ -165,5 +202,18 @@ class Visitor extends NodeVisitorAbstract
             $node->setAttribute('fluentEnd', $fluentEnd);
             $node->setAttribute('fluentNum', $fluentEnd - $fluentRev + 1);
         }
+    }
+
+    protected function leaveNodeExpansive(Node $node) : void
+    {
+        if ($this->expansiveAnnotation) {
+            $this->expansiveAnnotation --;
+        }
+    }
+
+    protected function setExpansive(Node $node) : bool
+    {
+        $node->setAttribute('expansive', true);
+        return true;
     }
 }

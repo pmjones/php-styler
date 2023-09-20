@@ -313,8 +313,11 @@ class Styler
     protected function sArgsEnd(P\Args $p) : void
     {
         if ($p->isExpansive()) {
-            $this->line[] = ',';
-            $this->newline();
+            if ($p->count) {
+                $this->line[] = ',';
+                $this->newline();
+            }
+
             $this->outdent();
         } elseif ($p->count && ! $p->isSingleArray) {
             $this->split(P\Args::class, 'last');
@@ -352,8 +355,11 @@ class Styler
     protected function sArrayEnd(P\Array_ $p) : void
     {
         if ($p->isExpansive()) {
-            $this->line[] = ',';
-            $this->newline();
+            if ($p->count) {
+                $this->line[] = ',';
+                $this->newline();
+            }
+
             $this->outdent();
         } elseif ($p->count) {
             $this->split(P\Array_::class, 'last');
@@ -1106,8 +1112,11 @@ class Styler
     protected function sParamsEnd(P\Params $p) : void
     {
         if ($p->isExpansive()) {
-            $this->line[] = ',';
-            $this->newline();
+            if ($p->count) {
+                $this->line[] = ',';
+                $this->newline();
+            }
+
             $this->outdent();
         } elseif ($p->count) {
             $this->split(P\Params::class, 'last');

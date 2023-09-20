@@ -11,8 +11,7 @@ class ExtStyler extends Styler
     {
         $this->newline();
         $this->clip(
-            when: fn (string $lastLine) : bool
-                => str_starts_with(trim($lastLine), ')'),
+            when: fn (string $lastLine) : bool => str_starts_with(trim($lastLine), ')'),
             append: ' ',
         );
         $this->line[] = '{';
