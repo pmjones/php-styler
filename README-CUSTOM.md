@@ -14,34 +14,27 @@
 
 ## Custom Styler Class
 
-Start with an empty extension of _Styler_.
+The easiest way to start is with an empty anonymous extension of _Styler_ in your `php-styler.php` config file; remember to include various _PhpParser_ amd _PhpStyler_ imports.
 
 ```php
-namespace Project;
-
 use PhpParser\Node\Expr;
 use PhpParser\Node\Stmt;
+use PhpStyler\Config;
+use PhpStyler\Files;
 use PhpStyler\Printable as P;
 use PhpStyler\Printable\Printable;
 use PhpStyler\Styler;
 
-class MyStyler extends Styler
-{
-}
-```
-
-Instantiate it in your `php-styler.php` config file.
-
-```php
-use PhpStyler\Config;
-use PhpStyler\Files;
-use Project\MyStyler;
+$styler = new class (lineLen: 88) extends Styler {
+};
 
 return new Config(
     files: new Files(__DIR__ . '/src'),
-    styler: new MyStyler(),
+    styler: $styler
 );
 ```
+
+> You might also create an entirely separate class, then load and instantiate it as the `$styler`.
 
 Then invoke the `php-styler apply` command to make sure it works as the standard _Styler_.
 
@@ -58,21 +51,10 @@ Each `$operators` key is the class name of the operation, and each value is a th
 You can set the spacing around operators by overriding the `Styler::setOperators()` method and modifying `$this->operators`. (Cf. `Styler::__construct()` for all operator strings.) For example, to make sure there is no space around `!`:
 
 ```php
-namespace Project;
-
-use PhpParser\Node\Expr;
-use PhpParser\Node\Stmt;
-use PhpStyler\Printable as P;
-use PhpStyler\Printable\Printable;
-use PhpStyler\Styler;
-
-class MyStyler extends Styler
-{
     protected function setOperators() : void
     {
         $this->operators[Expr\BooleanNot::class] = ['', '!', ''];
     }
-}
 ```
 
 ## Brace Placement
@@ -97,19 +79,8 @@ Override `classBrace()` to change brace placement on all class-like structures. 
 The finished output of styled code is handled by the `finish()` method. This is where you can add or trim lines around the code. For example, to make sure there is always a double-newline at the top of the file, and no line ending at the end:
 
 ```php
-namespace Project;
-
-use PhpParser\Node\Expr;
-use PhpParser\Node\Stmt;
-use PhpStyler\Printable as P;
-use PhpStyler\Printable\Printable;
-use PhpStyler\Styler;
-
-class MyStyler extends Styler
-{
     protected function finish(string $code) : string
     {
         return '<?php' . $this->eol . $this->eol. trim($code);
     }
 ```
-
