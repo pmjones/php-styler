@@ -178,14 +178,78 @@ Applying PHP-Styler to your source files for the first time may introduce a volu
 
 You can tell Git to overlook this initial reformatting pass by adding a `.git-blame-ignore-revs` file to your repository, and adding the full hash of the initial reformatting commit to it.
 
-1. Issue `php-styler apply` to your codebase.
-2. Issue `git log` and copy the full 40-character hash string.
+1. Issue `php-styler apply` to your codebase and commit the changes.
+2. Issue `git log` and copy the full 40-character hash string from that commit.
 3. Create and commit a file named `.git-blame-ignore-revs` with that hash pasted into it, perhaps with a comment.
 4. Configure Git to look at that file: `git config blame.ignoreRevsFile .git-blame-ignore-revs`
 
 Voila: `git blame` will now ignore that file when looking at authorship history, as will the GitHub `blame` user interface.
 
 (See also <https://git-scm.com/docs/git-blame#Documentation/git-blame.txt---ignore-revs-fileltfilegt>.)
+
+### Line Splitting
+
+#### Automatic
+
+At first, PHP-Styler builds each statement/instruction as a single line. If that line is "too long" (88 characters by default) the _Styler_ reconstructs the code by trying to split it across multiple lines. It does so by applying one or more rules in order:
+
+- `implements` are split at commas.
+- Arrow functions are split at `=>`.
+- String concatenations are split at dots.
+- Conditions are split at parentheses.
+- Precedence-indicating parentheses are split.
+- Ternaries are split at `?`, `:`, and `?:`.
+- Boolean `||` and logical `or` operators are split.
+- Boolean `&&` and logical `and` operators are split.
+- Array elements are split at commas.
+- Argument lists are split at commas.
+- Coalesce `??` operators are split.
+- Member operators are split at `::`, `::$`, `->` and `?->`.
+- Parameter lists are split at commas.
+
+If the first rule does not make the line short enough, the second rule is applied in addition, then the third, and so on.
+
+The line splitting logic attempts to be idiomatic; that is, PHP-Styler tries to take common line-splitting idioms into account, rather than making weighted calculations of elements. Reference projects were:
+
+- cakephp/database
+- laminas/laminas-mvc
+- nette/application
+- qiq/qiq
+- sapien/sapien
+- slim/slim
+- symfony/http-foundation
+
+
+#### Annotated
+
+Sometimes you may want to force lines to split expansively across lines. For example, a deeply-nested array with many elements per nesting level may look better when every element is on its own line, regardless of how short that element may be.
+
+To force expansiveness of line splitting, add the annotation `@php-styler-expansive` above the line in question. For example, this array ...
+
+```php
+$foo = ['bar', 'baz', 'dib'];
+```
+
+... would normally be presented on a single line. However, when adding the `@php-styler-expansive` annotation ...
+
+```php
+/** @php-styler-expansive */
+$foo = [
+    'bar',
+    'baz',
+    'dib',
+];
+```
+
+... the elements are made to split expansively across lines.
+
+PHP-Styler recognizes the one-liner annotations `/** @php-styler-expansive */` and `// @php-styler-expansive`, as well as typical docblock annotations:
+
+```php
+/**
+ * @php-styler-expansive
+ */
+```
 
 ### Fixing Mangled Output
 
@@ -239,39 +303,9 @@ SQL;
 
 These are not all-inclusive; see also [FIXME.md](./FIXME.md) for known issues to be addressed.
 
-### Automatic Line-Splitting
-
-At first, PHP-Styler builds each statement/instruction as a single line. If that line is "too long" (88 characters by default) the _Styler_ reconstructs the code by trying to split it across multiple lines. It does so by applying one or more rules in order:
-
-- `implements` are split at commas.
-- Arrow functions are split at `=>`.
-- String concatenations are split at dots.
-- Conditions are split at parentheses.
-- Precedence-indicating parentheses are split.
-- Ternaries are split at `?`, `:`, and `?:`.
-- Boolean `||` and logical `or` operators are split.
-- Boolean `&&` and logical `and` operators are split.
-- Array elements are split at commas.
-- Argument lists are split at commas.
-- Coalesce `??` operators are split.
-- Member operators are split at `::`, `::$`, `->` and `?->`.
-- Parameter lists are split at commas.
-
-If the first rule does not make the line short enough, the second rule is applied in addition, then the third, and so on.
-
-The line splitting logic attempts to be idiomatic; that is, PHP-Styler tries to take common line-splitting idioms into account, rather than making weighted calculations of elements. Reference projects were:
-
-- cakephp/database
-- laminas/laminas-mvc
-- nette/application
-- qiq/qiq
-- sapien/sapien
-- slim/slim
-- symfony/http-foundation
-
 ### Line Length
 
-Even after all splitting rules are applied, the line may still end up "too long."
+Even after all line splitting rules are applied, a line may still end up "too long." For example, if a line has a very long quoted string, PHP-Styler cannot split it for you.
 
 ### Reordering Code
 
@@ -279,7 +313,7 @@ PHP-Styler does not:
 
 - Regroup `use` imports
 - Split comment lines
-- Split literal string lines
+- Split quoted strings, heredocs, or nowdocs
 
 ### Horizontal Alignment
 
