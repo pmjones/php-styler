@@ -213,11 +213,16 @@ class Styler
         $this->line[] = new Clip($when, $append);
     }
 
-    protected function split(string $class, string $type) : void
+    protected function split(string $class, string $type, ?string $char = null) : void
     {
         if (! $this->nesting->in(P\Encapsed::class)) {
-            $this->line[] = new Split($this->nesting->level(), $class, $type);
+            $this->line[] = new Split($this->nesting->level(), $class, $type, $char);
         }
+    }
+
+    protected function lastSeparatorChar() : string
+    {
+        return ',';
     }
 
     protected function modifiers(?int $flags) : string
@@ -314,13 +319,13 @@ class Styler
     {
         if ($p->isExpansive()) {
             if ($p->count) {
-                $this->line[] = ',';
+                $this->line[] = $this->lastSeparatorChar();
                 $this->newline();
             }
 
             $this->outdent();
         } elseif ($p->count && ! $p->isSingleArray) {
-            $this->split(P\Args::class, 'last');
+            $this->split(P\Args::class, 'same', $this->lastSeparatorChar());
         }
 
         $this->line[] = ')';
@@ -356,13 +361,13 @@ class Styler
     {
         if ($p->isExpansive()) {
             if ($p->count) {
-                $this->line[] = ',';
+                $this->line[] = $this->lastSeparatorChar();
                 $this->newline();
             }
 
             $this->outdent();
         } elseif ($p->count) {
-            $this->split(P\Array_::class, 'last');
+            $this->split(P\Array_::class, 'same', $this->lastSeparatorChar());
         }
 
         $this->line[] = ']';
@@ -494,7 +499,7 @@ class Styler
     protected function sClosureUseEnd(P\ClosureUse $p) : void
     {
         if ($p->count) {
-            $this->split(P\Params::class, 'last');
+            $this->split(P\Params::class, 'same', $this->lastSeparatorChar());
         }
 
         $this->line[] = ')';
@@ -1010,7 +1015,7 @@ class Styler
 
     protected function sMatchArmEnd(P\MatchArm $p) : void
     {
-        $this->line[] = ',';
+        $this->line[] = $this->lastSeparatorChar();
         $this->newline();
     }
 
@@ -1111,13 +1116,13 @@ class Styler
     {
         if ($p->isExpansive()) {
             if ($p->count) {
-                $this->line[] = ',';
+                $this->line[] = $this->lastSeparatorChar();
                 $this->newline();
             }
 
             $this->outdent();
         } elseif ($p->count) {
-            $this->split(P\Params::class, 'last');
+            $this->split(P\Params::class, 'same', $this->lastSeparatorChar());
         }
 
         $this->line[] = ')';

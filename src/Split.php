@@ -13,6 +13,7 @@ class Split
         public readonly int $level,
         public readonly string $rule,
         public readonly ?string $type,
+        public readonly ?string $char,
     ) {
     }
 }

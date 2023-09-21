@@ -155,15 +155,12 @@ class Line implements ArrayAccess
         $this->line[] = new Clip();
     }
 
-    protected function lastSplit(Split $part) : void
-    {
-        $this->line[] = ',';
-        $this->lines[] = $this->line;
-        $this->line = $this->newline();
-    }
-
     protected function sameSplit(Split $part) : void
     {
+        if ($part->char) {
+            $this->line[] = $part->char;
+        }
+
         $this->lines[] = $this->line;
         $this->line = $this->newline();
     }

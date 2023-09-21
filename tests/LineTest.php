@@ -52,7 +52,7 @@ class LineTest extends TestCase
     public function testNoSuchSplit() : void
     {
         $this->line[] = 'fake fake fake fake fake fake fake fake fake fake fake fake fake fake fake fake fake fake ';
-        $this->line[] = new Split(0, 'fake', 'fake');
+        $this->line[] = new Split(0, 'fake', 'fake', null);
         $output = '';
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('No such split rule: fake');
