@@ -14,6 +14,7 @@ class Preview extends Command
 {
     public function __invoke(
         PreviewOptions $options,
+
         #[Help("The source file to preview.")]
         string $sourceFile,
     ) : int

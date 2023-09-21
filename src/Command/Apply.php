@@ -19,7 +19,11 @@ class Apply extends Command
         $configFile = $options->configFile ?? $this->findConfigFile();
         echo "Loading config file " . $configFile . PHP_EOL;
         $config = $this->loadConfigFile($configFile);
-        $cacheTime = $this->getCacheTime($configFile, $config->cache);
+
+        // load cache time
+        $cacheTime = $options->force
+            ? 0
+            : $this->getCacheTime($configFile, $config->cache);
 
         // apply styling
         try {
