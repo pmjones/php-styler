@@ -7,12 +7,10 @@ class Config
 {
     /**
      * @param string[] $files
-     * @param ?string $cache
      */
     public function __construct(
         public readonly Styler $styler,
         public readonly iterable $files = [],
-        public readonly ?string $cache = null,
     ) {
     }
 }
