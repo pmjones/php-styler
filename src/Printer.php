@@ -275,11 +275,6 @@ class Printer
     protected function pCond(Node $node) : void
     {
         $cond = $node->cond ?? null;
-
-        if (! $cond) {
-            return;
-        }
-
         $this->list[] = $orig = new P\Cond();
         $start = count($this->list);
         $this->p($cond);

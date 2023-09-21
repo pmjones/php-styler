@@ -116,13 +116,11 @@ class Visitor extends NodeVisitorAbstract
                         return $this->setExpansive($node);
                     }
 
-                    if (! isset($arg->value)) {
-                        continue;
-                    }
+                    $value = $arg->value ?? null;
 
                     if (
-                        $arg->value instanceof Expr\ArrowFunction
-                        || $arg->value instanceof Expr\Closure && $arg->value->stmts
+                        $value instanceof Expr\ArrowFunction
+                        || $value instanceof Expr\Closure && $value->stmts
                     ) {
                         return $this->setExpansive($node);
                     }
@@ -159,13 +157,11 @@ class Visitor extends NodeVisitorAbstract
                 return $this->setExpansive($node);
             }
 
-            if (! isset($item->value)) {
-                continue;
-            }
+            $value = $item->value ?? null;
 
             if (
-                $item->value instanceof Expr\ArrowFunction
-                || $item->value instanceof Expr\Closure && $item->value->stmts
+                $value instanceof Expr\ArrowFunction
+                || $value instanceof Expr\Closure && $value->stmts
             ) {
                 return $this->setExpansive($node);
             }

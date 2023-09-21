@@ -39,7 +39,9 @@ class Foo
 
     protected $prop7 = [Cast\Int_::class => [10, 1]];
 
-    // @php-styler-expansive
+    /**
+     * @php-styler-expansive
+     */
     protected $prop8 = [
         Cast\Int_::class => [
             10,
