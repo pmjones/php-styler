@@ -144,7 +144,7 @@ return new Config(
 
 - `Styler $styler` is any instance of _Styler_, whether the default one or any custom extended class.
 
-- `?string $cache` is the name of the cache file; the last-modified time of this empty file indicates the last time PHP-Styler was applied. If `$cache` is null then no caching will be used.
+- `?string $cache` is the name of the cache file; the last-modified time of this file indicates the last time PHP-Styler was applied. If `$cache` is null then no caching will be used.
 
 The _Styler_ instance can be configured with these constructor parameters:
 
