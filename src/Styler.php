@@ -83,7 +83,7 @@ class Styler
         $this->operators[Expr\BinaryOp\Smaller::class] = [' ', '<', ' '];
         $this->operators[Expr\BinaryOp\SmallerOrEqual::class] = [' ', '<=', ' '];
         $this->operators[Expr\BinaryOp\Spaceship::class] = [' ', '<=>', ' '];
-        $this->operators[Expr\BitwiseNot::class] = ['', '~', ''];
+        $this->operators[Expr\BitwiseNot::class] = ['', '~', ' '];
         $this->operators[Expr\BooleanNot::class] = ['', '!', ' '];
         $this->operators[Expr\ErrorSuppress::class] = ['', '@', ''];
         $this->operators[Expr\Instanceof_::class] = [' ', 'instanceof', ' '];
