@@ -1,5 +1,27 @@
 # Change Log
 
+## NEXT
+
+- Modify cache sytem:
+
+    - Use the filemetime on the cache file instead of on the config file.
+
+    - Add Cache::$config parameter to specify cache file location.
+
+- Consolidate open-brace and end-brace styling logic to their own methods.
+
+- Refactor Visitor.php to put enter/leave logic in separate methods.
+
+- Remove escaping on single-quoted strings.
+
+- Remove escaping on non-interpolation double-quoted strings.
+
+- Remove escaping on non-interpolation heredoc strings.
+
+- Second and subsequent parameters with attributes are now newline-separated.
+
+- Add basic customization document.
+
 ## 0.5.0
 
 - Re-enable caching.
