@@ -2027,33 +2027,13 @@ class Printer
         mixed $rawValue = null,
     ) : ?string
     {
-        $chars = [
-            '\\\\' => "\\",
-            '\\n' => "\n",
-            '\\r' => "\r",
-            '\\t' => "\t",
-            '\\f' => "\f",
-            '\\v' => "\v",
-            '$' => "\$",
-        ];
-
         if ($quote === null) {
             // For doc strings, don't escape newlines
-            $chars = ["\\", "\t", "\f", "\v", "\$"];
-        } elseif (is_string($rawValue)) {
-            // escape only chars present in raw value
-            foreach ($chars as $key => $val) {
-                if (strpos($rawValue, $key) === false) {
-                    unset($chars[$key]);
-                }
-            }
-
-            $chars[] = $quote;
+            $chars = "\\\t\f\v\$";
         } else {
-            $chars[] = $quote;
+            $chars = "\\\t\f\v\$\n\r" . $quote;
         }
 
-        $chars = implode('', $chars);
         $escaped = addcslashes($string, $chars);
 
         // Escape control characters and non-UTF-8 characters.
