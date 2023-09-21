@@ -19,12 +19,14 @@ abstract class Bar extends Baz implements Dib, Zim, Gir
     public function __construct(
         #[MyVeryVeryVeryVeryVeryVeryLongAttribute]
         public readonly ?string $foofoo,
+
         #[MyAttribute(
             foofofoo: 'barbarbar',
             bazbazbaz: 'dibdibdib',
             zimzimzim: 'girgirgir',
         )]
         public readonly ?string $barbar,
+
         #[MyVeryVeryVeryVeryVeryVeryLongAttribute]
         public readonly ?string $bazbaz,
     ) {

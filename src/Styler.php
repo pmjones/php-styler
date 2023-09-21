@@ -407,10 +407,6 @@ class Styler
 
     protected function sAttributeGroups(P\AttributeGroups $p) : void
     {
-        if ($this->nesting->in(P\Params::class)) {
-            return;
-        }
-
         $this->maybeNewline($p);
     }
 
@@ -1096,6 +1092,8 @@ class Styler
         } elseif ($p->count) {
             $this->split(P\Params::class, 'incr');
         }
+
+        $this->atFirstInBody = true;
     }
 
     protected function sParamSeparator(P\Separator $p) : void

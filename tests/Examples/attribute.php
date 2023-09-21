@@ -20,6 +20,7 @@ function bar(
 function baz(
     #[MyVeryVeryVeryVeryLongAttribute]
     $bar,
+
     #[MyVeryVeryVeryVeryLongAttribute]
     $baz,
 ) {
@@ -31,6 +32,7 @@ function dib(
         veryLongNamedProperty2: 'bar',
     )]
     $bar,
+
     #[MyVeryVeryVeryVeryLongAttribute]
     $baz,
 ) {
