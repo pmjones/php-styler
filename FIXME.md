@@ -4,9 +4,3 @@
 switch ($foo) {
     // this comment will be completely removed
 }
-
-// double-quotes increase backslashes; single-quotes do not
-$foo = 'Name\Space\\';
-$foo = "Name\\Space\\";
-$foo = '/^foo\sbar$/';
-$foo = "/^foo\sbar\$/";

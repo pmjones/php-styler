@@ -1361,7 +1361,7 @@ class Printer
                     $this->list[] = $orig = new P\Heredoc($label);
 
                     if ($node->value) {
-                        $this->list[] = $this->escapeString($node->value, null);
+                        $this->list[] = $node->value;
                     }
 
                     $this->list[] = new P\End($orig);
@@ -1370,13 +1370,7 @@ class Printer
 
             /* break missing intentionally */
             case Scalar\String_::KIND_DOUBLE_QUOTED:
-                $this->list[] = '"'
-                    . $this->escapeString(
-                        $node->value,
-                        '"',
-                        $node->getAttribute('rawValue'),
-                    )
-                    . '"';
+                $this->list[] = $node->getAttribute('rawValue');
                 return;
         }
 
