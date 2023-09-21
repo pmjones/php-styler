@@ -17,11 +17,9 @@ class Apply extends Command
 
         // load config
         $configFile = $options->configFile ?? $this->findConfigFile();
-        echo "Load config " . $configFile . PHP_EOL;
+        echo "Loading config file " . $configFile . PHP_EOL;
         $config = $this->loadConfigFile($configFile);
-
-        // load cache time
-        $cacheTime = $options->force ? 0 : filemtime($configFile);
+        $cacheTime = $this->getCacheTime($configFile, $config->cache);
 
         // apply styling
         try {
@@ -32,7 +30,7 @@ class Apply extends Command
         }
 
         // update cache time
-        touch($configFile);
+        touch($config->cache);
 
         // statistics
         $time = (hrtime(true) - $start) / 1000000000;
@@ -50,6 +48,31 @@ class Apply extends Command
 
         echo '.' . PHP_EOL;
         return 0;
+    }
+
+    protected function getCacheTime(string $configFile, ?string $cacheFile) : int
+    {
+        if (! $cacheFile) {
+            echo "No cache file specified." . PHP_EOL;
+            return 0;
+        }
+
+        if (! file_exists($cacheFile)) {
+            echo "Creating cache file {$cacheFile}" . PHP_EOL;
+            touch($cacheFile);
+            return 0;
+        }
+
+        echo "Using cache file {$cacheFile}" . PHP_EOL;
+        $cacheTime = filemtime($cacheFile);
+        $configTime = filemtime($configFile);
+
+        if ($configTime > $cacheTime) {
+            echo "Config file modified after last cache time." . PHP_EOL;
+            return 0;
+        }
+
+        return $cacheTime;
     }
 
     protected function style(Config $config, int|false $cacheTime) : int
