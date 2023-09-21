@@ -1,8 +1,20 @@
 <?php
+// single quotes
 $foo = 'Name\Space\\';
-$bar = '/^foo\sbar$/';
-$baz = "this\nthat";
-$dib = "foo
+$foo = '/^foo\sbar$/';
+$foo = 'this\nthat';
+$foo = 'foo
+    bar
+    baz';
+$foo = "zim\"zim\"zim";
+$foo = 'zim\'zim\'zim';
+
+// double quotes
+$foo = "this\nthat";
+$foo = "foo
     bar
     baz";
-$zim = 'zim\'zim\'zim';
+
+// double-quotes increase backslashes
+$foo = "Name\\Space\\";
+$foo = "/^foo\sbar\$/";
