@@ -1,6 +1,6 @@
 # Change Log
 
-## NEXT
+## 0.6.0
 
 - Modify cache sytem:
 
