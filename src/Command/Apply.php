@@ -66,8 +66,8 @@ class Apply extends Command
         }
 
         echo "Using cache file {$cacheFile}" . PHP_EOL;
-        $cacheTime = filemtime($cacheFile);
-        $configTime = filemtime($configFile);
+        $cacheTime = (int) filemtime($cacheFile);
+        $configTime = (int) filemtime($configFile);
 
         if ($configTime > $cacheTime) {
             echo "Config file modified after last cache time." . PHP_EOL;

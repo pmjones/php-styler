@@ -1350,7 +1350,7 @@ class Printer
 
             /* break missing intentionally */
             case Scalar\String_::KIND_SINGLE_QUOTED:
-                $this->list[] = $node->getAttribute('rawValue');
+                $this->list[] = $this->rawValue($node);
                 return;
 
             case Scalar\String_::KIND_HEREDOC:
@@ -1370,7 +1370,7 @@ class Printer
 
             /* break missing intentionally */
             case Scalar\String_::KIND_DOUBLE_QUOTED:
-                $this->list[] = $node->getAttribute('rawValue');
+                $this->list[] = $this->rawValue($node);
                 return;
         }
 
@@ -2234,5 +2234,11 @@ class Printer
                 return;
             }
         }
+    }
+
+    protected function rawValue(Node $node) : string
+    {
+        /** @var string */
+        return $node->getAttribute('rawValue');
     }
 }
