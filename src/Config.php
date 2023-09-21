@@ -10,8 +10,8 @@ class Config
      */
     public function __construct(
         public readonly Styler $styler,
-        public readonly iterable $files = [],
-        public readonly ?string $cache = null,
+        public readonly iterable $files,
+        public readonly ?string $cache,
     ) {
     }
 }
