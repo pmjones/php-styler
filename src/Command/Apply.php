@@ -30,7 +30,9 @@ class Apply extends Command
         }
 
         // update cache time
-        touch($config->cache);
+        if ($config->cache) {
+            touch($config->cache);
+        }
 
         // statistics
         $time = (hrtime(true) - $start) / 1000000000;
@@ -81,6 +83,7 @@ class Apply extends Command
         $service = new Service($config->styler);
 
         foreach ($config->files as $file) {
+            $file = (string) $file;
             $fileTime = filemtime($file);
 
             if ($cacheTime && $fileTime <= $cacheTime) {
@@ -88,7 +91,6 @@ class Apply extends Command
             }
 
             $count ++;
-            $file = (string) $file;
             echo $file . PHP_EOL;
             $code = $service((string) file_get_contents($file));
             file_put_contents($file, $code);
