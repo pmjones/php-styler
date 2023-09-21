@@ -1,5 +1,5 @@
 <?php
-// do not escape newlines without literal \n
+// use raw string value
 $sql = "
     SELECT TABLE_NAME
     FROM INFORMATION_SCHEMA.TABLES
@@ -8,7 +8,7 @@ $sql = "
     ORDER BY TABLE_NAME;
 ";
 
-// do not escape newlines without literal \n
+// use raw string value
 $sql = '
     SELECT TABLE_NAME
     FROM INFORMATION_SCHEMA.TABLES
@@ -17,9 +17,9 @@ $sql = '
     ORDER BY TABLE_NAME;
 ';
 
-// do escape newlines with literal \n
+// use raw string value
 $foo = "foo\nbar\nbaz";
 $foo = 'foo\\nbar\\nbaz';
 
-// encapsed escapes newlines with literal \n
+// interpolation causes escaped newlines with literal \n
 $foo = "%-{$max}s %s\nzim";

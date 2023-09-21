@@ -10,7 +10,7 @@ abstract class Bar extends Baz implements Dib, Zim, Gir
 
     private readonly ?string $bar;
 
-    public static string $callablePattern = '!^([^\\:]+)\\:([a-zA-Z_\\x7f-\\xff][a-zA-Z0-9_\\x7f-\\xff]*)$!';
+    public static string $callablePattern = '!^([^\:]+)\:([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)$!';
 
     private ?ContainerInterface $container;
 

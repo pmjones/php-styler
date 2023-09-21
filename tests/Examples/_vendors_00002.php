@@ -96,24 +96,24 @@ if (true) {
         preg_match_all(
             '
             /
-                (?!\\s)
+                (?!\s)
                     (?:
                         # quoted-string
-                        "(?:[^"\\\\]|\\\\.)*(?:"|\\\\|$)
+                        "(?:[^"\]|\.)*(?:"|\|$)
                     |
                         # token
                         [^"'
                 . $quotedSeparators
                 . ']+
                     )+
-                (?<!\\s)
+                (?<!\s)
             |
                 # separator
-                \\s*
+                \s*
                 (?<separator>['
                 . $quotedSeparators
                 . '])
-                \\s*
+                \s*
             /x',
             trim($header),
             $matches,
