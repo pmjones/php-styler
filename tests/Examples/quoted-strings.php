@@ -1,0 +1,2 @@
+<?php
+$foo = 'Name\Space\\';

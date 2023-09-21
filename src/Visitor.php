@@ -70,8 +70,8 @@ class Visitor extends NodeVisitorAbstract
         }
 
         $oneLiners = [
-            '/^\\/\\*+\\s*@php-styler-expansive\\s?/',
-            '/^\\/\\/+\\s+@php-styler-expansive\\s?/',
+            '/^\/\*+\s*@php-styler-expansive\s?/',
+            '/^\/\/+\s+@php-styler-expansive\s?/',
         ];
 
         foreach ($comments as $comment) {
@@ -88,7 +88,7 @@ class Visitor extends NodeVisitorAbstract
                 return null;
             }
 
-            if (preg_match('/^\s*\*\s*@php-styler-expansive\\s?/m', $text)) {
+            if (preg_match('/^\s*\*\s*@php-styler-expansive\s?/m', $text)) {
                 $this->expansiveAnnotation ++;
                 return $this->setExpansive($node);
             }
