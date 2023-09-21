@@ -115,13 +115,13 @@ Pass `-c` or `--config` to specify an alternative config file:
 ./vendor/bin/php-styler apply -c /path/to/other/php-styler.php
 ```
 
-PHP-Styler will only apply formatting to files with a modification time *later* than the config file. To force formatting on all files regardless of modification time, pass the `--force` option:
+PHP-Styler will only apply formatting to files with a modification time *later* than the cache file. To force formatting on all files regardless of modification time, pass the `--force` option:
 
 ```
 ./vendor/bin/php-styler apply --force
 ```
 
-The `apply` command will `touch()` the config file each time it runs, thereby noting the most-recent modification time. If you make changes to the config file, use `--force` to apply the new config.
+Changing the config file after `apply` will invalidate the cache, implying `--force` and thereby causing PHP-Styler to apply formatting to all files.
 
 ### Configuration
 
@@ -136,12 +136,15 @@ use PhpStyler\Styler;
 return new Config(
     files: new Files(__DIR__ . '/src'),
     styler: new Styler(),
+    cache: __DIR__ . '/.php-styler.cache',
 );
 ```
 
-The `files` parameter is any `iterable` of file names to which PHP-Styler should be applied. (If the _Files_ object is not to your liking, try [Symfony Finder](https://symfony.com/doc/current/components/finder.html) instead.)
+- `iterable $files` is any `iterable` of file names to which PHP-Styler should be applied. (If the PHP-Styler _Files_ object is not sufficient for your purposes, try [Symfony Finder](https://symfony.com/doc/current/components/finder.html) instead.)
 
-The `styler` parameter is any instance of _Styler_, whether the default one or any custom extended class.
+- `Styler $styler` is any instance of _Styler_, whether the default one or any custom extended class.
+
+- `?string $cache` is the name of the cache file; the last-modified time of this empty file indicates the last time PHP-Styler was applied. If `$cache` is null then no caching will be used.
 
 The _Styler_ instance can be configured with these constructor parameters:
 
