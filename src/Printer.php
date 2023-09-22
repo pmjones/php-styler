@@ -1387,9 +1387,8 @@ class Printer
     protected function pStmt_ClassConst(Stmt\ClassConst $node) : void
     {
         $this->pAttributeGroups($node);
-        $this->pModifiers($node);
-        $this->print[] = $orig = new P\Const_();
-        $this->pSeparate('const', $node->consts, $orig);
+        $this->print[] = $orig = new P\ClassConst($node->flags);
+        $this->pSeparate('classConst', $node->consts, $orig);
         $this->print[] = new P\End($orig);
     }
 

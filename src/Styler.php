@@ -501,6 +501,19 @@ class Styler
         $this->braceEnd();
     }
 
+    protected function sClassConst(P\ClassConst $p) : void
+    {
+        $this->maybeNewline($p);
+        $this->line[] = $this->modifiers($p->flags);
+        $this->line[] = 'const ';
+    }
+
+    protected function sClassConstEnd(P\ClassConst $p) : void
+    {
+        $this->line[] = ';';
+        $this->newline();
+    }
+
     protected function sClosure(P\Closure $p) : void
     {
         $this->line[] = $p->static ? 'static function ' : 'function ';
