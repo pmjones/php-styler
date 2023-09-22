@@ -1,6 +1,6 @@
 # Change Log
 
-## NEXT
+## 0.7.0
 
 - Add Styler::lastSeparatorChar() to specify comma (or no comma) on last item of split list.
 
