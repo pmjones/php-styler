@@ -140,7 +140,13 @@ class Styler
 
     protected function finish(string $code) : string
     {
-        return "<?php" . $this->eol . trim($code) . $this->eol;
+        $code = trim($code);
+
+        if (str_starts_with($code, 'return ')) {
+            return '<?php ' . $code . $this->eol;
+        }
+
+        return '<?php' . $this->eol . $code . $this->eol;
     }
 
     protected function newline() : void
