@@ -2,7 +2,7 @@
 
 ## Overview
 
-1. [Custom _Styler_ class](#custom-styler-class)
+1. [Custom _Styler_ Class](#custom-styler-class)
 
 2. [Method Overrides](#method-overrides)
 
