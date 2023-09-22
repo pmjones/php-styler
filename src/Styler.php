@@ -48,66 +48,69 @@ class Styler
         protected int $indentLen = 4,
         protected bool $indentTab = false,
     ) {
-        $this->operators[Expr\Assign::class] = [' ', '=', ' '];
-        $this->operators[Expr\AssignOp\BitwiseAnd::class] = [' ', '&=', ' '];
-        $this->operators[Expr\AssignOp\BitwiseOr::class] = [' ', '|=', ' '];
-        $this->operators[Expr\AssignOp\BitwiseXor::class] = [' ', '^=', ' '];
-        $this->operators[Expr\AssignOp\Coalesce::class] = [' ', '??=', ' '];
-        $this->operators[Expr\AssignOp\Concat::class] = [' ', '.=', ' '];
-        $this->operators[Expr\AssignOp\Div::class] = [' ', '/=', ' '];
-        $this->operators[Expr\AssignOp\Minus::class] = [' ', '-=', ' '];
-        $this->operators[Expr\AssignOp\Mod::class] = [' ', '%=', ' '];
-        $this->operators[Expr\AssignOp\Mul::class] = [' ', '*=', ' '];
-        $this->operators[Expr\AssignOp\Plus::class] = [' ', '+=', ' '];
-        $this->operators[Expr\AssignOp\Pow::class] = [' ', '**=', ' '];
-        $this->operators[Expr\AssignOp\ShiftLeft::class] = [' ', '<<=', ' '];
-        $this->operators[Expr\AssignOp\ShiftRight::class] = [' ', '>>=', ' '];
-        $this->operators[Expr\AssignRef::class] = [' ', '=&', ' '];
-        $this->operators[Expr\BinaryOp\BitwiseAnd::class] = [' ', '&', ' '];
-        $this->operators[Expr\BinaryOp\BitwiseOr::class] = [' ', '|', ' '];
-        $this->operators[Expr\BinaryOp\BitwiseXor::class] = [' ', '^', ' '];
-        $this->operators[Expr\BinaryOp\BooleanAnd::class] = [' ', '&&', ' '];
-        $this->operators[Expr\BinaryOp\BooleanOr::class] = [' ', '||', ' '];
-        $this->operators[Expr\BinaryOp\Coalesce::class] = [' ', '??', ' '];
-        $this->operators[Expr\BinaryOp\Concat::class] = [' ', '.', ' '];
-        $this->operators[Expr\BinaryOp\Div::class] = [' ', '/', ' '];
-        $this->operators[Expr\BinaryOp\Equal::class] = [' ', '==', ' '];
-        $this->operators[Expr\BinaryOp\Greater::class] = [' ', '>', ' '];
-        $this->operators[Expr\BinaryOp\GreaterOrEqual::class] = [' ', '>=', ' '];
-        $this->operators[Expr\BinaryOp\Identical::class] = [' ', '===', ' '];
-        $this->operators[Expr\BinaryOp\LogicalAnd::class] = [' ', 'and', ' '];
-        $this->operators[Expr\BinaryOp\LogicalOr::class] = [' ', 'or', ' '];
-        $this->operators[Expr\BinaryOp\LogicalXor::class] = [' ', 'xor', ' '];
-        $this->operators[Expr\BinaryOp\Minus::class] = [' ', '-', ' '];
-        $this->operators[Expr\BinaryOp\Mod::class] = [' ', '%', ' '];
-        $this->operators[Expr\BinaryOp\Mul::class] = [' ', '*', ' '];
-        $this->operators[Expr\BinaryOp\NotEqual::class] = [' ', '!=', ' '];
-        $this->operators[Expr\BinaryOp\NotIdentical::class] = [' ', '!==', ' '];
-        $this->operators[Expr\BinaryOp\Plus::class] = [' ', '+', ' '];
-        $this->operators[Expr\BinaryOp\Pow::class] = [' ', '**', ' '];
-        $this->operators[Expr\BinaryOp\ShiftLeft::class] = [' ', '<<', ' '];
-        $this->operators[Expr\BinaryOp\ShiftRight::class] = [' ', '>>', ' '];
-        $this->operators[Expr\BinaryOp\Smaller::class] = [' ', '<', ' '];
-        $this->operators[Expr\BinaryOp\SmallerOrEqual::class] = [' ', '<=', ' '];
-        $this->operators[Expr\BinaryOp\Spaceship::class] = [' ', '<=>', ' '];
-        $this->operators[Expr\BitwiseNot::class] = ['', '~', ' '];
-        $this->operators[Expr\BooleanNot::class] = ['', '!', ' '];
-        $this->operators[Expr\ErrorSuppress::class] = ['', '@', ''];
-        $this->operators[Expr\Instanceof_::class] = [' ', 'instanceof', ' '];
-        $this->operators[Expr\PostDec::class] = [' ', '--', ''];
-        $this->operators[Expr\PostInc::class] = [' ', '++', ''];
-        $this->operators[Expr\PreDec::class] = ['', '--', ' '];
-        $this->operators[Expr\PreInc::class] = ['', '++', ' '];
-        $this->operators[Expr\Print_::class] = ['', 'print', ' '];
-        $this->operators[Expr\Ternary::class] = [' ', '?:', ' '];
-        $this->operators[Expr\UnaryMinus::class] = ['', '-', ''];
-        $this->operators[Expr\UnaryPlus::class] = ['', '+', ''];
-        $this->operators[Expr\YieldFrom::class] = ['', 'yield from', ' '];
-        $this->setOperators();
+        $operators = [
+            Expr\Assign::class => [' ', '=', ' '],
+            Expr\AssignOp\BitwiseAnd::class => [' ', '&=', ' '],
+            Expr\AssignOp\BitwiseOr::class => [' ', '|=', ' '],
+            Expr\AssignOp\BitwiseXor::class => [' ', '^=', ' '],
+            Expr\AssignOp\Coalesce::class => [' ', '??=', ' '],
+            Expr\AssignOp\Concat::class => [' ', '.=', ' '],
+            Expr\AssignOp\Div::class => [' ', '/=', ' '],
+            Expr\AssignOp\Minus::class => [' ', '-=', ' '],
+            Expr\AssignOp\Mod::class => [' ', '%=', ' '],
+            Expr\AssignOp\Mul::class => [' ', '*=', ' '],
+            Expr\AssignOp\Plus::class => [' ', '+=', ' '],
+            Expr\AssignOp\Pow::class => [' ', '**=', ' '],
+            Expr\AssignOp\ShiftLeft::class => [' ', '<<=', ' '],
+            Expr\AssignOp\ShiftRight::class => [' ', '>>=', ' '],
+            Expr\AssignRef::class => [' ', '=&', ' '],
+            Expr\BinaryOp\BitwiseAnd::class => [' ', '&', ' '],
+            Expr\BinaryOp\BitwiseOr::class => [' ', '|', ' '],
+            Expr\BinaryOp\BitwiseXor::class => [' ', '^', ' '],
+            Expr\BinaryOp\BooleanAnd::class => [' ', '&&', ' '],
+            Expr\BinaryOp\BooleanOr::class => [' ', '||', ' '],
+            Expr\BinaryOp\Coalesce::class => [' ', '??', ' '],
+            Expr\BinaryOp\Concat::class => [' ', '.', ' '],
+            Expr\BinaryOp\Div::class => [' ', '/', ' '],
+            Expr\BinaryOp\Equal::class => [' ', '==', ' '],
+            Expr\BinaryOp\Greater::class => [' ', '>', ' '],
+            Expr\BinaryOp\GreaterOrEqual::class => [' ', '>=', ' '],
+            Expr\BinaryOp\Identical::class => [' ', '===', ' '],
+            Expr\BinaryOp\LogicalAnd::class => [' ', 'and', ' '],
+            Expr\BinaryOp\LogicalOr::class => [' ', 'or', ' '],
+            Expr\BinaryOp\LogicalXor::class => [' ', 'xor', ' '],
+            Expr\BinaryOp\Minus::class => [' ', '-', ' '],
+            Expr\BinaryOp\Mod::class => [' ', '%', ' '],
+            Expr\BinaryOp\Mul::class => [' ', '*', ' '],
+            Expr\BinaryOp\NotEqual::class => [' ', '!=', ' '],
+            Expr\BinaryOp\NotIdentical::class => [' ', '!==', ' '],
+            Expr\BinaryOp\Plus::class => [' ', '+', ' '],
+            Expr\BinaryOp\Pow::class => [' ', '**', ' '],
+            Expr\BinaryOp\ShiftLeft::class => [' ', '<<', ' '],
+            Expr\BinaryOp\ShiftRight::class => [' ', '>>', ' '],
+            Expr\BinaryOp\Smaller::class => [' ', '<', ' '],
+            Expr\BinaryOp\SmallerOrEqual::class => [' ', '<=', ' '],
+            Expr\BinaryOp\Spaceship::class => [' ', '<=>', ' '],
+            Expr\BitwiseNot::class => ['', '~', ' '],
+            Expr\BooleanNot::class => ['', '!', ' '],
+            Expr\ErrorSuppress::class => ['', '@', ''],
+            Expr\Instanceof_::class => [' ', 'instanceof', ' '],
+            Expr\PostDec::class => [' ', '--', ''],
+            Expr\PostInc::class => [' ', '++', ''],
+            Expr\PreDec::class => ['', '--', ' '],
+            Expr\PreInc::class => ['', '++', ' '],
+            Expr\Print_::class => ['', 'print', ' '],
+            Expr\Ternary::class => [' ', '?:', ' '],
+            Expr\UnaryMinus::class => ['', '-', ''],
+            Expr\UnaryPlus::class => ['', '+', ''],
+            Expr\YieldFrom::class => ['', 'yield from', ' '],
+        ];
+        $this->operators = array_replace($operators, $this->modOperators());
     }
 
-    protected function setOperators() : void
+    protected function modOperators() : array
     {
+        return [];
     }
 
     /**

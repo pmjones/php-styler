@@ -53,12 +53,14 @@ The `$this->operators` property describes the spacing around operation strings. 
 
 Each `$operators` key is the class name of the operation, and each value is a three-element array consisting of the space before the operator, the operator itself, and the space after the operator.
 
-You can set the spacing around operators by overriding the `Styler::setOperators()` method and modifying `$this->operators`. (Cf. `Styler::__construct()` for all operator strings.) For example, to make sure there is no space around `!`:
+You can set the spacing around operators by overriding the `Styler::modOperators()` method returning the operators to modify. (Cf. `Styler::__construct()` for all operator strings.) For example, to make sure there is no space around `!`:
 
 ```php
-    protected function setOperators() : void
+    protected function modOperators() : array
     {
-        $this->operators[Expr\BooleanNot::class] = ['', '!', ''];
+        return [
+            Expr\BooleanNot::class => ['', '!', ''],
+        ];
     }
 ```
 
