@@ -245,6 +245,11 @@ class Styler
         return ',';
     }
 
+    protected function functionBodyClipWhen() : callable
+    {
+        return fn (string $lastLine) : bool => trim($lastLine) === ')';
+    }
+
     protected function modifiers(?int $flags) : string
     {
         return implode(
@@ -803,7 +808,7 @@ class Styler
     {
         $this->newline();
         $this->clip(
-            when: fn (string $lastLine) : bool => trim($lastLine) === ')',
+            when: $this->functionBodyClipWhen(),
             append: ' ',
         );
         $this->line[] = '{';
