@@ -26,7 +26,7 @@ require $autoload;
 $console = Console::new(
     namespace: 'PhpStyler\Command',
     directory: dirname(__DIR__) . '/src/Command',
-    help: 'PHPStyler by Paul M. Jones' . PHP_EOL . PHP_EOL,
+    help: 'PHP-Styler by Paul M. Jones' . PHP_EOL . PHP_EOL,
 );
 
 $code = $console($_SERVER['argv']);
