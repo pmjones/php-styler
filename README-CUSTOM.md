@@ -70,9 +70,22 @@ Use these methods to place braces when overiding a `Styler::s*()` method.
 In addition, the standard _Styler_ uses two common methods for brace placement on class-like structures and control-flow structures:
 
 - `classBrace()` defines brace placement on class-like structures (`class`, `interface`, `trait`, etc.); defaults to `braceOnNextLine()`
-- `controlBrace()` defines brace placement on control-flow structures ((`if`, `do`, `foreach`, etc.); defaults to `braceOnSameLine()`
+- `controlBrace()` defines brace placement on control-flow structures (`if`, `do`, `foreach`, etc.); defaults to `braceOnSameLine()`
 
 Override `classBrace()` to change brace placement on all class-like structures. Likewise, override `controlBrace()` to change brace placement on all control-flow structures. Finally, if you want to, you can override the class-like and control flow `Styler::s*()` methods to handle brace placement on each individual structure.
+
+## Trailing Comma
+
+By default, the _Styler_ adds a trailing comma to the last item in an argument, parameter, or array listing, when that listing has been split across lines.
+
+To *not* add that comma, override `Styler::lastSeparatorChar()` to return an empty string:
+
+```php
+    protected function lastSeparatorChar() : string
+    {
+        return '';
+    }
+```
 
 ## Finished Output
 
