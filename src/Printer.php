@@ -1209,35 +1209,7 @@ class Printer
 
     protected function pScalar_DNumber(Scalar\DNumber $node) : void
     {
-        if (! is_finite($node->value)) {
-            if ($node->value === INF) {
-                $this->list[] = '\\INF';
-                return;
-            } elseif ($node->value === -INF) {
-                $this->list[] = '-\\INF';
-                return;
-            } else {
-                $this->list[] = '\\NAN';
-                return;
-            }
-        }
-
-        // Try to find a short full-precision representation
-        $stringValue = sprintf('%.16G', $node->value);
-
-        if ($node->value !== (float) $stringValue) {
-            $stringValue = sprintf('%.17G', $node->value);
-        }
-
-        // %G is locale dependent and there exists no locale-independent alternative. We don't want
-        // mess with switching locales here, so let's assume that a comma is the only non-standard
-        // decimal separator we may encounter...
-        $stringValue = str_replace(',', '.', $stringValue);
-
-        // ensure that number is really printed as float
-        $this->list[] = preg_match('/^-?[0-9]+$/', $stringValue)
-            ? $stringValue . '.0'
-            : $stringValue;
+        $this->list[] = $this->rawValue($node);
     }
 
     protected function pScalar_Encapsed(Scalar\Encapsed $node) : void
@@ -1282,7 +1254,7 @@ class Printer
 
     protected function pScalar_LNumber(Scalar\LNumber $node) : void
     {
-        $this->list[] = $this->lnumber($node);
+        $this->list[] = $this->rawValue($node);
     }
 
     protected function pScalar_MagicConst_Class(MagicConst\Class_ $node) : void
@@ -1417,11 +1389,6 @@ class Printer
         $this->pAttributeGroups($node);
         $this->pModifiers($node);
         $this->list[] = $orig = new P\Const_();
-
-        if ($node->type !== null) {
-            $this->p($node->type);
-        }
-
         $this->pSeparate('const', $node->consts, $orig);
         $this->list[] = new P\End($orig);
     }
@@ -2140,42 +2107,6 @@ class Printer
         return implode('|', $types);
     }
 
-    protected function lnumber(Scalar\LNumber $node) : string
-    {
-        if ($node->value === -PHP_INT_MAX - 1) {
-            // PHP_INT_MIN cannot be represented as a literal,
-            // because the sign is not part of the literal
-            return '(-' . PHP_INT_MAX . '-1)';
-        }
-
-        $kind = $node->getAttribute('kind', Scalar\LNumber::KIND_DEC);
-
-        if (Scalar\LNumber::KIND_DEC === $kind) {
-            return (string) $node->value;
-        }
-
-        if ($node->value < 0) {
-            $sign = '-';
-            $str = (string) -$node->value;
-        } else {
-            $sign = '';
-            $str = (string) $node->value;
-        }
-
-        switch ($kind) {
-            case Scalar\LNumber::KIND_BIN:
-                return $sign . '0b' . base_convert($str, 10, 2);
-
-            case Scalar\LNumber::KIND_OCT:
-                return $sign . '0' . base_convert($str, 10, 8);
-
-            case Scalar\LNumber::KIND_HEX:
-                return $sign . '0x' . base_convert($str, 10, 16);
-        }
-
-        throw new Exception('Invalid number kind');
-    }
-
     protected function useType(Node $node) : string
     {
         switch ($node->type ?? null) {
@@ -2210,6 +2141,6 @@ class Printer
     protected function rawValue(Node $node) : string
     {
         /** @var string */
-        return $node->getAttribute('rawValue');
+        return $node->getAttribute('rawValue', '');
     }
 }
