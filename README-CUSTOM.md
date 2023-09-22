@@ -79,7 +79,7 @@ In addition, the standard _Styler_ uses two common methods for brace placement o
 
 Override `classBrace()` to change brace placement on all class-like structures. Likewise, override `controlBrace()` to change brace placement on all control-flow structures. Finally, if you want to, you can override the class-like and control flow `Styler::s*()` methods to handle brace placement on each individual structure.
 
-## Function Singatures
+## Function Signatures
 
 The default presentation behavior for a function signature with expansive parameters and a return typehint is to ...
 
