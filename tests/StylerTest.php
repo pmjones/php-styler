@@ -17,12 +17,14 @@ class StylerTest extends TestCase
         <?php
         $inf = 1e10000;
         $ninf = -1e10000;
+        $nan = NAN;
 
         SOURCE;
         $expect = <<<'EXPECT'
         <?php
         $inf = \INF;
         $ninf = -\INF;
+        $nan = NAN;
 
         EXPECT;
         $this->assertPrint($expect, $source);

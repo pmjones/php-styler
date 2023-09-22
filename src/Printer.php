@@ -315,15 +315,11 @@ class Printer
         $this->list[] = ')';
     }
 
-    protected function pEmbrace(Node|string $spec) : void
+    protected function pEmbrace(Node $spec) : void
     {
-        if (is_string($spec)) {
-            $this->list[] = '$' . $spec;
-        } else {
-            $this->list[] = '{';
-            $this->p($spec);
-            $this->list[] = '}';
-        }
+        $this->list[] = '{';
+        $this->p($spec);
+        $this->list[] = '}';
     }
 
     /**
@@ -331,7 +327,7 @@ class Printer
      */
     protected function pEncapsList(array $encapsList, ?string $quote) : void
     {
-        /** @var Node|string $element */
+        /** @var Node $element */
         foreach ($encapsList as $element) {
             if ($element instanceof Scalar\EncapsedStringPart) {
                 $this->list[] = $this->escapeString($element->value, $quote);
