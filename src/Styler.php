@@ -15,6 +15,13 @@ class Styler
     protected Line $line;
 
     /**
+     * @var array<int, null|string|Printable>
+     */
+    protected array $print = [];
+
+    protected int $printIdx = 0;
+
+    /**
      * @var Line[]
      */
     protected array $lines = [];
@@ -112,6 +119,8 @@ class Styler
             return "<?php" . $this->eol;
         }
 
+        $this->print = $list;
+        $this->printIdx = 0;
         $this->indentNum = 0;
         $this->line = new Line(
             $this->eol,
@@ -123,8 +132,8 @@ class Styler
         $this->lines = [];
         $this->nesting = new Nesting();
 
-        while ($list) {
-            $p = array_shift($list);
+        foreach ($this->print as $printIdx => $p) {
+            $this->printIdx = $printIdx;
             $this->s($p ?? '');
         }
 
@@ -147,6 +156,11 @@ class Styler
         }
 
         return '<?php' . $this->eol . $code . $this->eol;
+    }
+
+    protected function nextPrintable() : null|string|Printable
+    {
+        return $this->print[$this->printIdx + 1] ?? null;
     }
 
     protected function newline() : void
@@ -592,6 +606,11 @@ class Styler
     {
         $this->line[] = ';';
         $this->newline();
+
+        if ($this->nextPrintable() instanceof P\Const_) {
+            return;
+        }
+
         $this->newline();
     }
 
@@ -1427,6 +1446,13 @@ class Styler
         }
 
         $this->line[] = ';';
+        $this->newline();
+        $next = $this->nextPrintable();
+
+        if ($next instanceof P\UseImport && $next->type === $p->type) {
+            return;
+        }
+
         $this->newline();
     }
 
