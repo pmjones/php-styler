@@ -5,7 +5,7 @@ namespace PhpStyler;
 
 use PhpStyler\Printable as P;
 
-class ExtStyler extends Styler
+class IrkStyler extends Styler
 {
     protected function functionBodyClipWhen() : callable
     {

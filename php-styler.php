@@ -7,11 +7,11 @@ return new Config(
     cache: __DIR__ . '/.php-styler.cache',
     files: new Files(
         __DIR__ . '/src',
-        __DIR__ . '/tests/ExtStyler.php',
-        __DIR__ . '/tests/ExtStylerTest.php',
         __DIR__ . '/tests/ConfigTest.php',
         __DIR__ . '/tests/ExamplesTest.php',
         __DIR__ . '/tests/FilesTest.php',
+        __DIR__ . '/tests/IrkStyler.php',
+        __DIR__ . '/tests/IrkStylerTest.php',
         __DIR__ . '/tests/LineTest.php',
         __DIR__ . '/tests/NestingTest.php',
         __DIR__ . '/tests/TestCase.php',
