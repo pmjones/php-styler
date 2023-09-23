@@ -49,11 +49,11 @@ In general, override the `Styler::s*()` method for styling the relevant _Printab
 
 ## Operator Spacing
 
-The `$this->operators` property describes the spacing around operation strings. The `$operators` property is used by the `Styler::sInfix*()`, `Styler::sPrefix*()`, and `Styler::sPostfix*()` method families.
+The `$this->operators` property describes the spacing around operation strings. This property is used by the `Styler::sInfix*()`, `Styler::sPrefix*()`, and `Styler::sPostfix*()` method families.
 
-Each `$operators` key is the class name of the operation, and each value is a three-element array consisting of the space before the operator, the operator itself, and the space after the operator.
+Each `$this->operators` key is the class name of the operation, and each value is a three-element array consisting of the space before the operator, the operator itself, and the space after the operator.
 
-You can set the spacing around operators by overriding the `Styler::modOperators()` method returning the operators to modify. (Cf. `Styler::__construct()` for all operator strings.) For example, to make sure there is no space around `!`:
+You can modify the spacing around operators by overriding the `Styler::modOperators()` method returning the operators to modify. (Cf. the `Styler::$operators` property for all operator strings.) For example, to make sure there is no space around `!`:
 
 ```php
     protected function modOperators() : array
