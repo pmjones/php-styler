@@ -49,7 +49,7 @@ class Apply extends Command
         echo "Styled {$count} {$noun} in {$sum} seconds";
 
         if ($count) {
-            echo " ({$avg} seconds/{$noun}, {$mem} MB peak memory usage)";
+            echo " ({$avg} seconds/file, {$mem} MB peak memory usage)";
         }
 
         echo '.' . PHP_EOL;
