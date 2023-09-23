@@ -6,7 +6,7 @@
 
 - Fix `apply` command to honor the `--force` option again.
 
-- Floats, integers, single-quoted strings, and non-interpolated dohble-quoted strings now display their original raw value, not a reconstructed value.
+- Floats, integers, single-quoted strings, and non-interpolated double-quoted strings now display their original raw value, not a reconstructed value.
 
 - A file that starts with a `return` now has the return on the same line as the opening `<?php` tag.
 
