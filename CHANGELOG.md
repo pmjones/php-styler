@@ -2,16 +2,6 @@
 
 ## NEXT
 
-- Fix name in help output.
-
-- Handle class constants separately from non-class constants.
-
-- Add Styler::functionBodyClipWhen().
-
-- Change how operators get modified; was setOperators(), now modOperators().
-
-## 0.7.0
-
 - Add Styler::lastSeparatorChar() to specify comma (or no comma) on last item of split list.
 
 - Fix `apply` command to honor the `--force` option again.
@@ -23,6 +13,14 @@
 - Imports now get a blank line between `use` statements of different types; this means groups of `use`, `use const`, and `use function` will be visually separate from each other, though the _Styler_ will not regroup or rearrange them.
 
 - Standalone `const` statements are now grouped together instead of getting a blank line between them; class constants still have the blank line.
+
+- Fix name in help output.
+
+- Handle class constants separately from non-class constants.
+
+- Add Styler::functionBodyClipWhen().
+
+- Change how operators get modified; was setOperators(), now modOperators().
 
 ## 0.6.0
 
