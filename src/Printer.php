@@ -1582,7 +1582,7 @@ class Printer
         $this->print[] = new P\End($orig);
     }
 
-    protected function pStmt_ElseIf(Stmt\ElseIf_ $node) : void
+    protected function pStmt_ElseIf(Stmt\ElseIf_|Stmt\If_ $node) : void
     {
         $this->print[] = new P\ElseIf_();
         $this->pCond($node);
@@ -1592,6 +1592,11 @@ class Printer
 
     protected function pStmt_Else(Stmt\Else_ $node) : void
     {
+        if (count($node->stmts) === 1 && $node->stmts[0] instanceof Stmt\If_) {
+            $this->pStmt_ElseIf($node->stmts[0]);
+            return;
+        }
+
         $this->print[] = new P\Else_();
         $this->print[] = new P\Body('else');
         $this->p($node->stmts);

@@ -12,6 +12,7 @@ return new Config(
         __DIR__ . '/tests/FilesTest.php',
         __DIR__ . '/tests/IrkStyler.php',
         __DIR__ . '/tests/IrkStylerTest.php',
+        __DIR__ . '/tests/IssuesTest.php',
         __DIR__ . '/tests/LineTest.php',
         __DIR__ . '/tests/NestingTest.php',
         __DIR__ . '/tests/TestCase.php',
