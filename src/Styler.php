@@ -245,9 +245,29 @@ class Styler
         }
     }
 
-    protected function lastSeparatorChar() : string
+    protected function lastSeparator() : string
     {
         return ',';
+    }
+
+    protected function lastArgSeparator() : string
+    {
+        return $this->lastSeparator();
+    }
+
+    protected function lastArraySeparator() : string
+    {
+        return $this->lastSeparator();
+    }
+
+    protected function lastParamSeparator() : string
+    {
+        return $this->lastSeparator();
+    }
+
+    protected function lastMatchSeparator() : string
+    {
+        return $this->lastSeparator();
     }
 
     protected function functionBodyClipWhen() : callable
@@ -349,13 +369,13 @@ class Styler
     {
         if ($p->isExpansive()) {
             if ($p->count) {
-                $this->line[] = $this->lastSeparatorChar();
+                $this->line[] = $this->lastArgSeparator();
                 $this->newline();
             }
 
             $this->outdent();
         } elseif ($p->count && ! $p->isSingleArray) {
-            $this->split(P\Args::class, 'same', $this->lastSeparatorChar());
+            $this->split(P\Args::class, 'same', $this->lastArgSeparator());
         }
 
         $this->line[] = ')';
@@ -391,13 +411,13 @@ class Styler
     {
         if ($p->isExpansive()) {
             if ($p->count) {
-                $this->line[] = $this->lastSeparatorChar();
+                $this->line[] = $this->lastArraySeparator();
                 $this->newline();
             }
 
             $this->outdent();
         } elseif ($p->count) {
-            $this->split(P\Array_::class, 'same', $this->lastSeparatorChar());
+            $this->split(P\Array_::class, 'same', $this->lastArraySeparator());
         }
 
         $this->line[] = ']';
@@ -542,7 +562,7 @@ class Styler
     protected function sClosureUseEnd(P\ClosureUse $p) : void
     {
         if ($p->count) {
-            $this->split(P\Params::class, 'same', $this->lastSeparatorChar());
+            $this->split(P\Params::class, 'same', $this->lastParamSeparator());
         }
 
         $this->line[] = ')';
@@ -1060,7 +1080,7 @@ class Styler
 
     protected function sMatchArmEnd(P\MatchArm $p) : void
     {
-        $this->line[] = $this->lastSeparatorChar();
+        $this->line[] = $this->lastMatchSeparator();
         $this->newline();
     }
 
@@ -1161,13 +1181,13 @@ class Styler
     {
         if ($p->isExpansive()) {
             if ($p->count) {
-                $this->line[] = $this->lastSeparatorChar();
+                $this->line[] = $this->lastParamSeparator();
                 $this->newline();
             }
 
             $this->outdent();
         } elseif ($p->count) {
-            $this->split(P\Params::class, 'same', $this->lastSeparatorChar());
+            $this->split(P\Params::class, 'same', $this->lastParamSeparator());
         }
 
         $this->line[] = ')';

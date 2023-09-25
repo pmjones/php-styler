@@ -140,11 +140,33 @@ Changing the colon and brace placement in that manner will de-align the return t
 
 By default, the _Styler_ adds a trailing comma to the last item in an argument, parameter, or array listing, when that listing has been split across lines.
 
-To *not* add that comma, override `Styler::lastSeparatorChar()` to return an empty string:
+To not-add the trailing, override `Styler::lastSeparator()` to return an empty string:
 
 ```php
-    protected function lastSeparatorChar() : string
+    protected function lastSeparator() : string
     {
+        return '';
+    }
+```
+
+To not-add the comma only in some lists but not others, override the `Styler::last*Separator()` method for that type of list:
+
+```php
+    protected function lastArgSeparator() : string
+    {
+        // no trailing comma for args
+        return '';
+    }
+
+    protected function lastArraySeparator() : string
+    {
+        // trailing comma for arrays
+        return ',';
+    }
+
+    protected function lastParamSeparator() : string
+    {
+        // no trailing comma for params
         return '';
     }
 ```
