@@ -30,18 +30,35 @@ use PhpStyler\Printable as P;
 use PhpStyler\Printable\Printable;
 use PhpStyler\Styler;
 
-$styler = new class (lineLen: 88) extends Styler {
-};
-
 return new Config(
     files: new Files(__DIR__ . '/src'),
-    styler: $styler
+    styler: new class (lineLen: 88) extends Styler {
+    },
 );
 ```
 
-> You might also create an entirely separate class, then load and instantiate it as the `$styler`.
+You might also create an entirely separate class, then load and instantiate it as the `$styler` argument.
 
-Then invoke the `php-styler apply` command to make sure it works as the standard _Styler_.
+```php
+use PhpParser\Node\Expr;
+use PhpParser\Node\Stmt;
+use PhpStyler\Config;
+use PhpStyler\Files;
+use PhpStyler\Printable as P;
+use PhpStyler\Printable\Printable;
+use PhpStyler\Styler;
+
+class MyStyler extends Styler
+{
+}
+
+return new Config(
+    files: new Files(__DIR__ . '/src'),
+    styler: new MyStyler(lineLen: 88),
+);
+```
+
+Then invoke the `php-styler apply` command to make sure it works without errors.
 
 ## Method Overrides
 
@@ -91,7 +108,7 @@ The default presentation behavior for a function signature with expansive parame
 This keeps the parameters and return typehint lined up vertically with 4-space indents, and presents visual blank space between the signature and the body, like so:
 
 ```php
-    function veryLongFunctionName(
+    public function veryLongFunctionName(
         $veryLongParameter1,
         $veryLongParameter2,
         $veryLongParameter3,
@@ -124,7 +141,7 @@ To present the brace on the same line, override the method that sets the conditi
 Changing the colon and brace placement in that manner will de-align the return typehint from the rest of the signature, and remove the visual blank space between the signature and the body:
 
 ```php
-    function veryLongFunctionName(
+    public function veryLongFunctionName(
         $veryLongParameter1,
         $veryLongParameter2,
         $veryLongParameter3,
@@ -140,7 +157,7 @@ Changing the colon and brace placement in that manner will de-align the return t
 
 By default, the _Styler_ adds a trailing comma to the last item in an argument, parameter, or array listing, when that listing has been split across lines.
 
-To not-add the trailing, override `Styler::lastSeparator()` to return an empty string:
+To not-add the trailing comma, override `Styler::lastSeparator()` to return an empty string:
 
 ```php
     protected function lastSeparator() : string
