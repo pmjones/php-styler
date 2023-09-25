@@ -1,6 +1,6 @@
 # Change Log
 
-## NEXT
+## 0.8.0
 
 - Fix #4 (`else if` now presented as `elseif`)
 
