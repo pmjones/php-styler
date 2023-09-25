@@ -1,5 +1,15 @@
 # Change Log
 
+## NEXT
+
+- Fix #4 (`else if` now presented as `elseif`)
+
+- Rename `Styler::lastSeparatorChar()` to `lastSeparator()`
+
+- Add methods `Styler::lastArgSeparator()`, `lastArraySeparator()`, `lastParamSeparator()`, `lastMatchSeparator()` to allow for different last-item-separators on different constructs.
+
+- Updated docs & tests
+
 ## 0.7.0
 
 - Add Styler::lastSeparatorChar() to specify comma (or no comma) on last item of split list.
