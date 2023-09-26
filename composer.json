@@ -30,9 +30,9 @@
     "scripts": {
         "analyze": "./vendor/bin/phpstan",
         "check": "composer cs-fix-check && composer test && composer analyze",
-        "cs-fix": "./bin/php-styler apply -c php-styler.php",
-        "cs-fix-check": "./bin/php-styler check -c php-styler.php",
-        "cs-fix-preview": "./bin/php-styler preview -c php-styler.php",
+        "cs-fix": "php bin/php-styler apply -c php-styler.php",
+        "cs-fix-check": "php bin/php-styler check -c php-styler.php",
+        "cs-fix-preview": "php bin/php-styler preview -c php-styler.php",
         "test": "./vendor/bin/phpunit",
         "test-coverage": "./vendor/bin/phpunit --coverage-html=./tmp/coverage"
     }
