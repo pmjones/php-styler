@@ -114,6 +114,17 @@ class FilesTest extends TestCase
         'Visitor.php',
     ];
 
+    protected function getExpect() : array
+    {
+        $expect = [];
+
+        foreach ($this->expect as $file) {
+            $expect[] = str_replace('/', DIRECTORY_SEPARATOR, $file);
+        }
+
+        return $expect;
+    }
+
     public function testDirs() : void
     {
         $dir = dirname(__DIR__) . '/src/';
@@ -127,7 +138,7 @@ class FilesTest extends TestCase
         }
 
         sort($actual);
-        $this->assertSame($this->expect, $actual);
+        $this->assertSame($this->getExpect(), $actual);
     }
 
     public function testFile() : void
