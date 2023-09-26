@@ -42,5 +42,5 @@ jobs:
     - name: Install dependencies
       run: composer install
 
-    - name: Run test suite
-      run: composer test
+    - name: QA checks
+      run: composer check
