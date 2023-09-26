@@ -1,6 +1,6 @@
 # Change Log
 
-## NEXT
+## 0.9.0
 
 - Fix testing on Windows, with related Github workflow changes.
 
