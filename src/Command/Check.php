@@ -7,6 +7,8 @@ use AutoShell\Help;
 use PhpStyler\Config;
 use PhpStyler\Service;
 use PhpParser\Error;
+use SebastianBergmann\Diff\Differ;
+use SebastianBergmann\Diff\Output\DiffOnlyOutputBuilder;
 
 #[Help("Checks if any of the configured files need styling.")]
 class Check extends Command
@@ -50,7 +52,6 @@ class Check extends Command
 
         echo '.' . PHP_EOL;
         $failed = count($this->failure);
-
         /** @phpstan-ignore-next-line */
         $phrase = $failed === 1 ? 'file needs' : 'files need';
         echo "{$failed} {$phrase} appear to need styling." . PHP_EOL;
@@ -61,6 +62,9 @@ class Check extends Command
     {
         $count = 0;
         $service = new Service($config->styler);
+        $differ = new Differ(new DiffOnlyOutputBuilder(
+            '--- Original' . PHP_EOL . '+++ New' . PHP_EOL
+        ));
 
         foreach ($config->files as $file) {
             $file = (string) $file;
@@ -71,6 +75,7 @@ class Check extends Command
             if ($source !== $styled) {
                 echo $file . PHP_EOL;
                 $this->failure[] = $file;
+                echo $differ->diff($source, $styled) . PHP_EOL;
             }
         }
 
