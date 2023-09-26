@@ -43,4 +43,4 @@ jobs:
       run: composer install
 
     - name: QA checks
-      run: composer check
+      run: composer test && composer analyze
