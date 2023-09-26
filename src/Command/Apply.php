@@ -27,7 +27,7 @@ class Apply extends Command
 
         // apply styling
         try {
-            $count = $this->style($config, $cacheTime);
+            $count = $this->applyStyle($config, $cacheTime);
         } catch (Error $e) {
             echo $e->getMessage() . PHP_EOL;
             return 1;
@@ -81,7 +81,7 @@ class Apply extends Command
         return $cacheTime;
     }
 
-    protected function style(Config $config, int|false $cacheTime) : int
+    protected function applyStyle(Config $config, int|false $cacheTime) : int
     {
         $count = 0;
         $service = new Service($config->styler);

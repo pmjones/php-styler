@@ -123,6 +123,24 @@ PHP-Styler will only apply formatting to files with a modification time *later* 
 
 Changing the config file after `apply` will invalidate the cache, implying `--force` and thereby causing PHP-Styler to apply formatting to all files.
 
+
+### Check Formatting
+
+Check all files identified in the config file to see if they need formatting, without changing any of the files:
+
+```
+./vendor/bin/php-styler check
+```
+
+Pass `-c` or `--config` to specify an alternative config file:
+
+```
+./vendor/bin/php-styler apply -c /path/to/other/php-styler.php
+```
+
+If all files look OK, the return code is `0`. If one or more files look like they need to be styled, the return code is `1`.
+
+
 ### Configuration
 
 The default `php-styler.php` config file looks like this:

@@ -46,6 +46,8 @@ class FilesTest extends TestCase
             'Clip.php',
             'Command/Apply.php',
             'Command/ApplyOptions.php',
+            'Command/Check.php',
+            'Command/CheckOptions.php',
             'Command/Command.php',
             'Command/Preview.php',
             'Command/PreviewOptions.php',
