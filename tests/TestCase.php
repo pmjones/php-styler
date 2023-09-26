@@ -25,6 +25,8 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
     protected function assertPrint(string $expect, string $source) : void
     {
         $actual = $this->print($source);
+        $actual = str_replace("\r\n", "\n", $actual);
+        $expect = str_replace("\r\n", "\n", $expect);
         $this->assertSame($expect, $actual);
     }
 }
