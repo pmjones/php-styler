@@ -2,9 +2,9 @@
 
 ## NEXT
 
-- Fix testing on Windows.
+- Fix testing on Windows, with related Github workflow changes.
 
-- Add/update Github workflow.
+- Add `check` command, to see if any files need styling.
 
 ## 0.8.0
 
