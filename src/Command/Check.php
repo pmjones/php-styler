@@ -52,6 +52,7 @@ class Check extends Command
 
         echo '.' . PHP_EOL;
         $failed = count($this->failure);
+
         /** @phpstan-ignore-next-line */
         $phrase = $failed === 1 ? 'file needs' : 'files need';
         echo "{$failed} {$phrase} appear to need styling." . PHP_EOL;
@@ -62,9 +63,9 @@ class Check extends Command
     {
         $count = 0;
         $service = new Service($config->styler);
-        $differ = new Differ(new DiffOnlyOutputBuilder(
-            '--- Original' . PHP_EOL . '+++ New' . PHP_EOL
-        ));
+        $differ = new Differ(
+            new DiffOnlyOutputBuilder('--- Original' . PHP_EOL . '+++ New' . PHP_EOL),
+        );
 
         foreach ($config->files as $file) {
             $file = (string) $file;
