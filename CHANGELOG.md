@@ -1,5 +1,11 @@
 # Change Log
 
+## NEXT
+
+- Fix testing on Windows.
+
+- Add/update Github workflow.
+
 ## 0.8.0
 
 - Fix #4 (`else if` now presented as `elseif`)
