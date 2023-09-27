@@ -52,8 +52,8 @@ class Check extends Command
         $failed = count($this->failure);
 
         /** @phpstan-ignore-next-line */
-        $phrase = $failed === 1 ? 'file needs' : 'files need';
-        echo "{$failed} {$phrase} appear to need styling." . PHP_EOL;
+        $phrase = $failed === 1 ? 'file appears' : 'files appear';
+        echo "{$failed} {$phrase} to need styling." . PHP_EOL;
         return (int) $this->failure;
     }
 
