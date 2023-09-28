@@ -1,5 +1,11 @@
 # Change Log
 
+## NEXT
+
+- Inline comments, including end-of-line comments, are now presented with greater fidelity to the original code.
+
+- Other internal QA tooling changes and additions.
+
 ## 0.9.0
 
 - Fix testing on Windows, with related Github workflow changes.
