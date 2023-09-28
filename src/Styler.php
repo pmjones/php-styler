@@ -603,6 +603,18 @@ class Styler
         }
     }
 
+    protected function sInlineComment(P\InlineComment $p) : void
+    {
+        if ($p->trailing) {
+            $this->clip();
+            $this->line[] = ' ' . $p->text;
+            $this->newline();
+        } else {
+            $this->line[] = $p->text;
+            $this->line[] = ' ';
+        }
+    }
+
     protected function sComment(P\Comment $p) : void
     {
         $this->line[] = $p->text;

@@ -105,6 +105,11 @@ class Printer
     ];
 
     /**
+     * @var ?Node
+     */
+    protected $priorNode = null;
+
+    /**
      * @var array<int, null|string|Printable>
      */
     protected array $print = [];
@@ -147,13 +152,9 @@ class Printer
         }
 
         $this->pComments($spec);
-
-        if ($spec instanceof Stmt\Nop) {
-            return;
-        }
-
         $method = 'p' . $spec->getType();
         $this->{$method}($spec);
+        $this->priorNode = $spec;
     }
 
     protected function pArg(Node\Arg $node) : void
@@ -244,24 +245,31 @@ class Printer
 
     protected function pComments(Node $node) : void
     {
-        $commentNodes = $node->getComments();
+        $comments = $node->getComments();
 
-        if (! $commentNodes) {
+        if (! $comments) {
             return;
         }
 
-        if ($this->commented->contains($commentNodes[0])) {
+        if ($this->commented->contains($comments[0])) {
             // if you've seen the first comment node from this array,
             // you've seen all the comment nodes from this array
             return;
         }
 
-        $this->commented->attach($commentNodes[0]);
-        $this->print[] = $orig = new P\Comments(count($commentNodes));
+        $this->commented->attach($comments[0]);
+        $inlineComment = $this->inlineComment($node, $comments);
 
-        foreach ($commentNodes as $commentNode) {
+        if ($inlineComment) {
+            $this->print[] = $inlineComment;
+            return;
+        }
+
+        $this->print[] = $orig = new P\Comments();
+
+        foreach ($comments as $comment) {
             /** @var string */
-            $text = $commentNode->getReformattedText();
+            $text = $comment->getReformattedText();
             $lines = explode("\n", $text);
 
             foreach ($lines as $line) {
@@ -1640,6 +1648,10 @@ class Printer
         }
     }
 
+    protected function pStmt_Nop(Stmt\Nop $node) : void
+    {
+    }
+
     protected function pStmt_Property(Stmt\Property $node) : void
     {
         $this->pAttributeGroups($node);
@@ -2141,6 +2153,33 @@ class Printer
                 return;
             }
         }
+    }
+
+    /**
+     * @param Comment[] $comments
+     */
+    protected function inlineComment(Node $node, array $comments) : ?P\InlineComment
+    {
+        if ($node instanceof Stmt\Nop || count($comments) > 1) {
+            return null;
+        }
+
+        $comment = $comments[0];
+        $commentStartLine = $comment->getStartLine();
+
+        if ($commentStartLine === $node->getStartLine()) {
+            /** @var string */
+            $text = $comment->getReformattedText();
+            return new P\InlineComment($text, trailing: false);
+        }
+
+        if ($commentStartLine === $this->priorNode?->getEndLine()) {
+            /** @var string */
+            $text = $comment->getReformattedText();
+            return new P\InlineComment($text, trailing: true);
+        }
+
+        return null;
     }
 
     protected function rawValue(Node $node) : string

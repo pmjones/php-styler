@@ -100,6 +100,7 @@ class FilesTest extends TestCase
             'Printable/Implements_.php',
             'Printable/Infix.php',
             'Printable/InfixOp.php',
+            'Printable/InlineComment.php',
             'Printable/InlineHtml.php',
             'Printable/InstanceOp.php',
             'Printable/Interface_.php',
