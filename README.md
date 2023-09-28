@@ -317,12 +317,11 @@ $sql = <<<SQL
     FROM {$table}
 SQL;
 ```
-... will be rendered exactly as provided.
+
+... should be rendered as provided.
 
 
 ## Caveats
-
-These are not all-inclusive; see also [FIXME.md](./FIXME.md) for known issues to be addressed.
 
 ### Line Length
 
@@ -389,21 +388,42 @@ $foo = 'muchlonger' . $bar;
 
 ### Comment Lines
 
-PHP-Styler does not reformat comment line contents.
-
-Comment lines are always attached to the following line, not the same or previous line. That is, leading or trailing comments *on the same line* may not appear where you expect. Likewise, comments intended to be attached to the *previous* line may end up attached to the *following* line. (This is a limitation of PHP-Parser.)
-
-Comments within argument or parameter lists may mess up indenting; consider removing them.
-
-Inline comments within array elements may mess up indenting; consider placing the comment on the line above that element instead.
-
-Comments on closure signatures may mess up indenting. For example, the following is how PHP-Styler reformats one part of Laminas Escaper:
+Comment lines are always "attached" to their following line, not their previous line. For example, the `// no break` comment that looks attached to its previous line ...
 
 ```php
-$this->htmlAttrMatcher =
+    case 'foo':
+        $foo = 'bar';
+        // no break
 
-/** @param array<array-key, string> $matches */
-function (array $matches) : string {
-   return $this->htmlAttrMatcher($matches);
-};
+    case 'baz':
+        $baz = 'dib'
+        break;
 ```
+
+... will be presented as if attached to its *following* line, like so:
+
+```php
+    case 'foo':
+        $foo = 'bar';
+
+    // no break
+    case 'baz':
+        $baz = 'dib'
+        break;
+```
+
+This is a limitation of PHP-Parser; becasue it does not currently report the column number on which nodes start and end, PHP-Styler cannot divine how the comment should be attached.
+
+Further, some comments may disappear entirely when they are the only element within certain structures:
+
+```php
+switch ($foo) {
+    /* this comment disappears */
+}
+
+function bar(/* this comment disappears */)
+{
+}
+```
+
+This appears to be an issue with PHP-Parser itself; cf. <https://github.com/nikic/PHP-Parser/issues/950>.
