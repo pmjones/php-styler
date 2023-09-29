@@ -424,6 +424,12 @@ switch ($foo) {
 function bar(/* this comment disappears */)
 {
 }
+
+$fb = 'veryVeryLongStringToConcatenate' // this comment disappears
+    . 'veryVeryLongStringToConcatenate' // this comment disappears
+    . 'veryVeryLongStringToConcatenate' // this comment disappears
+    . 'veryVeryLongStringToConcatenate' // this comment disappears
+    . 'veryVeryLongStringToConcatenate';
 ```
 
 This appears to be an issue with PHP-Parser itself; cf. <https://github.com/nikic/PHP-Parser/issues/950>.
