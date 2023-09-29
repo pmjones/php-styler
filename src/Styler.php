@@ -601,7 +601,10 @@ class Styler
 
     protected function sComments(P\Comments $p) : void
     {
-        $this->clip();
+        $this->clip(when: function (string $lastLine) : bool {
+            $trimmed = trim($lastLine);
+            return ! str_starts_with($trimmed, '//') && ! str_ends_with($trimmed, '*/');
+        });
         $this->newline();
 
         if (! $p->isFirst()) {

@@ -14,7 +14,7 @@ switch ($foo) {
     case 'foo':
         echo $foo;
 
-    // above-line-case
+    // no break
     case 'bar':
         echo $bar;
         break;
@@ -26,3 +26,11 @@ switch ($foo) {
  * multi-line
  */
 $foo = 'bar';
+
+// set callbacks
+$foo =
+
+/** @param array<array-key, string> $bar */
+function (array $bar) : string {
+    return baz($bar);
+};

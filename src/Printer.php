@@ -2167,15 +2167,14 @@ class Printer
         $comment = $comments[0];
         $commentStartLine = $comment->getStartLine();
 
+        /** @var string */
+        $text = $comment->getReformattedText();
+
         if ($commentStartLine === $node->getStartLine()) {
-            /** @var string */
-            $text = $comment->getReformattedText();
             return new P\InlineComment($text, trailing: false);
         }
 
         if ($commentStartLine === $this->priorNode?->getEndLine()) {
-            /** @var string */
-            $text = $comment->getReformattedText();
             return new P\InlineComment($text, trailing: true);
         }
 
