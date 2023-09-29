@@ -1,5 +1,46 @@
 # Change Log
 
+## NEXT
+
+Fixes a logic-breaking bug with inline docblock comments.
+
+Previously, this source code ...
+
+```php
+// set callbacks
+$foo =
+    /** @param array<array-key, string> $bar */
+    function (array $bar) : string {
+        return baz($bar);
+    };
+```
+
+... would be presented as ...
+
+```php
+// set callbacks$foo =
+
+/** @param array<array-key, string> $bar */
+function (array $bar) : string {
+    return baz($bar);
+};
+```
+
+... thereby breaking the code. With this fix, it is presented as ...
+
+```php
+// set callbacks
+$foo =
+
+/** @param array<array-key, string> $bar */
+function (array $bar) : string {
+    return baz($bar);
+};
+```
+
+... which corrects the logic-breaking bug, though the presentation leaves something to be desired.
+
+
 ## 0.10.0
 
 - Inline comments, including end-of-line comments, are now presented with greater fidelity to the original code.
