@@ -19,6 +19,7 @@ class Service
         protected Styler $styler,
         protected bool $debugParser = false,
         protected bool $debugPrinter = false,
+        protected bool $debugStyler = false,
     ) {
         $parserFactory = new ParserFactory();
         $this->parser = $parserFactory->create(ParserFactory::ONLY_PHP7);
@@ -36,7 +37,7 @@ class Service
         $this->nodeTraverser->traverse($stmts);
 
         if ($this->debugParser) {
-            $debug .= $this->dump("Parser nodes: ", $stmts);
+            $debug .= $this->dump("Parser Nodes: ", $stmts);
         }
 
         $printables = $this->printer->__invoke($stmts);
@@ -45,7 +46,7 @@ class Service
             $debug .= $this->dump("Printables: ", $printables);
         }
 
-        return $debug . $this->styler->__invoke($printables);
+        return $debug . $this->styler->__invoke($printables, $this->debugStyler);
     }
 
     protected function dump(string $label, mixed $value) : string

@@ -118,7 +118,7 @@ class Styler
     /**
      * @param array<int, null|string|Printable> $list
      */
-    public function __invoke(array $list) : string
+    public function __invoke(array $list, bool $debug = false) : string
     {
         if (! $list) {
             return "<?php" . $this->eol;
@@ -144,6 +144,12 @@ class Styler
 
         $this->newline();
         $output = '';
+
+        if ($debug) {
+            ob_start();
+            var_dump($this->lines);
+            $output .= "?>Styler Lines: " . ob_get_clean() . '<?php';
+        }
 
         foreach ($this->lines as $line) {
             $line->append($output);

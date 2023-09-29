@@ -17,8 +17,11 @@ class PreviewOptions implements Options
         #[Option('debug-parser', help: "Dump parser nodes in output.")]
         public readonly ?bool $debugParser,
 
-        #[Option('debug-printer', help: "Dump array of printables in output.")]
+        #[Option('debug-printer', help: "Dump printables in output.")]
         public readonly ?bool $debugPrinter,
+
+        #[Option('debug-styler', help: "Dump styler lines in output.")]
+        public readonly ?bool $debugStyler,
     ) {
     }
 }

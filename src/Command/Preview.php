@@ -25,6 +25,7 @@ class Preview extends Command
             $config->styler,
             $options->debugParser ?? false,
             $options->debugPrinter ?? false,
+            $options->debugStyler ?? false,
         );
         echo $service((string) file_get_contents($sourceFile));
         return 0;
