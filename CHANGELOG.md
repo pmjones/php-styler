@@ -1,6 +1,6 @@
 # Change Log
 
-## NEXT
+## 0.10.1
 
 Fixes a logic-breaking bug with inline docblock comments.
 
