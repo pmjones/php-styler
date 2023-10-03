@@ -1,5 +1,15 @@
 # Change Log
 
+## NEXT
+
+- Improve presentation of inline comments.
+
+- Rename Styler::functionBodyClipWhen() to functionBodyCondenseWhen().
+
+- Rename Styler::maybeNewline() to maybeDoubleNewline().
+
+- In Styler, replace clip+newline idiom with forceSingleNewline() method.
+
 ## 0.10.1
 
 Fixes a logic-breaking bug with inline docblock comments.
@@ -39,7 +49,6 @@ function (array $bar) : string {
 ```
 
 ... which corrects the logic-breaking bug, though the presentation leaves something to be desired.
-
 
 ## 0.10.0
 
