@@ -433,3 +433,16 @@ $fb = 'veryVeryLongStringToConcatenate' // this comment disappears
 ```
 
 This appears to be an issue with PHP-Parser itself; cf. <https://github.com/nikic/PHP-Parser/issues/950>.
+
+Likewise, a final inline comment on a final array element may disappear:
+
+```php
+$map = [
+    34 => 'quot', // quotation mark
+    38 => 'amp', // ampersand
+    60 => 'lt', // less-than sign
+    62 => 'gt', // greater-than sign -- this comment disappears
+];
+```
+
+This too appears to be an issue with PHP-Parser iself.
