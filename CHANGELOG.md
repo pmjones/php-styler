@@ -1,6 +1,6 @@
 # Change Log
 
-## NEXT
+## 0.11.0
 
 - Improve presentation of inline comments.
 
