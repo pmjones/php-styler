@@ -231,12 +231,12 @@ class Styler
         $this->braceOnNextLine();
     }
 
-    public function rtrim()
+    public function rtrim() : void
     {
         $this->line[] = new W\Rtrim();
     }
 
-    public function forceSingleNewline()
+    public function forceSingleNewline() : void
     {
         $this->rtrim();
         $this->newline();

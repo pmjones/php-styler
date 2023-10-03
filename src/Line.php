@@ -175,7 +175,7 @@ class Line implements ArrayAccess
 
         foreach ($this->parts as $part) {
             if ($part instanceof Whitespace) {
-                $method = lcfirst(substr(strrchr(get_class($part), '\\'), 1))
+                $method = lcfirst(substr((string) strrchr(get_class($part), '\\'), 1))
                     . 'Whitespace';
                 $this->{$method}($part, $output);
             } elseif (is_string($part)) {
@@ -221,7 +221,7 @@ class Line implements ArrayAccess
         return [$level, $rule];
     }
 
-    protected function rtrimWhitespace(W\Rtrim $rtrim, string &$output)
+    protected function rtrimWhitespace(W\Rtrim $rtrim, string &$output) : void
     {
         $this->append = rtrim($this->append);
 
