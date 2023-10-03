@@ -2160,7 +2160,7 @@ class Printer
      */
     protected function inlineComment(Node $node, array $comments) : ?P\InlineComment
     {
-        if ($node instanceof Stmt\Nop || count($comments) > 1) {
+        if (count($comments) > 1) {
             return null;
         }
 
@@ -2170,12 +2170,12 @@ class Printer
         /** @var string */
         $text = $comment->getReformattedText();
 
-        if ($commentStartLine === $node->getStartLine()) {
-            return new P\InlineComment($text, trailing: false);
-        }
-
         if ($commentStartLine === $this->priorNode?->getEndLine()) {
             return new P\InlineComment($text, trailing: true);
+        }
+
+        if ($commentStartLine === $node->getStartLine()) {
+            return new P\InlineComment($text, trailing: false);
         }
 
         return null;

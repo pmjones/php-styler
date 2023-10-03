@@ -129,10 +129,10 @@ To change the spacing around the return typehint colon, override the method that
     }
 ```
 
-To present the brace on the same line, override the method that sets the condition for when the space between the function signature and the function body should be clipped:
+To present the brace on the same line, override the method that sets the condition for when the space between the function signature and the function body should be condensed:
 
 ```php
-    protected function functionBodyClipWhen(): callable
+    protected function functionBodyCondenseWhen(): callable
     {
         return fn (string $lastLine): bool => str_starts_with(trim($lastLine), ')');
     }

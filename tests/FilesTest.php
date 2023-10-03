@@ -43,7 +43,6 @@ class FilesTest extends TestCase
     protected function getExpect() : array
     {
         $expect = [
-            'Clip.php',
             'Command/Apply.php',
             'Command/ApplyOptions.php',
             'Command/Check.php',
@@ -149,6 +148,9 @@ class FilesTest extends TestCase
             'Split.php',
             'Styler.php',
             'Visitor.php',
+            'Whitespace.php',
+            'Whitespace/Condense.php',
+            'Whitespace/Rtrim.php',
         ];
 
         foreach ($expect as $key => $val) {

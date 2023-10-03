@@ -7,7 +7,7 @@ use PhpStyler\Printable as P;
 
 class IrkStyler extends Styler
 {
-    protected function functionBodyClipWhen() : callable
+    protected function functionBodyCondenseWhen() : callable
     {
         return fn (string $lastLine) : bool => str_starts_with(trim($lastLine), ')');
     }

@@ -1,15 +1,17 @@
 <?php
 declare(strict_types=1);
 
-namespace PhpStyler;
+namespace PhpStyler\Whitespace;
 
-class Clip
+use PhpStyler\Whitespace;
+
+class Condense extends Whitespace
 {
     /**
      * @param callable $when
      */
     public function __construct(
-        public readonly mixed $when = null,
+        public readonly mixed $when,
         public readonly string $append = '',
     ) {
     }

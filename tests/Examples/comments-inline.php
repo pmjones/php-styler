@@ -20,6 +20,11 @@ switch ($foo) {
         break;
 }
 
+function foo()
+{
+    return; // end-line
+}
+
 /**
  * multi-line
  * multi-line
@@ -27,10 +32,18 @@ switch ($foo) {
  */
 $foo = 'bar';
 
-// set callbacks
-$foo =
+// set matcher callbacks
+$this->htmlAttrMatcher = /** @param array<array-key, string> $matches */
+function (array $matches) : string {
+    return $this->htmlAttrMatcher($matches);
+};
+$this->jsMatcher = /** @param array<array-key, string> $matches */
+function (array $matches) : string {
+    return $this->jsMatcher($matches);
+};
+$this->cssMatcher =
 
-/** @param array<array-key, string> $bar */
-function (array $bar) : string {
-    return baz($bar);
+/** @param array<array-key, string> $matches */
+function (array $matches) : string {
+    return $this->cssMatcher($matches);
 };

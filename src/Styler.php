@@ -7,6 +7,7 @@ use PhpParser\Node\Expr;
 use PhpParser\Node\Stmt;
 use PhpStyler\Printable as P;
 use PhpStyler\Printable\Printable;
+use PhpStyler\Whitespace as W;
 
 class Styler
 {
@@ -215,8 +216,7 @@ class Styler
 
     protected function braceEnd() : void
     {
-        $this->clip();
-        $this->newline();
+        $this->forceSingleNewline();
         $this->outdent();
         $this->line[] = '}';
         $this->newline();
@@ -231,17 +231,23 @@ class Styler
         $this->braceOnNextLine();
     }
 
+    public function rtrim()
+    {
+        $this->line[] = new W\Rtrim();
+    }
+
+    public function forceSingleNewline()
+    {
+        $this->rtrim();
+        $this->newline();
+    }
+
     /**
      * Opening brace for if, for, foreach, do, match, switch, try, while, etc.
      */
     protected function controlBrace() : void
     {
         $this->braceOnSameLine();
-    }
-
-    protected function clip(callable $when = null, string $append = '') : void
-    {
-        $this->line[] = new Clip($when, $append);
     }
 
     protected function split(string $class, string $type, ?string $char = null) : void
@@ -276,7 +282,7 @@ class Styler
         return $this->lastSeparator();
     }
 
-    protected function functionBodyClipWhen() : callable
+    protected function functionBodyCondenseWhen() : callable
     {
         return fn (string $lastLine) : bool => trim($lastLine) === ')';
     }
@@ -297,10 +303,9 @@ class Styler
         );
     }
 
-    protected function maybeNewline(Printable $p) : void
+    protected function maybeDoubleNewline(Printable $p) : void
     {
-        $this->clip();
-        $this->newline();
+        $this->forceSingleNewline();
 
         if ($p->isFirst() || $p->hasComment() || $p->hasAttribute()) {
             return;
@@ -457,7 +462,7 @@ class Styler
 
     protected function sArrowFunctionBodyEnd(P\Body $p) : void
     {
-        $this->split(P\ArrowFunction::class, 'clip');
+        $this->split(P\ArrowFunction::class, 'condense');
         $this->nesting->decr(P\ArrowFunction::class);
     }
 
@@ -468,7 +473,7 @@ class Styler
 
     protected function sAttributeGroups(P\AttributeGroups $p) : void
     {
-        $this->maybeNewline($p);
+        $this->maybeDoubleNewline($p);
     }
 
     protected function sAttributeGroup(P\AttributeGroup $p) : void
@@ -520,7 +525,7 @@ class Styler
     protected function sClass(P\Class_ $p) : void
     {
         if ($p->name) {
-            $this->maybeNewline($p);
+            $this->maybeDoubleNewline($p);
         }
 
         $name = $p->name ? ' ' . $p->name : ' ';
@@ -539,7 +544,7 @@ class Styler
 
     protected function sClassConst(P\ClassConst $p) : void
     {
-        $this->maybeNewline($p);
+        $this->maybeDoubleNewline($p);
         $this->line[] = $this->modifiers($p->flags);
         $this->line[] = 'const ';
     }
@@ -582,8 +587,7 @@ class Styler
 
     protected function sClosureBodyEnd(P\Body $p) : void
     {
-        $this->clip();
-        $this->newline();
+        $this->forceSingleNewline();
         $this->outdent();
         $this->line[] = '}';
     }
@@ -601,11 +605,7 @@ class Styler
 
     protected function sComments(P\Comments $p) : void
     {
-        $this->clip(when: function (string $lastLine) : bool {
-            $trimmed = trim($lastLine);
-            return ! str_starts_with($trimmed, '//') && ! str_ends_with($trimmed, '*/');
-        });
-        $this->newline();
+        $this->forceSingleNewline();
 
         if (! $p->isFirst()) {
             $this->newline();
@@ -615,7 +615,7 @@ class Styler
     protected function sInlineComment(P\InlineComment $p) : void
     {
         if ($p->trailing) {
-            $this->clip();
+            $this->rtrim();
             $this->line[] = ' ' . $p->text;
             $this->newline();
         } else {
@@ -707,7 +707,7 @@ class Styler
 
     protected function sDo(P\Do_ $p) : void
     {
-        $this->maybeNewline($p);
+        $this->maybeDoubleNewline($p);
         $this->line[] = 'do';
     }
 
@@ -718,8 +718,7 @@ class Styler
 
     protected function sDoBodyEnd(P\Body $p) : void
     {
-        $this->clip();
-        $this->newline();
+        $this->forceSingleNewline();
         $this->outdent();
         $this->line[] = '} while ';
     }
@@ -754,7 +753,7 @@ class Styler
 
     protected function sEnum(P\Enum_ $p) : void
     {
-        $this->maybeNewline($p);
+        $this->maybeDoubleNewline($p);
         $this->line[] = 'enum ' . $p->name;
     }
 
@@ -765,7 +764,7 @@ class Styler
 
     protected function sEnumCase(P\EnumCase $p) : void
     {
-        $this->maybeNewline($p);
+        $this->maybeDoubleNewline($p);
         $this->line[] = 'case ' . $p->name;
     }
 
@@ -802,7 +801,7 @@ class Styler
 
     protected function sFor(P\For_ $p) : void
     {
-        $this->maybeNewline($p);
+        $this->maybeDoubleNewline($p);
         $this->line[] = 'for ';
     }
 
@@ -824,7 +823,7 @@ class Styler
 
     protected function sForeach(P\Foreach_ $p) : void
     {
-        $this->maybeNewline($p);
+        $this->maybeDoubleNewline($p);
         $this->line[] = 'foreach ';
     }
 
@@ -840,7 +839,7 @@ class Styler
 
     protected function sFunction(P\Function_ $p) : void
     {
-        $this->maybeNewline($p);
+        $this->maybeDoubleNewline($p);
         $this->line[] = $this->modifiers($p->flags) . 'function ';
     }
 
@@ -853,7 +852,10 @@ class Styler
     protected function sFunctionBody(P\Body $p) : void
     {
         $this->newline();
-        $this->clip(when: $this->functionBodyClipWhen(), append: ' ');
+        $this->line[] = new W\Condense(
+            when: $this->functionBodyCondenseWhen(),
+            append: ' ',
+        );
         $this->line[] = '{';
         $this->newline();
         $this->indent();
@@ -902,7 +904,7 @@ class Styler
 
     protected function sIf(P\If_ $p) : void
     {
-        $this->maybeNewline($p);
+        $this->maybeDoubleNewline($p);
         $this->line[] = 'if ';
     }
 
@@ -913,8 +915,7 @@ class Styler
 
     protected function sElseIf(P\ElseIf_ $p) : void
     {
-        $this->clip();
-        $this->newline();
+        $this->forceSingleNewline();
         $this->outdent();
         $this->line[] = '} elseif ';
     }
@@ -926,8 +927,7 @@ class Styler
 
     protected function sElse(P\Else_ $p) : void
     {
-        $this->clip();
-        $this->newline();
+        $this->forceSingleNewline();
         $this->outdent();
         $this->line[] = '} else';
     }
@@ -1006,7 +1006,7 @@ class Styler
     {
         switch ($p->class) {
             case Expr\BinaryOp\Coalesce::class:
-                $this->split($p->class, 'clip');
+                $this->split($p->class, 'condense');
                 break;
 
             case Expr\BinaryOp\Concat::class:
@@ -1058,7 +1058,7 @@ class Styler
 
     protected function sInterface(P\Interface_ $p) : void
     {
-        $this->maybeNewline($p);
+        $this->maybeDoubleNewline($p);
         $this->line[] = 'interface ' . $p->name;
     }
 
@@ -1107,8 +1107,7 @@ class Styler
 
     protected function sMatchBodyEnd(P\Body $p) : void
     {
-        $this->clip();
-        $this->newline();
+        $this->forceSingleNewline();
         $this->outdent();
         $this->line[] = '}';
     }
@@ -1245,7 +1244,7 @@ class Styler
 
     protected function sProperty(P\Property $p) : void
     {
-        $this->maybeNewline($p);
+        $this->maybeDoubleNewline($p);
         $this->line[] = $this->modifiers($p->flags);
     }
 
@@ -1332,7 +1331,7 @@ class Styler
 
     protected function sSwitch(P\Switch_ $p) : void
     {
-        $this->maybeNewline($p);
+        $this->maybeDoubleNewline($p);
         $this->line[] = 'switch ';
     }
 
@@ -1381,8 +1380,7 @@ class Styler
 
     protected function sSwitchCaseBodyEnd(P\Body $p) : void
     {
-        $this->clip();
-        $this->newline();
+        $this->forceSingleNewline();
         $this->newline();
         $this->outdent();
     }
@@ -1412,7 +1410,7 @@ class Styler
 
     protected function sThrow(P\Throw_ $p) : void
     {
-        $this->maybeNewline($p);
+        $this->maybeDoubleNewline($p);
         $this->line[] = 'throw ';
     }
 
@@ -1424,7 +1422,7 @@ class Styler
 
     protected function sTrait(P\Trait_ $p) : void
     {
-        $this->maybeNewline($p);
+        $this->maybeDoubleNewline($p);
         $this->line[] = 'trait ' . $p->name;
     }
 
@@ -1440,7 +1438,7 @@ class Styler
 
     protected function sTry(P\Try_ $p) : void
     {
-        $this->maybeNewline($p);
+        $this->maybeDoubleNewline($p);
         $this->line[] = 'try';
     }
 
@@ -1451,8 +1449,7 @@ class Styler
 
     protected function sTryCatch(P\TryCatch $p) : void
     {
-        $this->clip();
-        $this->newline();
+        $this->forceSingleNewline();
         $this->outdent();
         $this->line[] = '} catch ';
     }
@@ -1464,8 +1461,7 @@ class Styler
 
     protected function sTryFinally(P\TryFinally $p) : void
     {
-        $this->clip();
-        $this->newline();
+        $this->forceSingleNewline();
         $this->outdent();
         $this->line[] = '} finally';
     }
@@ -1574,7 +1570,7 @@ class Styler
 
     protected function sWhile(P\While_ $p) : void
     {
-        $this->maybeNewline($p);
+        $this->maybeDoubleNewline($p);
         $this->line[] = 'while ';
     }
 

@@ -7,6 +7,8 @@ use ArrayAccess;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Stmt;
 use PhpStyler\Printable as P;
+use PhpStyler\Whitespace as W;
+use PhpStyler\Whitespace;
 
 /**
  * @implements ArrayAccess<int, mixed>
@@ -147,12 +149,12 @@ class Line implements ArrayAccess
         $this->line->indentNum ++;
     }
 
-    protected function clipSplit(Split $part) : void
+    protected function condenseSplit(Split $part) : void
     {
         $this->lines[] = $this->line;
         $this->line = $this->newline();
         $this->line->indentNum ++;
-        $this->line[] = new Clip();
+        $this->line[] = new W\Condense(when: fn () => true);
     }
 
     protected function sameSplit(Split $part) : void
@@ -172,8 +174,10 @@ class Line implements ArrayAccess
         $oldOutput = $output;
 
         foreach ($this->parts as $part) {
-            if ($part instanceof Clip) {
-                $this->clip($part, $output);
+            if ($part instanceof Whitespace) {
+                $method = lcfirst(substr(strrchr(get_class($part), '\\'), 1))
+                    . 'Whitespace';
+                $this->{$method}($part, $output);
             } elseif (is_string($part)) {
                 $this->append .= $part;
             }
@@ -217,22 +221,25 @@ class Line implements ArrayAccess
         return [$level, $rule];
     }
 
-    protected function clip(Clip $clip, string &$output) : void
+    protected function rtrimWhitespace(W\Rtrim $rtrim, string &$output)
     {
-        if ($clip->when === null) {
-            $this->append = ltrim($this->append) . $clip->append;
-            $output = rtrim($output);
-            return;
-        }
+        $this->append = rtrim($this->append);
 
+        if ($this->append === '') {
+            $output = rtrim($output);
+        }
+    }
+
+    protected function condenseWhitespace(W\Condense $condense, string &$output) : void
+    {
         $trimmed = rtrim($output);
         $pos = strrpos($trimmed, $this->eol);
         $len = strlen($this->eol);
         $lastLine = substr($trimmed, $pos + $len);
 
-        if (call_user_func($clip->when, $lastLine)) {
-            $this->append = ltrim($this->append) . $clip->append;
-            $output = rtrim($output);
+        if (call_user_func($condense->when, $lastLine)) {
+            $output = $trimmed;
+            $this->append = ltrim($this->append) . $condense->append;
         }
     }
 }
