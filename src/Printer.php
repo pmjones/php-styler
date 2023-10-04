@@ -265,7 +265,7 @@ class Printer
             return;
         }
 
-        $this->print[] = $orig = new P\Comments();
+        $this->print[] = $orig = new P\Comments(on: get_class($node));
 
         foreach ($comments as $comment) {
             /** @var string */
