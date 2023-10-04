@@ -15,3 +15,41 @@ function foo()
         BAZ;
     }
 }
+
+function bar()
+{
+    $query = <<<'SQL'
+        SELECT
+            *
+        FROM
+            table
+        WHERE
+            foo = bar
+    SQL;
+    return new Bar($query);
+}
+
+$baz = dib(
+    <<<'SQL'
+        SELECT
+            *
+        FROM
+            table
+        WHERE
+            foo = bar
+    SQL,
+    'bar',
+    'baz',
+);
+$foo = [
+    <<<SQL
+        SELECT
+            *
+        FROM
+            table
+        WHERE
+            foo = bar
+    SQL,
+    'bar',
+    'baz',
+];

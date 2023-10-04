@@ -5,6 +5,7 @@ namespace PhpStyler;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr;
+use PhpParser\Node\Scalar;
 use PhpParser\NodeVisitorAbstract;
 
 class Visitor extends NodeVisitorAbstract
@@ -118,10 +119,7 @@ class Visitor extends NodeVisitorAbstract
 
                     $value = $arg->value ?? null;
 
-                    if (
-                        $value instanceof Expr\ArrowFunction
-                        || $value instanceof Expr\Closure && $value->stmts
-                    ) {
+                    if ($this->isExpansive($value)) {
                         return $this->setExpansive($node);
                     }
                 }
@@ -159,10 +157,7 @@ class Visitor extends NodeVisitorAbstract
 
             $value = $item->value ?? null;
 
-            if (
-                $value instanceof Expr\ArrowFunction
-                || $value instanceof Expr\Closure && $value->stmts
-            ) {
+            if ($this->isExpansive($value)) {
                 return $this->setExpansive($node);
             }
         }
@@ -205,6 +200,33 @@ class Visitor extends NodeVisitorAbstract
         if ($this->expansiveAnnotation) {
             $this->expansiveAnnotation --;
         }
+    }
+
+    protected function isExpansive(?Node $value) : bool
+    {
+        if ($value === null) {
+            return false;
+        }
+
+        if ($value instanceof Expr\ArrowFunction) {
+            return true;
+        }
+
+        if ($value instanceof Expr\Closure && $value->stmts) {
+            return true;
+        }
+
+        if (
+            $value instanceof Scalar\String_
+            && (
+                $value->getAttribute('kind') === Scalar\String_::KIND_HEREDOC
+                || $value->getAttribute('kind') === Scalar\String_::KIND_NOWDOC
+            )
+        ) {
+            return true;
+        }
+
+        return false;
     }
 
     protected function setExpansive(Node $node) : bool
