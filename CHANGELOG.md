@@ -1,5 +1,11 @@
 # Change Log
 
+## NEXT
+
+- Make heredoc and nowdoc expansive in args and arrays
+
+- Comments now track what kind of Node they are on
+
 ## 0.11.0
 
 - Improve presentation of inline comments.
