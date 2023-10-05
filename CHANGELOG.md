@@ -1,6 +1,6 @@
 # Change Log
 
-## NEXT
+## 0.12.0
 
 - Make heredoc and nowdoc expansive in args and arrays
 
