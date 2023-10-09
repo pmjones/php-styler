@@ -287,8 +287,16 @@ class Styler
         return fn (string $lastLine) : bool => trim($lastLine) === ')';
     }
 
-    protected function modifiers(?int $flags) : string
+    protected function modifiers(?int $flags, bool $addVisibility = true) : string
     {
+        $isPublic = $flags & Stmt\Class_::MODIFIER_PUBLIC;
+        $isProtected = $flags & Stmt\Class_::MODIFIER_PROTECTED;
+        $isPrivate = $flags & Stmt\Class_::MODIFIER_PRIVATE;
+
+        if ($addVisibility && ! $isPublic && ! $isProtected && ! $isPrivate) {
+            $flags = $flags | Stmt\Class_::MODIFIER_PUBLIC;
+        }
+
         return implode(
             '',
             [
@@ -529,7 +537,9 @@ class Styler
         }
 
         $name = $p->name ? ' ' . $p->name : ' ';
-        $this->line[] = $this->modifiers($p->flags) . 'class' . $name;
+        $this->line[] = $this->modifiers($p->flags, addVisibility: false)
+            . 'class'
+            . $name;
     }
 
     protected function sClassBody(P\Body $p) : void
@@ -550,6 +560,24 @@ class Styler
     }
 
     protected function sClassConstEnd(P\ClassConst $p) : void
+    {
+        $this->line[] = ';';
+        $this->newline();
+    }
+
+    protected function sClassMethod(P\ClassMethod $p) : void
+    {
+        $this->maybeDoubleNewline($p);
+        $this->line[] = $this->modifiers($p->flags) . 'function ';
+    }
+
+    protected function sClassProperty(P\ClassProperty $p) : void
+    {
+        $this->maybeDoubleNewline($p);
+        $this->line[] = $this->modifiers($p->flags);
+    }
+
+    protected function sClassPropertyEnd(P\ClassProperty $end) : void
     {
         $this->line[] = ';';
         $this->newline();
@@ -840,7 +868,7 @@ class Styler
     protected function sFunction(P\Function_ $p) : void
     {
         $this->maybeDoubleNewline($p);
-        $this->line[] = $this->modifiers($p->flags) . 'function ';
+        $this->line[] = 'function ';
     }
 
     protected function sFunctionBodyEmpty(P\BodyEmpty $p) : void
@@ -1240,18 +1268,6 @@ class Styler
         $this->line[] = $this->operators[$p->class][0]
             . $this->operators[$p->class][1]
             . $this->operators[$p->class][2];
-    }
-
-    protected function sProperty(P\Property $p) : void
-    {
-        $this->maybeDoubleNewline($p);
-        $this->line[] = $this->modifiers($p->flags);
-    }
-
-    protected function sPropertyEnd(P\Property $end) : void
-    {
-        $this->line[] = ';';
-        $this->newline();
     }
 
     protected function sReturn(P\Return_ $p) : void

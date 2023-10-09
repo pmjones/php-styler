@@ -1403,7 +1403,7 @@ class Printer
     protected function pStmt_ClassMethod(Stmt\ClassMethod $node) : void
     {
         $this->pAttributeGroups($node);
-        $this->print[] = new P\Function_($node->flags);
+        $this->print[] = new P\ClassMethod($node->flags);
         $this->pByRef($node);
         $this->p($node->name);
         $this->pParams($node);
@@ -1655,7 +1655,7 @@ class Printer
     protected function pStmt_Property(Stmt\Property $node) : void
     {
         $this->pAttributeGroups($node);
-        $this->print[] = $orig = new P\Property($node->flags);
+        $this->print[] = $orig = new P\ClassProperty($node->flags);
         $this->pType($node);
         $this->pSeparate('property', $node->props, $orig);
         $this->print[] = new P\End($orig);
