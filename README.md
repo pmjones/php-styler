@@ -58,14 +58,13 @@ See the [Examples](./tests/Examples) directory for a nearly-exhaustive series of
 
 [PHP CS Fixer](https://cs.symfony.com/) is the category leader for PHP here. It offers a huge range of customization options to fix (or not fix) specific elements of PHP code. However, it is extremely complex, and can be difficult to modify.
 
-Other PHP code fixers include [PHP_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer)/[PHPCBF](https://phpqa.io/projects/phpcbf.html) and [ECS](https://github.com/easy-coding-standard/easy-coding-standard).
+The oldest PHP code fixer I know of is [PHP_Beautifier](https://pear.php.net/package/PHP_Beautifier).  Other newer fixers include [PHP_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer)/[PHPCBF](https://phpqa.io/projects/phpcbf.html) and [ECS](https://github.com/easy-coding-standard/easy-coding-standard).
 
 The [Black](https://black.readthedocs.io/en/stable/) formatter for Python appears to have similar design goals and operation as PHP-Styler.
 
 Likewise, [dart_style](https://pub.dev/packages/dart_style) is a formatter for Dart. (Read more about how it works [here](https://journal.stuffwithstuff.com/2015/09/08/the-hardest-program-ive-ever-written/).)
 
 Finally, there is a [PHP plugin for Prettier](https://github.com/prettier/plugin-php) that uses JavaScript to replace all PHP code formatting using its own rules.
-
 
 ## Usage
 
@@ -123,7 +122,6 @@ PHP-Styler will only apply formatting to files with a modification time *later* 
 
 Changing the config file after `apply` will invalidate the cache, implying `--force` and thereby causing PHP-Styler to apply formatting to all files.
 
-
 ### Check Formatting
 
 Check all files identified in the config file to see if they need formatting, without changing any of the files:
@@ -139,7 +137,6 @@ Pass `-c` or `--config` to specify an alternative config file:
 ```
 
 If all files look OK, the return code is `0`. If one or more files look like they need to be styled, the return code is `1`.
-
 
 ### Configuration
 
@@ -239,7 +236,6 @@ The line splitting logic attempts to be idiomatic; that is, PHP-Styler tries to 
 - sapien/sapien
 - slim/slim
 - symfony/http-foundation
-
 
 #### Annotated
 
