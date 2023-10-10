@@ -1,6 +1,6 @@
 # Change Log
 
-## NEXT
+## 0.15.0
 
 - Force visibility  on class members
 
