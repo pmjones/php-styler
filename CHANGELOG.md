@@ -1,5 +1,13 @@
 # Change Log
 
+## NEXT
+
+- Force visibility  on class members
+
+- Rename Property to ClassProperty
+
+- Style ClassMethod separately from Function
+
 ## 0.12.0
 
 - Make heredoc and nowdoc expansive in args and arrays
