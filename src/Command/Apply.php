@@ -7,11 +7,20 @@ use AutoShell\Help;
 use PhpStyler\Config;
 use PhpStyler\Service;
 use PhpParser\Error;
+use PhpStyler\Files;
 
 #[Help("Applies styling to the configured files, rewriting them in place.")]
 class Apply extends Command
 {
-    public function __invoke(ApplyOptions $options) : int
+    public function __invoke(
+        ApplyOptions $options,
+
+        #[Help(<<<'HELP'
+        Apply styling to these space-separated files and directories;
+                overrides the files specified in config.
+        HELP)]
+        string ...$paths,
+    ) : int
     {
         $start = hrtime(true);
 
@@ -27,14 +36,14 @@ class Apply extends Command
 
         // apply styling
         try {
-            $count = $this->applyStyle($config, $cacheTime);
+            $count = $this->applyStyle($config, $paths, $cacheTime);
         } catch (Error $e) {
             echo $e->getMessage() . PHP_EOL;
             return 1;
         }
 
         // update cache time
-        if ($config->cache) {
+        if ($config->cache && ! $paths) {
             touch($config->cache);
         }
 
@@ -81,12 +90,27 @@ class Apply extends Command
         return $cacheTime;
     }
 
-    protected function applyStyle(Config $config, int|false $cacheTime) : int
+    /**
+     * @param string[] $paths
+     */
+    protected function applyStyle(
+        Config $config,
+        array $paths,
+        int|false $cacheTime,
+    ) : int
     {
         $count = 0;
         $service = new Service($config->styler);
 
-        foreach ($config->files as $file) {
+        if ($paths) {
+            $cacheTime = false;
+            $files = new Files(...$paths);
+        } else {
+            $files = $config->files;
+        }
+
+        /** @var string $file */
+        foreach ($files as $file) {
             $file = (string) $file;
             $fileTime = filemtime($file);
 

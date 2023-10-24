@@ -122,6 +122,14 @@ PHP-Styler will only apply formatting to files with a modification time *later* 
 
 Changing the config file after `apply` will invalidate the cache, implying `--force` and thereby causing PHP-Styler to apply formatting to all files.
 
+To explictly apply styling to paths other than those specified in the config file, pass a space-separated list of files and directories as arguments:
+
+```
+./vendor/bin/php-styler apply ./src/File.php ./resources/
+```
+
+When explicitly specifying paths, the cache time is not honored, just as if the `--force` option had been passed.
+
 ### Check Formatting
 
 Check all files identified in the config file to see if they need formatting, without changing any of the files:
