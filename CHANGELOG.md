@@ -1,5 +1,10 @@
 # Change Log
 
+## NEXT
+
+- Can now `apply` stying to arbitrary paths by passing file and directory
+  names at the command line.
+
 ## 0.13.0
 
 - Force visibility  on class members
