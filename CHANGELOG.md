@@ -1,6 +1,6 @@
 # Change Log
 
-## NEXT
+## 0.14.0
 
 - Can now `apply` stying to arbitrary paths by passing file and directory
   names at the command line.
