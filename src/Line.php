@@ -49,6 +49,14 @@ class Line implements ArrayAccess
      */
     protected array $lines = [];
 
+    protected bool $addMarginAbove = false;
+
+    protected bool $addMarginBelow = false;
+
+    protected bool $allowMarginAbove = true;
+
+    protected bool $allowMarginBelow = true;
+
     public function __construct(
         protected string $eol,
         protected int $indentNum,
@@ -92,6 +100,69 @@ class Line implements ArrayAccess
         $this->indentNum --;
     }
 
+    /**
+     * This is advisory, and applies only when allowed.
+     */
+    public function addMarginAbove() : void
+    {
+        $this->addMarginAbove = true;
+    }
+
+    public function hasMarginAbove() : bool
+    {
+        return $this->addMarginAbove;
+    }
+
+    /**
+     * This is advisory, and applies only when allowed.
+     */
+    public function addMarginBelow() : void
+    {
+        $this->addMarginBelow = true;
+    }
+
+    public function hasMarginBelow() : bool
+    {
+        return $this->addMarginBelow;
+    }
+
+    public function allowMarginAbove(bool $allowMarginAbove) : void
+    {
+        $this->allowMarginAbove = $allowMarginAbove;
+    }
+
+    public function marginAllowedAbove() : bool
+    {
+        return $this->allowMarginAbove;
+    }
+
+    public function allowMarginBelow(bool $allowMarginBelow) : void
+    {
+        $this->allowMarginBelow = $allowMarginBelow;
+    }
+
+    public function marginAllowedBelow() : bool
+    {
+        return $this->allowMarginBelow;
+    }
+
+    public function isBlank() : bool
+    {
+        return empty($this->parts);
+    }
+
+    public function autoAddMargins() : void
+    {
+        $tmp = clone $this;
+        $output = '';
+        $tmp->append($output);
+
+        if ($tmp->lines || strpos(trim($output), $this->eol)) {
+            $this->addMarginAbove();
+            $this->addMarginBelow();
+        }
+    }
+
     public function append(string &$output) : void
     {
         list($level, $rule) = $this->listLevelRule();
@@ -107,7 +178,7 @@ class Line implements ArrayAccess
     protected function splitLines(string &$output, int $level, string $rule) : void
     {
         $this->lines = [];
-        $this->line = $this->newline();
+        $this->line = $this->blankLine();
 
         foreach ($this->parts as $part) {
             if (
@@ -131,7 +202,7 @@ class Line implements ArrayAccess
         }
     }
 
-    protected function newline() : Line
+    protected function blankLine() : Line
     {
         return new Line(
             $this->eol,
@@ -145,14 +216,14 @@ class Line implements ArrayAccess
     protected function incrSplit(Split $part) : void
     {
         $this->lines[] = $this->line;
-        $this->line = $this->newline();
+        $this->line = $this->blankLine();
         $this->line->indentNum ++;
     }
 
     protected function condenseSplit(Split $part) : void
     {
         $this->lines[] = $this->line;
-        $this->line = $this->newline();
+        $this->line = $this->blankLine();
         $this->line->indentNum ++;
         $this->line[] = new W\Condense(when: fn () => true);
     }
@@ -164,7 +235,7 @@ class Line implements ArrayAccess
         }
 
         $this->lines[] = $this->line;
-        $this->line = $this->newline();
+        $this->line = $this->blankLine();
     }
 
     protected function fitsOnSingleLine(string &$output) : bool
@@ -177,6 +248,7 @@ class Line implements ArrayAccess
             if ($part instanceof Whitespace) {
                 $method = lcfirst(substr((string) strrchr(get_class($part), '\\'), 1))
                     . 'Whitespace';
+
                 $this->{$method}($part, $output);
             } elseif (is_string($part)) {
                 $this->append .= $part;

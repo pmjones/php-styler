@@ -93,6 +93,7 @@ if (true) {
 if (true) {
     if (true) {
         $quotedSeparators = preg_quote($separators, '/');
+
         preg_match_all(
             '
             /
@@ -119,6 +120,7 @@ if (true) {
             $matches,
             \PREG_SET_ORDER,
         );
+
         groupParts($matches, $separators);
     }
 }

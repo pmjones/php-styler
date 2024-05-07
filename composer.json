@@ -28,7 +28,7 @@
     },
     "require": {
         "php": "^8.1 | ^8.2 | ^8.3",
-        "nikic/php-parser": "^4.17",
+        "nikic/php-parser": "^4.19",
         "pmjones/auto-shell": "^1.0"
     },
     "require-dev": {
@@ -41,7 +41,7 @@
         "bin/php-styler"
     ],
     "scripts": {
-        "analyze": "./vendor/bin/phpstan",
+        "analyze": "./vendor/bin/phpstan --memory-limit=256M",
         "check": "composer test && composer analyze && composer cs-check",
         "cs-check": "php bin/php-styler check -c php-styler.php",
         "cs-fix": "php bin/php-styler apply -c php-styler.php",

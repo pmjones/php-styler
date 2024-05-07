@@ -1,6 +1,7 @@
 <?php
 $foo = ['bar', 'baz', 'dib' => 'zim'];
 $zim = $foo['bar'][$baz][1];
+
 $long = [
     'veryLongElement',
     'veryLongElement',
@@ -13,6 +14,7 @@ $long = [
     'veryLongElement',
     'veryLongElement',
 ];
+
 $longWithComments = [
     // one
     'veryLongElement',
@@ -32,6 +34,7 @@ $longWithComments = [
     'veryLongElement',
     'veryLongElement',
 ];
+
 $veryVeryVeryVeryVeryVeryLongVariableName = [
     34 => 'quot',
     38 => 'amp',

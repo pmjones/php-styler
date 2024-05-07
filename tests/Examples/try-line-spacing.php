@@ -1,5 +1,6 @@
 <?php
-function () {
+function foo()
+{
     try {
         that();
     } catch (Exception $e) {
@@ -7,15 +8,19 @@ function () {
     }
 
     other();
-};
-function () {
+}
+
+function bar()
+{
     try {
         that();
     } finally {
         that();
     }
-};
-function () {
+}
+
+function baz()
+{
     // comment
     try {
         that();
@@ -24,8 +29,10 @@ function () {
     } finally {
         that();
     }
-};
-function () {
+}
+
+function dib()
+{
     try {
         that();
     } catch (Exception $e) {
@@ -41,4 +48,4 @@ function () {
     } finally {
         that();
     }
-};
+}

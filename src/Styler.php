@@ -90,12 +90,6 @@ class Styler
         Expr\YieldFrom::class => ['', 'yield from', ' '],
     ];
 
-    public bool $atFirstInBody = false;
-
-    public bool $hadAttribute = false;
-
-    public bool $hadComment = false;
-
     /**
      * @param non-empty-string $eol
      */
@@ -128,13 +122,7 @@ class Styler
         $this->print = $list;
         $this->printIdx = 0;
         $this->indentNum = 0;
-        $this->line = new Line(
-            $this->eol,
-            $this->indentNum,
-            $this->indentLen,
-            $this->indentTab,
-            $this->lineLen,
-        );
+        $this->line = $this->blankLine();
         $this->lines = [];
         $this->nesting = new Nesting();
 
@@ -177,8 +165,43 @@ class Styler
 
     protected function newline() : void
     {
+        if (! $this->nesting->in(P\Args::class)) {
+            $this->line->autoAddMargins();
+        }
+
+        $prevLine = $this->prevLine();
+
+        if (
+            $this->line->marginAllowedAbove()
+            && $this->line->hasMarginAbove()
+            && ! $prevLine->isBlank()
+        ) {
+            $this->lines[] = $this->blankLine();
+        }
+
+        if (! $this->line->marginAllowedAbove() || ! $prevLine->marginAllowedBelow()) {
+            $this->removeMargins();
+        }
+
         $this->lines[] = $this->line;
-        $this->line = new Line(
+
+        if ($this->line->marginAllowedBelow() && $this->line->hasMarginBelow()) {
+            $this->lines[] = $this->blankLine();
+        }
+
+        $this->line = $this->blankLine();
+    }
+
+    protected function newlineWithoutMargins() : void
+    {
+        $this->line->allowMarginBelow(false);
+        $this->newline();
+        $this->line->allowMarginAbove(false);
+    }
+
+    protected function blankLine() : Line
+    {
+        return new Line(
             $this->eol,
             $this->indentNum,
             $this->indentLen,
@@ -203,21 +226,22 @@ class Styler
     {
         $this->newline();
         $this->line[] = '{';
-        $this->newline();
+        $this->newlineWithoutMargins();
         $this->indent();
     }
 
     protected function braceOnSameLine() : void
     {
         $this->line[] = ' {';
-        $this->newline();
+        $this->newlineWithoutMargins();
         $this->indent();
     }
 
     protected function braceEnd() : void
     {
-        $this->forceSingleNewline();
+        $this->newline();
         $this->outdent();
+        $this->line->allowMarginAbove(false);
         $this->line[] = '}';
         $this->newline();
         $this->newline();
@@ -231,15 +255,15 @@ class Styler
         $this->braceOnNextLine();
     }
 
-    public function rtrim() : void
+    protected function removeMargins() : void
     {
-        $this->line[] = new W\Rtrim();
-    }
+        while ($end = end($this->lines)) {
+            if (! $end->isBlank()) {
+                return;
+            }
 
-    public function forceSingleNewline() : void
-    {
-        $this->rtrim();
-        $this->newline();
+            array_pop($this->lines);
+        }
     }
 
     /**
@@ -311,15 +335,9 @@ class Styler
         );
     }
 
-    protected function maybeDoubleNewline(Printable $p) : void
+    protected function prevLine() : Line
     {
-        $this->forceSingleNewline();
-
-        if ($p->isFirst() || $p->hasComment() || $p->hasAttribute()) {
-            return;
-        }
-
-        $this->newline();
+        return $this->lines ? end($this->lines) : $this->blankLine();
     }
 
     protected function s(string|Printable $p) : void
@@ -339,19 +357,6 @@ class Styler
 
     protected function sPrintable(Printable $p) : void
     {
-        // first printable in body?
-        $p->isFirst($this->atFirstInBody);
-        $this->atFirstInBody = false;
-
-        // has comment?
-        $p->hasComment($this->hadComment);
-        $this->hadComment = false;
-
-        // has attribute?
-        $p->hasAttribute($this->hadAttribute);
-        $this->hadAttribute = false;
-
-        // add the printable to the code
         $last = (string) strrchr(get_class($p), '\\');
         $method = 's' . trim($last, '\\_');
         $this->{$method}($p);
@@ -363,7 +368,8 @@ class Styler
         $this->nesting->incr(P\Args::class);
 
         if ($p->isExpansive()) {
-            $this->newline();
+            $this->line->addMarginAbove();
+            $this->newlineWithoutMargins();
             $this->indent();
             return;
         }
@@ -389,7 +395,7 @@ class Styler
         if ($p->isExpansive()) {
             if ($p->count) {
                 $this->line[] = $this->lastArgSeparator();
-                $this->newline();
+                $this->newlineWithoutMargins();
             }
 
             $this->outdent();
@@ -398,6 +404,11 @@ class Styler
         }
 
         $this->line[] = ')';
+
+        if ($p->isExpansive()) {
+            $this->line->addMarginBelow();
+        }
+
         $this->nesting->decr(P\Args::class);
     }
 
@@ -405,10 +416,9 @@ class Styler
     {
         $this->nesting->incr(P\Array_::class);
         $this->line[] = '[';
-        $this->atFirstInBody = true;
 
         if ($p->isExpansive()) {
-            $this->newline();
+            $this->newlineWithoutMargins();
             $this->indent();
         } elseif ($p->count) {
             $this->split(P\Array_::class, 'incr');
@@ -431,7 +441,7 @@ class Styler
         if ($p->isExpansive()) {
             if ($p->count) {
                 $this->line[] = $this->lastArraySeparator();
-                $this->newline();
+                $this->newlineWithoutMargins();
             }
 
             $this->outdent();
@@ -481,7 +491,7 @@ class Styler
 
     protected function sAttributeGroups(P\AttributeGroups $p) : void
     {
-        $this->maybeDoubleNewline($p);
+        $this->line->addMarginAbove();
     }
 
     protected function sAttributeGroup(P\AttributeGroup $p) : void
@@ -492,17 +502,15 @@ class Styler
     protected function sAttributeGroupEnd(P\AttributeGroup $p) : void
     {
         $this->line[] = ']';
-        $this->newline();
+        $this->newlineWithoutMargins();
     }
 
     protected function sAttributeGroupsEnd(P\AttributeGroups $p) : void
     {
-        $this->hadAttribute = true;
     }
 
     protected function sBody(P\Body $p) : void
     {
-        $this->atFirstInBody = true;
         $method = 's' . ucfirst($p->type) . 'Body';
         $this->{$method}($p);
     }
@@ -533,10 +541,11 @@ class Styler
     protected function sClass(P\Class_ $p) : void
     {
         if ($p->name) {
-            $this->maybeDoubleNewline($p);
+            $this->line->addMarginAbove();
         }
 
         $name = $p->name ? ' ' . $p->name : ' ';
+
         $this->line[] = $this->modifiers($p->flags, addVisibility: false)
             . 'class'
             . $name;
@@ -554,7 +563,7 @@ class Styler
 
     protected function sClassConst(P\ClassConst $p) : void
     {
-        $this->maybeDoubleNewline($p);
+        $this->line->addMarginAbove();
         $this->line[] = $this->modifiers($p->flags);
         $this->line[] = 'const ';
     }
@@ -567,13 +576,13 @@ class Styler
 
     protected function sClassMethod(P\ClassMethod $p) : void
     {
-        $this->maybeDoubleNewline($p);
+        $this->line->addMarginAbove();
         $this->line[] = $this->modifiers($p->flags) . 'function ';
     }
 
     protected function sClassProperty(P\ClassProperty $p) : void
     {
-        $this->maybeDoubleNewline($p);
+        $this->line->addMarginAbove();
         $this->line[] = $this->modifiers($p->flags);
     }
 
@@ -585,6 +594,10 @@ class Styler
 
     protected function sClosure(P\Closure $p) : void
     {
+        if (! $this->nesting->in(P\Args::class)) {
+            $this->line->addMarginAbove();
+        }
+
         $this->line[] = $p->static ? 'static function ' : 'function ';
     }
 
@@ -615,9 +628,14 @@ class Styler
 
     protected function sClosureBodyEnd(P\Body $p) : void
     {
-        $this->forceSingleNewline();
+        $this->newline();
+        $this->line->allowMarginAbove(false);
         $this->outdent();
         $this->line[] = '}';
+
+        if (! $this->nesting->in(P\Args::class)) {
+            $this->line->addMarginBelow();
+        }
     }
 
     protected function sClosureBodyEmpty(P\BodyEmpty $p) : void
@@ -633,17 +651,13 @@ class Styler
 
     protected function sComments(P\Comments $p) : void
     {
-        $this->forceSingleNewline();
-
-        if (! $p->isFirst()) {
-            $this->newline();
-        }
+        $this->line->addMarginAbove();
     }
 
     protected function sInlineComment(P\InlineComment $p) : void
     {
         if ($p->trailing) {
-            $this->rtrim();
+            $this->line[] = new W\Rtrim();
             $this->line[] = ' ' . $p->text;
             $this->newline();
         } else {
@@ -660,7 +674,7 @@ class Styler
 
     protected function sCommentsEnd(P\Comments $p) : void
     {
-        $this->hadComment = true;
+        $this->newlineWithoutMargins();
     }
 
     protected function sCond(P\Cond $p) : void
@@ -669,7 +683,7 @@ class Styler
         $this->line[] = '(';
 
         if ($p->isExpansive()) {
-            $this->newline();
+            $this->newlineWithoutMargins();
             $this->indent();
         } else {
             $this->split(P\Cond::class, 'incr');
@@ -679,7 +693,7 @@ class Styler
     protected function sCondEnd(P\Cond $p) : void
     {
         if ($p->isExpansive()) {
-            $this->newline();
+            $this->newlineWithoutMargins();
             $this->outdent();
         } else {
             $this->split(P\Cond::class, 'same');
@@ -706,36 +720,36 @@ class Styler
         $this->newline();
     }
 
-    public function sDeclare(P\Declare_ $p) : void
+    protected function sDeclare(P\Declare_ $p) : void
     {
         $this->line[] = 'declare';
     }
 
-    public function sDeclareBody(P\Body $p) : void
+    protected function sDeclareBody(P\Body $p) : void
     {
         $this->braceOnSameLine();
     }
 
-    public function sDeclareBodyEnd(P\Body $p) : void
+    protected function sDeclareBodyEnd(P\Body $p) : void
     {
         $this->braceEnd();
     }
 
-    public function sDeclareBodyEmpty(P\BodyEmpty $p) : void
+    protected function sDeclareBodyEmpty(P\BodyEmpty $p) : void
     {
         $this->line[] = ';';
         $this->newline();
         $this->newline();
     }
 
-    public function sDeclareDirective(P\DeclareDirective $p) : void
+    protected function sDeclareDirective(P\DeclareDirective $p) : void
     {
         $this->line[] = $p->name . '=';
     }
 
     protected function sDo(P\Do_ $p) : void
     {
-        $this->maybeDoubleNewline($p);
+        $this->line->addMarginAbove();
         $this->line[] = 'do';
     }
 
@@ -746,7 +760,7 @@ class Styler
 
     protected function sDoBodyEnd(P\Body $p) : void
     {
-        $this->forceSingleNewline();
+        $this->newlineWithoutMargins();
         $this->outdent();
         $this->line[] = '} while ';
     }
@@ -781,7 +795,7 @@ class Styler
 
     protected function sEnum(P\Enum_ $p) : void
     {
-        $this->maybeDoubleNewline($p);
+        $this->line->addMarginAbove();
         $this->line[] = 'enum ' . $p->name;
     }
 
@@ -792,7 +806,7 @@ class Styler
 
     protected function sEnumCase(P\EnumCase $p) : void
     {
-        $this->maybeDoubleNewline($p);
+        $this->line->addMarginAbove();
         $this->line[] = 'case ' . $p->name;
     }
 
@@ -829,7 +843,7 @@ class Styler
 
     protected function sFor(P\For_ $p) : void
     {
-        $this->maybeDoubleNewline($p);
+        $this->line->addMarginAbove();
         $this->line[] = 'for ';
     }
 
@@ -851,7 +865,7 @@ class Styler
 
     protected function sForeach(P\Foreach_ $p) : void
     {
-        $this->maybeDoubleNewline($p);
+        $this->line->addMarginAbove();
         $this->line[] = 'foreach ';
     }
 
@@ -867,7 +881,7 @@ class Styler
 
     protected function sFunction(P\Function_ $p) : void
     {
-        $this->maybeDoubleNewline($p);
+        $this->line->addMarginAbove();
         $this->line[] = 'function ';
     }
 
@@ -879,13 +893,15 @@ class Styler
 
     protected function sFunctionBody(P\Body $p) : void
     {
-        $this->newline();
+        $this->newlineWithoutMargins();
+
         $this->line[] = new W\Condense(
             when: $this->functionBodyCondenseWhen(),
             append: ' ',
         );
+
         $this->line[] = '{';
-        $this->newline();
+        $this->newlineWithoutMargins();
         $this->indent();
     }
 
@@ -902,11 +918,18 @@ class Styler
 
     protected function sHaltCompiler(P\HaltCompiler $p) : void
     {
+        $this->line->allowMarginAbove(false);
         $this->line[] = '__halt_compiler();';
     }
 
     protected function sHeredoc(P\Heredoc $p) : void
     {
+        if (
+            ! $this->nesting->in(P\Args::class) && ! $this->nesting->in(P\Array_::class)
+        ) {
+            $this->line->addMarginAbove();
+        }
+
         $this->line[] = "<<<{$p->label}";
         $this->nesting->incr(P\Heredoc::class);
         $this->newline();
@@ -928,11 +951,17 @@ class Styler
         $this->newline();
         $this->nesting->decr(P\Heredoc::class);
         $this->line[] = $p->label;
+
+        if (
+            ! $this->nesting->in(P\Args::class) && ! $this->nesting->in(P\Array_::class)
+        ) {
+            $this->line->addMarginBelow();
+        }
     }
 
     protected function sIf(P\If_ $p) : void
     {
-        $this->maybeDoubleNewline($p);
+        $this->line->addMarginAbove();
         $this->line[] = 'if ';
     }
 
@@ -943,7 +972,7 @@ class Styler
 
     protected function sElseIf(P\ElseIf_ $p) : void
     {
-        $this->forceSingleNewline();
+        $this->newlineWithoutMargins();
         $this->outdent();
         $this->line[] = '} elseif ';
     }
@@ -955,7 +984,7 @@ class Styler
 
     protected function sElse(P\Else_ $p) : void
     {
-        $this->forceSingleNewline();
+        $this->newlineWithoutMargins();
         $this->outdent();
         $this->line[] = '} else';
     }
@@ -974,6 +1003,7 @@ class Styler
     {
         $this->line[] = ' implements ';
         $this->split(P\Implements_::class, 'incr');
+        $this->line->allowMarginBelow(false);
     }
 
     protected function sImplementsSeparator(P\Separator $p) : void
@@ -1049,13 +1079,14 @@ class Styler
 
     protected function sInlineHtml(P\InlineHtml $p) : void
     {
+        $this->line->allowMarginAbove(false);
         $this->line[] = '?>' . ($p->newline ? $this->eol : '');
     }
 
     protected function sInlineHtmlEnd(P\InlineHtml $p) : void
     {
         $this->line[] = '<?php';
-        $this->newline();
+        $this->newlineWithoutMargins();
     }
 
     protected function sInstanceOp(P\InstanceOp $p) : void
@@ -1086,7 +1117,7 @@ class Styler
 
     protected function sInterface(P\Interface_ $p) : void
     {
-        $this->maybeDoubleNewline($p);
+        $this->line->addMarginAbove();
         $this->line[] = 'interface ' . $p->name;
     }
 
@@ -1102,13 +1133,14 @@ class Styler
 
     protected function sLabel(P\Label $p) : void
     {
-        $this->newline();
+        $this->line->addMarginAbove();
         $this->line[] = "{$p->name}:";
         $this->newline();
     }
 
     protected function sMatch(P\Match_ $p) : void
     {
+        $this->line->addMarginAbove();
         $this->line[] = 'match ';
     }
 
@@ -1125,6 +1157,8 @@ class Styler
 
     protected function sMatchArm(P\MatchArm $p) : void
     {
+        $this->line->allowMarginAbove(false);
+        $this->line->allowMarginBelow(false);
     }
 
     protected function sMatchArmEnd(P\MatchArm $p) : void
@@ -1135,7 +1169,7 @@ class Styler
 
     protected function sMatchBodyEnd(P\Body $p) : void
     {
-        $this->forceSingleNewline();
+        $this->line->allowMarginAbove(false);
         $this->outdent();
         $this->line[] = '}';
     }
@@ -1178,6 +1212,12 @@ class Styler
 
     protected function sNowdoc(P\Nowdoc $p) : void
     {
+        if (
+            ! $this->nesting->in(P\Args::class) && ! $this->nesting->in(P\Array_::class)
+        ) {
+            $this->line->addMarginAbove();
+        }
+
         $this->line[] = "<<<'{$p->label}'";
         $this->newline();
 
@@ -1187,6 +1227,12 @@ class Styler
         }
 
         $this->line[] = $p->label;
+
+        if (
+            ! $this->nesting->in(P\Args::class) && ! $this->nesting->in(P\Array_::class)
+        ) {
+            $this->line->addMarginBelow();
+        }
     }
 
     protected function sNull(P\Null_ $p) : void
@@ -1205,13 +1251,11 @@ class Styler
         $this->line[] = '(';
 
         if ($p->isExpansive()) {
-            $this->newline();
+            $this->newlineWithoutMargins();
             $this->indent();
         } elseif ($p->count) {
             $this->split(P\Params::class, 'incr');
         }
-
-        $this->atFirstInBody = true;
     }
 
     protected function sParamSeparator(P\Separator $p) : void
@@ -1347,7 +1391,7 @@ class Styler
 
     protected function sSwitch(P\Switch_ $p) : void
     {
-        $this->maybeDoubleNewline($p);
+        $this->line->addMarginAbove();
         $this->line[] = 'switch ';
     }
 
@@ -1366,7 +1410,7 @@ class Styler
         $this->line[] = ':';
 
         if ($p->hasBody) {
-            $this->newline();
+            $this->newlineWithoutMargins();
             $this->indent();
         } else {
             $this->newline();
@@ -1383,7 +1427,7 @@ class Styler
         $this->line[] = ':';
 
         if ($p->hasBody) {
-            $this->newline();
+            $this->newlineWithoutMargins();
             $this->indent();
         } else {
             $this->newline();
@@ -1396,7 +1440,7 @@ class Styler
 
     protected function sSwitchCaseBodyEnd(P\Body $p) : void
     {
-        $this->forceSingleNewline();
+        $this->line->allowMarginAbove(false);
         $this->newline();
         $this->outdent();
     }
@@ -1426,7 +1470,6 @@ class Styler
 
     protected function sThrow(P\Throw_ $p) : void
     {
-        $this->maybeDoubleNewline($p);
         $this->line[] = 'throw ';
     }
 
@@ -1438,7 +1481,7 @@ class Styler
 
     protected function sTrait(P\Trait_ $p) : void
     {
-        $this->maybeDoubleNewline($p);
+        $this->line->addMarginAbove();
         $this->line[] = 'trait ' . $p->name;
     }
 
@@ -1454,7 +1497,7 @@ class Styler
 
     protected function sTry(P\Try_ $p) : void
     {
-        $this->maybeDoubleNewline($p);
+        $this->line->addMarginAbove();
         $this->line[] = 'try';
     }
 
@@ -1465,7 +1508,7 @@ class Styler
 
     protected function sTryCatch(P\TryCatch $p) : void
     {
-        $this->forceSingleNewline();
+        $this->line->allowMarginAbove(false);
         $this->outdent();
         $this->line[] = '} catch ';
     }
@@ -1477,7 +1520,7 @@ class Styler
 
     protected function sTryFinally(P\TryFinally $p) : void
     {
-        $this->forceSingleNewline();
+        $this->line->allowMarginAbove(false);
         $this->outdent();
         $this->line[] = '} finally';
     }
@@ -1586,7 +1629,7 @@ class Styler
 
     protected function sWhile(P\While_ $p) : void
     {
-        $this->maybeDoubleNewline($p);
+        $this->line->addMarginAbove();
         $this->line[] = 'while ';
     }
 

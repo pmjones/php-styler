@@ -1,18 +1,23 @@
 <?php
-function () {
+function foo()
+{
     if ($this) {
         that();
     }
 
     other();
-};
-function () {
+}
+
+function bar()
+{
     // comment
     if ($this) {
         that();
     }
-};
-function () {
+}
+
+function baz()
+{
     if ($this) {
         that();
     }
@@ -20,8 +25,10 @@ function () {
     if ($this) {
         that();
     }
-};
-function () {
+}
+
+function dib()
+{
     if ($this) {
         that();
 
@@ -33,8 +40,10 @@ function () {
             that();
         }
     }
-};
-function () {
+}
+
+function zim()
+{
     if ($this) {
         that();
 
@@ -47,8 +56,10 @@ function () {
             that();
         }
     }
-};
-function () {
+}
+
+function gir()
+{
     if ($this) {
         that();
     } elseif ($that) {
@@ -56,8 +67,10 @@ function () {
     } else {
         whatever();
     }
-};
-function () {
+}
+
+function irk()
+{
     if ($this) {
         // comment
         that();
@@ -68,13 +81,12 @@ function () {
         // comment
         whatever();
     }
-};
+}
 
 if (true) {
     if (true) {
         foreach ($controllerMap as $namespace => $replacement) {
             if (
-
                 // Allow disabling rule by setting value to false since config
                 // merging have no feature to remove entries
                 false == $replacement

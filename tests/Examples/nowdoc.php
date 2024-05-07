@@ -18,6 +18,8 @@ function foo()
 
 function bar()
 {
+    $foo = 'bar';
+
     $query = <<<'SQL'
         SELECT
             *
@@ -26,6 +28,7 @@ function bar()
         WHERE
             foo = bar
     SQL;
+
     return new Bar($query);
 }
 
@@ -41,8 +44,9 @@ $baz = dib(
     'bar',
     'baz',
 );
+
 $foo = [
-    <<<SQL
+    <<<'SQL'
         SELECT
             *
         FROM

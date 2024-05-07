@@ -1,18 +1,23 @@
 <?php
-function () {
+function foo()
+{
     foreach ($foo as $bar) {
         that();
     }
 
     other();
-};
-function () {
+}
+
+function bar()
+{
     // comment
     foreach ($foo as $bar) {
         that();
     }
-};
-function () {
+}
+
+function baz()
+{
     foreach ($foo as $bar) {
         that();
 
@@ -24,8 +29,10 @@ function () {
             that();
         }
     }
-};
-function () {
+}
+
+function dib()
+{
     foreach ($foo as $bar) {
         that();
 
@@ -38,4 +45,4 @@ function () {
             that();
         }
     }
-};
+}

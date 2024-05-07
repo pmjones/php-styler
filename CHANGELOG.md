@@ -1,5 +1,34 @@
 # Change Log
 
+## 0.15.0
+
+- Make line control more explicit.
+
+    - Remove Printable::$hasAttribute, $hasComment, $isFirst, hasAttribute(),
+      hasComment(), and isFirst().
+
+    - Remove Styler::$atFirstInBody, $hadComment, $hadAttribute,
+      forceSingleNewline(), maybeDoubleNewline(), and rtrim().
+
+    - The Line object now tracks if a margin above or below is advised for
+      addition, and if a margin above or below is allowed.
+
+    - The Styler methods now specify margin additions and allowances on the
+      current Line object.
+
+- Protect various Styler methods that were mistakenly public.
+
+- Add method Styler::blankLine() to create new Line instances.
+
+- Rename Line::newline() to Line::blankLine().
+
+- Styler::newline() now applies one line of margin above and below auto-split
+  lines, subject to margin allowances; updated tests to reflect this
+  expectation.
+
+- Fix a logic-breaking bug where final `else` gets lost after `else if`
+  (refs #4).
+
 ## 0.14.0
 
 - Can now `apply` stying to arbitrary paths by passing file and directory
@@ -7,7 +36,7 @@
 
 ## 0.13.0
 
-- Force visibility  on class members
+- Force visibility on class members
 
 - Rename Property to ClassProperty
 

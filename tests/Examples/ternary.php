@@ -107,10 +107,12 @@ $newPath = ! isset($path[0])
 // fix by extracting the assignments
 $colonPos = strpos($path, ':');
 $slashPos = strpos($path, '/');
+
 $cond = ! isset($path[0])
     || '/' === $path[0]
     || false !== $colonPos && $colonPos < $slashPos
     || false === $slashPos;
+
 $path = $cond ? "./{$path}" : $path;
 
 // split ternary before concat

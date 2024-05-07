@@ -46,6 +46,7 @@ function concat_after_function()
         $this->getRequestUri(),
         $this->server->get('SERVER_PROTOCOL'),
     );
+
     return $statusLine . "\r\n" . $this->headers . $cookieHeader . "\r\n" . $content;
 }
 

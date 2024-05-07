@@ -1,19 +1,24 @@
 <?php
-foo(function () {
-    /* code */
-});
+foo(
+    function () {
+        /* code */
+    },
+);
+
 foo(
     $bar,
     function () {
         /* code */
     },
 );
+
 foo(
     function () {
         /* code */
     },
     $baz,
 );
+
 foo(
     $bar,
     function () {
@@ -21,8 +26,10 @@ foo(
     },
     $baz,
 );
+
 $result = $this->veryLongProperty->veryLongMethod(
     $veryLongVariableName,
+
     new VeryLongClassName(
         static function () : void {
             throw VeryLongException::create();
@@ -30,6 +37,7 @@ $result = $this->veryLongProperty->veryLongMethod(
         $this->veryLongVariableName,
     ),
 );
+
 $shortVar = array_reduce(
     $foo,
     function ($addr, $addrs) {
@@ -53,7 +61,10 @@ $foo = foo(
 );
 
 // closure without body
-$foo = foo($value, function ($value) {});
+$foo = foo(
+    $value,
+    function ($value) {},
+);
 
 class foo
 {
@@ -61,6 +72,7 @@ class foo
     {
         $result = $this->func->proc(
             $psr7Request,
+
             new VeryLongClassName(
                 static function () : void {
                     throw ReachedFinalHandlerException::create();
@@ -68,6 +80,7 @@ class foo
                 $this->veryLongProperty,
             ),
         );
+
         $e->setResult($result);
         return $result;
     }

@@ -21,12 +21,14 @@ class Preview extends Command
     {
         $configFile = $options->configFile ?? $this->findConfigFile();
         $config = $this->loadConfigFile($configFile);
+
         $service = new Service(
             $config->styler,
             $options->debugParser ?? false,
             $options->debugPrinter ?? false,
             $options->debugStyler ?? false,
         );
+
         echo $service((string) file_get_contents($sourceFile));
         return 0;
     }

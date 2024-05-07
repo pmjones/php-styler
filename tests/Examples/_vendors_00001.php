@@ -43,6 +43,7 @@ if (true) {
     if (true) {
         if (true) {
             $value = $default ?? "";
+
             $placeholderAttr = [
                 'value' => $value,
                 'disabled' => true,
@@ -72,6 +73,7 @@ if (true) {
 if (true) {
     if (true) {
         $this->options = array_merge([], $options);
+
         $this->options = array_merge(
             [
                 'id_field' => '_id',
@@ -81,6 +83,7 @@ if (true) {
             ],
             $options,
         );
+
         $this
             ->getCollection()
             ->updateOne(
@@ -88,6 +91,7 @@ if (true) {
                 ['$set' => $fields],
                 ['upsert' => true],
             );
+
         $this->foobar($bar, new Foo());
         $this->foobar($bar, new Foo('bar', 'baz'));
     }

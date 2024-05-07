@@ -8,6 +8,7 @@ class IrkStylerTest extends TestCase
     public function test() : void
     {
         $this->service = new Service(new IrkStyler());
+
         $code = <<<'CODE'
         <?php
         function foo()
@@ -39,6 +40,7 @@ class IrkStylerTest extends TestCase
         }
 
         CODE;
+
         $this->assertPrint($code, $code);
     }
 }

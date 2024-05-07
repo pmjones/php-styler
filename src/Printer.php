@@ -762,6 +762,7 @@ class Printer
             Expr\Include_::TYPE_REQUIRE => 'require',
             Expr\Include_::TYPE_REQUIRE_ONCE => 'require_once',
         ];
+
         $this->print[] = new P\ReservedWord($map[$node->type]);
         $this->p($node->expr);
     }
@@ -800,12 +801,14 @@ class Printer
         $fluentNum = $node->getAttribute('fluentNum');
         $fluentEnd = $node->getAttribute('fluentEnd');
         $this->pDereferenceLhs($node->var);
+
         $this->print[] = $orig = new P\InstanceOp(
             '->',
             'method',
             $fluentNum,
             $fluentEnd,
         );
+
         $this->pObjectProperty($node->name);
         $this->pArgs($node);
         $this->print[] = new P\End($orig);
@@ -828,12 +831,14 @@ class Printer
         $fluentNum = $node->getAttribute('fluentNum');
         $fluentEnd = $node->getAttribute('fluentEnd');
         $this->pDereferenceLhs($node->var);
+
         $this->print[] = $orig = new P\InstanceOp(
             '?->',
             'method',
             $fluentNum,
             $fluentEnd,
         );
+
         $this->pObjectProperty($node->name);
         $this->pArgs($node);
         $this->print[] = new P\End($orig);
@@ -846,12 +851,14 @@ class Printer
         $fluentNum = $node->getAttribute('fluentNum');
         $fluentEnd = $node->getAttribute('fluentEnd');
         $this->pDereferenceLhs($node->var);
+
         $this->print[] = $orig = new P\InstanceOp(
             '?->',
             'property',
             $fluentNum,
             $fluentEnd,
         );
+
         $this->pObjectProperty($node->name);
         $this->print[] = new P\End($orig);
     }
@@ -861,12 +868,14 @@ class Printer
         $fluentNum = $node->getAttribute('fluentNum');
         $fluentEnd = $node->getAttribute('fluentEnd');
         $this->pDereferenceLhs($node->var);
+
         $this->print[] = $orig = new P\InstanceOp(
             '->',
             'property',
             $fluentNum,
             $fluentEnd,
         );
+
         $this->pObjectProperty($node->name);
         $this->print[] = new P\End($orig);
     }
@@ -908,12 +917,14 @@ class Printer
         $this->pStaticDereferenceLhs($node->class);
         $fluentNum = $node->getAttribute('fluentNum');
         $fluentEnd = $node->getAttribute('fluentEnd');
+
         $this->print[] = $orig = new P\StaticOp(
             '::$',
             'property',
             $fluentNum,
             $fluentEnd,
         );
+
         $this->pObjectProperty($node->name);
         $this->print[] = new P\End($orig);
     }
@@ -1600,7 +1611,12 @@ class Printer
 
     protected function pStmt_Else(Stmt\Else_ $node) : void
     {
-        if (count($node->stmts) === 1 && $node->stmts[0] instanceof Stmt\If_) {
+        if (
+            count($node->stmts) === 1
+            && $node->stmts[0] instanceof Stmt\If_
+            && ! $node->stmts[0]->elseifs
+            && ! $node->stmts[0]->else
+        ) {
             $this->pStmt_ElseIf($node->stmts[0]);
             return;
         }
@@ -1760,6 +1776,7 @@ class Printer
             $node->newModifier,
             $node->newName ? $this->name($node->newName) : null,
         );
+
         $this->print[] = $useTraitAs;
     }
 
@@ -1947,6 +1964,7 @@ class Printer
     {
         $start = $atStart ? '(?:^|[\r\n])' : '[\r\n]';
         $end = $atEnd ? '(?:$|[;\r\n])' : '[;\r\n]';
+
         return false !== strpos($string, $label)
             && preg_match("/{$start}{$label}{$end}/", $string);
     }
@@ -1972,6 +1990,7 @@ class Printer
             || $node instanceof Expr\Array_
             || $node instanceof Scalar\String_
             || $node instanceof Expr\ClassConstFetch;
+
         return ! $noParens;
     }
 
@@ -2027,11 +2046,13 @@ class Printer
             | (?<=[\xF0-\xF4])[\x80-\xBF](?![\x80-\xBF]{2}) # Short 4 byte sequence
             | (?<=[\xF0-\xF4][\x80-\xBF])[\x80-\xBF](?![\x80-\xBF]) # Short 4 byte sequence (2)
         )/x';
+
         $callback = function ($matches) {
             assert(strlen($matches[0]) === 1);
             $hex = dechex(ord($matches[0]));
             return '\x' . str_pad($hex, 2, '0', STR_PAD_LEFT);
         };
+
         return preg_replace_callback($regex, $callback, $escaped);
     }
 
@@ -2148,6 +2169,7 @@ class Printer
                 $this->print[$i] instanceof Printable
                 && $this->print[$i]->isExpansive()
                 || $this->print[$i] instanceof P\Comments
+                || $this->print[$i] instanceof P\Closure
             ) {
                 $orig->isExpansive(true);
                 return;

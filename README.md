@@ -32,7 +32,7 @@ PHP-Styler is **not appropriate** for PHP-based templates, as it does not use th
 
 PHP-Styler uses a 3-pass system to reformat and style PHP code:
 
-1. _PHPParser\Parser_ converts the code to an abstract syntax tree of _Node_ elements.
+1. _PHPParser\Parser_ converts the code to an abstract syntax tree of _Node_ elements, applying transformations from _PHPStyler\Visitor_ along the way.
 2. _PHPStyler\Printer_ flattens the _Node_ tree into a list of _Printable_ elements.
 3. _PHPStyler\Styler_ converts each _Printable_ back into text using a series of _Line_ objects; it applies horizontal spacing, vertical spacing, and line-splitting rules as it goes.
 
@@ -234,6 +234,8 @@ At first, PHP-Styler builds each statement/instruction as a single line. If that
 - Parameter lists are split at commas.
 
 If the first rule does not make the line short enough, the second rule is applied in addition, then the third, and so on.
+
+Finally, PHP-Styler will add one blank line of margin around each line that has been automatically split.
 
 The line splitting logic attempts to be idiomatic; that is, PHP-Styler tries to take common line-splitting idioms into account, rather than making weighted calculations of elements. Reference projects were:
 

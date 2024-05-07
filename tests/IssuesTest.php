@@ -19,6 +19,7 @@ class IssuesTest extends TestCase
         }
 
         SOURCE;
+
         $expect = <<<'EXPECT'
         <?php
         if ($foo) {
@@ -28,6 +29,7 @@ class IssuesTest extends TestCase
         }
 
         EXPECT;
+
         $this->assertPrint($expect, $source);
     }
 }

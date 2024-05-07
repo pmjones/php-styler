@@ -1,18 +1,23 @@
 <?php
-function () {
+function foo()
+{
     do {
         that();
     } while (true);
 
     other();
-};
-function () {
+}
+
+function bar()
+{
     // comment
     do {
         that();
     } while (true);
-};
-function () {
+}
+
+function baz()
+{
     do {
         that();
 
@@ -24,8 +29,10 @@ function () {
             that();
         } while (true);
     } while (true);
-};
-function () {
+}
+
+function dib()
+{
     do {
         that();
 
@@ -38,4 +45,4 @@ function () {
             that();
         } while (true);
     } while (true);
-};
+}

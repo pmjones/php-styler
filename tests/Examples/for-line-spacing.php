@@ -1,18 +1,23 @@
 <?php
-function () {
+function foo()
+{
     for (; ; ) {
         that();
     }
 
     other();
-};
-function () {
+}
+
+function bar()
+{
     // comment
     for (; ; ) {
         that();
     }
-};
-function () {
+}
+
+function baz()
+{
     for (; ; ) {
         that();
 
@@ -24,8 +29,10 @@ function () {
             that();
         }
     }
-};
-function () {
+}
+
+function dib()
+{
     for (; ; ) {
         that();
 
@@ -38,4 +45,4 @@ function () {
             that();
         }
     }
-};
+}

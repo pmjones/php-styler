@@ -24,6 +24,7 @@ class ExamplesTest extends TestCase
                 strrchr(str_replace('.source.php', '', $sourceFile), '/'),
                 '/',
             );
+
             $provide[$key] = [$sourceFile];
         }
 

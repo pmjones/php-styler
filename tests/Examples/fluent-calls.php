@@ -42,15 +42,18 @@ function static_fluency()
         if (true) {
             $foo = FooBar::fromFoo($veryVeryLongVariable, ResponseStatus::INVALID)
                 ->setError(Error::ALREADY_RESPONDED);
+
             $bar = FooBar::fromBar($e->getResponse())
                 ->setRequest($e->getRequest())
                 ->setError((string) $e->getResponse()->getBody())
                 ->setException($e);
+
             $baz = FooBar::fromBaz(
                 $response,
                 $overrideStatus ?? DomainStatus::UNAUTHORIZED,
             )
                 ->setException($e);
+
             $payload = FooBar::fromResponse($e->getResponse())
                 ->setRequest($e->getRequest())
                 ->setError((string) $e->getResponse()->getBody())
