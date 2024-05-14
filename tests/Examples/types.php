@@ -1,4 +1,4 @@
 <?php
-function funcname(Foo $foo, Bar&Baz $baz, Zim|(Gir&Irk) $doom)
+function funcname(Foo $foo, Bar&Baz $baz, Dib|Zim $gir)
 {
 }

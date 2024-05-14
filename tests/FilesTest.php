@@ -55,6 +55,7 @@ class FilesTest extends TestCase
             'Files.php',
             'Line.php',
             'Nesting.php',
+            'Parser.php',
             'Printable/Args.php',
             'Printable/ArrayDim.php',
             'Printable/Array_.php',

@@ -1,5 +1,13 @@
 # Change Log
 
+## NEXT
+
+Previously, PHP-Styler converted `else if` to `elseif` as part of
+the _Printer_ operations on parsed _Node_ objects. Now, it converts them as
+part of a custom _Parser_ pre-processing step by modifying the original code
+PHP tokens themselves. Doing so required a minor change to the testing of
+typehints and `declare` values.
+
 ## 0.15.0
 
 - Make line control more explicit.
@@ -31,7 +39,7 @@
 
 ## 0.14.0
 
-- Can now `apply` stying to arbitrary paths by passing file and directory
+- Can now `apply` styling to arbitrary paths by passing file and directory
   names at the command line.
 
 ## 0.13.0

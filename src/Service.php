@@ -3,9 +3,10 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
+use PhpParser\Lexer;
+use PhpParser\Node\Stmt;
 use PhpParser\NodeTraverser;
-use PhpParser\Parser;
-use PhpParser\ParserFactory;
+use PhpToken;
 
 class Service
 {
@@ -21,8 +22,7 @@ class Service
         protected bool $debugPrinter = false,
         protected bool $debugStyler = false,
     ) {
-        $parserFactory = new ParserFactory();
-        $this->parser = $parserFactory->create(ParserFactory::ONLY_PHP7);
+        $this->parser = new Parser(new Lexer\Emulative());
         $this->printer = new Printer();
         $this->nodeTraverser = new NodeTraverser();
         $this->nodeTraverser->addVisitor(new Visitor());
@@ -32,7 +32,7 @@ class Service
     {
         $debug = '';
 
-        /** @var array<\PhpParser\Node\Stmt> */
+        /** @var Stmt[] */
         $stmts = $this->parser->parse($code);
         $this->nodeTraverser->traverse($stmts);
 

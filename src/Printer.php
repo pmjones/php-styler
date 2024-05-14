@@ -1611,16 +1611,6 @@ class Printer
 
     protected function pStmt_Else(Stmt\Else_ $node) : void
     {
-        if (
-            count($node->stmts) === 1
-            && $node->stmts[0] instanceof Stmt\If_
-            && ! $node->stmts[0]->elseifs
-            && ! $node->stmts[0]->else
-        ) {
-            $this->pStmt_ElseIf($node->stmts[0]);
-            return;
-        }
-
         $this->print[] = new P\Else_();
         $this->print[] = new P\Body('else');
         $this->p($node->stmts);

@@ -25,11 +25,9 @@ if (($ifNoneMatchEtags = $request->getETags()) && null !== ($etag = $this->getEt
 }
 
 /**
- *
  * Short line
  * Also a short line
  * A very very very very very very very very very very very very very very very very very very long line
- *
  */
 if (true) {
     $foo1->language

@@ -30,11 +30,18 @@ PHP-Styler is **not appropriate** for PHP-based templates, as it does not use th
 
 ### How It Works
 
-PHP-Styler uses a 3-pass system to reformat and style PHP code:
+PHP-Styler uses a multiple-pass system to reformat and style PHP code:
 
-1. _PHPParser\Parser_ converts the code to an abstract syntax tree of _Node_ elements, applying transformations from _PHPStyler\Visitor_ along the way.
-2. _PHPStyler\Printer_ flattens the _Node_ tree into a list of _Printable_ elements.
-3. _PHPStyler\Styler_ converts each _Printable_ back into text using a series of _Line_ objects; it applies horizontal spacing, vertical spacing, and line-splitting rules as it goes.
+1. The _Parser_ converts the code to an abstract syntax tree of _Node_ elements, applying transformations from a _Visitor_ along the way.
+2. The _Printer_ flattens the _Node_ tree into a list of _Printable_ elements.
+3. The _Styler_ converts each _Printable_ back into text using a series of _Line_ objects; it applies horizontal spacing, vertical spacing, and line-splitting rules as it goes.
+
+> Note:
+>
+> The _Parser_ additionally converts all uses of `else if` (with a space between
+> the keywords)  to `elseif` (without the space) as a pre-processing step; this
+> is both a practical and a stylistic matter. Cf. <https://github.com/pmjones/php-styler/issues/4>
+> and <https://github.com/nikic/PHP-Parser/issues/948>.
 
 ### Design Goals
 

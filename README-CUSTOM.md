@@ -58,7 +58,7 @@ return new Config(
 );
 ```
 
-Then invoke the `php-styler apply` command to make sure it works without errors.
+Then invoke the `php-styler preview` command to make sure it works without errors.
 
 ## Method Overrides
 
@@ -195,6 +195,6 @@ The finished output of styled code is handled by the `finish()` method. This is 
 ```php
     protected function finish(string $code) : string
     {
-        return '<?php' . $this->eol . $this->eol. trim($code);
+        return '<' . '?php' . $this->eol . $this->eol . trim($code);
     }
 ```
