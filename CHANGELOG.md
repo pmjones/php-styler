@@ -8,6 +8,9 @@ part of a custom _Parser_ pre-processing step by modifying the original code
 PHP tokens themselves. Doing so required a minor change to the testing of
 typehints and `declare` values.
 
+Also renamed the default config file from `resources/php-styler.dist.php` to
+`resources/php-styler.php`.
+
 ## 0.15.0
 
 - Make line control more explicit.
