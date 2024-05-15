@@ -1,6 +1,6 @@
 # Change Log
 
-## NEXT
+## 0.16.0
 
 Previously, PHP-Styler converted `else if` to `elseif` as part of
 the _Printer_ operations on parsed _Node_ objects. Now, it converts them as
