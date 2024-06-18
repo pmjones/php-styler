@@ -414,6 +414,10 @@ class Styler
 
     protected function sArray(P\Array_ $p) : void
     {
+        if ($p->isExpansive() && ! $this->nesting->in(P\Array_::class)) {
+            $this->line->addMarginAbove();
+        }
+
         $this->nesting->incr(P\Array_::class);
         $this->line[] = '[';
 
@@ -451,6 +455,10 @@ class Styler
 
         $this->line[] = ']';
         $this->nesting->decr(P\Array_::class);
+
+        if ($p->isExpansive() && ! $this->nesting->in(P\Array_::class)) {
+            $this->line->addMarginBelow();
+        }
     }
 
     protected function sArrayDim(P\ArrayDim $p) : void
