@@ -37,7 +37,7 @@ class Nesting
         return (bool) $this->types[$type];
     }
 
-    public function level(string $type = null) : int
+    public function level(?string $type = null) : int
     {
         $this->types[$type] ??= 0;
         return $type ? $this->types[$type] : $this->level;
