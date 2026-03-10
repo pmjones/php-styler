@@ -7,7 +7,7 @@ class ConfigTest extends TestCase
 {
     public function test() : void
     {
-        $actual = new Config(new Styler(), new Files(), null);
+        $actual = new Config(new Files(), null);
         $this->assertInstanceof(Config::class, $actual);
     }
 }

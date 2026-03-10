@@ -13,10 +13,7 @@ $dib = function () {
 $veryLongVariableName = function (
     $veryLongVar1,
     $veryLongVar2,
-) use (
-    $veryLongVar3,
-    $veryLongVar4,
-) {
+) use ($veryLongVar3, $veryLongVar4) {
     $i ++;
 };
 
@@ -56,9 +53,7 @@ $foo = function (
     $veryVeryVeryVeryLongParameter,
     $veryVeryVeryVeryLongerParameter,
     $veryVeryVeryVeryMuchLongerParameter,
-) use (
-    $var1,
-) {
+) use ($var1) {
     // body
 };
 

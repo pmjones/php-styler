@@ -4,9 +4,9 @@ echo $bar; // end-line
 
 if (1) {
     // own-line
-}
+} /* after-line */
 
-/* pre-line */ echo $foo;
+echo $foo;
 echo /* mid-line */ $foo;
 
 switch ($foo) {
@@ -14,7 +14,8 @@ switch ($foo) {
     case 'foo':
         echo $foo;
 
-    // no break
+        // no break
+
     case 'bar':
         echo $bar;
         break;

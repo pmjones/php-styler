@@ -20,7 +20,7 @@ class StyleLocator
         }
 
         $shortName = substr($class, strrpos($class, '\\') + 1);
-        $styleClass = "Oxford\\Style\\{$shortName}Style";
+        $styleClass = "PhpStyler\\Style\\{$shortName}Style";
 
         /** @var Style $style */
         $style = class_exists($styleClass) ? new $styleClass() : new Style();

@@ -4,8 +4,6 @@ declare(strict_types=1);
 namespace PhpStyler\Command;
 
 use AutoShell\Help;
-use PhpParser\ParserFactory;
-use PhpParser\Parser;
 use PhpStyler\Service;
 use PhpStyler\Styler;
 
@@ -22,14 +20,8 @@ class Preview extends Command
         $configFile = $options->configFile ?? $this->findConfigFile();
         $config = $this->loadConfigFile($configFile);
 
-        $service = new Service(
-            $config->styler,
-            $options->debugParser ?? false,
-            $options->debugPrinter ?? false,
-            $options->debugStyler ?? false,
-        );
-
-        echo $service((string) file_get_contents($sourceFile));
+        $styler = Styler::fromConfig($config);
+        echo $styler((string) file_get_contents($sourceFile));
         return 0;
     }
 }

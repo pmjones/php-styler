@@ -2,6 +2,7 @@
 class MyHelloWorld extends Base
 {
     use SayWorld;
+
     use SpeakWorld, SeeWorld;
 }
 

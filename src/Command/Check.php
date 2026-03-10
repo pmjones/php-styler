@@ -5,7 +5,7 @@ namespace PhpStyler\Command;
 
 use AutoShell\Help;
 use PhpStyler\Config;
-use PhpStyler\Service;
+use PhpStyler\Styler;
 use PhpParser\Error;
 
 #[Help("Checks if any of the configured files need styling.")]
@@ -60,13 +60,13 @@ class Check extends Command
     protected function checkStyle(Config $config) : int
     {
         $count = 0;
-        $service = new Service($config->styler);
+        $styler = Styler::fromConfig($config);
 
         foreach ($config->files as $file) {
             $file = (string) $file;
             $count ++;
             $source = (string) file_get_contents($file);
-            $styled = $service($source);
+            $styled = $styler($source);
 
             if ($source !== $styled) {
                 echo $file . PHP_EOL;

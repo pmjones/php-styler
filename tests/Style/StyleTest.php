@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Style;
 
+use PhpStyler\Styler;
 use PhpStyler\Token\TAssign;
 use PhpStyler\Token\TBinaryPlus;
 use PhpStyler\Token\TClassOpeningBrace;

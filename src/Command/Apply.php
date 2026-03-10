@@ -5,7 +5,7 @@ namespace PhpStyler\Command;
 
 use AutoShell\Help;
 use PhpStyler\Config;
-use PhpStyler\Service;
+use PhpStyler\Styler;
 use PhpParser\Error;
 use PhpStyler\Files;
 
@@ -100,7 +100,7 @@ class Apply extends Command
     ) : int
     {
         $count = 0;
-        $service = new Service($config->styler);
+        $styler = Styler::fromConfig($config);
 
         if ($paths) {
             $cacheTime = false;
@@ -120,7 +120,7 @@ class Apply extends Command
 
             $count ++;
             echo $file . PHP_EOL;
-            $code = $service((string) file_get_contents($file));
+            $code = $styler((string) file_get_contents($file));
             file_put_contents($file, $code);
         }
 

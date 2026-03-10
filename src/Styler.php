@@ -13,11 +13,21 @@ class Styler
 
     private Splitter $splitter;
 
+    public static function fromConfig(Config $config) : static
+    {
+        return new self(
+            eol: $config->eol,
+            lineLen: $config->lineLen,
+            indentLen: $config->indentLen,
+            indentTab: $config->indentTab,
+        );
+    }
+
     public function __construct(
-        ?int $lineLen = 88,
+        private string $eol = "\n",
+        int $lineLen = 88,
         int $indentLen = 4,
         bool $indentTab = false,
-        private string $eol = PHP_EOL,
         ?StyleLocator $styles = null,
     ) {
         $lineFactory = new LineFactory($lineLen, $indentLen, $indentTab);

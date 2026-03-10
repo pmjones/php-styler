@@ -56,7 +56,7 @@ class Splitter
      */
     private function splitLine(Line $line) : array
     {
-        if ($this->lineFactory->lineLen === null || $line->length() <= $this->lineFactory->lineLen) {
+        if ($this->lineFactory->lineLen === 0 || $line->length() <= $this->lineFactory->lineLen) {
             return [$line];
         }
 

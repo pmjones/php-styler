@@ -22,7 +22,7 @@ function () {
         case 'dib':
             that();
 
-        // no break
+            // no break
         default:
             that();
     }

@@ -54,13 +54,11 @@ $useTraitAs = $this->veryLongFunctionName(
     $node->newName ?: $this->name($node->newName),
 );
 
-// ternary embedded in argument with boolean looks off
-$sourceDirs = explode('/', isset($basePath[0])
-    && '/' === $basePath[0] ? substr($basePath, 1) : $basePath);
-
-// fix by extracting the condition
-$condition = isset($basePath[0]) && '/' === $basePath[0];
-$sourceDirs = explode('/', $condition ? substr($basePath, 1) : $basePath);
+// ternary embedded in argument with boolean
+$sourceDirs = explode(
+    '/',
+    isset($basePath[0]) && '/' === $basePath[0] ? substr($basePath, 1) : $basePath,
+);
 
 if (true) {
     if (true) {
@@ -96,13 +94,13 @@ if (true) {
     }
 }
 
-// embedded assignments look off
+// embedded assignments looks off
 $newPath = ! isset($path[0])
     || '/' === $path[0]
     || false !== ($colonPos = strpos($path, ':'))
-        && (
-            $colonPos < ($slashPos = strpos($path, '/')) || false === $slashPos
-        ) ? "./{$path}" : $path;
+        && ($colonPos < ($slashPos = strpos($path, '/')) || false === $slashPos)
+    ? "./{$path}"
+    : $path;
 
 // fix by extracting the assignments
 $colonPos = strpos($path, ':');

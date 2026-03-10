@@ -63,7 +63,8 @@ $foo = foo(
 // closure without body
 $foo = foo(
     $value,
-    function ($value) {},
+    function ($value) {
+    },
 );
 
 class foo

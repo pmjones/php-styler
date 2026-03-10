@@ -169,7 +169,7 @@ class Parser
 
         if (str_starts_with($name, 'T_')) {
             return self::PARSE_CLASS[$name]
-                ?? "\\Oxford\\Token\\" . str_replace('_', '', ucwords(strtolower($name), '_'));
+                ?? "\\PhpStyler\\Token\\" . str_replace('_', '', ucwords(strtolower($name), '_'));
         }
 
         return self::PARSE_CLASS[$unparsed->text];

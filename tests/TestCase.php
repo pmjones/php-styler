@@ -8,18 +8,16 @@ use PhpParser\NodeTraverser;
 
 abstract class TestCase extends \PHPUnit\Framework\TestCase
 {
-    protected Service $service;
-
     protected Styler $styler;
 
     protected function setUp() : void
     {
-        $this->service = new Service(new Styler());
+        $this->styler = new Styler();
     }
 
     protected function print(string $source) : string
     {
-        return $this->service->__invoke($source);
+        return $this->styler->__invoke($source);
     }
 
     protected function assertPrint(string $expect, string $source) : void
