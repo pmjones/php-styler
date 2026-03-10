@@ -1,0 +1,24 @@
+<?php
+declare(strict_types=1);
+
+namespace Oxford\Token;
+
+use Oxford\Parser;
+use PhpToken;
+
+/**
+ * Token: T_IMPLEMENTS
+ *
+ * Syntax: implements
+ *
+ * Reference: https://www.php.net/manual/en/language.oop5.interfaces.php Object Interfaces
+ */
+class TImplements extends T
+{
+    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    {
+        $parser->add($unparsed, static::class);
+        $parser->space();
+        $parser->addSplitPoint(TSplittable::COMMA);
+    }
+}

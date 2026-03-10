@@ -1,0 +1,15 @@
+<?php
+declare(strict_types=1);
+
+namespace Oxford\Token;
+
+/**
+ * Token: T_UNSET_CAST
+ *
+ * Syntax: (unset)
+ *
+ * Reference: https://www.php.net/manual/en/language.types.type-juggling.php#language.types.typecasting type-casting
+ */
+class TUnsetCast extends T
+{
+}

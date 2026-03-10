@@ -1,0 +1,24 @@
+<?php
+declare(strict_types=1);
+
+namespace Oxford\Token;
+
+use Oxford\Parser;
+use PhpToken;
+
+/**
+ * Token: T_WHILE
+ *
+ * Syntax: while
+ *
+ * Reference: https://www.php.net/manual/en/control-structures.while.php while,
+ * https://www.php.net/manual/en/control-structures.do.while.php do..while
+ */
+class TWhile extends T
+{
+    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    {
+        $parser->addNesting($unparsed, self::class);
+        $parser->space();
+    }
+}

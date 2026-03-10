@@ -1,0 +1,15 @@
+<?php
+declare(strict_types=1);
+
+namespace Oxford\Token;
+
+/**
+ * Token: T_IS_GREATER_OR_EQUAL
+ *
+ * Syntax: >=
+ *
+ * Reference: https://www.php.net/manual/en/language.operators.comparison.php comparison operators
+ */
+class TIsGreaterOrEqual extends T
+{
+}

@@ -1,0 +1,56 @@
+<?php
+declare(strict_types=1);
+
+namespace Oxford\Token;
+
+class TNamedArgColonTest extends TTestCase
+{
+    /**
+     * @inheritdoc
+     */
+    public static function provide() : array
+    {
+        return [
+            'named-arg' => [
+                <<<'CODE'
+                <?php
+                foo(name: 'bar');
+                CODE,
+                [
+                    TPhpOpeningTag::class,
+                    TFunctionCallName::class,
+                    TArgsOpeningParen::class,
+                    TNamedArgName::class,
+                    TNamedArgColon::class,
+                    TStringLiteral::class,
+                    TArgsClosingParen::class,
+                    TSemicolon::class,
+                ],
+            ],
+            'named-arg-in-attribute' => [
+                <<<'CODE'
+                <?php
+                #[Foo(name: 'bar')]
+                function baz() {}
+                CODE,
+                [
+                    TPhpOpeningTag::class,
+                    TAttribute::class,
+                    TUnqualifiedName::class,
+                    TArgsOpeningParen::class,
+                    TNamedArgName::class,
+                    TNamedArgColon::class,
+                    TStringLiteral::class,
+                    TArgsClosingParen::class,
+                    TAttributeClosingBracket::class,
+                    TFunction::class,
+                    TFunctionName::class,
+                    TParamsOpeningParen::class,
+                    TParamsClosingParen::class,
+                    TFunctionOpeningBrace::class,
+                    TFunctionClosingBrace::class,
+                ],
+            ],
+        ];
+    }
+}

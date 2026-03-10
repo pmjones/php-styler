@@ -1,0 +1,22 @@
+<?php
+declare(strict_types=1);
+
+namespace Oxford\Token;
+
+use Oxford\Parser;
+use PhpToken;
+
+/**
+ * Token: T_CURLY_OPEN
+ *
+ * Syntax: {$a
+ *         ^
+ * Reference: https://www.php.net/manual/en/language.types.string.php#language.types.string.parsing.complex complex variable parsed syntax
+ */
+class TCurlyOpen extends T
+{
+    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    {
+        $parser->addNesting($unparsed, self::class);
+    }
+}

@@ -1,0 +1,84 @@
+<?php
+declare(strict_types=1);
+
+namespace Oxford\Token;
+
+use Oxford\Line;
+
+class TCommentStarredTest extends TTestCase
+{
+    /**
+     * @inheritdoc
+     */
+    public static function provide() : array
+    {
+        return [
+            'basic' => [
+                <<<'CODE'
+                <?php
+                $foo = 1;
+                /*
+                 * bar
+                 */
+                $bar = 1;
+                CODE,
+                [
+                    TPhpOpeningTag::class,
+                    TVariable::class,
+                    TAssign::class,
+                    TIntegerLiteral::class,
+                    TSemicolon::class,
+                    TCommentStarred::class,
+                    TVariable::class,
+                    TAssign::class,
+                    TIntegerLiteral::class,
+                    TSemicolon::class,
+                ],
+            ],
+            'open-tag' => [
+                <<<'CODE'
+                <?php
+                /*
+                 * foo
+                 */
+                CODE,
+                [
+                    TPhpOpeningTag::class,
+                    TCommentStarredInline::class,
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider provideRender
+     */
+    public function testRender(string $text, int $indent, string $expect) : void
+    {
+        $token = new TCommentStarred(T_COMMENT, $text);
+        $line = new Line(indent: $indent);
+        $this->assertSame($expect, $token->render($line));
+    }
+
+    /** @return array<string, array{0: string, 1: int, 2: string}> */
+    public static function provideRender() : array
+    {
+        return [
+            'reindent-to-1' => [
+                "/*\n * Foo.\n * More text.\n */",
+                1,
+                "/*\n     * Foo.\n     * More text.\n     */",
+            ],
+            'reindent-to-2' => [
+                "/*\n * Foo.\n */",
+                2,
+                "/*\n         * Foo.\n         */",
+            ],
+            'reindent-to-0' => [
+                "/*\n     * Foo.\n     */",
+                0,
+                "/*\n * Foo.\n */",
+            ],
+        ];
+    }
+}

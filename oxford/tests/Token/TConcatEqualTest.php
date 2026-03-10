@@ -1,0 +1,29 @@
+<?php
+declare(strict_types=1);
+
+namespace Oxford\Token;
+
+class TConcatEqualTest extends TTestCase
+{
+    /**
+     * @inheritdoc
+     */
+    public static function provide() : array
+    {
+        return [
+            'concat-equal' => [
+                <<<'CODE'
+                <?php
+                $foo .= 'bar';
+                CODE,
+                [
+                    TPhpOpeningTag::class,
+                    TVariable::class,
+                    TConcatEqual::class,
+                    TStringLiteral::class,
+                    TSemicolon::class,
+                ],
+            ],
+        ];
+    }
+}

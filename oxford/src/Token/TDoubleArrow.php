@@ -1,0 +1,43 @@
+<?php
+declare(strict_types=1);
+
+namespace Oxford\Token;
+
+use Oxford\Parser;
+use PhpToken;
+
+/**
+ * Token: T_DOUBLE_ARROW
+ *
+ * Syntax: =>
+ *
+ * Reference: https://www.php.net/manual/en/language.types.array.php#language.types.array.syntax array syntax
+ */
+class TDoubleArrow extends T
+{
+    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    {
+        if ($parser->atNesting(TReturnColon::class)) {
+            $parser->popNesting(TReturnColon::class);
+        }
+
+        $parseClass = match ($parser->getNesting()) {
+            TFn::class => TFnDoubleArrow::class,
+            TMatchOpeningBrace::class => TMatchDoubleArrow::class,
+            TArrayOpeningBracket::class,
+            TArrayConstructOpeningParen::class => TArrayDoubleArrow::class,
+            TForeachOpeningParen::class => TForeachDoubleArrow::class,
+            TPropertyHookGet::class => TPropertyHookGetDoubleArrow::class,
+            TPropertyHookSet::class => TPropertyHookSetDoubleArrow::class,
+            TYield::class => TYieldDoubleArrow::class,
+            default => null,
+        };
+
+        if ($parseClass) {
+            $parser->parse($unparsed, $parseClass);
+            return;
+        }
+
+        $parser->add($unparsed, self::class);
+    }
+}
