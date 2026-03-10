@@ -3,315 +3,310 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
-use ArrayAccess;
-use PhpParser\Node\Expr;
-use PhpParser\Node\Stmt;
-use PhpStyler\Printable as P;
-use PhpStyler\Whitespace as W;
-use PhpStyler\Whitespace;
+use PhpStyler\Token\T;
+use PhpStyler\Token\TBlankLine;
+use PhpStyler\Token\TSpace;
+use PhpStyler\Token\TSplitPoint;
+use PhpStyler\Token\TSplittableComma;
 
-/**
- * @implements ArrayAccess<int, mixed>
- */
-class Line implements ArrayAccess
+class Line
 {
-    protected const RULES = [
-        P\Implements_::class,
-        P\ArrowFunction::class,
-        Expr\BinaryOp\Concat::class,
-        P\Cond::class,
-        P\Precedence::class,
-        Expr\Ternary::class,
-        Expr\BinaryOp\BooleanOr::class,
-        Expr\BinaryOp\LogicalOr::class,
-        Expr\BinaryOp\BooleanAnd::class,
-        Expr\BinaryOp\LogicalAnd::class,
-        P\Array_::class,
-        P\Args::class,
-        Expr\BinaryOp\Coalesce::class,
-        P\MemberOp::class,
-        P\Params::class,
-    ];
+    public bool $isExpanded = false;
 
-    protected string $append = '';
-
-    protected string $indent = '';
-
-    /**
-     * @var mixed[]
-     */
-    protected array $parts = [];
-
-    protected Line $line;
-
-    /**
-     * @var Line[]
-     */
-    protected array $lines = [];
-
-    protected bool $addMarginAbove = false;
-
-    protected bool $addMarginBelow = false;
-
-    protected bool $allowMarginAbove = true;
-
-    protected bool $allowMarginBelow = true;
-
+    /** @param T[] $tokens */
     public function __construct(
-        protected string $eol,
-        protected int $indentNum,
-        protected int $indentLen,
-        protected bool $indentTab,
-        protected int $lineLen,
+        private array $tokens = [],
+        public int $indent = 0,
+        public readonly string $indentStr = '    ',
+        public readonly int $indentLen = 4,
     ) {
-    }
-
-    public function offsetSet(mixed $offset, mixed $value) : void
-    {
-        if ($offset !== null) {
-            throw new Exception(__CLASS__ . ' is append-only.');
+        while ($tokens !== [] && $tokens[0] instanceof TSpace) {
+            array_shift($tokens);
         }
 
-        $this->parts[] = $value;
+        while ($tokens !== [] && end($tokens) instanceof TSpace) {
+            array_pop($tokens);
+        }
+
+        $this->tokens = array_values($tokens);
     }
 
-    public function offsetGet(mixed $offset) : mixed
+    public function addToken(T $token) : void
     {
-        throw new Exception(__CLASS__ . ' is write-only.');
+        $this->tokens[] = $token;
     }
 
-    public function offsetExists(mixed $offset) : bool
+    public function hasTokens() : bool
     {
-        return isset($this->parts[$offset]);
+        return $this->tokens !== [];
     }
 
-    public function offsetUnset(mixed $offset) : void
+    /** @return T[] */
+    public function getTokens() : array
     {
-        throw new Exception(__CLASS__ . ' is append-only.');
+        return $this->tokens;
     }
 
-    public function indent() : void
+    public function rejoinOrphanBefore() : bool
     {
-        $this->indentNum ++;
+        return $this->firstContentToken()?->rejoinOrphanBefore() ?? false;
     }
 
-    public function outdent() : void
+    public function continuationIndent() : int
     {
-        $this->indentNum --;
+        return $this->isExpanded ? $this->indent : $this->indent + 1;
     }
 
-    /**
-     * This is advisory, and applies only when allowed.
-     */
-    public function addMarginAbove() : void
+    /** @return array<int, T> */
+    public function getTopLevelTokens() : array
     {
-        $this->addMarginAbove = true;
+        $tokens = $this->tokens;
+        $count = count($tokens);
+        $result = [];
+
+        for ($i = 0; $i < $count; $i++) {
+            $token = $tokens[$i];
+
+            if ($token->isOpener()) {
+                $closerPos = $this->findTokenIndex($token->closingToken);
+
+                if ($closerPos !== null) {
+                    $i = $closerPos;
+                    continue;
+                }
+            }
+
+            $result[$i] = $token;
+        }
+
+        return $result;
     }
 
-    public function hasMarginAbove() : bool
+    public function findTokenIndex(T $target) : ?int
     {
-        return $this->addMarginAbove;
-    }
+        foreach ($this->tokens as $i => $token) {
+            if ($token === $target) {
+                return $i;
+            }
+        }
 
-    /**
-     * This is advisory, and applies only when allowed.
-     */
-    public function addMarginBelow() : void
-    {
-        $this->addMarginBelow = true;
-    }
-
-    public function hasMarginBelow() : bool
-    {
-        return $this->addMarginBelow;
-    }
-
-    public function allowMarginAbove(bool $allowMarginAbove) : void
-    {
-        $this->allowMarginAbove = $allowMarginAbove;
-    }
-
-    public function marginAllowedAbove() : bool
-    {
-        return $this->allowMarginAbove;
-    }
-
-    public function allowMarginBelow(bool $allowMarginBelow) : void
-    {
-        $this->allowMarginBelow = $allowMarginBelow;
-    }
-
-    public function marginAllowedBelow() : bool
-    {
-        return $this->allowMarginBelow;
+        return null;
     }
 
     public function isBlank() : bool
     {
-        return empty($this->parts);
+        return $this->firstContentToken() instanceof TBlankLine;
     }
 
-    public function autoAddMargins() : void
+    public function firstContentToken() : ?T
     {
-        $tmp = clone $this;
-        $output = '';
-        $tmp->append($output);
-
-        if ($tmp->lines || strpos(trim($output), $this->eol)) {
-            $this->addMarginAbove();
-            $this->addMarginBelow();
-        }
-    }
-
-    public function append(string &$output) : void
-    {
-        list($level, $rule) = $this->listLevelRule();
-
-        if ($this->fitsOnSingleLine($output) || ! $rule) {
-            $output .= rtrim($this->append) . $this->eol;
-            return;
-        }
-
-        $this->splitLines($output, $level, $rule);
-    }
-
-    protected function splitLines(string &$output, int $level, string $rule) : void
-    {
-        $this->lines = [];
-        $this->line = $this->blankLine();
-
-        foreach ($this->parts as $part) {
-            if (
-                $part instanceof Split
-                && $part->level === $level
-                && $part->rule === $rule
-            ) {
-                $method = lcfirst($part->type . 'Split');
-                $this->{$method}($part);
-            } else {
-                $this->line[] = $part;
+        foreach ($this->tokens as $token) {
+            if (! $token instanceof TSplitPoint && ! $token instanceof TSpace) {
+                return $token;
             }
         }
 
-        if ($this->line->parts) {
-            $this->lines[] = $this->line;
-        }
-
-        foreach ($this->lines as $line) {
-            $line->append($output);
-        }
+        return null;
     }
 
-    protected function blankLine() : Line
+    public function lastContentToken() : ?T
     {
-        return new Line(
-            $this->eol,
-            $this->indentNum,
-            $this->indentLen,
-            $this->indentTab,
-            $this->lineLen,
-        );
-    }
-
-    protected function incrSplit(Split $part) : void
-    {
-        $this->lines[] = $this->line;
-        $this->line = $this->blankLine();
-        $this->line->indentNum ++;
-    }
-
-    protected function condenseSplit(Split $part) : void
-    {
-        $this->lines[] = $this->line;
-        $this->line = $this->blankLine();
-        $this->line->indentNum ++;
-        $this->line[] = new W\Condense(when: fn () => true);
-    }
-
-    protected function sameSplit(Split $part) : void
-    {
-        if ($part->char) {
-            $this->line[] = $part->char;
-        }
-
-        $this->lines[] = $this->line;
-        $this->line = $this->blankLine();
-    }
-
-    protected function fitsOnSingleLine(string &$output) : bool
-    {
-        $indentStr = $this->indentTab ? "\t" : str_pad('', $this->indentLen);
-        $this->append = str_repeat($indentStr, $this->indentNum);
-        $oldOutput = $output;
-
-        foreach ($this->parts as $part) {
-            if ($part instanceof Whitespace) {
-                $method = lcfirst(substr((string) strrchr(get_class($part), '\\'), 1))
-                    . 'Whitespace';
-
-                $this->{$method}($part, $output);
-            } elseif (is_string($part)) {
-                $this->append .= $part;
+        for ($i = count($this->tokens) - 1; $i >= 0; $i--) {
+            if (! $this->tokens[$i] instanceof TSplitPoint && ! $this->tokens[$i] instanceof TSpace) {
+                return $this->tokens[$i];
             }
         }
 
-        if (strlen($this->append) <= $this->lineLen) {
-            return true;
-        }
-
-        $output = $oldOutput;
-        return false;
+        return null;
     }
 
-    /**
-     * @return array{int, string}
-     */
-    protected function listLevelRule() : array
+    public function lastContentIndex() : int
     {
-        $rules = [];
-
-        foreach ($this->parts as $part) {
-            if ($part instanceof Split) {
-                if (! in_array($part->rule, static::RULES)) {
-                    throw new Exception("No such split rule: {$part->rule}");
-                }
-
-                $rules[$part->level][] = $part->rule;
+        for ($i = count($this->tokens) - 1; $i >= 0; $i--) {
+            if (! $this->tokens[$i] instanceof TSplitPoint && ! $this->tokens[$i] instanceof TSpace) {
+                return $i;
             }
         }
 
-        if (! $rules) {
-            return [0, ''];
-        }
-
-        // get the highest-priority rule at the earliest level
-        ksort($rules);
-        $level = key($rules);
-        $rules = current($rules);
-        $rules = array_intersect(static::RULES, $rules);
-        $rule = current($rules);
-        return [$level, $rule];
+        return 0;
     }
 
-    protected function rtrimWhitespace(W\Rtrim $rtrim, string &$output) : void
+    public function contentTokenCount() : int
     {
-        $this->append = rtrim($this->append);
+        $count = 0;
 
-        if ($this->append === '') {
-            $output = rtrim($output);
+        foreach ($this->tokens as $token) {
+            if (! $token instanceof TSplitPoint && ! $token instanceof TSpace) {
+                $count++;
+            }
         }
+
+        return $count;
     }
 
-    protected function condenseWhitespace(W\Condense $condense, string &$output) : void
+    public function lastTopLevelContentIndex() : int
     {
-        $trimmed = rtrim($output);
-        $pos = strrpos($trimmed, $this->eol);
-        $len = strlen($this->eol);
-        $lastLine = substr($trimmed, $pos + $len);
+        $topLevel = $this->getTopLevelTokens();
+        $keys = array_keys($topLevel);
 
-        if (call_user_func($condense->when, $lastLine)) {
-            $output = $trimmed;
-            $this->append = ltrim($this->append) . $condense->append;
+        for ($i = count($keys) - 1; $i >= 0; $i--) {
+            if (! $topLevel[$keys[$i]] instanceof TSplitPoint && ! $topLevel[$keys[$i]] instanceof TSpace) {
+                return $keys[$i];
+            }
         }
+
+        return $keys[0] ?? 0;
+    }
+
+    public function render() : string
+    {
+        if ($this->isBlank()) {
+            return '';
+        }
+
+        $indent = str_repeat($this->indentStr, $this->indent);
+        $parts = [];
+        $skipLeading = true;
+
+        foreach ($this->tokens as $token) {
+            if ($skipLeading && ($token->text === '' || $token instanceof TSpace)) {
+                continue;
+            }
+
+            $skipLeading = false;
+            $parts[] = $token->render($this);
+        }
+
+        return $indent . implode('', $parts);
+    }
+
+    public function length() : int
+    {
+        if ($this->isBlank()) {
+            return 0;
+        }
+
+        $contentLen = 0;
+        $skipLeading = true;
+
+        foreach ($this->tokens as $token) {
+            if ($skipLeading && ($token->text === '' || $token instanceof TSpace)) {
+                continue;
+            }
+
+            $skipLeading = false;
+            $contentLen += strlen($token->text);
+        }
+
+        return $this->indent * $this->indentLen + $contentLen;
+    }
+
+    public function findTopLevelComma() : ?int
+    {
+        $topLevel = $this->getTopLevelTokens();
+        $lastIndex = $this->lastTopLevelContentIndex();
+
+        foreach ($topLevel as $i => $token) {
+            if ($token instanceof TSplittableComma && $i !== $lastIndex) {
+                return $i;
+            }
+        }
+
+        return null;
+    }
+
+    /** @return array{int, int, int}|null */
+    public function findBestPair() : ?array
+    {
+        $tokens = $this->tokens;
+        $count = count($tokens);
+
+        // Phase 1: Collect all top-level pairs
+        $pairs = [];
+
+        for ($i = 0; $i < $count; $i++) {
+            $token = $tokens[$i];
+
+            if (! $token->isOpener()) {
+                continue;
+            }
+
+            $closerPos = $this->findTokenIndex($token->closingToken);
+
+            if ($closerPos === null || $closerPos - $i <= 1) {
+                continue;
+            }
+
+            $pairs[] = [$i, $closerPos, $token->argCount];
+            $i = $closerPos;
+        }
+
+        if ($pairs === []) {
+            return null;
+        }
+
+        // Phase 2: Select best pair — prefer the one with commas if exactly one has them
+        $commaIndices = [];
+
+        foreach ($pairs as $idx => $pair) {
+            if ($pair[2] > 0) {
+                $commaIndices[] = $idx;
+            }
+        }
+
+        if (count($commaIndices) === 1) {
+            return $pairs[$commaIndices[0]];
+        }
+
+        return $pairs[0];
+    }
+
+    /** @return list<array{positions: int[], continuation: bool}> */
+    public function collectSplitGroups() : array
+    {
+        $tokens = $this->tokens;
+
+        /** @var array<int, array{positions: int[], continuation: bool}> $groups */
+        $groups = [];
+
+        foreach ($this->getTopLevelTokens() as $i => $token) {
+            if ($i === 0 || ! $token instanceof TSplitPoint) {
+                continue;
+            }
+
+            $order = $token->splitPriority;
+            $groups[$order] ??= ['positions' => [], 'continuation' => $token->continuation];
+            $groups[$order]['positions'][] = $i;
+        }
+
+        foreach ($groups as $priority => &$group) {
+            /** @var TSplitPoint $firstSplit */
+            $firstSplit = $tokens[$group['positions'][0]];
+
+            if ($firstSplit->shouldSkipFirst(count($group['positions']))) {
+                array_shift($group['positions']);
+            }
+
+            if ($group['positions'] === []) {
+                unset($groups[$priority]);
+            }
+        }
+        unset($group);
+
+        ksort($groups);
+
+        return array_values($groups);
+    }
+
+    /** @return class-string<T>[] */
+    public function getTokenClasses() : array
+    {
+        $classes = [];
+
+        foreach ($this->tokens as $token) {
+            $classes[] = get_class($token);
+        }
+
+        return $classes;
     }
 }
