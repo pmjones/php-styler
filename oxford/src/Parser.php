@@ -1,21 +1,21 @@
 <?php
 declare(strict_types=1);
 
-namespace Oxford;
+namespace PhpStyler;
 
-use Oxford\Style\Style;
-use Oxford\Style\StyleLocator;
-use Oxford\Token;
-use Oxford\Token\T;
-use Oxford\Token\TIndentDecrement;
-use Oxford\Token\TIndentIncrement;
-use Oxford\Token\TLineBreak;
-use Oxford\Token\TSpace;
-use Oxford\Token\TExtendsComma;
-use Oxford\Token\TImplementsComma;
-use Oxford\Token\TSplitPoint;
-use Oxford\Token\TSplittable;
-use Oxford\Token\TSplittableComma;
+use PhpStyler\Style\Style;
+use PhpStyler\Style\StyleLocator;
+use PhpStyler\Token;
+use PhpStyler\Token\T;
+use PhpStyler\Token\TIndentDecrement;
+use PhpStyler\Token\TIndentIncrement;
+use PhpStyler\Token\TLineBreak;
+use PhpStyler\Token\TSpace;
+use PhpStyler\Token\TExtendsComma;
+use PhpStyler\Token\TImplementsComma;
+use PhpStyler\Token\TSplitPoint;
+use PhpStyler\Token\TSplittable;
+use PhpStyler\Token\TSplittableComma;
 use PhpToken;
 
 class Parser

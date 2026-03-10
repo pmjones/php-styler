@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace Oxford;
+namespace PhpStyler;
 
-use Oxford\Token\T;
-use Oxford\Token\TBlankLine;
-use Oxford\Token\TSpace;
-use Oxford\Token\TSplitPoint;
-use Oxford\Token\TSplittableComma;
+use PhpStyler\Token\T;
+use PhpStyler\Token\TBlankLine;
+use PhpStyler\Token\TSpace;
+use PhpStyler\Token\TSplitPoint;
+use PhpStyler\Token\TSplittableComma;
 
 class Line
 {

@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Oxford;
+namespace PhpStyler;
 
-use Oxford\Style\StyleLocator;
+use PhpStyler\Style\StyleLocator;
 
 class Styler
 {

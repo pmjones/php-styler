@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Oxford;
+namespace PhpStyler;
 
-use Oxford;
+use PhpStyler;
 
 class Exception extends \Exception
 {

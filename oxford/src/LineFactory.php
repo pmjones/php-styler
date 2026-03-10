@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Oxford;
+namespace PhpStyler;
 
-use Oxford\Token\T;
+use PhpStyler\Token\T;
 
 class LineFactory
 {

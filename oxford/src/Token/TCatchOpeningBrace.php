@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Oxford\Token;
+namespace PhpStyler\Token;
 
-use Oxford\Parser;
+use PhpStyler\Parser;
 use PhpToken;
 
 class TCatchOpeningBrace extends T implements TOpeningStructure

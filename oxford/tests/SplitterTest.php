@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Oxford;
+namespace PhpStyler;
 
-use Oxford\Styler;
+use PhpStyler\Styler;
 use PHPUnit\Framework\TestCase;
 
 class SplitterTest extends TestCase

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Oxford\Token;
+namespace PhpStyler\Token;
 
 class TArrayOpeningBracketTest extends TTestCase
 {

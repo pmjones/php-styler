@@ -1,26 +1,26 @@
 <?php
 declare(strict_types=1);
 
-namespace Oxford;
+namespace PhpStyler;
 
-use Oxford\Token\T;
-use Oxford\Token\TArgsComma;
-use Oxford\Token\TArgsOpeningParen;
-use Oxford\Token\TArrayComma;
-use Oxford\Token\TArrayOpeningBracket;
-use Oxford\Token\TArrayConstructOpeningParen;
-use Oxford\Token\TCommentHashedInline;
-use Oxford\Token\TCommentHashedMidStatement;
-use Oxford\Token\TCommentSlashedInline;
-use Oxford\Token\TCommentSlashedMidStatement;
-use Oxford\Token\TCommentStarredInline;
-use Oxford\Token\TParamsComma;
-use Oxford\Token\TParamsOpeningParen;
-use Oxford\Token\TSpace;
-use Oxford\Token\TSplitPoint;
-use Oxford\Token\TSplittableComma;
-use Oxford\Token\TUseVariablesComma;
-use Oxford\Token\TUseVariablesOpeningParen;
+use PhpStyler\Token\T;
+use PhpStyler\Token\TArgsComma;
+use PhpStyler\Token\TArgsOpeningParen;
+use PhpStyler\Token\TArrayComma;
+use PhpStyler\Token\TArrayOpeningBracket;
+use PhpStyler\Token\TArrayConstructOpeningParen;
+use PhpStyler\Token\TCommentHashedInline;
+use PhpStyler\Token\TCommentHashedMidStatement;
+use PhpStyler\Token\TCommentSlashedInline;
+use PhpStyler\Token\TCommentSlashedMidStatement;
+use PhpStyler\Token\TCommentStarredInline;
+use PhpStyler\Token\TParamsComma;
+use PhpStyler\Token\TParamsOpeningParen;
+use PhpStyler\Token\TSpace;
+use PhpStyler\Token\TSplitPoint;
+use PhpStyler\Token\TSplittableComma;
+use PhpStyler\Token\TUseVariablesComma;
+use PhpStyler\Token\TUseVariablesOpeningParen;
 class Splitter
 {
     public function __construct(

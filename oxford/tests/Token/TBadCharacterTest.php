@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Oxford\Token;
+namespace PhpStyler\Token;
 
 class TBadCharacterTest extends TTestCase
 {

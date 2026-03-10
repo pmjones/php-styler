@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Oxford;
+namespace PhpStyler;
 
 use PHPUnit\Framework\TestCase;
 

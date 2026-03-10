@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Oxford\Token;
+namespace PhpStyler\Token;
 
-use Oxford\Exception;
-use Oxford\Parser;
+use PhpStyler\Exception;
+use PhpStyler\Parser;
 use PhpToken;
 
 class TContinuationBrace extends T

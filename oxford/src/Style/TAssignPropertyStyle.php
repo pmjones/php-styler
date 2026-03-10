@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Oxford\Style;
+namespace PhpStyler\Style;
 
 class TAssignPropertyStyle extends Style
 {

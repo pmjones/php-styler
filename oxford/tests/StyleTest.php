@@ -1,21 +1,21 @@
 <?php
 declare(strict_types=1);
 
-namespace Oxford;
+namespace PhpStyler;
 
-use Oxford\Style\StyleLocator;
-use Oxford\Token\TAssign;
-use Oxford\Token\TBinaryPlus;
-use Oxford\Token\TClassOpeningBrace;
-use Oxford\Token\TDot;
-use Oxford\Token\TFalse;
-use Oxford\Token\TIfClosingBrace;
-use Oxford\Token\TIntersection;
-use Oxford\Token\TNull;
-use Oxford\Token\TReturnColon;
-use Oxford\Token\TSemicolon;
-use Oxford\Token\TTrue;
-use Oxford\Token\TUnion;
+use PhpStyler\Style\StyleLocator;
+use PhpStyler\Token\TAssign;
+use PhpStyler\Token\TBinaryPlus;
+use PhpStyler\Token\TClassOpeningBrace;
+use PhpStyler\Token\TDot;
+use PhpStyler\Token\TFalse;
+use PhpStyler\Token\TIfClosingBrace;
+use PhpStyler\Token\TIntersection;
+use PhpStyler\Token\TNull;
+use PhpStyler\Token\TReturnColon;
+use PhpStyler\Token\TSemicolon;
+use PhpStyler\Token\TTrue;
+use PhpStyler\Token\TUnion;
 use PHPUnit\Framework\TestCase;
 
 class StyleTest extends TestCase

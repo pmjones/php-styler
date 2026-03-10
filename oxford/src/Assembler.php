@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace Oxford;
+namespace PhpStyler;
 
-use Oxford\Token\T;
-use Oxford\Token\TIndentDecrement;
-use Oxford\Token\TIndentIncrement;
-use Oxford\Token\TLineBreak;
+use PhpStyler\Token\T;
+use PhpStyler\Token\TIndentDecrement;
+use PhpStyler\Token\TIndentIncrement;
+use PhpStyler\Token\TLineBreak;
 
 class Assembler
 {

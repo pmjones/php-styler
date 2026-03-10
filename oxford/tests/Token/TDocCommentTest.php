@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Oxford\Token;
+namespace PhpStyler\Token;
 
-use Oxford\Line;
+use PhpStyler\Line;
 
 class TDocCommentTest extends TTestCase
 {

@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Oxford\Token;
+namespace PhpStyler\Token;
 
-use Oxford\Line;
-use Oxford\Parser;
+use PhpStyler\Line;
+use PhpStyler\Parser;
 use PhpToken;
 
 abstract class T extends PhpToken
