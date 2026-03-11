@@ -20,3 +20,21 @@ if (true) {
         }
     }
 }
+
+class FooFactory
+{
+    public function new() : self
+    {
+    }
+
+    protected function print(string $source) : string
+    {
+    }
+}
+
+// should not break at operator when it's the only operator
+// -            TConst::class => $parser->atNesting(TConst::class, TClasslikeOpeningBrace::class)
+// +            TConst::class => $parser
+// +                ->atNesting(TConst::class, TClasslikeOpeningBrace::class)
+//                  ? TConstEndSemicolon::class
+//                  : TNamespaceConstEndSemicolon::class,
