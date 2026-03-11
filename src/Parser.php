@@ -89,7 +89,7 @@ class Parser
     ];
 
     /**
-     * @var array<int, T>
+     * @var array<int, Nesting>
      */
     protected array $nesting = [];
 
@@ -112,12 +112,6 @@ class Parser
     protected int $lastAddedIndex = 0;
 
     protected int $parenDepth = 0;
-
-    /** @var int[] Comma count per nesting level, parallel to $nesting */
-    protected array $nestingArgCount = [];
-
-    /** @var bool[] Whether each nesting level directly contains a bracket child */
-    protected array $nestingContainsBracket = [];
 
     public ?TSplitPoint $lastSplitPoint = null;
 
@@ -147,8 +141,6 @@ class Parser
         $this->unparsedCount = count($this->unparsed);
         $this->unparsedOffset = 0;
         $this->parenDepth = 0;
-        $this->nestingArgCount = [];
-        $this->nestingContainsBracket = [];
         $this->lastSplitPoint = null;
 
         foreach ($this->unparsed as $this->unparsedOffset => $unparsed) {
@@ -223,8 +215,8 @@ class Parser
             $this->parenDepth ++;
         }
 
-        if ($token instanceof TSplittableComma && $this->nestingArgCount !== []) {
-            $this->nestingArgCount[array_key_last($this->nestingArgCount)] ++;
+        if ($token instanceof TSplittableComma && $this->nesting !== []) {
+            $this->nesting[array_key_last($this->nesting)]->argCount ++;
         }
 
         // Emit TSplitPoint BEFORE operators/fluent
@@ -232,9 +224,8 @@ class Parser
             $this->addSplitPoint($token->splitCategory());
         }
 
-        $this->parsed[] = $token;
         $this->lastAddedIndex = $this->parsedCount;
-        $this->parsedCount ++;
+        $this->emit($token);
 
         // Emit TSplitPoint AFTER commas
         if ($token instanceof TSplittableComma) {
@@ -261,15 +252,13 @@ class Parser
         $splitPoint = new TSplitPoint(T_WHITESPACE, '');
         $splitPoint->splitPriority = $priority;
         $splitPoint->continuation = $continuation;
-        $this->parsed[] = $splitPoint;
-        $this->parsedCount ++;
+        $this->emit($splitPoint);
         $this->lastSplitPoint = $splitPoint;
     }
 
     public function indentIncr() : void
     {
-        $this->parsed[] = new TIndentIncrement(T_WHITESPACE, '');
-        $this->parsedCount ++;
+        $this->emit(new TIndentIncrement(T_WHITESPACE, ''));
     }
 
     public function indentDecr() : void
@@ -283,8 +272,7 @@ class Parser
             return;
         }
 
-        $this->parsed[] = new TIndentDecrement(T_WHITESPACE, '');
-        $this->parsedCount ++;
+        $this->emit(new TIndentDecrement(T_WHITESPACE, ''));
     }
 
     public function blankLine() : void
@@ -298,8 +286,7 @@ class Parser
         }
 
         $this->lineBreak();
-        $this->parsed[] = new Token\TBlankLine(T_WHITESPACE, '');
-        $this->parsedCount ++;
+        $this->emit(new Token\TBlankLine(T_WHITESPACE, ''));
         $this->lineBreak();
     }
 
@@ -338,8 +325,7 @@ class Parser
             return;
         }
 
-        $this->parsed[] = new TLineBreak(T_WHITESPACE, '');
-        $this->parsedCount ++;
+        $this->emit(new TLineBreak(T_WHITESPACE, ''));
     }
 
     public function space() : void
@@ -364,7 +350,12 @@ class Parser
             }
         }
 
-        $this->parsed[] = new TSpace(T_WHITESPACE, ' ');
+        $this->emit(new TSpace(T_WHITESPACE, ' '));
+    }
+
+    private function emit(T $token) : void
+    {
+        $this->parsed[] = $token;
         $this->parsedCount ++;
     }
 
@@ -434,9 +425,7 @@ class Parser
     public function addNesting(PhpToken $unparsed, string $parseClass) : T
     {
         $token = $this->add($unparsed, $parseClass);
-        $this->nesting[] = $token;
-        $this->nestingArgCount[] = 0;
-        $this->nestingContainsBracket[] = false;
+        $this->nesting[] = new Nesting($token);
         return $token;
     }
 
@@ -452,7 +441,7 @@ class Parser
             $nestingOffset --;
             $nesting = $this->nesting[$nestingOffset] ?? null;
 
-            if (! $nesting instanceof $kind) {
+            if (! $nesting?->token instanceof $kind) {
                 return false;
             }
         }
@@ -465,10 +454,10 @@ class Parser
      */
     public function getNesting() : string
     {
-        $token = end($this->nesting);
+        $nesting = end($this->nesting);
 
         /** @var class-string */
-        return $token !== false ? get_class($token) : '';
+        return $nesting !== false ? get_class($nesting->token) : '';
     }
 
     /**
@@ -476,17 +465,19 @@ class Parser
      */
     public function listNesting() : array
     {
-        return array_map(get_class(...), $this->nesting);
+        return array_map(fn(Nesting $n) => get_class($n->token), $this->nesting);
     }
 
     public function popTernaryNesting() : void
     {
         while (true) {
-            $token = end($this->nesting);
+            $nesting = end($this->nesting);
 
-            if ($token === false) {
+            if ($nesting === false) {
                 break;
             }
+
+            $token = $nesting->token;
 
             if (
                 $token instanceof Token\TTernaryColon
@@ -495,15 +486,9 @@ class Parser
                 || $token instanceof Token\TElvisQuestion
             ) {
                 array_pop($this->nesting);
-                array_pop($this->nestingArgCount);
-                array_pop($this->nestingContainsBracket);
             } elseif ($token instanceof Token\TFnDoubleArrow) {
                 array_pop($this->nesting); // TFnDoubleArrow
-                array_pop($this->nestingArgCount);
-                array_pop($this->nestingContainsBracket);
                 array_pop($this->nesting); // TFn
-                array_pop($this->nestingArgCount);
-                array_pop($this->nestingContainsBracket);
             } else {
                 break;
             }
@@ -520,18 +505,17 @@ class Parser
         string ...$openerClasses,
     ) : T
     {
-        $argCount = array_pop($this->nestingArgCount) ?? 0;
-        $containsBracket = array_pop($this->nestingContainsBracket) ?? false;
+        $current = end($this->nesting);
+        $argCount = $current !== false ? $current->argCount : 0;
+        $containsBracket = $current !== false ? $current->containsBracket : false;
         $opener = $this->popNesting($openerClass, ...$openerClasses);
         $opener->argCount = $argCount;
         $closer = $this->add($unparsed, $closerClass);
         $opener->closingToken = $closer;
         $closer->openingToken = $opener;
 
-        if ($opener->text === '[' && $this->nestingContainsBracket !== []) {
-            $this->nestingContainsBracket[
-                array_key_last($this->nestingContainsBracket)
-            ] = true;
+        if ($opener->text === '[' && $this->nesting !== []) {
+            $this->nesting[array_key_last($this->nesting)]->containsBracket = true;
         } elseif (
             $argCount === 0
             && $opener->text === '('
@@ -547,17 +531,8 @@ class Parser
     public function popNesting(string $expect, string ...$expects) : T
     {
         $expects = [$expect, ...$expects];
-        $actual = array_pop($this->nesting);
-
-        // Pop arg count if not already popped by closeNesting
-        if (count($this->nestingArgCount) > count($this->nesting)) {
-            array_pop($this->nestingArgCount);
-        }
-
-        if (count($this->nestingContainsBracket) > count($this->nesting)) {
-            array_pop($this->nestingContainsBracket);
-        }
-
+        $nesting = array_pop($this->nesting);
+        $actual = $nesting?->token;
         $actualClass = $actual !== null ? get_class($actual) : '';
 
         if (! in_array($actualClass, $expects)) {
@@ -676,56 +651,29 @@ class Parser
 
     public function hasPrevEol() : bool
     {
-        $parsedOffset = $this->parsedCount - 1;
-
-        while ($parsedOffset >= 0) {
-            $parsed = $this->parsed[$parsedOffset];
-
-            if ($parsed instanceof Token\TWhitespaceEol) {
-                return true;
-            } elseif (! $parsed->is(T_WHITESPACE)) {
-                return false;
-            }
-
-            $parsedOffset --;
-        }
-
-        return false;
+        return $this->hasPrev(Token\TWhitespaceEol::class);
     }
 
     public function hasPrevBlankLine() : bool
     {
-        $parsedOffset = $this->parsedCount - 1;
-
-        while ($parsedOffset >= 0) {
-            $parsed = $this->parsed[$parsedOffset];
-
-            if ($parsed instanceof Token\TBlankLine) {
-                return true;
-            } elseif (! $parsed->is(T_WHITESPACE)) {
-                return false;
-            }
-
-            $parsedOffset --;
-        }
-
-        return false;
+        return $this->hasPrev(Token\TBlankLine::class);
     }
 
     public function hasPrevOpeningStructure() : bool
     {
-        $parsedOffset = $this->parsedCount - 1;
+        return $this->hasPrev(Token\TOpeningStructure::class);
+    }
 
-        while ($parsedOffset >= 0) {
-            $parsed = $this->parsed[$parsedOffset];
+    private function hasPrev(string $class) : bool
+    {
+        for ($i = $this->parsedCount - 1; $i >= 0; $i --) {
+            $parsed = $this->parsed[$i];
 
-            if ($parsed instanceof Token\TOpeningStructure) {
+            if ($parsed instanceof $class) {
                 return true;
             } elseif (! $parsed->is(T_WHITESPACE)) {
                 return false;
             }
-
-            $parsedOffset --;
         }
 
         return false;
