@@ -518,7 +518,7 @@ class Parser
 
         if ($opener->text === '[' && $this->nestingContainsBracket !== []) {
             $this->nestingContainsBracket[array_key_last($this->nestingContainsBracket)] = true;
-        } elseif ($argCount === 0 && $opener->text === '(' && $containsBracket) {
+        } elseif ($argCount === 0 && $opener->text === '(' && $containsBracket && !$this->containsSplittableOperator($opener)) {
             $opener->transparentOpener = true;
         }
 
@@ -717,6 +717,29 @@ class Parser
         if ($unparsed?->is(T_WHITESPACE)) {
             return strpos($unparsed->text, "\r") !== false
                 || strpos($unparsed->text, "\n") !== false;
+        }
+
+        return false;
+    }
+
+    private function containsSplittableOperator(T $opener) : bool
+    {
+        $depth = 0;
+
+        for ($i = $this->lastAddedIndex - 1; $i >= 0; $i--) {
+            $token = $this->parsed[$i];
+
+            if ($token === $opener) {
+                return false;
+            }
+
+            if ($token->text === ')' || $token->text === ']') {
+                $depth++;
+            } elseif ($token->text === '(' || $token->text === '[') {
+                $depth--;
+            } elseif ($depth === 0 && $token instanceof Token\TSplittableOperator) {
+                return true;
+            }
         }
 
         return false;

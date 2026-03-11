@@ -17,13 +17,20 @@ use PhpStyler\Token\TCommentSlashedMidStatement;
 use PhpStyler\Token\TCommentStarredInline;
 use PhpStyler\Token\TCommentStarredOneline;
 use PhpStyler\Token\TDocCommentInline;
+use PhpStyler\Token\TElseifOpeningParen;
+use PhpStyler\Token\TForOpeningParen;
+use PhpStyler\Token\TForeachOpeningParen;
+use PhpStyler\Token\TIfOpeningParen;
+use PhpStyler\Token\TMatchOpeningParen;
 use PhpStyler\Token\TParamsComma;
 use PhpStyler\Token\TParamsOpeningParen;
 use PhpStyler\Token\TSpace;
 use PhpStyler\Token\TSplitPoint;
 use PhpStyler\Token\TSplittableComma;
+use PhpStyler\Token\TSwitchOpeningParen;
 use PhpStyler\Token\TUseVariablesComma;
 use PhpStyler\Token\TUseVariablesOpeningParen;
+use PhpStyler\Token\TWhileOpeningParen;
 class Splitter
 {
     public function __construct(
@@ -90,6 +97,17 @@ class Splitter
     /** @return Line[]|null */
     private function trySplit(Line $line) : ?array
     {
+        // For condition parens, split at the paren before trying operator splits
+        $conditionPair = $this->findConditionPair($line);
+
+        if ($conditionPair !== null) {
+            $split = $this->splitAtParens($line, $conditionPair);
+
+            if ($split !== null) {
+                return $split;
+            }
+        }
+
         $groups = $line->collectSplitGroups();
 
         foreach ($groups as $group) {
@@ -101,6 +119,41 @@ class Splitter
         }
 
         return $this->splitAtParens($line);
+    }
+
+    /**
+     * @return array{int, int, int}|null
+     */
+    private function findConditionPair(Line $line) : ?array
+    {
+        $tokens = $line->getTokens();
+
+        foreach ($tokens as $i => $token) {
+            if (! $this->isConditionOpener($token) || $token->closingToken === null) {
+                continue;
+            }
+
+            $closerPos = $line->findTokenIndex($token->closingToken);
+
+            if ($closerPos === null || $closerPos - $i <= 1) {
+                continue;
+            }
+
+            return [$i, $closerPos, $token->argCount];
+        }
+
+        return null;
+    }
+
+    private function isConditionOpener(T $token) : bool
+    {
+        return $token instanceof TIfOpeningParen
+            || $token instanceof TElseifOpeningParen
+            || $token instanceof TWhileOpeningParen
+            || $token instanceof TForOpeningParen
+            || $token instanceof TForeachOpeningParen
+            || $token instanceof TSwitchOpeningParen
+            || $token instanceof TMatchOpeningParen;
     }
 
     /**
@@ -230,10 +283,13 @@ class Splitter
         return count($lines) > 1 ? $lines : null;
     }
 
-    /** @return Line[]|null */
-    private function splitAtParens(Line $line) : ?array
+    /**
+     * @param array{int, int, int}|null $pair
+     * @return Line[]|null
+     */
+    private function splitAtParens(Line $line, ?array $pair = null) : ?array
     {
-        $pair = $line->findBestPair();
+        $pair ??= $line->findBestPair();
 
         if ($pair === null) {
             return null;
