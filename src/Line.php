@@ -6,6 +6,7 @@ namespace PhpStyler;
 use PhpStyler\Token\T;
 use PhpStyler\Token\TBlankLine;
 use PhpStyler\Token\TSpace;
+use PhpStyler\Token\TMemberDoubleColon;
 use PhpStyler\Token\TSplitPoint;
 use PhpStyler\Token\TSplittableComma;
 
@@ -283,7 +284,12 @@ class Line
             /** @var TSplitPoint $firstSplit */
             $firstSplit = $tokens[$group['positions'][0]];
 
-            if ($firstSplit->shouldSkipFirst(count($group['positions']))) {
+            $firstPos = $group['positions'][0];
+
+            if (
+                $firstSplit->shouldSkipFirst(count($group['positions']))
+                || ($tokens[$firstPos + 1] ?? null) instanceof TMemberDoubleColon
+            ) {
                 array_shift($group['positions']);
             }
 

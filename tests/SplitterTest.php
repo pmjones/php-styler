@@ -920,8 +920,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
-                $records = UserModel
-                    ::query()
+                $records = UserModel::query()
                     ->where("department", $departmentName)
                     ->whereIn("status", [$statusAlpha, $statusBravo, $statusCharlie])
                     ->get();
