@@ -34,6 +34,7 @@ class Splitter
      */
     public function split(array $lines) : array
     {
+        $lines = $this->detectExpansiveAnnotations($lines);
         $lines = $this->normalizeIndents($lines);
         $result = [];
 
@@ -56,7 +57,10 @@ class Splitter
      */
     private function splitLine(Line $line) : array
     {
-        if ($this->lineFactory->lineLen === 0 || $line->length() <= $this->lineFactory->lineLen) {
+        if (
+            ! $line->forceExpand
+            && ($this->lineFactory->lineLen === 0 || $line->length() <= $this->lineFactory->lineLen)
+        ) {
             return [$line];
         }
 
@@ -69,6 +73,10 @@ class Splitter
         $result = [];
 
         foreach ($split as $splitLine) {
+            if ($line->forceExpand) {
+                $splitLine->forceExpand = true;
+            }
+
             $result = array_merge($result, $this->splitLine($splitLine));
         }
 
@@ -149,6 +157,13 @@ class Splitter
         $before = array_slice($tokens, 0, $openerPos + 1);
         $inside = array_slice($tokens, $openerPos + 1, $closerPos - $openerPos - 1);
         $after = array_slice($tokens, $closerPos);
+        if ($inside === []) {
+            return [
+                $this->lineFactory->new($before, $indent),
+                $this->lineFactory->new($after, $indent),
+            ];
+        }
+
         $contentLine = $this->lineFactory->new($inside, $indent + 1);
         $contentLine->isExpanded = $argCount === 0;
 
@@ -157,6 +172,32 @@ class Splitter
             $contentLine,
             $this->lineFactory->new($after, $indent),
         ];
+    }
+
+    /**
+     * @param Line[] $lines
+     * @return Line[]
+     */
+    private function detectExpansiveAnnotations(array $lines) : array
+    {
+        $markNext = false;
+
+        foreach ($lines as $line) {
+            if ($markNext && ! $line->isBlank()) {
+                $line->forceExpand = true;
+                $markNext = false;
+                continue;
+            }
+
+            foreach ($line->getTokens() as $token) {
+                if (str_contains($token->text, '@php-styler-expansive')) {
+                    $markNext = true;
+                    break;
+                }
+            }
+        }
+
+        return $lines;
     }
 
     /**
@@ -521,6 +562,11 @@ class Splitter
 
         // Already has trailing comma
         if ($tokens[$lastContentPos] instanceof TSplittableComma) {
+            return;
+        }
+
+        // Don't add comma after an opener (e.g., empty expanded brackets)
+        if ($tokens[$lastContentPos]->isOpener()) {
             return;
         }
 

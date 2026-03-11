@@ -14,6 +14,8 @@ class Line
 {
     public bool $isExpanded = false;
 
+    public bool $forceExpand = false;
+
     /** @param T[] $tokens */
     public function __construct(
         private array $tokens = [],
@@ -234,7 +236,7 @@ class Line
 
             $closerPos = $this->findTokenIndex($token->closingToken);
 
-            if ($closerPos === null || $closerPos - $i <= 1) {
+            if ($closerPos === null || (! $this->forceExpand && $closerPos - $i <= 1)) {
                 continue;
             }
 
