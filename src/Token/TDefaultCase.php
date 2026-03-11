@@ -8,7 +8,7 @@ use PhpToken;
 
 class TDefaultCase extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         if ($parser->atNesting(TCaseColon::class)) {
             $parser->popNesting(TCaseColon::class);
@@ -18,11 +18,11 @@ class TDefaultCase extends T
                 TCaseAfterCase::class,
                 TDefaultAfterCase::class,
             );
-            $parser->parse($unparsed, TDefaultAfterCase::class);
+            $parser->parse($source, TDefaultAfterCase::class);
             return;
         }
 
-        $parser->addNesting($unparsed, self::class);
+        $parser->addNesting($source, self::class);
         $parser->space();
     }
 }

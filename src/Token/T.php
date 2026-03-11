@@ -21,9 +21,9 @@ abstract class T extends PhpToken
 
     public bool $transparentOpener = false;
 
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
-        $parser->add($unparsed, static::class);
+        $parser->add($source, static::class);
 
         if ($parser->getStyle(static::class)->spaceAfter !== false) {
             $parser->space();

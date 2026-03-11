@@ -15,21 +15,21 @@ use PhpToken;
  */
 class TFunction extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         if ($parser->atNesting(TUse::class)) {
             $parser->popNesting(TUse::class);
-            $parser->addNesting($unparsed, TUseFunction::class);
+            $parser->addNesting($source, TUseFunction::class);
             $parser->space();
             return;
         }
 
-        if ($parser->getNextUnparsed()?->is('(')) {
-            $parser->parse($unparsed, TAnonymousFunction::class);
+        if ($parser->getNextSource()?->is('(')) {
+            $parser->parse($source, TAnonymousFunction::class);
             return;
         }
 
-        $parser->addNesting($unparsed, self::class);
+        $parser->addNesting($source, self::class);
         $parser->space();
     }
 }

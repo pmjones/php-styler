@@ -8,10 +8,10 @@ use PhpToken;
 
 class TElvisEndSemicolon extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->popNesting(TElvisColon::class);
 
-        $parser->add($unparsed, self::class);
+        $parser->add($source, self::class);
     }
 }

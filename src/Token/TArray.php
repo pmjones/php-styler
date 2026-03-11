@@ -15,12 +15,12 @@ use PhpToken;
  */
 class TArray extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
-        if ($parser->getNextUnparsed()?->is('(')) {
-            $parser->addNesting($unparsed, TArrayConstruct::class);
+        if ($parser->getNextSource()?->is('(')) {
+            $parser->addNesting($source, TArrayConstruct::class);
         } else {
-            $parser->add($unparsed, self::class);
+            $parser->add($source, self::class);
         }
     }
 }

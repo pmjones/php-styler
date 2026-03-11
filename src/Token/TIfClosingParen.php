@@ -8,12 +8,12 @@ use PhpToken;
 
 class TIfClosingParen extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
-        $parser->closeNesting($unparsed, self::class, TIfOpeningParen::class);
+        $parser->closeNesting($source, self::class, TIfOpeningParen::class);
 
-        if (! $parser->getNextUnparsed()?->is(['{', ':'])) {
-            $parser->parse($unparsed, TOpeningBraceless::class);
+        if (! $parser->getNextSource()?->is(['{', ':'])) {
+            $parser->parse($source, TOpeningBraceless::class);
         }
     }
 }

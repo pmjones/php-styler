@@ -16,21 +16,21 @@ use PhpToken;
  */
 class TDocComment extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         if (! $parser->hasPrevSourceNewline() || ! $parser->hasNextEol()) {
-            $token = $parser->add($unparsed, TDocCommentInline::class);
+            $token = $parser->add($source, TDocCommentInline::class);
             $parser->space();
             $parser->transferLineBreakAfter($token);
             return;
         }
 
-        if (strpos($unparsed->text, PHP_EOL) === false) {
-            $parser->parse($unparsed, TDocCommentOneline::class);
+        if (strpos($source->text, PHP_EOL) === false) {
+            $parser->parse($source, TDocCommentOneline::class);
             return;
         }
 
-        $parser->add($unparsed, self::class);
+        $parser->add($source, self::class);
     }
 
     public function render(Line $line) : string

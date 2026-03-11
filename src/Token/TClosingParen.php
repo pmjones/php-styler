@@ -8,7 +8,7 @@ use PhpToken;
 
 class TClosingParen extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->popTernaryNesting();
 
@@ -16,10 +16,10 @@ class TClosingParen extends T
         $closingParenClass = str_replace('Opening', 'Closing', $parser->getNesting());
 
         if ($closingParenClass !== self::class) {
-            $parser->parse($unparsed, $closingParenClass);
+            $parser->parse($source, $closingParenClass);
             return;
         }
 
-        $parser->closeNesting($unparsed, self::class, TOpeningParen::class);
+        $parser->closeNesting($source, self::class, TOpeningParen::class);
     }
 }

@@ -15,14 +15,14 @@ use PhpToken;
  */
 class TUse extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         if ($parser->atNesting(TClasslikeOpeningBrace::class)) {
-            $parser->parse($unparsed, TUseTrait::class);
+            $parser->parse($source, TUseTrait::class);
             return;
         }
 
-        $parser->addNesting($unparsed, self::class);
+        $parser->addNesting($source, self::class);
         $parser->space();
     }
 }

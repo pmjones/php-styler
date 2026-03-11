@@ -15,19 +15,19 @@ use PhpToken;
  */
 class TPhpOpeningTag extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
-        $eol = strpos($unparsed->text, "\n") !== false
-            || strpos($unparsed->text, "\r") !== false;
+        $eol = strpos($source->text, "\n") !== false
+            || strpos($source->text, "\r") !== false;
 
         $class = $eol ? self::class : TPhpOpeningTagInline::class;
-        $trimmed = rtrim($unparsed->text);
+        $trimmed = rtrim($source->text);
 
         $openTagToken = new PhpToken(
             T_OPEN_TAG,
             $trimmed,
-            $unparsed->line,
-            $unparsed->pos,
+            $source->line,
+            $source->pos,
         );
 
         $parser->add($openTagToken, $class);
@@ -36,7 +36,7 @@ class TPhpOpeningTag extends T
             $parser->lineBreak();
         }
 
-        $whitespace = substr($unparsed->text, strlen($trimmed));
+        $whitespace = substr($source->text, strlen($trimmed));
 
         if ($whitespace === '') {
             return;
@@ -46,8 +46,8 @@ class TPhpOpeningTag extends T
             new PhpToken(
                 T_WHITESPACE,
                 $whitespace,
-                $unparsed->line,
-                $unparsed->pos + strlen($trimmed),
+                $source->line,
+                $source->pos + strlen($trimmed),
             ),
             TWhitespace::class,
         );

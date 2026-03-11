@@ -8,19 +8,19 @@ use PhpToken;
 
 class TCommentHashed extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         if ($parser->hasPrevSourceNewline()) {
-            $parser->parse($unparsed, TCommentHashedOwnLine::class);
+            $parser->parse($source, TCommentHashedOwnLine::class);
             return;
         }
 
-        $token = $parser->add($unparsed, TCommentHashedInline::class);
+        $token = $parser->add($source, TCommentHashedInline::class);
         $parser->space();
         $transferred = $parser->transferLineBreakAfter($token);
 
-        if (! $transferred && $parser->getNextUnparsed() !== null) {
-            $parser->replaceLastParsed($unparsed, TCommentHashedMidStatement::class);
+        if (! $transferred && $parser->getNextSource() !== null) {
+            $parser->replaceLastParsed($source, TCommentHashedMidStatement::class);
         }
     }
 }

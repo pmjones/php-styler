@@ -8,9 +8,9 @@ use PhpToken;
 
 class TCaseColon extends T implements TOpeningStructure
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
-        if ($parser->getNextUnparsed()?->is([T_CASE, T_DEFAULT])) {
+        if ($parser->getNextSource()?->is([T_CASE, T_DEFAULT])) {
             $parser->popNesting(
                 TCase::class,
                 TDefaultCase::class,
@@ -18,11 +18,11 @@ class TCaseColon extends T implements TOpeningStructure
                 TDefaultAfterCase::class,
             );
 
-            $parser->add($unparsed, TCaseFallthroughColon::class);
+            $parser->add($source, TCaseFallthroughColon::class);
             return;
         }
 
-        $parser->addNesting($unparsed, self::class);
+        $parser->addNesting($source, self::class);
 
         $parser->indentIncr();
     }

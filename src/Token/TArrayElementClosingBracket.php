@@ -8,11 +8,11 @@ use PhpToken;
 
 class TArrayElementClosingBracket extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->noSpace();
         $parser->closeNesting(
-            $unparsed,
+            $source,
             self::class,
             TArrayElementOpeningBracket::class,
         );

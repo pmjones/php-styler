@@ -103,11 +103,11 @@ class Parser
     /**
      * @var array<PhpToken>
      */
-    protected array $unparsed = [];
+    protected array $source = [];
 
-    protected int $unparsedCount = 0;
+    protected int $sourceCount = 0;
 
-    protected int $unparsedOffset = 0;
+    protected int $sourceOffset = 0;
 
     protected int $lastAddedIndex = 0;
 
@@ -137,16 +137,16 @@ class Parser
         $this->parsed = [];
         $this->parsedCount = 0;
         $this->lastAddedIndex = 0;
-        $this->unparsed = PhpToken::tokenize($code);
-        $this->unparsedCount = count($this->unparsed);
-        $this->unparsedOffset = 0;
+        $this->source = PhpToken::tokenize($code);
+        $this->sourceCount = count($this->source);
+        $this->sourceOffset = 0;
         $this->parenDepth = 0;
         $this->lastSplitPoint = null;
 
-        foreach ($this->unparsed as $this->unparsedOffset => $unparsed) {
+        foreach ($this->source as $this->sourceOffset => $source) {
             /** @var class-string<T> $parseClass */
-            $parseClass = $this->getParseClass($unparsed);
-            $this->parse($unparsed, $parseClass);
+            $parseClass = $this->getParseClass($source);
+            $this->parse($source, $parseClass);
         }
 
         $this->removePrevWhitespace();
@@ -154,9 +154,9 @@ class Parser
         return $this->parsed;
     }
 
-    protected function getParseClass(PhpToken $unparsed) : string
+    protected function getParseClass(PhpToken $source) : string
     {
-        $name = (string) $unparsed->getTokenName();
+        $name = (string) $source->getTokenName();
 
         if (str_starts_with($name, 'T_')) {
             return self::PARSE_CLASS[$name]
@@ -164,21 +164,21 @@ class Parser
                     . str_replace('_', '', ucwords(strtolower($name), '_'));
         }
 
-        return self::PARSE_CLASS[$unparsed->text];
+        return self::PARSE_CLASS[$source->text];
     }
 
     /**
      * @param class-string<T> $parseClass
      */
-    public function parse(PhpToken $unparsed, string $parseClass) : void
+    public function parse(PhpToken $source, string $parseClass) : void
     {
-        $parseClass::parse($this, $unparsed);
+        $parseClass::parse($this, $source);
     }
 
     /**
      * @param class-string<T> $parseClass
      */
-    public function add(PhpToken $unparsed, string $parseClass) : T
+    public function add(PhpToken $source, string $parseClass) : T
     {
         $this->removePrevWhitespace();
         $style = $this->getStyle($parseClass);
@@ -195,10 +195,10 @@ class Parser
 
         /** @var T $token */
         $token = new $parseClass(
-            $unparsed->id,
-            $unparsed->text,
-            $unparsed->line,
-            $unparsed->pos,
+            $source->id,
+            $source->text,
+            $source->line,
+            $source->pos,
         );
 
         if ($style->case !== null) {
@@ -403,16 +403,16 @@ class Parser
     /**
      * @param class-string<T> $parseClass
      */
-    public function replaceLastParsed(PhpToken $unparsed, string $parseClass) : T
+    public function replaceLastParsed(PhpToken $source, string $parseClass) : T
     {
         $this->removePrevWhitespace();
 
         /** @var T $token */
         $token = new $parseClass(
-            $unparsed->id,
-            $unparsed->text,
-            $unparsed->line,
-            $unparsed->pos,
+            $source->id,
+            $source->text,
+            $source->line,
+            $source->pos,
         );
 
         $this->parsed[$this->lastAddedIndex] = $token;
@@ -422,9 +422,9 @@ class Parser
     /**
      * @param class-string<T> $parseClass
      */
-    public function addNesting(PhpToken $unparsed, string $parseClass) : T
+    public function addNesting(PhpToken $source, string $parseClass) : T
     {
-        $token = $this->add($unparsed, $parseClass);
+        $token = $this->add($source, $parseClass);
         $this->nesting[] = new Nesting($token);
         return $token;
     }
@@ -499,7 +499,7 @@ class Parser
      * @param class-string<T> $closerClass
      */
     public function closeNesting(
-        PhpToken $unparsed,
+        PhpToken $source,
         string $closerClass,
         string $openerClass,
         string ...$openerClasses,
@@ -510,7 +510,7 @@ class Parser
         $containsBracket = $current !== false ? $current->containsBracket : false;
         $opener = $this->popNesting($openerClass, ...$openerClasses);
         $opener->argCount = $argCount;
-        $closer = $this->add($unparsed, $closerClass);
+        $closer = $this->add($source, $closerClass);
         $opener->closingToken = $closer;
         $closer->openingToken = $opener;
 
@@ -580,18 +580,18 @@ class Parser
         return null;
     }
 
-    public function getNextUnparsed() : ?PhpToken
+    public function getNextSource() : ?PhpToken
     {
-        $unparsedOffset = $this->unparsedOffset + 1;
+        $sourceOffset = $this->sourceOffset + 1;
 
-        while ($unparsedOffset < $this->unparsedCount) {
-            $unparsed = $this->unparsed[$unparsedOffset];
+        while ($sourceOffset < $this->sourceCount) {
+            $source = $this->source[$sourceOffset];
 
-            if (! $unparsed->isIgnorable()) {
-                return $unparsed;
+            if (! $source->isIgnorable()) {
+                return $source;
             }
 
-            $unparsedOffset ++;
+            $sourceOffset ++;
         }
 
         return null;
@@ -634,19 +634,19 @@ class Parser
 
     public function hasPrevSourceNewline() : bool
     {
-        $unparsed = $this->unparsed[$this->unparsedOffset - 1] ?? null;
+        $source = $this->source[$this->sourceOffset - 1] ?? null;
 
-        if ($unparsed === null) {
+        if ($source === null) {
             return false;
         }
 
-        if ($unparsed->is(T_WHITESPACE)) {
-            return strpos($unparsed->text, "\r") !== false
-                || strpos($unparsed->text, "\n") !== false;
+        if ($source->is(T_WHITESPACE)) {
+            return strpos($source->text, "\r") !== false
+                || strpos($source->text, "\n") !== false;
         }
 
-        return str_ends_with($unparsed->text, "\r")
-            || str_ends_with($unparsed->text, "\n");
+        return str_ends_with($source->text, "\r")
+            || str_ends_with($source->text, "\n");
     }
 
     public function hasPrevEol() : bool
@@ -681,11 +681,11 @@ class Parser
 
     public function hasNextEol() : bool
     {
-        $unparsed = $this->unparsed[$this->unparsedOffset + 1] ?? null;
+        $source = $this->source[$this->sourceOffset + 1] ?? null;
 
-        if ($unparsed?->is(T_WHITESPACE)) {
-            return strpos($unparsed->text, "\r") !== false
-                || strpos($unparsed->text, "\n") !== false;
+        if ($source?->is(T_WHITESPACE)) {
+            return strpos($source->text, "\r") !== false
+                || strpos($source->text, "\n") !== false;
         }
 
         return false;

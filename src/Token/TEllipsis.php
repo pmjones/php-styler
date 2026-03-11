@@ -15,16 +15,16 @@ use PhpToken;
  */
 class TEllipsis extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         $nesting = $parser->getNesting();
 
         if (
             $nesting === TArgsOpeningParen::class
             && $parser->getPrevParsed() instanceof TArgsOpeningParen
-            && $parser->getNextUnparsed()?->is(')')
+            && $parser->getNextSource()?->is(')')
         ) {
-            $parser->add($unparsed, TFirstClassCallableEllipsis::class);
+            $parser->add($source, TFirstClassCallableEllipsis::class);
             return;
         }
 
@@ -36,6 +36,6 @@ class TEllipsis extends T
             default => self::class,
         };
 
-        $parser->add($unparsed, $parseClass);
+        $parser->add($source, $parseClass);
     }
 }

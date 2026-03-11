@@ -8,10 +8,10 @@ use PhpToken;
 
 class TEchoEndSemicolon extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->popNesting(TEcho::class);
 
-        $parser->add($unparsed, self::class);
+        $parser->add($source, self::class);
     }
 }

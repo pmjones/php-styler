@@ -8,7 +8,7 @@ use PhpToken;
 
 class TOpeningParen extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parseClass = match ($parser->getNesting()) {
             TArrayConstruct::class => TArrayConstructOpeningParen::class,
@@ -41,7 +41,7 @@ class TOpeningParen extends T
         };
 
         if ($parseClass) {
-            $parser->parse($unparsed, $parseClass);
+            $parser->parse($source, $parseClass);
             return;
         }
 
@@ -67,10 +67,10 @@ class TOpeningParen extends T
                 '}',
             ])
         ) {
-            $parser->parse($unparsed, TArgsOpeningParen::class);
+            $parser->parse($source, TArgsOpeningParen::class);
             return;
         }
 
-        $parser->parse($unparsed, TExpressionOpeningParen::class);
+        $parser->parse($source, TExpressionOpeningParen::class);
     }
 }

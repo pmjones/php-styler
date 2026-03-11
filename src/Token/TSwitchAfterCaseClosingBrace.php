@@ -8,13 +8,13 @@ use PhpToken;
 
 class TSwitchAfterCaseClosingBrace extends T implements TClosingStructure
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->removeTrailingBlankLine();
         $parser->indentDecr();
         $parser->indentDecr();
         $parser->noSpace();
-        $parser->closeNesting($unparsed, self::class, TSwitch::class);
+        $parser->closeNesting($source, self::class, TSwitch::class);
         $parser->space();
     }
 }

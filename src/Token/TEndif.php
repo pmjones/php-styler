@@ -16,12 +16,12 @@ use PhpToken;
  */
 class TEndif extends T implements TClosingStructure
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->popNesting(TIfColon::class, TElseColon::class, TElseifColon::class);
         $parser->popNesting(TIf::class, TElse::class, TElseif::class);
         $parser->indentDecr();
-        $parser->add($unparsed, self::class);
+        $parser->add($source, self::class);
         $parser->space();
     }
 }

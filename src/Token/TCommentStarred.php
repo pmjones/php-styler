@@ -9,21 +9,21 @@ use PhpToken;
 
 class TCommentStarred extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         if (! $parser->hasPrevSourceNewline() || ! $parser->hasNextEol()) {
-            $token = $parser->add($unparsed, TCommentStarredInline::class);
+            $token = $parser->add($source, TCommentStarredInline::class);
             $parser->space();
             $parser->transferLineBreakAfter($token);
             return;
         }
 
-        if (strpos($unparsed->text, PHP_EOL) === false) {
-            $parser->parse($unparsed, TCommentStarredOneline::class);
+        if (strpos($source->text, PHP_EOL) === false) {
+            $parser->parse($source, TCommentStarredOneline::class);
             return;
         }
 
-        $parser->add($unparsed, self::class);
+        $parser->add($source, self::class);
     }
 
     public function render(Line $line) : string

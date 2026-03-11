@@ -8,10 +8,10 @@ use PhpToken;
 
 class TFunctionOpeningBrace extends T implements TOpeningStructure
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         $rejoin = $parser->getPrevParsed() instanceof TParamsClosingParen;
-        $token = $parser->addNesting($unparsed, static::class);
+        $token = $parser->addNesting($source, static::class);
         $parser->indentIncr();
 
         if ($rejoin) {

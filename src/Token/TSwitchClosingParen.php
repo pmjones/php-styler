@@ -8,12 +8,12 @@ use PhpToken;
 
 class TSwitchClosingParen extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
-        $parser->closeNesting($unparsed, self::class, TSwitchOpeningParen::class);
+        $parser->closeNesting($source, self::class, TSwitchOpeningParen::class);
 
-        if (! $parser->getNextUnparsed()?->is(['{', ':'])) {
-            $parser->parse($unparsed, TOpeningBraceless::class);
+        if (! $parser->getNextSource()?->is(['{', ':'])) {
+            $parser->parse($source, TOpeningBraceless::class);
         }
     }
 }

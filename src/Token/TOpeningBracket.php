@@ -8,13 +8,13 @@ use PhpToken;
 
 class TOpeningBracket extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         if ($parser->getPrevParsed()?->is([T_VARIABLE, T_STRING, ']', ')', '}'])) {
-            $parser->parse($unparsed, TArrayElementOpeningBracket::class);
+            $parser->parse($source, TArrayElementOpeningBracket::class);
             return;
         }
 
-        $parser->parse($unparsed, TArrayOpeningBracket::class);
+        $parser->parse($source, TArrayOpeningBracket::class);
     }
 }

@@ -8,7 +8,7 @@ use PhpToken;
 
 class TComma extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->popTernaryNesting();
 
@@ -35,10 +35,10 @@ class TComma extends T
         };
 
         if ($parseClass) {
-            $parser->parse($unparsed, $parseClass);
+            $parser->parse($source, $parseClass);
             return;
         }
 
-        $parser->add($unparsed, self::class);
+        $parser->add($source, self::class);
     }
 }

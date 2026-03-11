@@ -15,13 +15,13 @@ use PhpToken;
  */
 class TDoubleColon extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         if ($parser->atNesting(TUseTraitOpeningBrace::class)) {
-            $parser->add($unparsed, TUseTraitDoubleColon::class);
+            $parser->add($source, TUseTraitDoubleColon::class);
             return;
         }
 
-        $parser->add($unparsed, TMemberDoubleColon::class);
+        $parser->add($source, TMemberDoubleColon::class);
     }
 }

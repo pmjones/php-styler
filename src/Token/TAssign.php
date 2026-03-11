@@ -11,7 +11,7 @@ use PhpToken;
  */
 class TAssign extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parseClass = match ($parser->getNesting()) {
             TDeclareDirectivesOpeningParen::class => TAssignDirective::class,
@@ -28,6 +28,6 @@ class TAssign extends T
             $parser->noSpace();
         }
 
-        $parser->add($unparsed, $parseClass);
+        $parser->add($source, $parseClass);
     }
 }

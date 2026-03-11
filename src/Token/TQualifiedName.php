@@ -15,10 +15,10 @@ use PhpToken;
  */
 class TQualifiedName extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         if (
-            $parser->getNextUnparsed()?->is('(')
+            $parser->getNextSource()?->is('(')
             && ! $parser
                 ->getPrevParsed()
                 ?->is([
@@ -29,12 +29,12 @@ class TQualifiedName extends T
                 ])
             && ! $parser->atNesting(TAttribute::class)
         ) {
-            $parser->add($unparsed, TFunctionCallQualified::class);
+            $parser->add($source, TFunctionCallQualified::class);
             $parser->space();
             return;
         }
 
-        $parser->add($unparsed, self::class);
+        $parser->add($source, self::class);
         $parser->space();
     }
 }

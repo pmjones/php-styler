@@ -15,16 +15,16 @@ use PhpToken;
  */
 class TConst extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         if ($parser->atNesting(TUse::class)) {
             $parser->popNesting(TUse::class);
-            $parser->addNesting($unparsed, TUseConst::class);
+            $parser->addNesting($source, TUseConst::class);
             $parser->space();
             return;
         }
 
-        $parser->addNesting($unparsed, self::class);
+        $parser->addNesting($source, self::class);
         $parser->space();
     }
 }

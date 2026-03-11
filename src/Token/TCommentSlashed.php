@@ -8,19 +8,19 @@ use PhpToken;
 
 class TCommentSlashed extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         if ($parser->hasPrevSourceNewline()) {
-            $parser->parse($unparsed, TCommentSlashedOwnLine::class);
+            $parser->parse($source, TCommentSlashedOwnLine::class);
             return;
         }
 
-        $token = $parser->add($unparsed, TCommentSlashedInline::class);
+        $token = $parser->add($source, TCommentSlashedInline::class);
         $parser->space();
         $transferred = $parser->transferLineBreakAfter($token);
 
-        if (! $transferred && $parser->getNextUnparsed() !== null) {
-            $parser->replaceLastParsed($unparsed, TCommentSlashedMidStatement::class);
+        if (! $transferred && $parser->getNextSource() !== null) {
+            $parser->replaceLastParsed($source, TCommentSlashedMidStatement::class);
         }
     }
 }

@@ -8,13 +8,13 @@ use PhpToken;
 
 class TWhitespaceEol extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         if ($parser->hasPrevEol() || $parser->hasPrevBlankLine()) {
             $parser->blankLine();
             return;
         }
 
-        $parser->add($unparsed, static::class);
+        $parser->add($source, static::class);
     }
 }

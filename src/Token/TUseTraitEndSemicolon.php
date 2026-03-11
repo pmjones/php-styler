@@ -8,10 +8,10 @@ use PhpToken;
 
 class TUseTraitEndSemicolon extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->popNesting(TUseTrait::class);
 
-        $parser->add($unparsed, self::class);
+        $parser->add($source, self::class);
     }
 }

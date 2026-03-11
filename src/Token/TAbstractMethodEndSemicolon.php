@@ -8,7 +8,7 @@ use PhpToken;
 
 class TAbstractMethodEndSemicolon extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         if ($parser->atNesting(TReturnColon::class)) {
             $parser->popNesting(TReturnColon::class);
@@ -16,6 +16,6 @@ class TAbstractMethodEndSemicolon extends T
 
         $parser->popNesting(TFunction::class);
 
-        $parser->add($unparsed, self::class);
+        $parser->add($source, self::class);
     }
 }

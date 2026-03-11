@@ -8,7 +8,7 @@ use PhpToken;
 
 class TPropertyHookSetSemicolon extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         if ($parser->atNesting(TPropertyHookSetDoubleArrow::class)) {
             $parser->popNesting(TPropertyHookSetDoubleArrow::class);
@@ -16,6 +16,6 @@ class TPropertyHookSetSemicolon extends T
 
         $parser->popNesting(TPropertyHookSet::class);
 
-        $parser->add($unparsed, self::class);
+        $parser->add($source, self::class);
     }
 }

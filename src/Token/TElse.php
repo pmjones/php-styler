@@ -15,7 +15,7 @@ use PhpToken;
  */
 class TElse extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         if (
             $parser->atNesting(TIfColon::class)
@@ -25,17 +25,17 @@ class TElse extends T
             $parser->popNesting(TIf::class, TElseif::class);
         }
 
-        if ($parser->getNextUnparsed()?->is(T_IF)) {
-            $parser->add($unparsed, self::class);
+        if ($parser->getNextSource()?->is(T_IF)) {
+            $parser->add($source, self::class);
             $parser->space();
             return;
         }
 
-        $parser->addNesting($unparsed, self::class);
+        $parser->addNesting($source, self::class);
         $parser->space();
 
-        if (! $parser->getNextUnparsed()?->is(['{', ':'])) {
-            $parser->parse($unparsed, TOpeningBraceless::class);
+        if (! $parser->getNextSource()?->is(['{', ':'])) {
+            $parser->parse($source, TOpeningBraceless::class);
         }
     }
 }

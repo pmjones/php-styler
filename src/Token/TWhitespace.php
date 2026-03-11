@@ -15,17 +15,17 @@ use PhpToken;
  */
 class TWhitespace extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         /** @var list<string> $segments */
         $segments = preg_split(
             pattern: '/(\r\n|\n|\r|[ \t]+)/',
-            subject: $unparsed->text,
+            subject: $source->text,
             flags: PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY,
         );
 
-        $line = $unparsed->line;
-        $pos = $unparsed->pos;
+        $line = $source->line;
+        $pos = $source->pos;
 
         foreach ($segments as $i => $segment) {
             $segmentToken = new PhpToken(T_WHITESPACE, $segment, $line, $pos);

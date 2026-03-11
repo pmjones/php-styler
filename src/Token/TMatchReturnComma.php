@@ -13,10 +13,10 @@ class TMatchReturnComma extends T implements TSplittableComma
         return self::COMMA;
     }
 
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->popNesting(TMatchDoubleArrow::class);
 
-        $parser->add($unparsed, self::class);
+        $parser->add($source, self::class);
     }
 }

@@ -8,7 +8,7 @@ use PhpToken;
 
 class TClosingBrace extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->popTernaryNesting();
 
@@ -21,7 +21,7 @@ class TClosingBrace extends T
         };
 
         if ($curly) {
-            $parser->parse($unparsed, $curly);
+            $parser->parse($source, $curly);
             return;
         }
 
@@ -52,13 +52,13 @@ class TClosingBrace extends T
         };
 
         if ($useClass) {
-            $parser->add($unparsed, $useClass);
+            $parser->add($source, $useClass);
 
             return;
         }
 
         if ($parser->atNesting(TPropertyHooksOpeningBrace::class)) {
-            $parser->parse($unparsed, TPropertyHooksClosingBrace::class);
+            $parser->parse($source, TPropertyHooksClosingBrace::class);
             return;
         }
 
@@ -69,11 +69,11 @@ class TClosingBrace extends T
         $nesting = $parser->getNesting();
 
         if (
-            $parser->getNextUnparsed()?->is([T_CATCH, T_ELSE, T_ELSEIF, T_FINALLY])
+            $parser->getNextSource()?->is([T_CATCH, T_ELSE, T_ELSEIF, T_FINALLY])
             || $nesting === TDo::class
             || $nesting === TTry::class
         ) {
-            $parser->parse($unparsed, TContinuationBrace::class);
+            $parser->parse($source, TContinuationBrace::class);
             return;
         }
 
@@ -119,10 +119,10 @@ class TClosingBrace extends T
         };
 
         if ($nestedBraceClass) {
-            $parser->parse($unparsed, $nestedBraceClass);
+            $parser->parse($source, $nestedBraceClass);
             return;
         }
 
-        $parser->add($unparsed, self::class);
+        $parser->add($source, self::class);
     }
 }

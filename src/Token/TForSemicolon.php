@@ -13,17 +13,17 @@ class TForSemicolon extends T implements TSplittableComma
         return self::FOR_SEMICOLON;
     }
 
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         if (
             $parser->getPrevParsed() instanceof TForOpeningParen
             || $parser->getPrevParsed() instanceof TLoopEmptySemicolon
         ) {
-            $parser->add($unparsed, TLoopEmptySemicolon::class);
+            $parser->add($source, TLoopEmptySemicolon::class);
 
             return;
         }
 
-        $parser->add($unparsed, self::class);
+        $parser->add($source, self::class);
     }
 }

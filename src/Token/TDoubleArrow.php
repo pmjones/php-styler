@@ -15,7 +15,7 @@ use PhpToken;
  */
 class TDoubleArrow extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         if ($parser->atNesting(TReturnColon::class)) {
             $parser->popNesting(TReturnColon::class);
@@ -34,10 +34,10 @@ class TDoubleArrow extends T
         };
 
         if ($parseClass) {
-            $parser->parse($unparsed, $parseClass);
+            $parser->parse($source, $parseClass);
             return;
         }
 
-        $parser->add($unparsed, self::class);
+        $parser->add($source, self::class);
     }
 }

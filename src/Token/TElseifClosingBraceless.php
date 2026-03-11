@@ -8,12 +8,12 @@ use PhpToken;
 
 class TElseifClosingBraceless extends T implements TClosingStructure
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->popNesting(TElseif::class);
         $parser->indentDecr();
         $parser->noSpace();
-        $parser->add($unparsed, self::class);
+        $parser->add($source, self::class);
         $parser->space();
     }
 }

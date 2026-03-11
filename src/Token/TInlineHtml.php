@@ -15,12 +15,12 @@ use PhpToken;
  */
 class TInlineHtml extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         if ($parser->getPrevParsed() instanceof THaltCompilerSemicolon) {
-            $unparsed->text = rtrim($unparsed->text, "\r\n");
+            $source->text = rtrim($source->text, "\r\n");
         }
 
-        $parser->add($unparsed, self::class);
+        $parser->add($source, self::class);
     }
 }

@@ -9,7 +9,7 @@ use PhpToken;
 
 class TContinuationBrace extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         $nesting = $parser->getNesting();
 
@@ -23,13 +23,13 @@ class TContinuationBrace extends T
         };
 
         if ($partingBrace) {
-            $parser->parse($unparsed, $partingBrace);
+            $parser->parse($source, $partingBrace);
             return;
         }
 
         $message = "Unknown kind of parting brace "
-            . "on line {$unparsed->line} "
-            . "at position {$unparsed->pos} "
+            . "on line {$source->line} "
+            . "at position {$source->pos} "
             . "in nesting "
             . var_export($parser->listNesting(), true);
 

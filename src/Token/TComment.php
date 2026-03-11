@@ -16,14 +16,14 @@ use PhpToken;
  */
 class TComment extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
-        $parseClass = match (substr($unparsed->text, 0, 2)) {
+        $parseClass = match (substr($source->text, 0, 2)) {
             '//' => TCommentSlashed::class,
             '/*' => TCommentStarred::class,
             default => TCommentHashed::class,
         };
 
-        $parser->parse($unparsed, $parseClass);
+        $parser->parse($source, $parseClass);
     }
 }

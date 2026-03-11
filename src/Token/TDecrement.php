@@ -15,7 +15,7 @@ use PhpToken;
  */
 class TDecrement extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         $prev = $parser->getPrevParsed();
 
@@ -34,10 +34,10 @@ class TDecrement extends T
                 '}',
             ])
         ) {
-            $parser->add($unparsed, TPostDecrement::class);
+            $parser->add($source, TPostDecrement::class);
             return;
         }
 
-        $parser->add($unparsed, TPreDecrement::class);
+        $parser->add($source, TPreDecrement::class);
     }
 }

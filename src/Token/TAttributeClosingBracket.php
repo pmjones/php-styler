@@ -8,10 +8,10 @@ use PhpToken;
 
 class TAttributeClosingBracket extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->noSpace();
-        $token = $parser->closeNesting($unparsed, self::class, TAttribute::class);
+        $token = $parser->closeNesting($source, self::class, TAttribute::class);
         $parser->space();
 
         if (

@@ -8,8 +8,8 @@ use PhpToken;
 
 class TArgsClosingParen extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
-        $parser->closeNesting($unparsed, self::class, TArgsOpeningParen::class);
+        $parser->closeNesting($source, self::class, TArgsOpeningParen::class);
     }
 }

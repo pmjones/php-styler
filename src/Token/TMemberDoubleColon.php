@@ -13,9 +13,9 @@ class TMemberDoubleColon extends T implements TSplittableFluent
         return self::FLUENT;
     }
 
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->noSpace();
-        $parser->add($unparsed, static::class);
+        $parser->add($source, static::class);
     }
 }

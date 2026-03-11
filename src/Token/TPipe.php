@@ -8,7 +8,7 @@ use PhpToken;
 
 class TPipe extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         $prev = $parser->getPrevParsed();
 
@@ -40,7 +40,7 @@ class TPipe extends T
             default => TBitwiseOr::class,
         };
 
-        $parser->add($unparsed, $class);
+        $parser->add($source, $class);
 
         if ($class !== TUnion::class) {
             $parser->space();

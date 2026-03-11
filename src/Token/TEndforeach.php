@@ -16,12 +16,12 @@ use PhpToken;
  */
 class TEndforeach extends T implements TClosingStructure
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->popNesting(TForeachColon::class);
         $parser->popNesting(TForeach::class);
         $parser->indentDecr();
-        $parser->add($unparsed, self::class);
+        $parser->add($source, self::class);
         $parser->space();
     }
 }

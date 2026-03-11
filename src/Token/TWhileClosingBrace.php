@@ -8,11 +8,11 @@ use PhpToken;
 
 class TWhileClosingBrace extends T implements TClosingStructure
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->removeTrailingBlankLine();
         $parser->indentDecr();
 
-        $parser->closeNesting($unparsed, self::class, TWhile::class);
+        $parser->closeNesting($source, self::class, TWhile::class);
     }
 }

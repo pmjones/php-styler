@@ -8,10 +8,10 @@ use PhpToken;
 
 class TDynamicVariableClosingBrace extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->closeNesting(
-            $unparsed,
+            $source,
             self::class,
             TDynamicVariableOpeningBrace::class,
         );

@@ -8,7 +8,7 @@ use PhpToken;
 
 class TMinus extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         $prev = $parser->getPrevParsed();
 
@@ -29,10 +29,10 @@ class TMinus extends T
                 T_DEC,
             ])
         ) {
-            $parser->add($unparsed, TBinaryMinus::class);
+            $parser->add($source, TBinaryMinus::class);
             return;
         }
 
-        $parser->add($unparsed, TUnaryMinus::class);
+        $parser->add($source, TUnaryMinus::class);
     }
 }

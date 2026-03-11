@@ -13,8 +13,8 @@ class TFnDoubleArrow extends T implements TSplittableOperator
         return self::FN_DOUBLE_ARROW;
     }
 
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
-        $parser->addNesting($unparsed, self::class);
+        $parser->addNesting($source, self::class);
     }
 }

@@ -20,12 +20,12 @@ class TObjectOperator extends T implements TSplittableFluent
         return self::FLUENT;
     }
 
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         $class = $parser->atNesting(TCurlyOpen::class)
             || $parser->atNesting(TDollarOpenCurlyBraces::class)
             ? TEncapsedObjectOperator::class
             : static::class;
-        $parser->add($unparsed, $class);
+        $parser->add($source, $class);
     }
 }

@@ -8,10 +8,10 @@ use PhpToken;
 
 class TPropertyHookSetClosingParen extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->closeNesting(
-            $unparsed,
+            $source,
             self::class,
             TPropertyHookSetOpeningParen::class,
         );

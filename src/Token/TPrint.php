@@ -15,15 +15,15 @@ use PhpToken;
  */
 class TPrint extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         $prev = $parser->getPrevParsed();
 
         if ($prev instanceof TFunction || $prev instanceof TReference) {
-            $parser->add($unparsed, TFunctionName::class);
+            $parser->add($source, TFunctionName::class);
             return;
         }
 
-        parent::parse($parser, $unparsed);
+        parent::parse($parser, $source);
     }
 }

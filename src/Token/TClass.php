@@ -15,21 +15,21 @@ use PhpToken;
  */
 class TClass extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         $prev = $parser->getPrevParsed();
 
         if ($prev?->is(T_NEW)) {
-            $parser->parse($unparsed, TAnonymousClass::class);
+            $parser->parse($source, TAnonymousClass::class);
             return;
         }
 
         if ($prev?->is('::')) {
-            $parser->parse($unparsed, TString::class);
+            $parser->parse($source, TString::class);
             return;
         }
 
-        $parser->addNesting($unparsed, self::class);
+        $parser->addNesting($source, self::class);
         $parser->space();
     }
 }

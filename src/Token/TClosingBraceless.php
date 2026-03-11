@@ -9,15 +9,15 @@ use PhpToken;
 
 class TClosingBraceless extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
-        if ($parser->getNextUnparsed()?->is([T_ELSE, T_ELSEIF])) {
-            $parser->parse($unparsed, TContinuationBraceless::class);
+        if ($parser->getNextSource()?->is([T_ELSE, T_ELSEIF])) {
+            $parser->parse($source, TContinuationBraceless::class);
             return;
         }
 
         $parser->noSpace();
-        $parser->add($unparsed, TSemicolon::class);
+        $parser->add($source, TSemicolon::class);
         $parser->space();
         $parser->popNesting(TOpeningBraceless::class);
 
@@ -34,13 +34,13 @@ class TClosingBraceless extends T
         };
 
         if ($closingBraceless) {
-            $parser->parse($unparsed, $closingBraceless);
+            $parser->parse($source, $closingBraceless);
             return;
         }
 
         $message = "Unknown kind of closing braceless "
-            . "on line {$unparsed->line} "
-            . "at position {$unparsed->pos} "
+            . "on line {$source->line} "
+            . "at position {$source->pos} "
             . "in nesting "
             . var_export($parser->listNesting(), true);
 

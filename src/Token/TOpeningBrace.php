@@ -8,12 +8,12 @@ use PhpToken;
 
 class TOpeningBrace extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         $prev = $parser->getPrevParsed();
 
         if ($prev instanceof TDollar) {
-            $parser->addNesting($unparsed, TDynamicVariableOpeningBrace::class);
+            $parser->addNesting($source, TDynamicVariableOpeningBrace::class);
             return;
         }
 
@@ -22,7 +22,7 @@ class TOpeningBrace extends T
             || $prev instanceof TNullsafeObjectOperator
             || $prev instanceof TMemberDoubleColon
         ) {
-            $parser->addNesting($unparsed, TDynamicMemberOpeningBrace::class);
+            $parser->addNesting($source, TDynamicMemberOpeningBrace::class);
             return;
         }
 
@@ -31,7 +31,7 @@ class TOpeningBrace extends T
         }
 
         if ($parser->getNesting() === TFunction::class) {
-            $parser->parse($unparsed, TFunctionOpeningBrace::class);
+            $parser->parse($source, TFunctionOpeningBrace::class);
             return;
         }
 
@@ -63,7 +63,7 @@ class TOpeningBrace extends T
         };
 
         if ($braceClass) {
-            $parser->parse($unparsed, $braceClass);
+            $parser->parse($source, $braceClass);
             return;
         }
 
@@ -75,7 +75,7 @@ class TOpeningBrace extends T
         };
 
         if ($useClass) {
-            $parser->add($unparsed, $useClass);
+            $parser->add($source, $useClass);
             return;
         }
 
@@ -83,10 +83,10 @@ class TOpeningBrace extends T
             $parser->getPrevParsed() instanceof TVariable
             && $parser->atNesting(TClasslikeOpeningBrace::class)
         ) {
-            $parser->parse($unparsed, TPropertyHooksOpeningBrace::class);
+            $parser->parse($source, TPropertyHooksOpeningBrace::class);
             return;
         }
 
-        $parser->add($unparsed, self::class);
+        $parser->add($source, self::class);
     }
 }

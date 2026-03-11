@@ -13,10 +13,10 @@ class TTernaryColon extends T implements TSplittableOperator
         return self::LOOSE_OPERATOR;
     }
 
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->popNesting(TTernaryQuestion::class);
 
-        $parser->addNesting($unparsed, self::class);
+        $parser->addNesting($source, self::class);
     }
 }

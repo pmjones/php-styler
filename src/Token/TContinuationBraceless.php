@@ -9,9 +9,9 @@ use PhpToken;
 
 class TContinuationBraceless extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
-        $parser->add($unparsed, TSemicolon::class);
+        $parser->add($source, TSemicolon::class);
         $parser->space();
         $parser->popNesting(TOpeningBraceless::class);
 
@@ -24,13 +24,13 @@ class TContinuationBraceless extends T
         };
 
         if ($partingBraceless) {
-            $parser->parse($unparsed, $partingBraceless);
+            $parser->parse($source, $partingBraceless);
             return;
         }
 
         $message = "Unknown kind of parting braceless "
-            . "on line {$unparsed->line} "
-            . "at position {$unparsed->pos} "
+            . "on line {$source->line} "
+            . "at position {$source->pos} "
             . "in nesting "
             . var_export($parser->listNesting(), true);
 

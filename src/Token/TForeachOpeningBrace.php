@@ -8,9 +8,9 @@ use PhpToken;
 
 class TForeachOpeningBrace extends T implements TOpeningStructure
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
-        $parser->addNesting($unparsed, static::class);
+        $parser->addNesting($source, static::class);
         $parser->indentIncr();
     }
 }

@@ -8,8 +8,8 @@ use PhpToken;
 
 class TCurlyClose extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
-        $parser->closeNesting($unparsed, self::class, TCurlyOpen::class);
+        $parser->closeNesting($source, self::class, TCurlyOpen::class);
     }
 }

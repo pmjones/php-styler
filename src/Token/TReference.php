@@ -13,7 +13,7 @@ use PhpToken;
  */
 class TReference extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         $prev = $parser->getPrevParsed();
 
@@ -28,6 +28,6 @@ class TReference extends T
             default => self::class,
         };
 
-        $parser->add($unparsed, $class);
+        $parser->add($source, $class);
     }
 }

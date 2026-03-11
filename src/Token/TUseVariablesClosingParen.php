@@ -8,9 +8,9 @@ use PhpToken;
 
 class TUseVariablesClosingParen extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
-        $parser->closeNesting($unparsed, self::class, TUseVariablesOpeningParen::class);
+        $parser->closeNesting($source, self::class, TUseVariablesOpeningParen::class);
 
         $parser->popNesting(TUse::class);
     }

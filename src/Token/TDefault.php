@@ -15,10 +15,10 @@ use PhpToken;
  */
 class TDefault extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         if ($parser->atNesting(TMatchOpeningBrace::class)) {
-            $parser->parse($unparsed, TDefaultMatch::class);
+            $parser->parse($source, TDefaultMatch::class);
             return;
         }
 
@@ -27,11 +27,11 @@ class TDefault extends T
             || $parser->atNesting(TSwitchColon::class)
             || $parser->atNesting(TCaseColon::class)
         ) {
-            $parser->parse($unparsed, TDefaultCase::class);
+            $parser->parse($source, TDefaultCase::class);
             return;
         }
 
-        $parser->add($unparsed, self::class);
+        $parser->add($source, self::class);
         $parser->space();
     }
 }

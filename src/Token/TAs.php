@@ -15,7 +15,7 @@ use PhpToken;
  */
 class TAs extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parseClass = match ($parser->getNesting()) {
             TForeachOpeningParen::class => TForeachAs::class,
@@ -27,6 +27,6 @@ class TAs extends T
             default => self::class,
         };
 
-        $parser->add($unparsed, $parseClass);
+        $parser->add($source, $parseClass);
     }
 }

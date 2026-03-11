@@ -16,12 +16,12 @@ use PhpToken;
  */
 class TString extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
-        $text = strtolower($unparsed->text);
+        $text = strtolower($source->text);
 
         if ($text === 'string') {
-            $parser->add($unparsed, static::class);
+            $parser->add($source, static::class);
             $parser->space();
             return;
         }
@@ -48,7 +48,7 @@ class TString extends T
         };
 
         if ($parseClass) {
-            $parser->parse($unparsed, $parseClass);
+            $parser->parse($source, $parseClass);
             return;
         }
 
@@ -63,7 +63,7 @@ class TString extends T
         };
 
         if ($classlikeName !== null) {
-            $parser->add($unparsed, $classlikeName);
+            $parser->add($source, $classlikeName);
             $parser->space();
             return;
         }
@@ -95,13 +95,13 @@ class TString extends T
             || $prev instanceof TUseTraitComma
             || $prev instanceof TInsteadofComma
         ) {
-            $parser->add($unparsed, TUnqualifiedName::class);
+            $parser->add($source, TUnqualifiedName::class);
             $parser->space();
             return;
         }
 
         if ($prev instanceof TFunction || $prev instanceof TReference) {
-            $parser->add($unparsed, TFunctionName::class);
+            $parser->add($source, TFunctionName::class);
             return;
         }
 
@@ -113,7 +113,7 @@ class TString extends T
         };
 
         if ($nestingAddClass) {
-            $parser->add($unparsed, $nestingAddClass);
+            $parser->add($source, $nestingAddClass);
 
             if ($nestingAddClass === TFunctionName::class) {
             } else {
@@ -131,7 +131,7 @@ class TString extends T
             };
 
             if ($hookClass) {
-                $parser->parse($unparsed, $hookClass);
+                $parser->parse($source, $hookClass);
                 return;
             }
         }
@@ -145,55 +145,55 @@ class TString extends T
         };
 
         if ($prevAddClass) {
-            $parser->add($unparsed, $prevAddClass);
+            $parser->add($source, $prevAddClass);
             $parser->space();
             return;
         }
 
         if ($prev instanceof TUseComma || $prev instanceof TUseOpeningBrace) {
-            $parser->add($unparsed, TUnqualifiedName::class);
+            $parser->add($source, TUnqualifiedName::class);
             $parser->space();
             return;
         }
 
-        if ($parser->getNextUnparsed()?->is(T_DOUBLE_COLON)) {
-            $parser->add($unparsed, TUnqualifiedName::class);
+        if ($parser->getNextSource()?->is(T_DOUBLE_COLON)) {
+            $parser->add($source, TUnqualifiedName::class);
             $parser->space();
             return;
         }
 
         if (
-            $parser->getNextUnparsed()?->is(':')
+            $parser->getNextSource()?->is(':')
             && $parser->atNesting(TArgsOpeningParen::class)
         ) {
-            $parser->add($unparsed, TNamedArgName::class);
+            $parser->add($source, TNamedArgName::class);
             $parser->space();
             return;
         }
 
-        if ($prev instanceof TGoto || $parser->getNextUnparsed()?->is(':')) {
-            $parser->add($unparsed, TGotoLabel::class);
+        if ($prev instanceof TGoto || $parser->getNextSource()?->is(':')) {
+            $parser->add($source, TGotoLabel::class);
             $parser->space();
             return;
         }
 
-        if ($parser->getNextUnparsed()?->is('(')) {
+        if ($parser->getNextSource()?->is('(')) {
             if ($prev?->is([T_OBJECT_OPERATOR, T_NULLSAFE_OBJECT_OPERATOR])) {
                 if ($parser->lastSplitPoint !== null) {
                     $parser->lastSplitPoint->markAsMethodCall();
                 }
 
-                $parser->add($unparsed, TMethodCallName::class);
+                $parser->add($source, TMethodCallName::class);
                 $parser->space();
             } elseif ($prev?->is(T_DOUBLE_COLON)) {
                 if ($parser->lastSplitPoint !== null) {
                     $parser->lastSplitPoint->markAsMethodCall();
                 }
 
-                $parser->add($unparsed, TStaticMethodCallName::class);
+                $parser->add($source, TStaticMethodCallName::class);
                 $parser->space();
             } else {
-                $parser->add($unparsed, TFunctionCallName::class);
+                $parser->add($source, TFunctionCallName::class);
                 $parser->space();
             }
 
@@ -201,18 +201,18 @@ class TString extends T
         }
 
         if ($prev?->is([T_OBJECT_OPERATOR, T_NULLSAFE_OBJECT_OPERATOR])) {
-            $parser->add($unparsed, TPropertyAccessName::class);
+            $parser->add($source, TPropertyAccessName::class);
             $parser->space();
             return;
         }
 
         if ($prev?->is(T_DOUBLE_COLON)) {
-            $parser->add($unparsed, TStaticMemberName::class);
+            $parser->add($source, TStaticMemberName::class);
             $parser->space();
             return;
         }
 
-        $parser->add($unparsed, TUnknownString::class);
+        $parser->add($source, TUnknownString::class);
         $parser->space();
     }
 }

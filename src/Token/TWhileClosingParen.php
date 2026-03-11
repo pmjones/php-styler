@@ -8,16 +8,16 @@ use PhpToken;
 
 class TWhileClosingParen extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
-        $parser->closeNesting($unparsed, self::class, TWhileOpeningParen::class);
+        $parser->closeNesting($source, self::class, TWhileOpeningParen::class);
 
-        if ($parser->atNesting(TWhile::class) && $parser->getNextUnparsed()?->is(';')) {
+        if ($parser->atNesting(TWhile::class) && $parser->getNextSource()?->is(';')) {
             $parser->popNesting(TWhile::class);
         }
 
-        if (! $parser->getNextUnparsed()?->is(['{', ':', ';'])) {
-            $parser->parse($unparsed, TOpeningBraceless::class);
+        if (! $parser->getNextSource()?->is(['{', ':', ';'])) {
+            $parser->parse($source, TOpeningBraceless::class);
         }
     }
 }

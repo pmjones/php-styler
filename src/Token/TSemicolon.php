@@ -8,10 +8,10 @@ use PhpToken;
 
 class TSemicolon extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         if ($parser->atNesting(TOpeningBraceless::class)) {
-            $parser->parse($unparsed, TClosingBraceless::class);
+            $parser->parse($source, TClosingBraceless::class);
             return;
         }
 
@@ -49,10 +49,10 @@ class TSemicolon extends T
         };
 
         if ($parseClass) {
-            $parser->parse($unparsed, $parseClass);
+            $parser->parse($source, $parseClass);
             return;
         }
 
-        $parser->add($unparsed, self::class);
+        $parser->add($source, self::class);
     }
 }

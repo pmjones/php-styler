@@ -17,7 +17,7 @@ class TAttribute extends T
 {
     public bool $ownLine = false;
 
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         $inParams = $parser->atNesting(TParamsOpeningParen::class);
         $blankLine = $parser->hasPrevBlankLine();
@@ -28,7 +28,7 @@ class TAttribute extends T
         }
 
         /** @var TAttribute $token */
-        $token = $parser->addNesting($unparsed, self::class);
+        $token = $parser->addNesting($source, self::class);
         $token->ownLine = $ownLine;
     }
 }

@@ -15,7 +15,7 @@ use PhpToken;
  */
 class TElseif extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         if (
             $parser->atNesting(TIfColon::class)
@@ -25,7 +25,7 @@ class TElseif extends T
             $parser->popNesting(TIf::class, TElseif::class);
         }
 
-        $parser->addNesting($unparsed, self::class);
+        $parser->addNesting($source, self::class);
         $parser->space();
     }
 }

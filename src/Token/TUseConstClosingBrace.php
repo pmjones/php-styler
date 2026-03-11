@@ -8,10 +8,10 @@ use PhpToken;
 
 class TUseConstClosingBrace extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->noSpace();
-        $parser->add($unparsed, static::class);
+        $parser->add($source, static::class);
         $parser->space();
     }
 }

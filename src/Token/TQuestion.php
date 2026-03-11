@@ -8,7 +8,7 @@ use PhpToken;
 
 class TQuestion extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         $prev = $parser->getPrevParsed();
 
@@ -27,15 +27,15 @@ class TQuestion extends T
             || $prev instanceof TStatic
             || $prev instanceof TConst
         ) {
-            $parser->parse($unparsed, TNullable::class);
+            $parser->parse($source, TNullable::class);
             return;
         }
 
-        if ($parser->getNextUnparsed()?->is(':')) {
-            $parser->parse($unparsed, TElvisQuestion::class);
+        if ($parser->getNextSource()?->is(':')) {
+            $parser->parse($source, TElvisQuestion::class);
             return;
         }
 
-        $parser->parse($unparsed, TTernaryQuestion::class);
+        $parser->parse($source, TTernaryQuestion::class);
     }
 }

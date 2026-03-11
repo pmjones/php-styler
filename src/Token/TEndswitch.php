@@ -16,7 +16,7 @@ use PhpToken;
  */
 class TEndswitch extends T implements TClosingStructure
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         $closesCase = false;
 
@@ -34,7 +34,7 @@ class TEndswitch extends T implements TClosingStructure
         $parser->popNesting(TSwitchColon::class);
         $parser->popNesting(TSwitch::class);
         $parser->indentDecr();
-        $parser->add($unparsed, $closesCase ? TEndswitchAfterCase::class : self::class);
+        $parser->add($source, $closesCase ? TEndswitchAfterCase::class : self::class);
         $parser->space();
     }
 }

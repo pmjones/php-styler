@@ -9,7 +9,7 @@ use PhpToken;
 
 class TColon extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
         if (
             $parser->atNesting(TCase::class)
@@ -17,7 +17,7 @@ class TColon extends T
             || $parser->atNesting(TCaseAfterCase::class)
             || $parser->atNesting(TDefaultAfterCase::class)
         ) {
-            $parser->parse($unparsed, TCaseColon::class);
+            $parser->parse($source, TCaseColon::class);
             return;
         }
 
@@ -36,7 +36,7 @@ class TColon extends T
         };
 
         if ($colonClass) {
-            $parser->parse($unparsed, $colonClass);
+            $parser->parse($source, $colonClass);
             return;
         }
 
@@ -51,23 +51,23 @@ class TColon extends T
         };
 
         if ($parseClass) {
-            $parser->parse($unparsed, $parseClass);
+            $parser->parse($source, $parseClass);
             return;
         }
 
         if ($parser->getPrevParsed() instanceof TGotoLabel) {
-            $parser->add($unparsed, TGotoLabelColon::class);
+            $parser->add($source, TGotoLabelColon::class);
             return;
         }
 
         if ($parser->atNesting(TArgsOpeningParen::class)) {
-            $parser->add($unparsed, TNamedArgColon::class);
+            $parser->add($source, TNamedArgColon::class);
             return;
         }
 
         $message = "Unknown kind of colon "
-            . "on line {$unparsed->line} "
-            . "at position {$unparsed->pos} "
+            . "on line {$source->line} "
+            . "at position {$source->pos} "
             . "in nesting "
             . var_export($parser->listNesting(), true);
 

@@ -8,8 +8,8 @@ use PhpToken;
 
 class TExpressionClosingParen extends T
 {
-    public static function parse(Parser $parser, PhpToken $unparsed) : void
+    public static function parse(Parser $parser, PhpToken $source) : void
     {
-        $parser->closeNesting($unparsed, self::class, TExpressionOpeningParen::class);
+        $parser->closeNesting($source, self::class, TExpressionOpeningParen::class);
     }
 }
