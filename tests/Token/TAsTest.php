@@ -10,6 +10,7 @@ class TAsTest extends TTestCase
      */
     public static function provide() : array
     {
+        /** @php-styler-expansive */
         return [
             'foreach' => [
                 <<<'CODE'

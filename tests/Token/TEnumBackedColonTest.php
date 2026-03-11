@@ -10,6 +10,7 @@ class TEnumBackedColonTest extends TTestCase
      */
     public static function provide() : array
     {
+        /** @php-styler-expansive */
         return [
             'backed-enum-string' => [
                 <<<'CODE'

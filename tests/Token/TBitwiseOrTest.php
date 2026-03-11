@@ -10,6 +10,7 @@ class TBitwiseOrTest extends TTestCase
      */
     public static function provide() : array
     {
+        /** @php-styler-expansive */
         return [
             'bitwise-or' => [
                 <<<'CODE'

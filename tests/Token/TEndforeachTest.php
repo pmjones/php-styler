@@ -10,6 +10,7 @@ class TEndforeachTest extends TTestCase
      */
     public static function provide() : array
     {
+        /** @php-styler-expansive */
         return [
             'endforeach' => [
                 <<<'CODE'

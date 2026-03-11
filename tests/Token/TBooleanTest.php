@@ -10,6 +10,7 @@ class TBooleanTest extends TTestCase
      */
     public static function provide() : array
     {
+        /** @php-styler-expansive */
         return [
             'boolean-param' => [
                 '<?php function foo(boolean $x) {}',

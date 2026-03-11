@@ -12,6 +12,7 @@ class TDocCommentTest extends TTestCase
      */
     public static function provide() : array
     {
+        /** @php-styler-expansive */
         return [
             'basic' => [
                 <<<'CODE'
@@ -57,6 +58,7 @@ class TDocCommentTest extends TTestCase
     /** @return array<string, array{0: string, 1: int, 2: string}> */
     public static function provideRender() : array
     {
+        /** @php-styler-expansive */
         return [
             'reindent-to-1' => [
                 "/**\n * Foo.\n * @return void\n */",

@@ -10,6 +10,7 @@ class THeredocEndTest extends TTestCase
      */
     public static function provide() : array
     {
+        /** @php-styler-expansive */
         return [
             'end-heredoc' => [
                 "<?php\n\$foo = <<<EOT\nhello\nEOT;\n",

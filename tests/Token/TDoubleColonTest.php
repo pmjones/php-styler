@@ -10,6 +10,7 @@ class TDoubleColonTest extends TTestCase
      */
     public static function provide() : array
     {
+        /** @php-styler-expansive */
         return [
             'static-method-call' => [
                 <<<'CODE'

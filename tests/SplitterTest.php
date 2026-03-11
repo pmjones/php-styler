@@ -29,6 +29,7 @@ class SplitterTest extends TestCase
     /** @return array<string, array{0: string, 1: string}> */
     public static function provide44() : array
     {
+        /** @php-styler-expansive */
         return [
             'short-line-unchanged' => [
                 <<<'CODE'
@@ -620,6 +621,7 @@ class SplitterTest extends TestCase
     /** @return array<string, array{0: string, 1: string}> */
     public static function provide88() : array
     {
+        /** @php-styler-expansive */
         return [
             'comma-over-fluent' => [
                 <<<'CODE'

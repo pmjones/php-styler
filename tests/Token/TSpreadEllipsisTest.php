@@ -10,6 +10,7 @@ class TSpreadEllipsisTest extends TTestCase
      */
     public static function provide() : array
     {
+        /** @php-styler-expansive */
         return [
             'spread-in-args' => [
                 <<<'CODE'

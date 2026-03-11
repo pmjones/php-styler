@@ -10,6 +10,7 @@ class TNamedArgColonTest extends TTestCase
      */
     public static function provide() : array
     {
+        /** @php-styler-expansive */
         return [
             'named-arg' => [
                 <<<'CODE'

@@ -10,6 +10,7 @@ class TArrayElementOpeningBracketTest extends TTestCase
      */
     public static function provide() : array
     {
+        /** @php-styler-expansive */
         return [
             'numeric' => [
                 <<<'CODE'

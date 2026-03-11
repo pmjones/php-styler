@@ -10,6 +10,7 @@ class TMinusTest extends TTestCase
      */
     public static function provide() : array
     {
+        /** @php-styler-expansive */
         return [
             'basic' => [
                 <<<'CODE'

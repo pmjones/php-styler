@@ -10,6 +10,7 @@ class TInlineHtmlTest extends TTestCase
      */
     public static function provide() : array
     {
+        /** @php-styler-expansive */
         return [
             'inline-html-before-php' => [
                 "hello <?php echo 1;",

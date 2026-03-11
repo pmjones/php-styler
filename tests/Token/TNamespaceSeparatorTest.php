@@ -10,6 +10,7 @@ class TNamespaceSeparatorTest extends TTestCase
      */
     public static function provide() : array
     {
+        /** @php-styler-expansive */
         return [
             'group-use' => [
                 <<<'CODE'

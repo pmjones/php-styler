@@ -10,6 +10,7 @@ class TWhitespaceTest extends TTestCase
      */
     public static function provide() : array
     {
+        /** @php-styler-expansive */
         return [
             'space-newline' => [
                 "<?php 1;    \n    2;\n",

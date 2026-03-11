@@ -63,6 +63,7 @@ class StyleTest extends TestCase
         $binaryPlusNoSpaces->get(TBinaryPlus::class)->spaceBefore = false;
         $binaryPlusNoSpaces->get(TBinaryPlus::class)->spaceAfter = false;
 
+        /** @php-styler-expansive */
         return [
             'return-colon-no-space-before' => [
                 $returnColonNoSpaceBefore,

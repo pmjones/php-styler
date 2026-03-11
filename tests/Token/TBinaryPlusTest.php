@@ -10,6 +10,7 @@ class TBinaryPlusTest extends TTestCase
      */
     public static function provide() : array
     {
+        /** @php-styler-expansive */
         return [
             'binary-plus' => [
                 '<?php $a + $b;',

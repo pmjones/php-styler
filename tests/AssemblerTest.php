@@ -167,6 +167,7 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
     /** @return array<string, array{0: string, 1: array<int, array<int, class-string>>}> */
     public static function provide() : array
     {
+        /** @php-styler-expansive */
         return [
             'simple-statements' => [
                 <<<'CODE'

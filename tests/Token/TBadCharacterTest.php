@@ -10,6 +10,7 @@ class TBadCharacterTest extends TTestCase
      */
     public static function provide() : array
     {
+        /** @php-styler-expansive */
         return [
             'control-character' => [
                 "<?php\n" . chr(1) . "\n",

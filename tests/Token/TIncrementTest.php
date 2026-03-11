@@ -10,6 +10,7 @@ class TIncrementTest extends TTestCase
      */
     public static function provide() : array
     {
+        /** @php-styler-expansive */
         return [
             'post-increment' => [
                 <<<'CODE'

@@ -26,6 +26,7 @@ class StylerTest extends TestCase
     /** @return array<string, array{0: string, 1: string}> */
     public static function provide() : array
     {
+        /** @php-styler-expansive */
         return [
             'simple-assignment' => [
                 <<<'CODE'

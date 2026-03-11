@@ -10,6 +10,7 @@ class TExtendsCommaTest extends TTestCase
      */
     public static function provide() : array
     {
+        /** @php-styler-expansive */
         return [
             'interface-extends-multiple' => [
                 <<<'CODE'

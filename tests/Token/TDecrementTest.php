@@ -10,6 +10,7 @@ class TDecrementTest extends TTestCase
      */
     public static function provide() : array
     {
+        /** @php-styler-expansive */
         return [
             'post-decrement' => [
                 <<<'CODE'

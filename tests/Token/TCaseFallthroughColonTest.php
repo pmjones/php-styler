@@ -10,6 +10,7 @@ class TCaseFallthroughColonTest extends TTestCase
      */
     public static function provide() : array
     {
+        /** @php-styler-expansive */
         return [
             'case-to-case' => [
                 <<<'CODE'

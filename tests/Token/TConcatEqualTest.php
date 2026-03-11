@@ -10,6 +10,7 @@ class TConcatEqualTest extends TTestCase
      */
     public static function provide() : array
     {
+        /** @php-styler-expansive */
         return [
             'concat-equal' => [
                 <<<'CODE'

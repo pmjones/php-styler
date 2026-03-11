@@ -10,6 +10,7 @@ class TEnddeclareTest extends TTestCase
      */
     public static function provide() : array
     {
+        /** @php-styler-expansive */
         return [
             'enddeclare' => [
                 <<<'CODE'
