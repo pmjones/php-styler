@@ -33,7 +33,12 @@ class TClosingBrace extends T
 
         if ($parser->atNesting(TCaseColon::class)) {
             $parser->popNesting(TCaseColon::class);
-            $parser->popNesting(TCase::class, TDefaultCase::class, TCaseAfterCase::class, TDefaultAfterCase::class);
+            $parser->popNesting(
+                TCase::class,
+                TDefaultCase::class,
+                TCaseAfterCase::class,
+                TDefaultAfterCase::class,
+            );
             $closesCase = true;
         }
 
@@ -47,7 +52,6 @@ class TClosingBrace extends T
         };
 
         if ($useClass) {
-
             $parser->add($unparsed, $useClass);
 
             return;
@@ -65,13 +69,7 @@ class TClosingBrace extends T
         $nesting = $parser->getNesting();
 
         if (
-            $parser->getNextUnparsed()
-                ?->is([
-                    T_CATCH,
-                    T_ELSE,
-                    T_ELSEIF,
-                    T_FINALLY,
-                ])
+            $parser->getNextUnparsed()?->is([T_CATCH, T_ELSE, T_ELSEIF, T_FINALLY])
             || $nesting === TDo::class
             || $nesting === TTry::class
         ) {
@@ -102,7 +100,9 @@ class TClosingBrace extends T
             TForeach::class => TForeachClosingBrace::class,
             TIf::class => TIfClosingBrace::class,
             TMatch::class => TMatchClosingBrace::class,
-            TSwitch::class => $closesCase ? TSwitchAfterCaseClosingBrace::class : TSwitchClosingBrace::class,
+            TSwitch::class => $closesCase
+                ? TSwitchAfterCaseClosingBrace::class
+                : TSwitchClosingBrace::class,
             TWhile::class => TWhileClosingBrace::class,
 
             // other

@@ -10,6 +10,10 @@ class TDeclareDirectivesClosingParen extends T
 {
     public static function parse(Parser $parser, PhpToken $unparsed) : void
     {
-        $parser->closeNesting($unparsed, self::class, TDeclareDirectivesOpeningParen::class);
+        $parser->closeNesting(
+            $unparsed,
+            self::class,
+            TDeclareDirectivesOpeningParen::class,
+        );
     }
 }

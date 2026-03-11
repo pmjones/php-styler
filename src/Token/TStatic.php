@@ -18,7 +18,6 @@ class TStatic extends T
     public static function parse(Parser $parser, PhpToken $unparsed) : void
     {
         if ($parser->getNextUnparsed()?->is(T_DOUBLE_COLON)) {
-
             $parser->add($unparsed, TStaticBinding::class);
 
             return;
@@ -32,7 +31,6 @@ class TStatic extends T
             || $prev instanceof TUnion
             || $prev instanceof TIntersection
         ) {
-
             $parser->add($unparsed, TStaticType::class);
 
             return;
@@ -42,7 +40,6 @@ class TStatic extends T
             $parser->getNextUnparsed()?->is(T_VARIABLE)
             && ! $parser->atNesting(TClasslikeOpeningBrace::class)
         ) {
-
             $parser->addNesting($unparsed, TStaticVar::class);
 
             return;

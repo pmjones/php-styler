@@ -34,8 +34,12 @@ abstract class T extends PhpToken
     {
         $vars = ['CLASS' => get_class($this), 'TOKEN' => $this->getTokenName()];
         $info = $vars + get_object_vars($this);
-        $info['openingToken'] = $this->openingToken !== null ? get_class($this->openingToken) : null;
-        $info['closingToken'] = $this->closingToken !== null ? get_class($this->closingToken) : null;
+        $info['openingToken'] = $this->openingToken !== null
+            ? get_class($this->openingToken)
+            : null;
+        $info['closingToken'] = $this->closingToken !== null
+            ? get_class($this->closingToken)
+            : null;
         return $info;
     }
 

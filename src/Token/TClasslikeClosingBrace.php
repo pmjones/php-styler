@@ -13,6 +13,13 @@ class TClasslikeClosingBrace extends T implements TClosingStructure
         $parser->removeTrailingBlankLine();
         $parser->indentDecr();
 
-        $parser->closeNesting($unparsed, self::class, TClass::class, TEnum::class, TInterface::class, TTrait::class);
+        $parser->closeNesting(
+            $unparsed,
+            self::class,
+            TClass::class,
+            TEnum::class,
+            TInterface::class,
+            TTrait::class,
+        );
     }
 }

@@ -10,6 +10,10 @@ class TPropertyHookSetClosingParen extends T
 {
     public static function parse(Parser $parser, PhpToken $unparsed) : void
     {
-        $parser->closeNesting($unparsed, self::class, TPropertyHookSetOpeningParen::class);
+        $parser->closeNesting(
+            $unparsed,
+            self::class,
+            TPropertyHookSetOpeningParen::class,
+        );
     }
 }

@@ -19,7 +19,14 @@ class TFullyQualifiedName extends T
     {
         if (
             $parser->getNextUnparsed()?->is('(')
-            && ! $parser->getPrevParsed()?->is([T_OBJECT_OPERATOR, T_NULLSAFE_OBJECT_OPERATOR, T_DOUBLE_COLON, T_NEW])
+            && ! $parser
+                ->getPrevParsed()
+                ?->is([
+                    T_OBJECT_OPERATOR,
+                    T_NULLSAFE_OBJECT_OPERATOR,
+                    T_DOUBLE_COLON,
+                    T_NEW,
+                ])
             && ! $parser->atNesting(TAttribute::class)
         ) {
             $parser->add($unparsed, TFunctionCallFullyQualified::class);

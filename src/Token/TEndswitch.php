@@ -22,7 +22,12 @@ class TEndswitch extends T implements TClosingStructure
 
         if ($parser->atNesting(TCaseColon::class)) {
             $parser->popNesting(TCaseColon::class);
-            $parser->popNesting(TCase::class, TDefaultCase::class, TCaseAfterCase::class, TDefaultAfterCase::class);
+            $parser->popNesting(
+                TCase::class,
+                TDefaultCase::class,
+                TCaseAfterCase::class,
+                TDefaultAfterCase::class,
+            );
             $closesCase = true;
         }
 

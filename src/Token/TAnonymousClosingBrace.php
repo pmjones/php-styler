@@ -13,6 +13,11 @@ class TAnonymousClosingBrace extends T implements TClosingStructure
         $parser->removeTrailingBlankLine();
         $parser->indentDecr();
 
-        $parser->closeNesting($unparsed, self::class, TAnonymousClass::class, TAnonymousFunction::class);
+        $parser->closeNesting(
+            $unparsed,
+            self::class,
+            TAnonymousClass::class,
+            TAnonymousFunction::class,
+        );
     }
 }

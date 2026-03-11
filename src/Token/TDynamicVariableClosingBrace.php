@@ -10,6 +10,10 @@ class TDynamicVariableClosingBrace extends T
 {
     public static function parse(Parser $parser, PhpToken $unparsed) : void
     {
-        $parser->closeNesting($unparsed, self::class, TDynamicVariableOpeningBrace::class);
+        $parser->closeNesting(
+            $unparsed,
+            self::class,
+            TDynamicVariableOpeningBrace::class,
+        );
     }
 }

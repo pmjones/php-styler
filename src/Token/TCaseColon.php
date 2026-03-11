@@ -11,7 +11,12 @@ class TCaseColon extends T implements TOpeningStructure
     public static function parse(Parser $parser, PhpToken $unparsed) : void
     {
         if ($parser->getNextUnparsed()?->is([T_CASE, T_DEFAULT])) {
-            $parser->popNesting(TCase::class, TDefaultCase::class, TCaseAfterCase::class, TDefaultAfterCase::class);
+            $parser->popNesting(
+                TCase::class,
+                TDefaultCase::class,
+                TCaseAfterCase::class,
+                TDefaultAfterCase::class,
+            );
 
             $parser->add($unparsed, TCaseFallthroughColon::class);
             return;

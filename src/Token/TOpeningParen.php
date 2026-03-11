@@ -45,24 +45,28 @@ class TOpeningParen extends T
             return;
         }
 
-        if ($parser->getPrevParsed()?->is([
-            T_EMPTY,
-            T_EVAL,
-            T_EXIT,
-            T_HALT_COMPILER,
-            T_ISSET,
-            T_LIST,
-            T_NAME_FULLY_QUALIFIED,
-            T_NAME_QUALIFIED,
-            T_NAME_RELATIVE,
-            T_STATIC,
-            T_STRING,
-            T_UNSET,
-            T_VARIABLE,
-            ')',
-            ']',
-            '}',
-        ])) {
+        if (
+            $parser
+            ->getPrevParsed()
+            ?->is([
+                T_EMPTY,
+                T_EVAL,
+                T_EXIT,
+                T_HALT_COMPILER,
+                T_ISSET,
+                T_LIST,
+                T_NAME_FULLY_QUALIFIED,
+                T_NAME_QUALIFIED,
+                T_NAME_RELATIVE,
+                T_STATIC,
+                T_STRING,
+                T_UNSET,
+                T_VARIABLE,
+                ')',
+                ']',
+                '}',
+            ])
+        ) {
             $parser->parse($unparsed, TArgsOpeningParen::class);
             return;
         }

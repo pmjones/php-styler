@@ -17,9 +17,8 @@ class Assembler
 
     private Line $line;
 
-    public function __construct(
-        private LineFactory $lineFactory = new LineFactory(),
-    ) {
+    public function __construct(private LineFactory $lineFactory = new LineFactory())
+    {
     }
 
     /**
@@ -48,12 +47,12 @@ class Assembler
     private function assembleToken(T $token) : void
     {
         if ($token instanceof TIndentIncrement) {
-            $this->indent++;
+            $this->indent ++;
             return;
         }
 
         if ($token instanceof TIndentDecrement) {
-            $this->indent--;
+            $this->indent --;
             return;
         }
 

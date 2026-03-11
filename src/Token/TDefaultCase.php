@@ -12,7 +12,12 @@ class TDefaultCase extends T
     {
         if ($parser->atNesting(TCaseColon::class)) {
             $parser->popNesting(TCaseColon::class);
-            $parser->popNesting(TCase::class, TDefaultCase::class, TCaseAfterCase::class, TDefaultAfterCase::class);
+            $parser->popNesting(
+                TCase::class,
+                TDefaultCase::class,
+                TCaseAfterCase::class,
+                TDefaultAfterCase::class,
+            );
             $parser->parse($unparsed, TDefaultAfterCase::class);
             return;
         }

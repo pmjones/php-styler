@@ -11,6 +11,7 @@ class TClosingParen extends T
     public static function parse(Parser $parser, PhpToken $unparsed) : void
     {
         $parser->popTernaryNesting();
+
         /** @var class-string<T> $closingParenClass */
         $closingParenClass = str_replace('Opening', 'Closing', $parser->getNesting());
 

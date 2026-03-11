@@ -12,21 +12,23 @@ class TMinus extends T
     {
         $prev = $parser->getPrevParsed();
 
-        if ($prev?->is([
-            T_VARIABLE,
-            T_LNUMBER,
-            T_DNUMBER,
-            T_CONSTANT_ENCAPSED_STRING,
-            T_STRING,
-            T_NAME_QUALIFIED,
-            T_NAME_FULLY_QUALIFIED,
-            T_NAME_RELATIVE,
-            ')',
-            ']',
-            '}',
-            T_INC,
-            T_DEC,
-        ])) {
+        if (
+            $prev?->is([
+                T_VARIABLE,
+                T_LNUMBER,
+                T_DNUMBER,
+                T_CONSTANT_ENCAPSED_STRING,
+                T_STRING,
+                T_NAME_QUALIFIED,
+                T_NAME_FULLY_QUALIFIED,
+                T_NAME_RELATIVE,
+                ')',
+                ']',
+                '}',
+                T_INC,
+                T_DEC,
+            ])
+        ) {
             $parser->add($unparsed, TBinaryMinus::class);
             return;
         }

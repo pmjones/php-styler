@@ -2912,6 +2912,7 @@ class StylerTest extends TestCase
 
                 EXPECT,
             ],
+
         ];
     }
 }

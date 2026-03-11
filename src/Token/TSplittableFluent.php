@@ -3,4 +3,6 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-interface TSplittableFluent extends TSplittable {}
+interface TSplittableFluent extends TSplittable
+{
+}

@@ -139,10 +139,16 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
         $actual = [];
 
         foreach ($lines as $line) {
-            $classes = array_values(array_filter(
-                $line->getTokenClasses(),
-                fn(string $class) => $class !== TIndentIncrement::class && $class !== TIndentDecrement::class && $class !== TSpace::class && ! is_a($class, TSplitPoint::class, true),
-            ));
+            $classes = array_values(
+                array_filter(
+                    $line->getTokenClasses(),
+                    fn (string $class)
+                        => $class !== TIndentIncrement::class
+                            && $class !== TIndentDecrement::class
+                            && $class !== TSpace::class
+                            && ! is_a($class, TSplitPoint::class, true),
+                ),
+            );
             $actual[] = $classes;
         }
 

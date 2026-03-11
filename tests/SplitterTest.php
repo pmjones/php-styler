@@ -10,10 +10,7 @@ class SplitterTest extends TestCase
 {
     private function assertSplit(string $code, string $expect, int $lineLen) : void
     {
-        $styler = new Styler(
-            lineLen: $lineLen,
-            eol: "\n",
-        );
+        $styler = new Styler(lineLen: $lineLen, eol: "\n");
         $actual = $styler($code);
         $this->assertSame($expect, $actual);
     }
@@ -218,7 +215,6 @@ class SplitterTest extends TestCase
 
                 EXPECT,
             ],
-
 
             'comma-nested-array' => [
                 <<<'CODE'
@@ -607,6 +603,7 @@ class SplitterTest extends TestCase
 
                 EXPECT,
             ],
+
         ];
     }
 
@@ -996,6 +993,7 @@ class SplitterTest extends TestCase
 
                 EXPECT,
             ],
+
         ];
     }
 }

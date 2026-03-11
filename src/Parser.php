@@ -121,9 +121,8 @@ class Parser
 
     public ?TSplitPoint $lastSplitPoint = null;
 
-    public function __construct(
-        ?StyleLocator $styles = null,
-    ) {
+    public function __construct(?StyleLocator $styles = null)
+    {
         $this->styles = $styles ?? new StyleLocator();
     }
 
@@ -169,7 +168,8 @@ class Parser
 
         if (str_starts_with($name, 'T_')) {
             return self::PARSE_CLASS[$name]
-                ?? "\\PhpStyler\\Token\\" . str_replace('_', '', ucwords(strtolower($name), '_'));
+                ?? "\\PhpStyler\\Token\\"
+                    . str_replace('_', '', ucwords(strtolower($name), '_'));
         }
 
         return self::PARSE_CLASS[$unparsed->text];
@@ -220,11 +220,11 @@ class Parser
         $token->parenDepth = $this->parenDepth;
 
         if ($token->text === '(' || $token->text === '[') {
-            $this->parenDepth++;
+            $this->parenDepth ++;
         }
 
         if ($token instanceof TSplittableComma && $this->nestingArgCount !== []) {
-            $this->nestingArgCount[array_key_last($this->nestingArgCount)]++;
+            $this->nestingArgCount[array_key_last($this->nestingArgCount)] ++;
         }
 
         // Emit TSplitPoint BEFORE operators/fluent
@@ -234,15 +234,13 @@ class Parser
 
         $this->parsed[] = $token;
         $this->lastAddedIndex = $this->parsedCount;
-        $this->parsedCount++;
+        $this->parsedCount ++;
 
         // Emit TSplitPoint AFTER commas
         if ($token instanceof TSplittableComma) {
-            $isListComma = $token instanceof TExtendsComma || $token instanceof TImplementsComma;
-            $this->addSplitPoint(
-                $token->splitCategory(),
-                continuation: $isListComma,
-            );
+            $isListComma = $token instanceof TExtendsComma
+                || $token instanceof TImplementsComma;
+            $this->addSplitPoint($token->splitCategory(), continuation: $isListComma);
         }
 
         if ($style->spaceAfter === true) {
@@ -264,28 +262,29 @@ class Parser
         $splitPoint->splitPriority = $priority;
         $splitPoint->continuation = $continuation;
         $this->parsed[] = $splitPoint;
-        $this->parsedCount++;
+        $this->parsedCount ++;
         $this->lastSplitPoint = $splitPoint;
     }
 
     public function indentIncr() : void
     {
         $this->parsed[] = new TIndentIncrement(T_WHITESPACE, '');
-        $this->parsedCount++;
+        $this->parsedCount ++;
     }
 
     public function indentDecr() : void
     {
-        if ($this->parsedCount > 0
+        if (
+            $this->parsedCount > 0
             && $this->parsed[$this->parsedCount - 1] instanceof TIndentIncrement
         ) {
             array_pop($this->parsed);
-            $this->parsedCount--;
+            $this->parsedCount --;
             return;
         }
 
         $this->parsed[] = new TIndentDecrement(T_WHITESPACE, '');
-        $this->parsedCount++;
+        $this->parsedCount ++;
     }
 
     public function blankLine() : void
@@ -300,16 +299,16 @@ class Parser
 
         $this->lineBreak();
         $this->parsed[] = new Token\TBlankLine(T_WHITESPACE, '');
-        $this->parsedCount++;
+        $this->parsedCount ++;
         $this->lineBreak();
     }
 
     public function removeTrailingBlankLine() : void
     {
-        for ($i = $this->parsedCount - 1; $i >= 0; $i--) {
+        for ($i = $this->parsedCount - 1; $i >= 0; $i --) {
             if ($this->parsed[$i] instanceof Token\TBlankLine) {
                 array_splice($this->parsed, $i, 1);
-                $this->parsedCount--;
+                $this->parsedCount --;
                 return;
             }
 
@@ -321,23 +320,26 @@ class Parser
 
     public function lineBreak() : void
     {
-        for ($i = $this->parsedCount - 1; $i >= 0; $i--) {
+        for ($i = $this->parsedCount - 1; $i >= 0; $i --) {
             $prev = $this->parsed[$i];
 
             if ($prev instanceof TSpace) {
                 array_splice($this->parsed, $i, 1);
-                $this->parsedCount--;
+                $this->parsedCount --;
             } elseif (! $prev->is(T_WHITESPACE)) {
                 break;
             }
         }
 
-        if ($this->parsedCount > 0 && $this->parsed[$this->parsedCount - 1] instanceof TLineBreak) {
+        if (
+            $this->parsedCount > 0
+            && $this->parsed[$this->parsedCount - 1] instanceof TLineBreak
+        ) {
             return;
         }
 
         $this->parsed[] = new TLineBreak(T_WHITESPACE, '');
-        $this->parsedCount++;
+        $this->parsedCount ++;
     }
 
     public function space() : void
@@ -346,7 +348,7 @@ class Parser
             return;
         }
 
-        for ($i = $this->parsedCount - 1; $i >= 0; $i--) {
+        for ($i = $this->parsedCount - 1; $i >= 0; $i --) {
             $prev = $this->parsed[$i];
 
             if ($prev instanceof TSpace) {
@@ -363,17 +365,17 @@ class Parser
         }
 
         $this->parsed[] = new TSpace(T_WHITESPACE, ' ');
-        $this->parsedCount++;
+        $this->parsedCount ++;
     }
 
     public function noSpace() : void
     {
-        for ($i = $this->parsedCount - 1; $i >= 0; $i--) {
+        for ($i = $this->parsedCount - 1; $i >= 0; $i --) {
             $prev = $this->parsed[$i];
 
             if ($prev instanceof TSpace) {
                 array_splice($this->parsed, $i, 1);
-                $this->parsedCount--;
+                $this->parsedCount --;
                 return;
             }
 
@@ -389,12 +391,15 @@ class Parser
 
     private function removePrevWhitespace() : void
     {
-        for ($i = $this->parsedCount - 1; $i >= 0; $i--) {
+        for ($i = $this->parsedCount - 1; $i >= 0; $i --) {
             $prev = $this->parsed[$i];
 
-            if ($prev instanceof Token\TWhitespaceEol || $prev instanceof Token\TWhitespace) {
+            if (
+                $prev instanceof Token\TWhitespaceEol
+                || $prev instanceof Token\TWhitespace
+            ) {
                 array_splice($this->parsed, $i, 1);
-                $this->parsedCount--;
+                $this->parsedCount --;
                 continue;
             }
 
@@ -410,6 +415,7 @@ class Parser
     public function replaceLastParsed(PhpToken $unparsed, string $parseClass) : T
     {
         $this->removePrevWhitespace();
+
         /** @var T $token */
         $token = new $parseClass(
             $unparsed->id,
@@ -460,6 +466,7 @@ class Parser
     public function getNesting() : string
     {
         $token = end($this->nesting);
+
         /** @var class-string */
         return $token !== false ? get_class($token) : '';
     }
@@ -506,7 +513,12 @@ class Parser
     /**
      * @param class-string<T> $closerClass
      */
-    public function closeNesting(PhpToken $unparsed, string $closerClass, string $openerClass, string ...$openerClasses) : T
+    public function closeNesting(
+        PhpToken $unparsed,
+        string $closerClass,
+        string $openerClass,
+        string ...$openerClasses,
+    ) : T
     {
         $argCount = array_pop($this->nestingArgCount) ?? 0;
         $containsBracket = array_pop($this->nestingContainsBracket) ?? false;
@@ -517,8 +529,15 @@ class Parser
         $closer->openingToken = $opener;
 
         if ($opener->text === '[' && $this->nestingContainsBracket !== []) {
-            $this->nestingContainsBracket[array_key_last($this->nestingContainsBracket)] = true;
-        } elseif ($argCount === 0 && $opener->text === '(' && $containsBracket && !$this->containsSplittableOperator($opener)) {
+            $this->nestingContainsBracket[
+                array_key_last($this->nestingContainsBracket)
+            ] = true;
+        } elseif (
+            $argCount === 0
+            && $opener->text === '('
+            && $containsBracket
+            && ! $this->containsSplittableOperator($opener)
+        ) {
             $opener->transparentOpener = true;
         }
 
@@ -543,7 +562,9 @@ class Parser
 
         if (! in_array($actualClass, $expects)) {
             throw new \RuntimeException(
-                "Expected to pop " . implode('|', $expects) . ", got {$actualClass} instead",
+                "Expected to pop "
+                    . implode('|', $expects)
+                    . ", got {$actualClass} instead",
             );
         }
 
@@ -555,7 +576,7 @@ class Parser
     {
         $before = null;
 
-        for ($i = 0; $i <= $skip; $i++) {
+        for ($i = 0; $i <= $skip; $i ++) {
             $before = $this->getPrevTokenOffset($before);
 
             if ($before === null) {
@@ -603,7 +624,7 @@ class Parser
 
     public function transferLineBreakAfter(T $to) : bool
     {
-        for ($i = $this->parsedCount - 1; $i >= 0; $i--) {
+        for ($i = $this->parsedCount - 1; $i >= 0; $i --) {
             if ($this->parsed[$i] === $to) {
                 continue;
             }
@@ -614,14 +635,14 @@ class Parser
                 // clean up adjacent TBlankLine and its preceding TLineBreak
                 while ($i > 0 && $this->parsed[$i - 1] instanceof Token\TBlankLine) {
                     array_splice($this->parsed, $i - 1, 1);
-                    $this->parsedCount--;
-                    $i--;
+                    $this->parsedCount --;
+                    $i --;
                 }
 
                 if ($i > 0 && $this->parsed[$i - 1] instanceof TLineBreak) {
                     array_splice($this->parsed, $i - 1, 1);
-                    $this->parsedCount--;
-                    $i--;
+                    $this->parsedCount --;
+                    $i --;
                 }
 
                 $this->lineBreak();
@@ -666,7 +687,7 @@ class Parser
                 return false;
             }
 
-            $parsedOffset--;
+            $parsedOffset --;
         }
 
         return false;
@@ -685,7 +706,7 @@ class Parser
                 return false;
             }
 
-            $parsedOffset--;
+            $parsedOffset --;
         }
 
         return false;
@@ -704,7 +725,7 @@ class Parser
                 return false;
             }
 
-            $parsedOffset--;
+            $parsedOffset --;
         }
 
         return false;
@@ -726,7 +747,7 @@ class Parser
     {
         $depth = 0;
 
-        for ($i = $this->lastAddedIndex - 1; $i >= 0; $i--) {
+        for ($i = $this->lastAddedIndex - 1; $i >= 0; $i --) {
             $token = $this->parsed[$i];
 
             if ($token === $opener) {
@@ -734,9 +755,9 @@ class Parser
             }
 
             if ($token->text === ')' || $token->text === ']') {
-                $depth++;
+                $depth ++;
             } elseif ($token->text === '(' || $token->text === '[') {
-                $depth--;
+                $depth --;
             } elseif ($depth === 0 && $token instanceof Token\TSplittableOperator) {
                 return true;
             }

@@ -3,4 +3,6 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-interface TSplittableComma extends TSplittable {}
+interface TSplittableComma extends TSplittable
+{
+}

@@ -23,7 +23,8 @@ class TSemicolon extends T
             TPropertyHookGetDoubleArrow::class => TPropertyHookGetSemicolon::class,
             TPropertyHookSet::class,
             TPropertyHookSetDoubleArrow::class => TPropertyHookSetSemicolon::class,
-            TConst::class => $parser->atNesting(TConst::class, TClasslikeOpeningBrace::class)
+            TConst::class => $parser
+                ->atNesting(TConst::class, TClasslikeOpeningBrace::class)
                 ? TConstEndSemicolon::class
                 : TNamespaceConstEndSemicolon::class,
             TUse::class,
@@ -33,8 +34,7 @@ class TSemicolon extends T
             TElvisColon::class => TElvisEndSemicolon::class,
             TTernaryColon::class => TTernaryEndSemicolon::class,
             TFnDoubleArrow::class => TFnEndSemicolon::class,
-            TReturnColon::class,
-            TFunction::class => TAbstractMethodEndSemicolon::class,
+            TReturnColon::class, TFunction::class => TAbstractMethodEndSemicolon::class,
             TUseTrait::class => TUseTraitEndSemicolon::class,
             TYield::class => TYieldEndSemicolon::class,
             TGlobal::class => TGlobalEndSemicolon::class,

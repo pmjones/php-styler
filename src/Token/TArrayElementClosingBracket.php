@@ -11,7 +11,11 @@ class TArrayElementClosingBracket extends T
     public static function parse(Parser $parser, PhpToken $unparsed) : void
     {
         $parser->noSpace();
-        $parser->closeNesting($unparsed, self::class, TArrayElementOpeningBracket::class);
+        $parser->closeNesting(
+            $unparsed,
+            self::class,
+            TArrayElementOpeningBracket::class,
+        );
         $parser->space();
     }
 }

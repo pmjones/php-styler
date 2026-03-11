@@ -33,9 +33,8 @@ use PhpStyler\Token\TUseVariablesOpeningParen;
 use PhpStyler\Token\TWhileOpeningParen;
 class Splitter
 {
-    public function __construct(
-        private LineFactory $lineFactory = new LineFactory(),
-    ) {
+    public function __construct(private LineFactory $lineFactory = new LineFactory())
+    {
     }
 
     /**
@@ -70,7 +69,10 @@ class Splitter
     {
         if (
             ! $line->forceExpand
-            && ($this->lineFactory->lineLen === 0 || $line->length() <= $this->lineFactory->lineLen)
+            && (
+                $this->lineFactory->lineLen === 0
+                || $line->length() <= $this->lineFactory->lineLen
+            )
         ) {
             return [$line];
         }
@@ -111,7 +113,11 @@ class Splitter
         $groups = $line->collectSplitGroups();
 
         foreach ($groups as $group) {
-            $split = $this->splitAtPositions($line, $group['positions'], $group['continuation']);
+            $split = $this->splitAtPositions(
+                $line,
+                $group['positions'],
+                $group['continuation'],
+            );
 
             if ($split !== null) {
                 return $split;
@@ -166,25 +172,33 @@ class Splitter
      */
     private function moveLeadingInlineComments(array $lines) : array
     {
-        for ($i = 1; $i < count($lines); $i++) {
+        for ($i = 1; $i < count($lines); $i ++) {
             $tokens = $lines[$i]->getTokens();
             $peek = 0;
 
             // Skip leading TSpace/TSplitPoint
-            while (isset($tokens[$peek]) && ($tokens[$peek] instanceof TSpace || $tokens[$peek] instanceof TSplitPoint)) {
-                $peek++;
+            while (
+                isset($tokens[$peek])
+                && (
+                    $tokens[$peek] instanceof TSpace
+                    || $tokens[$peek] instanceof TSplitPoint
+                )
+            ) {
+                $peek ++;
             }
 
             // Check if next token is an inline comment
             if (
                 ! isset($tokens[$peek])
-                || ! ($tokens[$peek] instanceof TCommentSlashedInline
+                || ! (
+                    $tokens[$peek] instanceof TCommentSlashedInline
                     || $tokens[$peek] instanceof TCommentHashedInline
                     || $tokens[$peek] instanceof TCommentStarredInline
                     || $tokens[$peek] instanceof TCommentStarredOneline
                     || $tokens[$peek] instanceof TCommentSlashedMidStatement
                     || $tokens[$peek] instanceof TCommentHashedMidStatement
-                    || $tokens[$peek] instanceof TDocCommentInline)
+                    || $tokens[$peek] instanceof TDocCommentInline
+                )
             ) {
                 continue;
             }
@@ -194,7 +208,7 @@ class Splitter
             // Check if there is real content after the comment on this line (before any blank line)
             $hasContentAfter = false;
 
-            for ($j = $commentEnd; $j < count($tokens); $j++) {
+            for ($j = $commentEnd; $j < count($tokens); $j ++) {
                 $t = $tokens[$j];
 
                 if ($t instanceof TSpace || $t instanceof TSplitPoint) {
@@ -214,7 +228,10 @@ class Splitter
                 // For standalone comments, only move if the previous line ends with a comma
                 $prevLastContent = $lines[$i - 1]->lastContentToken();
 
-                if (! $prevLastContent instanceof TSplittableComma || $prevLastContent->text !== ',') {
+                if (
+                    ! $prevLastContent instanceof TSplittableComma
+                    || $prevLastContent->text !== ','
+                ) {
                     continue;
                 }
             }
@@ -224,16 +241,18 @@ class Splitter
             $remainingTokens = array_slice($tokens, $commentEnd);
             $prevTokens = $lines[$i - 1]->getTokens();
 
-            $lines[$i - 1] = $this->lineFactory->new(
-                array_merge($prevTokens, $commentTokens),
-                $lines[$i - 1]->indent,
-            );
+            $lines[$i - 1] = $this->lineFactory
+                ->new(
+                    array_merge($prevTokens, $commentTokens),
+                    $lines[$i - 1]->indent,
+                );
 
             if ($remainingTokens === [] || ! $hasContentAfter) {
                 array_splice($lines, $i, 1);
-                $i--;
+                $i --;
             } else {
-                $lines[$i] = $this->lineFactory->new($remainingTokens, $lines[$i]->indent);
+                $lines[$i] = $this->lineFactory
+                    ->new($remainingTokens, $lines[$i]->indent);
             }
         }
 
@@ -248,7 +267,11 @@ class Splitter
      * @param int[] $positions
      * @return Line[]|null
      */
-    private function splitAtPositions(Line $line, array $positions, bool $continuation) : ?array
+    private function splitAtPositions(
+        Line $line,
+        array $positions,
+        bool $continuation,
+    ) : ?array
     {
         $tokens = $line->getTokens();
         $indent = $line->indent;
@@ -260,7 +283,8 @@ class Splitter
             $segment = array_slice($tokens, $start, $pos - $start);
 
             if ($segment !== []) {
-                $lines[] = $this->lineFactory->new($segment, $start === 0 ? $indent : $contIndent);
+                $lines[] = $this->lineFactory
+                    ->new($segment, $start === 0 ? $indent : $contIndent);
             }
 
             $start = $pos;
@@ -276,7 +300,8 @@ class Splitter
                 $lines[] = $segLine;
             } else {
                 $prev = array_pop($lines);
-                $lines[] = $this->lineFactory->new(array_merge($prev->getTokens(), $segment), $prev->indent);
+                $lines[] = $this->lineFactory
+                    ->new(array_merge($prev->getTokens(), $segment), $prev->indent);
             }
         }
 
@@ -359,7 +384,8 @@ class Splitter
                 continue;
             }
 
-            $closerLineIndex = $tokenLineMap[spl_object_id($lastToken->closingToken)] ?? null;
+            $closerLineIndex = $tokenLineMap[spl_object_id($lastToken->closingToken)]
+                ?? null;
 
             if ($closerLineIndex === null || $closerLineIndex <= $lineIndex + 1) {
                 continue;
@@ -369,11 +395,13 @@ class Splitter
             $bump = null;
             $closerLine = $lines[$closerLineIndex];
             $closerFirst = $closerLine->firstContentToken();
-            $bumpEnd = ($closerFirst !== null && $closerFirst !== $lastToken->closingToken)
+            $bumpEnd = (
+                $closerFirst !== null && $closerFirst !== $lastToken->closingToken
+            )
                 ? $closerLineIndex + 1
                 : $closerLineIndex;
 
-            for ($i = $lineIndex + 1; $i < $bumpEnd; $i++) {
+            for ($i = $lineIndex + 1; $i < $bumpEnd; $i ++) {
                 if ($lines[$i]->isBlank()) {
                     continue;
                 }
@@ -393,16 +421,17 @@ class Splitter
      */
     private function rejoinOrphans(array $lines) : array
     {
-        for ($i = 0; $i < count($lines) - 1; $i++) {
+        for ($i = 0; $i < count($lines) - 1; $i ++) {
             $line = $lines[$i];
             $tokens = $line->getTokens();
             $nextLine = $lines[$i + 1];
 
-            if (
-                $line->contentTokenCount() === 1
-                && $nextLine->rejoinOrphanBefore()
-            ) {
-                $merged = array_merge($tokens, [new TSpace(T_WHITESPACE, ' ')], $nextLine->getTokens());
+            if ($line->contentTokenCount() === 1 && $nextLine->rejoinOrphanBefore()) {
+                $merged = array_merge(
+                    $tokens,
+                    [new TSpace(T_WHITESPACE, ' ')],
+                    $nextLine->getTokens(),
+                );
                 $lines[$i] = $this->lineFactory->new($merged, $line->indent);
                 array_splice($lines, $i + 1, 1);
                 continue;
@@ -464,7 +493,8 @@ class Splitter
                     continue;
                 }
 
-                $closerLineIndex = $tokenLineMap[spl_object_id($token->closingToken)] ?? null;
+                $closerLineIndex = $tokenLineMap[spl_object_id($token->closingToken)]
+                    ?? null;
 
                 if ($closerLineIndex === null || $closerLineIndex === $lineIndex) {
                     continue;
@@ -479,7 +509,9 @@ class Splitter
                 }
 
                 // Split before closer if it's not the first token on its line
-                $closerTokenIndex = $lines[$closerLineIndex]->findTokenIndex($token->closingToken);
+                $closerTokenIndex = $lines[
+                    $closerLineIndex
+                ]->findTokenIndex($token->closingToken);
 
                 if ($closerTokenIndex !== null && $closerTokenIndex > 0) {
                     return [
@@ -502,7 +534,8 @@ class Splitter
         int $openerLineIndex,
         int $openerTokenIndex,
         int $closerLineIndex,
-    ) : array {
+    ) : array
+    {
         $line = $lines[$openerLineIndex];
         $tokens = $line->getTokens();
         $indent = $line->indent;
@@ -512,18 +545,23 @@ class Splitter
         $after = array_slice($tokens, $openerTokenIndex + 1);
 
         $lines[$openerLineIndex] = $this->lineFactory->new($before, $indent);
-        array_splice($lines, $openerLineIndex + 1, 0, [$this->lineFactory->new($after, $indent + 1)]);
+        array_splice(
+            $lines,
+            $openerLineIndex + 1,
+            0,
+            [$this->lineFactory->new($after, $indent + 1)],
+        );
 
         // Bump indent of all content lines between opener and closer
-        for ($i = $openerLineIndex + 2; $i < $closerLineIndex; $i++) {
-            $lines[$i]->indent++;
+        for ($i = $openerLineIndex + 2; $i < $closerLineIndex; $i ++) {
+            $lines[$i]->indent ++;
         }
 
         // Also bump the closer line if the closer is not its first token
         $firstContent = $lines[$closerLineIndex]->firstContentToken();
 
         if ($firstContent !== $openerToken->closingToken) {
-            $lines[$closerLineIndex]->indent++;
+            $lines[$closerLineIndex]->indent ++;
         }
 
         return array_values($lines);
@@ -538,7 +576,8 @@ class Splitter
         int $closerLineIndex,
         int $closerTokenIndex,
         int $openerIndent,
-    ) : array {
+    ) : array
+    {
         $line = $lines[$closerLineIndex];
         $tokens = $line->getTokens();
 
@@ -546,7 +585,12 @@ class Splitter
         $after = array_slice($tokens, $closerTokenIndex);
 
         $lines[$closerLineIndex] = $this->lineFactory->new($before, $line->indent);
-        array_splice($lines, $closerLineIndex + 1, 0, [$this->lineFactory->new($after, $openerIndent)]);
+        array_splice(
+            $lines,
+            $closerLineIndex + 1,
+            0,
+            [$this->lineFactory->new($after, $openerIndent)],
+        );
 
         return array_values($lines);
     }
@@ -582,13 +626,14 @@ class Splitter
                     continue;
                 }
 
-                $closerLineIndex = $tokenLineMap[spl_object_id($token->closingToken)] ?? null;
+                $closerLineIndex = $tokenLineMap[spl_object_id($token->closingToken)]
+                    ?? null;
 
                 if ($closerLineIndex === null || $closerLineIndex <= $lineIndex) {
                     continue;
                 }
 
-                for ($i = $lineIndex + 1; $i < $closerLineIndex; $i++) {
+                for ($i = $lineIndex + 1; $i < $closerLineIndex; $i ++) {
                     $splitPos = $lines[$i]->findTopLevelComma();
 
                     if ($splitPos !== null) {
@@ -605,7 +650,11 @@ class Splitter
      * @param Line[] $lines
      * @return Line[]
      */
-    private function splitAfterComma(array $lines, int $lineIndex, int $commaIndex) : array
+    private function splitAfterComma(
+        array $lines,
+        int $lineIndex,
+        int $commaIndex,
+    ) : array
     {
         $line = $lines[$lineIndex];
         $tokens = $line->getTokens();
@@ -615,7 +664,7 @@ class Splitter
         $splitAt = $commaIndex + 1;
 
         while (isset($tokens[$splitAt]) && $tokens[$splitAt] instanceof TSplitPoint) {
-            $splitAt++;
+            $splitAt ++;
         }
 
         $before = array_slice($tokens, 0, $splitAt);
@@ -624,7 +673,12 @@ class Splitter
         $lines[$lineIndex] = $this->lineFactory->new($before, $indent);
 
         if ($after !== []) {
-            array_splice($lines, $lineIndex + 1, 0, [$this->lineFactory->new($after, $indent)]);
+            array_splice(
+                $lines,
+                $lineIndex + 1,
+                0,
+                [$this->lineFactory->new($after, $indent)],
+            );
         }
 
         return array_values($lines);
@@ -647,7 +701,8 @@ class Splitter
                 $commaClass = match (true) {
                     $token instanceof TArgsOpeningParen => TArgsComma::class,
                     $token instanceof TParamsOpeningParen => TParamsComma::class,
-                    $token instanceof TArrayOpeningBracket, $token instanceof TArrayConstructOpeningParen => TArrayComma::class,
+                    $token instanceof TArrayOpeningBracket,
+                    $token instanceof TArrayConstructOpeningParen => TArrayComma::class,
                     $token instanceof TUseVariablesOpeningParen => TUseVariablesComma::class,
                     default => null,
                 };
@@ -656,7 +711,8 @@ class Splitter
                     continue;
                 }
 
-                $closerLineIndex = $tokenLineMap[spl_object_id($token->closingToken)] ?? null;
+                $closerLineIndex = $tokenLineMap[spl_object_id($token->closingToken)]
+                    ?? null;
 
                 if ($closerLineIndex === null) {
                     continue;
@@ -677,13 +733,17 @@ class Splitter
      * @param Line[] $lines
      * @param class-string<TSplittableComma&T> $commaClass
      */
-    private function ensureTrailingComma(array &$lines, int $closerLineIndex, string $commaClass) : void
+    private function ensureTrailingComma(
+        array &$lines,
+        int $closerLineIndex,
+        string $commaClass,
+    ) : void
     {
         // Find the last-item line (skip blank lines going backward)
         $lastItemLineIndex = $closerLineIndex - 1;
 
         while ($lastItemLineIndex >= 0 && $lines[$lastItemLineIndex]->isBlank()) {
-            $lastItemLineIndex--;
+            $lastItemLineIndex --;
         }
 
         if ($lastItemLineIndex < 0) {
@@ -696,8 +756,14 @@ class Splitter
         // Walk backward, skipping TSpace and TSplitPoint, to find last content token
         $lastContentPos = $count - 1;
 
-        while ($lastContentPos >= 0 && ($tokens[$lastContentPos] instanceof TSpace || $tokens[$lastContentPos] instanceof TSplitPoint)) {
-            $lastContentPos--;
+        while (
+            $lastContentPos >= 0
+            && (
+                $tokens[$lastContentPos] instanceof TSpace
+                || $tokens[$lastContentPos] instanceof TSplitPoint
+            )
+        ) {
+            $lastContentPos --;
         }
 
         if ($lastContentPos < 0) {
@@ -719,19 +785,27 @@ class Splitter
 
         while (
             $insertAfterPos >= 0
-            && ($tokens[$insertAfterPos] instanceof TCommentSlashedInline
+            && (
+                $tokens[$insertAfterPos] instanceof TCommentSlashedInline
                 || $tokens[$insertAfterPos] instanceof TCommentHashedInline
                 || $tokens[$insertAfterPos] instanceof TCommentStarredInline
                 || $tokens[$insertAfterPos] instanceof TCommentStarredOneline
                 || $tokens[$insertAfterPos] instanceof TCommentSlashedMidStatement
                 || $tokens[$insertAfterPos] instanceof TCommentHashedMidStatement
-                || $tokens[$insertAfterPos] instanceof TDocCommentInline)
+                || $tokens[$insertAfterPos] instanceof TDocCommentInline
+            )
         ) {
-            $insertAfterPos--;
+            $insertAfterPos --;
 
             // Skip TSpace and TSplitPoint before the comment
-            while ($insertAfterPos >= 0 && ($tokens[$insertAfterPos] instanceof TSpace || $tokens[$insertAfterPos] instanceof TSplitPoint)) {
-                $insertAfterPos--;
+            while (
+                $insertAfterPos >= 0
+                && (
+                    $tokens[$insertAfterPos] instanceof TSpace
+                    || $tokens[$insertAfterPos] instanceof TSplitPoint
+                )
+            ) {
+                $insertAfterPos --;
             }
         }
 
@@ -755,7 +829,11 @@ class Splitter
     /**
      * @param Line[] $lines
      */
-    private function removeTrailingComma(array &$lines, int $lineIndex, T $opener) : void
+    private function removeTrailingComma(
+        array &$lines,
+        int $lineIndex,
+        T $opener,
+    ) : void
     {
         if ($opener->closingToken === null) {
             return;
@@ -773,8 +851,11 @@ class Splitter
         // Walk backward from closer, skipping TSpace and TSplitPoint
         $pos = $closerPos - 1;
 
-        while ($pos >= 0 && ($tokens[$pos] instanceof TSpace || $tokens[$pos] instanceof TSplitPoint)) {
-            $pos--;
+        while (
+            $pos >= 0
+            && ($tokens[$pos] instanceof TSpace || $tokens[$pos] instanceof TSplitPoint)
+        ) {
+            $pos --;
         }
 
         if ($pos < 0 || ! $tokens[$pos] instanceof TSplittableComma) {
@@ -786,5 +867,4 @@ class Splitter
 
         $lines[$lineIndex] = $this->lineFactory->new($tokens, $line->indent);
     }
-
 }

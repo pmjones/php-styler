@@ -10,7 +10,11 @@ class TArrayConstructClosingParen extends T
 {
     public static function parse(Parser $parser, PhpToken $unparsed) : void
     {
-        $parser->closeNesting($unparsed, self::class, TArrayConstructOpeningParen::class);
+        $parser->closeNesting(
+            $unparsed,
+            self::class,
+            TArrayConstructOpeningParen::class,
+        );
 
         $parser->popNesting(TArrayConstruct::class);
     }

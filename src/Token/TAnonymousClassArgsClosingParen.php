@@ -10,6 +10,10 @@ class TAnonymousClassArgsClosingParen extends T
 {
     public static function parse(Parser $parser, PhpToken $unparsed) : void
     {
-        $parser->closeNesting($unparsed, self::class, TAnonymousClassArgsOpeningParen::class);
+        $parser->closeNesting(
+            $unparsed,
+            self::class,
+            TAnonymousClassArgsOpeningParen::class,
+        );
     }
 }

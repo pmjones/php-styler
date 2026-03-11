@@ -16,7 +16,10 @@ class TAttributeClosingBracket extends T
 
         if (
             ! $parser->atNesting(TParamsOpeningParen::class)
-            || ($token->openingToken instanceof TAttribute && $token->openingToken->ownLine)
+            || (
+                $token->openingToken instanceof TAttribute
+                && $token->openingToken->ownLine
+            )
             || $parser->hasNextEol()
         ) {
             $parser->lineBreak();

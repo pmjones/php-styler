@@ -11,7 +11,11 @@ class TDynamicMemberClosingBrace extends T
     public static function parse(Parser $parser, PhpToken $unparsed) : void
     {
         $parser->noSpace();
-        $parser->closeNesting($unparsed, self::class, TDynamicMemberOpeningBrace::class);
+        $parser->closeNesting(
+            $unparsed,
+            self::class,
+            TDynamicMemberOpeningBrace::class,
+        );
         $parser->space();
     }
 }

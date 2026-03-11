@@ -20,9 +20,7 @@ class TAs extends T
         $parseClass = match ($parser->getNesting()) {
             TForeachOpeningParen::class => TForeachAs::class,
 
-            TUse::class,
-            TUseFunction::class,
-            TUseConst::class => TUseAs::class,
+            TUse::class, TUseFunction::class, TUseConst::class => TUseAs::class,
 
             TUseTraitOpeningBrace::class => TUseTraitAs::class,
 

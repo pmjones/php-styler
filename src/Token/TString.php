@@ -100,10 +100,7 @@ class TString extends T
             return;
         }
 
-        if (
-            $prev instanceof TFunction
-            || $prev instanceof TReference
-        ) {
+        if ($prev instanceof TFunction || $prev instanceof TReference) {
             $parser->add($unparsed, TFunctionName::class);
             return;
         }
@@ -153,10 +150,7 @@ class TString extends T
             return;
         }
 
-        if (
-            $prev instanceof TUseComma
-            || $prev instanceof TUseOpeningBrace
-        ) {
+        if ($prev instanceof TUseComma || $prev instanceof TUseOpeningBrace) {
             $parser->add($unparsed, TUnqualifiedName::class);
             $parser->space();
             return;
@@ -177,10 +171,7 @@ class TString extends T
             return;
         }
 
-        if (
-            $prev instanceof TGoto
-            || $parser->getNextUnparsed()?->is(':')
-        ) {
+        if ($prev instanceof TGoto || $parser->getNextUnparsed()?->is(':')) {
             $parser->add($unparsed, TGotoLabel::class);
             $parser->space();
             return;
@@ -205,6 +196,7 @@ class TString extends T
                 $parser->add($unparsed, TFunctionCallName::class);
                 $parser->space();
             }
+
             return;
         }
 

@@ -31,10 +31,7 @@ class ExamplesTest extends TestCase
         $sourceFiles = glob(__DIR__ . '/Examples/*.php') ?: [];
 
         foreach ($sourceFiles as $sourceFile) {
-            $key = ltrim(
-                (string) strrchr($sourceFile, '/'),
-                '/',
-            );
+            $key = ltrim((string) strrchr($sourceFile, '/'), '/');
 
             $provide[$key] = [$sourceFile];
         }

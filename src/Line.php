@@ -74,7 +74,7 @@ class Line
         $count = count($tokens);
         $result = [];
 
-        for ($i = 0; $i < $count; $i++) {
+        for ($i = 0; $i < $count; $i ++) {
             $token = $tokens[$i];
 
             if ($token->isOpener()) {
@@ -121,8 +121,11 @@ class Line
 
     public function lastContentToken() : ?T
     {
-        for ($i = count($this->tokens) - 1; $i >= 0; $i--) {
-            if (! $this->tokens[$i] instanceof TSplitPoint && ! $this->tokens[$i] instanceof TSpace) {
+        for ($i = count($this->tokens) - 1; $i >= 0; $i --) {
+            if (
+                ! $this->tokens[$i] instanceof TSplitPoint
+                && ! $this->tokens[$i] instanceof TSpace
+            ) {
                 return $this->tokens[$i];
             }
         }
@@ -132,8 +135,11 @@ class Line
 
     public function lastContentIndex() : int
     {
-        for ($i = count($this->tokens) - 1; $i >= 0; $i--) {
-            if (! $this->tokens[$i] instanceof TSplitPoint && ! $this->tokens[$i] instanceof TSpace) {
+        for ($i = count($this->tokens) - 1; $i >= 0; $i --) {
+            if (
+                ! $this->tokens[$i] instanceof TSplitPoint
+                && ! $this->tokens[$i] instanceof TSpace
+            ) {
                 return $i;
             }
         }
@@ -147,7 +153,7 @@ class Line
 
         foreach ($this->tokens as $token) {
             if (! $token instanceof TSplitPoint && ! $token instanceof TSpace) {
-                $count++;
+                $count ++;
             }
         }
 
@@ -159,8 +165,11 @@ class Line
         $topLevel = $this->getTopLevelTokens();
         $keys = array_keys($topLevel);
 
-        for ($i = count($keys) - 1; $i >= 0; $i--) {
-            if (! $topLevel[$keys[$i]] instanceof TSplitPoint && ! $topLevel[$keys[$i]] instanceof TSpace) {
+        for ($i = count($keys) - 1; $i >= 0; $i --) {
+            if (
+                ! $topLevel[$keys[$i]] instanceof TSplitPoint
+                && ! $topLevel[$keys[$i]] instanceof TSpace
+            ) {
                 return $keys[$i];
             }
         }
@@ -220,7 +229,10 @@ class Line
             if ($token instanceof TSplittableComma && $i !== $lastIndex) {
                 // For actual commas (not semicolons), skip if the only remaining
                 // content after the comma is an inline comment
-                if ($token->text === ',' && $this->hasOnlyInlineCommentAfter($topLevel, $i)) {
+                if (
+                    $token->text === ','
+                    && $this->hasOnlyInlineCommentAfter($topLevel, $i)
+                ) {
                     continue;
                 }
 
@@ -249,13 +261,15 @@ class Line
 
             if (
                 ! $foundComment
-                && ($token instanceof TCommentSlashedInline
+                && (
+                    $token instanceof TCommentSlashedInline
                     || $token instanceof TCommentHashedInline
                     || $token instanceof TCommentStarredInline
                     || $token instanceof TCommentStarredOneline
                     || $token instanceof TCommentSlashedMidStatement
                     || $token instanceof TCommentHashedMidStatement
-                    || $token instanceof TDocCommentInline)
+                    || $token instanceof TDocCommentInline
+                )
             ) {
                 $foundComment = true;
                 continue;
@@ -277,7 +291,7 @@ class Line
         // Phase 1: Collect all top-level pairs
         $pairs = [];
 
-        for ($i = 0; $i < $count; $i++) {
+        for ($i = 0; $i < $count; $i ++) {
             $token = $tokens[$i];
 
             if (! $token->isOpener()) {
@@ -328,7 +342,10 @@ class Line
             }
 
             $order = $token->splitPriority;
-            $groups[$order] ??= ['positions' => [], 'continuation' => $token->continuation];
+            $groups[$order] ??= [
+                'positions' => [],
+                'continuation' => $token->continuation,
+            ];
             $groups[$order]['positions'][] = $i;
         }
 
@@ -349,6 +366,7 @@ class Line
                 unset($groups[$priority]);
             }
         }
+
         unset($group);
 
         ksort($groups);

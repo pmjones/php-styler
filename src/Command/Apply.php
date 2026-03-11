@@ -15,10 +15,12 @@ class Apply extends Command
     public function __invoke(
         ApplyOptions $options,
 
-        #[Help(<<<'HELP'
+        #[Help(
+            <<<'HELP'
         Apply styling to these space-separated files and directories;
                 overrides the files specified in config.
-        HELP)]
+        HELP,
+        )]
         string ...$paths,
     ) : int
     {
