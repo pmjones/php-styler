@@ -13,7 +13,7 @@ class Styler
 
     private Splitter $splitter;
 
-    public static function fromConfig(Config $config) : static
+    public static function fromConfig(Config $config) : self
     {
         return new self(
             eol: $config->eol,

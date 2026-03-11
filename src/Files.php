@@ -37,7 +37,7 @@ class Files implements IteratorAggregate
             $files = new RecursiveIteratorIterator(
                 new RecursiveCallbackFilterIterator(
                     new RecursiveDirectoryIterator($path),
-                    fn ($c, $k, $i) => $this->filter($c, $k, $i),
+                    fn (SplFileInfo $c, string $k, RecursiveDirectoryIterator $i) => $this->filter($c, $k, $i),
                 ),
             );
 
