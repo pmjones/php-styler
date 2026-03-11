@@ -4,15 +4,20 @@ $zim = $foo['bar'][$baz][1];
 
 $long = [
     'veryLongElement',
+    'veryLongElement', // comment
+    'veryLongElement',
+    'veryLongElement', # comment
+    'veryLongElement',
+    'veryLongElement' => 'longValue', // comment
+    'veryLongElement',
+    'veryLongElement', /* comment */
     'veryLongElement',
     'veryLongElement',
     'veryLongElement',
     'veryLongElement',
     'veryLongElement',
     'veryLongElement',
-    'veryLongElement',
-    'veryLongElement',
-    'veryLongElement',
+    'veryLongElement', /** comment */
 ];
 
 $longWithComments = [

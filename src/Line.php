@@ -5,6 +5,13 @@ namespace PhpStyler;
 
 use PhpStyler\Token\T;
 use PhpStyler\Token\TBlankLine;
+use PhpStyler\Token\TCommentHashedInline;
+use PhpStyler\Token\TCommentHashedMidStatement;
+use PhpStyler\Token\TCommentSlashedInline;
+use PhpStyler\Token\TCommentSlashedMidStatement;
+use PhpStyler\Token\TCommentStarredInline;
+use PhpStyler\Token\TCommentStarredOneline;
+use PhpStyler\Token\TDocCommentInline;
 use PhpStyler\Token\TSpace;
 use PhpStyler\Token\TMemberDoubleColon;
 use PhpStyler\Token\TSplitPoint;
@@ -211,11 +218,54 @@ class Line
 
         foreach ($topLevel as $i => $token) {
             if ($token instanceof TSplittableComma && $i !== $lastIndex) {
+                // For actual commas (not semicolons), skip if the only remaining
+                // content after the comma is an inline comment
+                if ($token->text === ',' && $this->hasOnlyInlineCommentAfter($topLevel, $i)) {
+                    continue;
+                }
+
                 return $i;
             }
         }
 
         return null;
+    }
+
+    /**
+     * @param array<int, T> $topLevel
+     */
+    private function hasOnlyInlineCommentAfter(array $topLevel, int $commaIndex) : bool
+    {
+        $foundComment = false;
+
+        foreach ($topLevel as $j => $token) {
+            if ($j <= $commaIndex) {
+                continue;
+            }
+
+            if ($token instanceof TSpace || $token instanceof TSplitPoint) {
+                continue;
+            }
+
+            if (
+                ! $foundComment
+                && ($token instanceof TCommentSlashedInline
+                    || $token instanceof TCommentHashedInline
+                    || $token instanceof TCommentStarredInline
+                    || $token instanceof TCommentStarredOneline
+                    || $token instanceof TCommentSlashedMidStatement
+                    || $token instanceof TCommentHashedMidStatement
+                    || $token instanceof TDocCommentInline)
+            ) {
+                $foundComment = true;
+                continue;
+            }
+
+            // Found a non-comment content token after the comma
+            return false;
+        }
+
+        return $foundComment;
     }
 
     /** @return array{int, int, int}|null */

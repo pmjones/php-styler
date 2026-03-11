@@ -9,11 +9,14 @@ use PhpStyler\Token\TArgsOpeningParen;
 use PhpStyler\Token\TArrayComma;
 use PhpStyler\Token\TArrayOpeningBracket;
 use PhpStyler\Token\TArrayConstructOpeningParen;
+use PhpStyler\Token\TBlankLine;
 use PhpStyler\Token\TCommentHashedInline;
 use PhpStyler\Token\TCommentHashedMidStatement;
 use PhpStyler\Token\TCommentSlashedInline;
 use PhpStyler\Token\TCommentSlashedMidStatement;
 use PhpStyler\Token\TCommentStarredInline;
+use PhpStyler\Token\TCommentStarredOneline;
+use PhpStyler\Token\TDocCommentInline;
 use PhpStyler\Token\TParamsComma;
 use PhpStyler\Token\TParamsOpeningParen;
 use PhpStyler\Token\TSpace;
@@ -46,6 +49,7 @@ class Splitter
 
         $result = $this->expandOpenerCloser($result);
         $result = $this->normalizeIndents($result);
+        $result = $this->moveLeadingInlineComments($result);
         $result = $this->expandCommas($result);
         $result = $this->normalizeTrailingCommas($result);
 
@@ -97,6 +101,90 @@ class Splitter
         }
 
         return $this->splitAtParens($line);
+    }
+
+    /**
+     * Move leading inline comments from a line to the end of the previous line,
+     * but only when the current line has other content after the comment
+     * (before any blank line), or when the previous line ends with a comma.
+     *
+     * @param Line[] $lines
+     * @return Line[]
+     */
+    private function moveLeadingInlineComments(array $lines) : array
+    {
+        for ($i = 1; $i < count($lines); $i++) {
+            $tokens = $lines[$i]->getTokens();
+            $peek = 0;
+
+            // Skip leading TSpace/TSplitPoint
+            while (isset($tokens[$peek]) && ($tokens[$peek] instanceof TSpace || $tokens[$peek] instanceof TSplitPoint)) {
+                $peek++;
+            }
+
+            // Check if next token is an inline comment
+            if (
+                ! isset($tokens[$peek])
+                || ! ($tokens[$peek] instanceof TCommentSlashedInline
+                    || $tokens[$peek] instanceof TCommentHashedInline
+                    || $tokens[$peek] instanceof TCommentStarredInline
+                    || $tokens[$peek] instanceof TCommentStarredOneline
+                    || $tokens[$peek] instanceof TCommentSlashedMidStatement
+                    || $tokens[$peek] instanceof TCommentHashedMidStatement
+                    || $tokens[$peek] instanceof TDocCommentInline)
+            ) {
+                continue;
+            }
+
+            $commentEnd = $peek + 1;
+
+            // Check if there is real content after the comment on this line (before any blank line)
+            $hasContentAfter = false;
+
+            for ($j = $commentEnd; $j < count($tokens); $j++) {
+                $t = $tokens[$j];
+
+                if ($t instanceof TSpace || $t instanceof TSplitPoint) {
+                    continue;
+                }
+
+                // Stop at blank lines — content beyond belongs to a different section
+                if ($t instanceof TBlankLine) {
+                    break;
+                }
+
+                $hasContentAfter = true;
+                break;
+            }
+
+            if (! $hasContentAfter) {
+                // For standalone comments, only move if the previous line ends with a comma
+                $prevLastContent = $lines[$i - 1]->lastContentToken();
+
+                if (! $prevLastContent instanceof TSplittableComma || $prevLastContent->text !== ',') {
+                    continue;
+                }
+            }
+
+            // Move comment (and preceding whitespace/split points) to end of previous line
+            $commentTokens = array_slice($tokens, 0, $commentEnd);
+            $remainingTokens = array_slice($tokens, $commentEnd);
+            $prevTokens = $lines[$i - 1]->getTokens();
+
+            $lines[$i - 1] = $this->lineFactory->new(
+                array_merge($prevTokens, $commentTokens),
+                $lines[$i - 1]->indent,
+            );
+
+            if ($remainingTokens === [] || ! $hasContentAfter) {
+                array_splice($lines, $i, 1);
+                $i--;
+            } else {
+                $lines[$i] = $this->lineFactory->new($remainingTokens, $lines[$i]->indent);
+            }
+        }
+
+        return $lines;
     }
 
     /**
@@ -578,13 +666,15 @@ class Splitter
             && ($tokens[$insertAfterPos] instanceof TCommentSlashedInline
                 || $tokens[$insertAfterPos] instanceof TCommentHashedInline
                 || $tokens[$insertAfterPos] instanceof TCommentStarredInline
+                || $tokens[$insertAfterPos] instanceof TCommentStarredOneline
                 || $tokens[$insertAfterPos] instanceof TCommentSlashedMidStatement
-                || $tokens[$insertAfterPos] instanceof TCommentHashedMidStatement)
+                || $tokens[$insertAfterPos] instanceof TCommentHashedMidStatement
+                || $tokens[$insertAfterPos] instanceof TDocCommentInline)
         ) {
             $insertAfterPos--;
 
-            // Skip TSpace before the comment
-            while ($insertAfterPos >= 0 && $tokens[$insertAfterPos] instanceof TSpace) {
+            // Skip TSpace and TSplitPoint before the comment
+            while ($insertAfterPos >= 0 && ($tokens[$insertAfterPos] instanceof TSpace || $tokens[$insertAfterPos] instanceof TSplitPoint)) {
                 $insertAfterPos--;
             }
         }
@@ -640,4 +730,5 @@ class Splitter
 
         $lines[$lineIndex] = $this->lineFactory->new($tokens, $line->indent);
     }
+
 }
