@@ -16,6 +16,6 @@ class TCoalesce extends T implements TSplittableOperator
 {
     public function splitBefore(Parser $parser) : ?TSplit
     {
-        return TSplitOperator::new (self::LOOSE_OPERATOR);
+        return new TSplitLooseOperator(T_WHITESPACE, '');
     }
 }

@@ -9,6 +9,6 @@ class TDot extends T implements TSplittableOperator
 {
     public function splitBefore(Parser $parser) : ?TSplit
     {
-        return TSplitOperator::new (self::TIGHT_OPERATOR);
+        return new TSplitTightOperator(T_WHITESPACE, '');
     }
 }
