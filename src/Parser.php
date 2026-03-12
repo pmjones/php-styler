@@ -628,21 +628,10 @@ class Parser
         return null;
     }
 
-    public function hasPrevSourceNewline() : bool
+    public function hasPrevLineBreak() : bool
     {
-        $source = $this->source[$this->sourceOffset - 1] ?? null;
-
-        if ($source === null) {
-            return false;
-        }
-
-        if ($source->is(T_WHITESPACE)) {
-            return strpos($source->text, "\r") !== false
-                || strpos($source->text, "\n") !== false;
-        }
-
-        return str_ends_with($source->text, "\r")
-            || str_ends_with($source->text, "\n");
+        return $this->hasPrev(Token\TLineBreak::class)
+            || $this->hasPrev(Token\TWhitespaceEol::class);
     }
 
     public function hasPrevEol() : bool
