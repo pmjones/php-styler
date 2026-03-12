@@ -10,19 +10,7 @@ use PhpStyler\Token\TArrayComma;
 use PhpStyler\Token\TArrayOpeningBracket;
 use PhpStyler\Token\TArrayConstructOpeningParen;
 use PhpStyler\Token\TBlankLine;
-use PhpStyler\Token\TCommentHashedBlankLine;
-use PhpStyler\Token\TCommentHashedLineBreak;
-use PhpStyler\Token\TCommentHashedMidStatement;
-use PhpStyler\Token\TCommentSlashedBlankLine;
-use PhpStyler\Token\TCommentSlashedLineBreak;
-use PhpStyler\Token\TCommentSlashedMidStatement;
-use PhpStyler\Token\TCommentStarredBlankLine;
-use PhpStyler\Token\TCommentStarredMidStatement;
-use PhpStyler\Token\TCommentStarredLineBreak;
-use PhpStyler\Token\TCommentStarredOneline;
-use PhpStyler\Token\TDocCommentBlankLine;
-use PhpStyler\Token\TDocCommentMidStatement;
-use PhpStyler\Token\TDocCommentLineBreak;
+use PhpStyler\Token\TCommentary;
 use PhpStyler\Token\TElseifOpeningParen;
 use PhpStyler\Token\TForOpeningParen;
 use PhpStyler\Token\TForeachOpeningParen;
@@ -193,7 +181,7 @@ class Splitter
             }
 
             // Check if next token is an inline comment
-            if (! isset($tokens[$peek]) || ! self::isComment($tokens[$peek])) {
+            if (! isset($tokens[$peek]) || ! $tokens[$peek] instanceof TCommentary) {
                 continue;
             }
 
@@ -777,7 +765,9 @@ class Splitter
         // Walk backward further, skipping inline comments and their preceding TSpace
         $insertAfterPos = $lastContentPos;
 
-        while ($insertAfterPos >= 0 && self::isComment($tokens[$insertAfterPos])) {
+        while (
+            $insertAfterPos >= 0 && $tokens[$insertAfterPos] instanceof TCommentary
+        ) {
             $insertAfterPos --;
 
             // Skip TSpace and TSplit before the comment
@@ -807,23 +797,6 @@ class Splitter
 
         $indent = $lines[$lastItemLineIndex]->indent;
         $lines[$lastItemLineIndex] = $this->lineFactory->new($tokens, $indent);
-    }
-
-    private static function isComment(T $token) : bool
-    {
-        return $token instanceof TCommentStarredMidStatement
-            || $token instanceof TCommentStarredOneline
-            || $token instanceof TCommentSlashedMidStatement
-            || $token instanceof TCommentHashedMidStatement
-            || $token instanceof TDocCommentMidStatement
-            || $token instanceof TCommentSlashedLineBreak
-            || $token instanceof TCommentSlashedBlankLine
-            || $token instanceof TCommentHashedLineBreak
-            || $token instanceof TCommentHashedBlankLine
-            || $token instanceof TCommentStarredLineBreak
-            || $token instanceof TCommentStarredBlankLine
-            || $token instanceof TDocCommentLineBreak
-            || $token instanceof TDocCommentBlankLine;
     }
 
     /**

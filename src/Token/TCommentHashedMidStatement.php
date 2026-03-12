@@ -3,6 +3,6 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-class TCommentHashedMidStatement extends T
+class TCommentHashedMidStatement extends T implements TCommentary
 {
 }

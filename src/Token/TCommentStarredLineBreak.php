@@ -6,7 +6,7 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TCommentStarredLineBreak extends T
+class TCommentStarredLineBreak extends T implements TCommentary
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
