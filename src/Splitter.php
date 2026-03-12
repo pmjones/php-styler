@@ -11,20 +11,14 @@ use PhpStyler\Token\TArrayOpeningBracket;
 use PhpStyler\Token\TArrayConstructOpeningParen;
 use PhpStyler\Token\TBlankLine;
 use PhpStyler\Token\TCommentary;
-use PhpStyler\Token\TElseifOpeningParen;
-use PhpStyler\Token\TForOpeningParen;
-use PhpStyler\Token\TForeachOpeningParen;
-use PhpStyler\Token\TIfOpeningParen;
-use PhpStyler\Token\TMatchOpeningParen;
+use PhpStyler\Token\TConditionOpener;
 use PhpStyler\Token\TParamsComma;
 use PhpStyler\Token\TParamsOpeningParen;
 use PhpStyler\Token\TSpace;
 use PhpStyler\Token\TSplit;
 use PhpStyler\Token\TSplittableComma;
-use PhpStyler\Token\TSwitchOpeningParen;
 use PhpStyler\Token\TUseVariablesComma;
 use PhpStyler\Token\TUseVariablesOpeningParen;
-use PhpStyler\Token\TWhileOpeningParen;
 class Splitter
 {
     public function __construct(private LineFactory $lineFactory = new LineFactory())
@@ -129,7 +123,7 @@ class Splitter
         $tokens = $line->getTokens();
 
         foreach ($tokens as $i => $token) {
-            if (! $this->isConditionOpener($token) || $token->closingToken === null) {
+            if (! $token instanceof TConditionOpener || $token->closingToken === null) {
                 continue;
             }
 
@@ -143,17 +137,6 @@ class Splitter
         }
 
         return null;
-    }
-
-    private function isConditionOpener(T $token) : bool
-    {
-        return $token instanceof TIfOpeningParen
-            || $token instanceof TElseifOpeningParen
-            || $token instanceof TWhileOpeningParen
-            || $token instanceof TForOpeningParen
-            || $token instanceof TForeachOpeningParen
-            || $token instanceof TSwitchOpeningParen
-            || $token instanceof TMatchOpeningParen;
     }
 
     /**

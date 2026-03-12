@@ -6,7 +6,7 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TSwitchOpeningParen extends T
+class TSwitchOpeningParen extends T implements TConditionOpener
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
