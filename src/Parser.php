@@ -272,8 +272,7 @@ class Parser
             $this->parsedCount > 0
             && $this->parsed[$this->parsedCount - 1] instanceof TIndentIncrement
         ) {
-            array_pop($this->parsed);
-            $this->parsedCount --;
+            $this->removeParsedAt($this->parsedCount - 1);
             return;
         }
 
@@ -310,8 +309,7 @@ class Parser
     {
         for ($i = $this->parsedCount - 1; $i >= 0; $i --) {
             if ($this->parsed[$i] instanceof Token\TBlankLine) {
-                array_splice($this->parsed, $i, 1);
-                $this->parsedCount --;
+                $this->removeParsedAt($i);
                 return;
             }
 
@@ -345,8 +343,7 @@ class Parser
             $prev = $this->parsed[$i];
 
             if ($prev instanceof TSpace) {
-                array_splice($this->parsed, $i, 1);
-                $this->parsedCount --;
+                $this->removeParsedAt($i);
             } elseif (! $prev->is(T_WHITESPACE)) {
                 break;
             }
@@ -390,14 +387,19 @@ class Parser
         $this->parsedCount ++;
     }
 
+    private function removeParsedAt(int $index) : void
+    {
+        array_splice($this->parsed, $index, 1);
+        $this->parsedCount --;
+    }
+
     public function noSpace() : void
     {
         for ($i = $this->parsedCount - 1; $i >= 0; $i --) {
             $prev = $this->parsed[$i];
 
             if ($prev instanceof TSpace) {
-                array_splice($this->parsed, $i, 1);
-                $this->parsedCount --;
+                $this->removeParsedAt($i);
                 return;
             }
 
@@ -420,8 +422,7 @@ class Parser
                 $prev instanceof Token\TWhitespaceEol
                 || $prev instanceof Token\TWhitespace
             ) {
-                array_splice($this->parsed, $i, 1);
-                $this->parsedCount --;
+                $this->removeParsedAt($i);
                 continue;
             }
 

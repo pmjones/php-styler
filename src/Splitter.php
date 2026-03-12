@@ -194,24 +194,7 @@ class Splitter
             }
 
             // Check if next token is an inline comment
-            if (
-                ! isset($tokens[$peek])
-                || ! (
-                    $tokens[$peek] instanceof TCommentStarredMidStatement
-                    || $tokens[$peek] instanceof TCommentStarredOneline
-                    || $tokens[$peek] instanceof TCommentSlashedMidStatement
-                    || $tokens[$peek] instanceof TCommentHashedMidStatement
-                    || $tokens[$peek] instanceof TDocCommentMidStatement
-                    || $tokens[$peek] instanceof TCommentSlashedLineBreak
-                    || $tokens[$peek] instanceof TCommentSlashedBlankLine
-                    || $tokens[$peek] instanceof TCommentHashedLineBreak
-                    || $tokens[$peek] instanceof TCommentHashedBlankLine
-                    || $tokens[$peek] instanceof TCommentStarredLineBreak
-                    || $tokens[$peek] instanceof TCommentStarredBlankLine
-                    || $tokens[$peek] instanceof TDocCommentLineBreak
-                    || $tokens[$peek] instanceof TDocCommentBlankLine
-                )
-            ) {
+            if (! isset($tokens[$peek]) || ! self::isComment($tokens[$peek])) {
                 continue;
             }
 
@@ -795,24 +778,7 @@ class Splitter
         // Walk backward further, skipping inline comments and their preceding TSpace
         $insertAfterPos = $lastContentPos;
 
-        while (
-            $insertAfterPos >= 0
-            && (
-                $tokens[$insertAfterPos] instanceof TCommentStarredMidStatement
-                || $tokens[$insertAfterPos] instanceof TCommentStarredOneline
-                || $tokens[$insertAfterPos] instanceof TCommentSlashedMidStatement
-                || $tokens[$insertAfterPos] instanceof TCommentHashedMidStatement
-                || $tokens[$insertAfterPos] instanceof TDocCommentMidStatement
-                || $tokens[$insertAfterPos] instanceof TCommentSlashedLineBreak
-                || $tokens[$insertAfterPos] instanceof TCommentSlashedBlankLine
-                || $tokens[$insertAfterPos] instanceof TCommentHashedLineBreak
-                || $tokens[$insertAfterPos] instanceof TCommentHashedBlankLine
-                || $tokens[$insertAfterPos] instanceof TCommentStarredLineBreak
-                || $tokens[$insertAfterPos] instanceof TCommentStarredBlankLine
-                || $tokens[$insertAfterPos] instanceof TDocCommentLineBreak
-                || $tokens[$insertAfterPos] instanceof TDocCommentBlankLine
-            )
-        ) {
+        while ($insertAfterPos >= 0 && self::isComment($tokens[$insertAfterPos])) {
             $insertAfterPos --;
 
             // Skip TSpace and TSplitPoint before the comment
@@ -842,6 +808,23 @@ class Splitter
 
         $indent = $lines[$lastItemLineIndex]->indent;
         $lines[$lastItemLineIndex] = $this->lineFactory->new($tokens, $indent);
+    }
+
+    private static function isComment(T $token) : bool
+    {
+        return $token instanceof TCommentStarredMidStatement
+            || $token instanceof TCommentStarredOneline
+            || $token instanceof TCommentSlashedMidStatement
+            || $token instanceof TCommentHashedMidStatement
+            || $token instanceof TDocCommentMidStatement
+            || $token instanceof TCommentSlashedLineBreak
+            || $token instanceof TCommentSlashedBlankLine
+            || $token instanceof TCommentHashedLineBreak
+            || $token instanceof TCommentHashedBlankLine
+            || $token instanceof TCommentStarredLineBreak
+            || $token instanceof TCommentStarredBlankLine
+            || $token instanceof TDocCommentLineBreak
+            || $token instanceof TDocCommentBlankLine;
     }
 
     /**
