@@ -11,7 +11,7 @@ class TCommentSlashed extends T
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         if ($parser->hasPrevLineBreak()) {
-            $parser->parse($source, TCommentSlashedOwnLine::class);
+            $parser->add($source, TCommentSlashed::class);
             return;
         }
 

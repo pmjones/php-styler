@@ -45,7 +45,7 @@ class TCommentStarredTest extends TTestCase
                 CODE,
                 [
                     TPhpOpeningTag::class,
-                    TCommentStarredInline::class,
+                    TCommentStarredMidStatement::class,
                 ],
             ],
         ];

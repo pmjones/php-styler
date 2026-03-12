@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-class TCommentHashedInlineTest extends TTestCase
+class TCommentHashedMidStatementTest extends TTestCase
 {
     /**
      * @inheritdoc

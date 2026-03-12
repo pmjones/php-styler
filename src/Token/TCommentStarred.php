@@ -12,7 +12,7 @@ class TCommentStarred extends T
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         if (! $parser->hasPrevLineBreak() || ! $parser->hasNextEol()) {
-            $parser->add($source, TCommentStarredInline::class);
+            $parser->add($source, TCommentStarredMidStatement::class);
             $parser->space();
             return;
         }

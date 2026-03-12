@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-class TDocCommentInlineTest extends TTestCase
+class TDocCommentMidStatementTest extends TTestCase
 {
     /**
      * @inheritdoc
@@ -22,12 +22,12 @@ class TDocCommentInlineTest extends TTestCase
                 [
                     TPhpOpeningTag::class,
                     TVariable::class,
-                    TDocCommentInline::class,
+                    TDocCommentMidStatement::class,
                     TAssign::class,
                     TIntegerLiteral::class,
                     TSemicolon::class,
                     TVariable::class,
-                    TDocCommentInline::class,
+                    TDocCommentMidStatement::class,
                     TAssign::class,
                     TIntegerLiteral::class,
                     TSemicolon::class,
@@ -44,7 +44,7 @@ class TDocCommentInlineTest extends TTestCase
                     TVariable::class,
                     TAssign::class,
                     TIntegerLiteral::class,
-                    TDocCommentInline::class,
+                    TDocCommentMidStatement::class,
                     TBinaryPlus::class,
                     TIntegerLiteral::class,
                     TSemicolon::class,
@@ -59,12 +59,12 @@ class TDocCommentInlineTest extends TTestCase
                 CODE,
                 [
                     TPhpOpeningTag::class,
-                    TDocCommentInline::class,
+                    TDocCommentMidStatement::class,
                     TVariable::class,
                     TAssign::class,
                     TIntegerLiteral::class,
                     TSemicolon::class,
-                    TDocCommentInline::class,
+                    TDocCommentMidStatement::class,
                     TVariable::class,
                     TAssign::class,
                     TIntegerLiteral::class,
@@ -85,7 +85,7 @@ class TDocCommentInlineTest extends TTestCase
                     TArgsOpeningParen::class,
                     TVariable::class,
                     TArgsComma::class,
-                    TDocCommentInline::class,
+                    TDocCommentMidStatement::class,
                     TVariable::class,
                     TArgsClosingParen::class,
                     TSemicolon::class,

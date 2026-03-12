@@ -25,7 +25,7 @@ class TCommentSlashedTest extends TTestCase
                     TAssign::class,
                     TIntegerLiteral::class,
                     TSemicolon::class,
-                    TCommentSlashedOwnLine::class,
+                    TCommentSlashed::class,
                     TVariable::class,
                     TAssign::class,
                     TIntegerLiteral::class,
@@ -39,7 +39,7 @@ class TCommentSlashedTest extends TTestCase
                 CODE,
                 [
                     TPhpOpeningTag::class,
-                    TCommentSlashedOwnLine::class,
+                    TCommentSlashed::class,
                 ],
             ],
         ];

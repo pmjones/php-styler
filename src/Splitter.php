@@ -11,19 +11,17 @@ use PhpStyler\Token\TArrayOpeningBracket;
 use PhpStyler\Token\TArrayConstructOpeningParen;
 use PhpStyler\Token\TBlankLine;
 use PhpStyler\Token\TCommentHashedBlankLine;
-use PhpStyler\Token\TCommentHashedInline;
 use PhpStyler\Token\TCommentHashedLineBreak;
 use PhpStyler\Token\TCommentHashedMidStatement;
 use PhpStyler\Token\TCommentSlashedBlankLine;
-use PhpStyler\Token\TCommentSlashedInline;
 use PhpStyler\Token\TCommentSlashedLineBreak;
 use PhpStyler\Token\TCommentSlashedMidStatement;
 use PhpStyler\Token\TCommentStarredBlankLine;
-use PhpStyler\Token\TCommentStarredInline;
+use PhpStyler\Token\TCommentStarredMidStatement;
 use PhpStyler\Token\TCommentStarredLineBreak;
 use PhpStyler\Token\TCommentStarredOneline;
 use PhpStyler\Token\TDocCommentBlankLine;
-use PhpStyler\Token\TDocCommentInline;
+use PhpStyler\Token\TDocCommentMidStatement;
 use PhpStyler\Token\TDocCommentLineBreak;
 use PhpStyler\Token\TElseifOpeningParen;
 use PhpStyler\Token\TForOpeningParen;
@@ -199,13 +197,11 @@ class Splitter
             if (
                 ! isset($tokens[$peek])
                 || ! (
-                    $tokens[$peek] instanceof TCommentSlashedInline
-                    || $tokens[$peek] instanceof TCommentHashedInline
-                    || $tokens[$peek] instanceof TCommentStarredInline
+                    $tokens[$peek] instanceof TCommentStarredMidStatement
                     || $tokens[$peek] instanceof TCommentStarredOneline
                     || $tokens[$peek] instanceof TCommentSlashedMidStatement
                     || $tokens[$peek] instanceof TCommentHashedMidStatement
-                    || $tokens[$peek] instanceof TDocCommentInline
+                    || $tokens[$peek] instanceof TDocCommentMidStatement
                     || $tokens[$peek] instanceof TCommentSlashedLineBreak
                     || $tokens[$peek] instanceof TCommentSlashedBlankLine
                     || $tokens[$peek] instanceof TCommentHashedLineBreak
@@ -802,13 +798,11 @@ class Splitter
         while (
             $insertAfterPos >= 0
             && (
-                $tokens[$insertAfterPos] instanceof TCommentSlashedInline
-                || $tokens[$insertAfterPos] instanceof TCommentHashedInline
-                || $tokens[$insertAfterPos] instanceof TCommentStarredInline
+                $tokens[$insertAfterPos] instanceof TCommentStarredMidStatement
                 || $tokens[$insertAfterPos] instanceof TCommentStarredOneline
                 || $tokens[$insertAfterPos] instanceof TCommentSlashedMidStatement
                 || $tokens[$insertAfterPos] instanceof TCommentHashedMidStatement
-                || $tokens[$insertAfterPos] instanceof TDocCommentInline
+                || $tokens[$insertAfterPos] instanceof TDocCommentMidStatement
                 || $tokens[$insertAfterPos] instanceof TCommentSlashedLineBreak
                 || $tokens[$insertAfterPos] instanceof TCommentSlashedBlankLine
                 || $tokens[$insertAfterPos] instanceof TCommentHashedLineBreak

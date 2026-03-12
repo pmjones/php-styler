@@ -11,7 +11,7 @@ class TCommentHashed extends T
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         if ($parser->hasPrevLineBreak()) {
-            $parser->parse($source, TCommentHashedOwnLine::class);
+            $parser->add($source, TCommentHashed::class);
             return;
         }
 

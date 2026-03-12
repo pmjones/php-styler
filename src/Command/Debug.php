@@ -25,8 +25,9 @@ class Debug extends Command
         $tokens = $styler->parse($code);
 
         if (
-            $options->parse
-            || (! $options->assemble && ! $options->split)
+            ! $options->parse
+            && ! $options->assemble
+            && ! $options->split
         ) {
             var_export($tokens);
             return 0;

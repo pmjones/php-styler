@@ -20,7 +20,7 @@ class TCommentTest extends TTestCase
                 CODE,
                 [
                     TPhpOpeningTag::class,
-                    TCommentSlashedOwnLine::class,
+                    TCommentSlashed::class,
                     TVariable::class,
                     TAssign::class,
                     TIntegerLiteral::class,
@@ -50,7 +50,7 @@ class TCommentTest extends TTestCase
                 CODE,
                 [
                     TPhpOpeningTag::class,
-                    TCommentHashedOwnLine::class,
+                    TCommentHashed::class,
                     TVariable::class,
                     TAssign::class,
                     TIntegerLiteral::class,

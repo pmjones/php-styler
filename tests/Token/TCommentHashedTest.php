@@ -28,7 +28,7 @@ class TCommentHashedTest extends TTestCase
                     TAssign::class,
                     TIntegerLiteral::class,
                     TSemicolon::class,
-                    TCommentHashedOwnLine::class,
+                    TCommentHashed::class,
                     TVariable::class,
                     TAssign::class,
                     TIntegerLiteral::class,
@@ -42,7 +42,7 @@ class TCommentHashedTest extends TTestCase
                 CODE,
                 [
                     TPhpOpeningTag::class,
-                    TCommentHashedOwnLine::class,
+                    TCommentHashed::class,
                 ],
             ],
         ];

@@ -6,19 +6,17 @@ namespace PhpStyler;
 use PhpStyler\Token\T;
 use PhpStyler\Token\TBlankLine;
 use PhpStyler\Token\TCommentHashedBlankLine;
-use PhpStyler\Token\TCommentHashedInline;
 use PhpStyler\Token\TCommentHashedLineBreak;
 use PhpStyler\Token\TCommentHashedMidStatement;
 use PhpStyler\Token\TCommentSlashedBlankLine;
-use PhpStyler\Token\TCommentSlashedInline;
 use PhpStyler\Token\TCommentSlashedLineBreak;
 use PhpStyler\Token\TCommentSlashedMidStatement;
 use PhpStyler\Token\TCommentStarredBlankLine;
-use PhpStyler\Token\TCommentStarredInline;
+use PhpStyler\Token\TCommentStarredMidStatement;
 use PhpStyler\Token\TCommentStarredLineBreak;
 use PhpStyler\Token\TCommentStarredOneline;
 use PhpStyler\Token\TDocCommentBlankLine;
-use PhpStyler\Token\TDocCommentInline;
+use PhpStyler\Token\TDocCommentMidStatement;
 use PhpStyler\Token\TDocCommentLineBreak;
 use PhpStyler\Token\TSpace;
 use PhpStyler\Token\TMemberDoubleColon;
@@ -270,13 +268,11 @@ class Line
             if (
                 ! $foundComment
                 && (
-                    $token instanceof TCommentSlashedInline
-                    || $token instanceof TCommentHashedInline
-                    || $token instanceof TCommentStarredInline
+                    $token instanceof TCommentStarredMidStatement
                     || $token instanceof TCommentStarredOneline
                     || $token instanceof TCommentSlashedMidStatement
                     || $token instanceof TCommentHashedMidStatement
-                    || $token instanceof TDocCommentInline
+                    || $token instanceof TDocCommentMidStatement
                     || $token instanceof TCommentSlashedLineBreak
                     || $token instanceof TCommentSlashedBlankLine
                     || $token instanceof TCommentHashedLineBreak

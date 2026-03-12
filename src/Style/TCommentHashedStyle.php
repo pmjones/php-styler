@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Style;
 
-class TCommentHashedOwnLineStyle extends Style
+class TCommentHashedStyle extends Style
 {
     public ?bool $lineBreakBefore = true;
 

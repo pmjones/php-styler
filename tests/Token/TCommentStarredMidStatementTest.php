@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-class TCommentSlashedInlineTest extends TTestCase
+class TCommentStarredMidStatementTest extends TTestCase
 {
     /**
      * @inheritdoc
@@ -12,10 +12,24 @@ class TCommentSlashedInlineTest extends TTestCase
     {
         /** @php-styler-expansive */
         return [
+            'basic' => [
+                <<<'CODE'
+                <?php
+                $foo /* bar */ = 1;
+                CODE,
+                [
+                    TPhpOpeningTag::class,
+                    TVariable::class,
+                    TCommentStarredMidStatement::class,
+                    TAssign::class,
+                    TIntegerLiteral::class,
+                    TSemicolon::class,
+                ],
+            ],
             'mid-expression' => [
                 <<<'CODE'
                 <?php
-                $foo = 1 // mid
+                $foo = 1 /* mid */
                     + 2;
                 CODE,
                 [
@@ -23,8 +37,22 @@ class TCommentSlashedInlineTest extends TTestCase
                     TVariable::class,
                     TAssign::class,
                     TIntegerLiteral::class,
-                    TCommentSlashedMidStatement::class,
+                    TCommentStarredMidStatement::class,
                     TBinaryPlus::class,
+                    TIntegerLiteral::class,
+                    TSemicolon::class,
+                ],
+            ],
+            'before-code' => [
+                <<<'CODE'
+                <?php
+                /* bar */ $foo = 1;
+                CODE,
+                [
+                    TPhpOpeningTag::class,
+                    TCommentStarredMidStatement::class,
+                    TVariable::class,
+                    TAssign::class,
                     TIntegerLiteral::class,
                     TSemicolon::class,
                 ],
@@ -33,7 +61,7 @@ class TCommentSlashedInlineTest extends TTestCase
                 <<<'CODE'
                 <?php
                 foo(
-                    $a, // mid
+                    $a, /* mid */
                     $b
                 );
                 CODE,
@@ -43,7 +71,7 @@ class TCommentSlashedInlineTest extends TTestCase
                     TArgsOpeningParen::class,
                     TVariable::class,
                     TArgsComma::class,
-                    TCommentSlashedMidStatement::class,
+                    TCommentStarredMidStatement::class,
                     TVariable::class,
                     TArgsClosingParen::class,
                     TSemicolon::class,
@@ -52,7 +80,8 @@ class TCommentSlashedInlineTest extends TTestCase
             'after-semicolon' => [
                 <<<'CODE'
                 <?php
-                $foo = 1; // foo
+                $foo = 1; /* bar */
+
                 CODE,
                 [
                     TPhpOpeningTag::class,
@@ -60,16 +89,7 @@ class TCommentSlashedInlineTest extends TTestCase
                     TAssign::class,
                     TIntegerLiteral::class,
                     TSemicolon::class,
-                    TCommentSlashedLineBreak::class,
-                ],
-            ],
-            'after-open-tag' => [
-                <<<'CODE'
-                <?php // foo
-                CODE,
-                [
-                    TPhpOpeningTagInline::class,
-                    TCommentSlashedMidStatement::class,
+                    TCommentStarredLineBreak::class,
                 ],
             ],
         ];

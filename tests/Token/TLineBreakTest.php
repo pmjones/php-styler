@@ -69,7 +69,7 @@ class TLineBreakTest extends TTestCase
                     TIntegerLiteral::class,
                     TSemicolon::class,
                     TLineBreak::class,
-                    TCommentSlashedOwnLine::class,
+                    TCommentSlashed::class,
                     TLineBreak::class,
                     TVariable::class,
                     TAssign::class,

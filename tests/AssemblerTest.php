@@ -46,17 +46,13 @@ use PhpStyler\Token\TForComma;
 use PhpStyler\Token\TMatchReturnComma;
 use PhpStyler\Token\TParamsComma;
 use PhpStyler\Token\TCommentHashed;
-use PhpStyler\Token\TCommentHashedInline;
 use PhpStyler\Token\TCommentHashedLineBreak;
 use PhpStyler\Token\TCommentHashedMidStatement;
-use PhpStyler\Token\TCommentHashedOwnLine;
 use PhpStyler\Token\TCommentSlashed;
-use PhpStyler\Token\TCommentSlashedInline;
 use PhpStyler\Token\TCommentSlashedLineBreak;
 use PhpStyler\Token\TCommentSlashedMidStatement;
-use PhpStyler\Token\TCommentSlashedOwnLine;
 use PhpStyler\Token\TCommentStarred;
-use PhpStyler\Token\TCommentStarredInline;
+use PhpStyler\Token\TCommentStarredMidStatement;
 use PhpStyler\Token\TCommentStarredLineBreak;
 use PhpStyler\Token\TCommentStarredOneline;
 use PhpStyler\Token\TPostDecrement;
@@ -500,7 +496,7 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                     [
                         TVariable::class,
                         TAssign::class,
-                        TCommentStarredInline::class,
+                        TCommentStarredMidStatement::class,
                         TIntegerLiteral::class,
                         TSemicolon::class,
                     ],
@@ -517,7 +513,7 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                         TPhpOpeningTag::class,
                     ],
                     [
-                        TCommentSlashedOwnLine::class,
+                        TCommentSlashed::class,
                     ],
                     [
                         TVariable::class,
@@ -538,7 +534,7 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                         TPhpOpeningTag::class,
                     ],
                     [
-                        TCommentHashedOwnLine::class,
+                        TCommentHashed::class,
                     ],
                     [
                         TVariable::class,
@@ -1188,7 +1184,7 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                         TIntegerLiteral::class,
                         TCommentSlashedMidStatement::class,
                         TBinaryPlus::class,
-                        TCommentStarredInline::class,
+                        TCommentStarredMidStatement::class,
                         TIntegerLiteral::class,
                     ],
                     [
