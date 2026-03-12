@@ -48,6 +48,41 @@ class TCommentStarredTest extends TTestCase
                     TCommentStarredMidStatement::class,
                 ],
             ],
+            'oneline-basic' => [
+                <<<'CODE'
+                <?php
+                $foo = 1;
+                /* bar */
+                $bar = 1;
+                CODE,
+                [
+                    TPhpOpeningTag::class,
+                    TVariable::class,
+                    TAssign::class,
+                    TIntegerLiteral::class,
+                    TSemicolon::class,
+                    TCommentStarred::class,
+                    TVariable::class,
+                    TAssign::class,
+                    TIntegerLiteral::class,
+                    TSemicolon::class,
+                ],
+            ],
+            'oneline-open-tag' => [
+                <<<'CODE'
+                <?php
+                /* foo */
+                $foo = 1;
+                CODE,
+                [
+                    TPhpOpeningTag::class,
+                    TCommentStarred::class,
+                    TVariable::class,
+                    TAssign::class,
+                    TIntegerLiteral::class,
+                    TSemicolon::class,
+                ],
+            ],
         ];
     }
 

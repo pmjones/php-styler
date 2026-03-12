@@ -35,7 +35,7 @@ class TCommentTest extends TTestCase
                 CODE,
                 [
                     TPhpOpeningTag::class,
-                    TCommentStarredOneline::class,
+                    TCommentStarred::class,
                     TVariable::class,
                     TAssign::class,
                     TIntegerLiteral::class,

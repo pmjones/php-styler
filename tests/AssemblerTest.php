@@ -54,14 +54,12 @@ use PhpStyler\Token\TCommentSlashedMidStatement;
 use PhpStyler\Token\TCommentStarred;
 use PhpStyler\Token\TCommentStarredMidStatement;
 use PhpStyler\Token\TCommentStarredLineBreak;
-use PhpStyler\Token\TCommentStarredOneline;
 use PhpStyler\Token\TPostDecrement;
 use PhpStyler\Token\TDefaultAfterCase;
 use PhpStyler\Token\TDefaultCase;
 use PhpStyler\Token\TDefaultMatch;
 use PhpStyler\Token\TDo;
 use PhpStyler\Token\TDocComment;
-use PhpStyler\Token\TDocCommentOneline;
 use PhpStyler\Token\TForeachDoubleArrow;
 use PhpStyler\Token\TMatchDoubleArrow;
 use PhpStyler\Token\TEcho;
@@ -555,7 +553,7 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                         TPhpOpeningTag::class,
                     ],
                     [
-                        TCommentStarredOneline::class,
+                        TCommentStarred::class,
                     ],
                     [
                         TVariable::class,
@@ -601,7 +599,7 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                         TBlankLine::class,
                     ],
                     [
-                        TDocCommentOneline::class,
+                        TDocComment::class,
                     ],
                     [
                         TVariable::class,

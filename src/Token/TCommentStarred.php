@@ -17,11 +17,6 @@ class TCommentStarred extends T
             return;
         }
 
-        if (strpos($source->text, PHP_EOL) === false) {
-            $parser->parse($source, TCommentStarredOneline::class);
-            return;
-        }
-
         $parser->add($source, self::class);
     }
 

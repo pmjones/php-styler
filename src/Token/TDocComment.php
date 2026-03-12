@@ -24,11 +24,6 @@ class TDocComment extends T
             return;
         }
 
-        if (strpos($source->text, PHP_EOL) === false) {
-            $parser->parse($source, TDocCommentOneline::class);
-            return;
-        }
-
         $parser->add($source, self::class);
     }
 

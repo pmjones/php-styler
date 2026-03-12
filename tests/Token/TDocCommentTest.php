@@ -42,6 +42,30 @@ class TDocCommentTest extends TTestCase
                     TSemicolon::class,
                 ],
             ],
+            'oneline-basic' => [
+                <<<'CODE'
+                <?php
+                /** Foo */
+                $foo = 1;
+
+                /** Bar */
+                $bar = 2;
+
+                CODE,
+                [
+                    TPhpOpeningTag::class,
+                    TDocComment::class,
+                    TVariable::class,
+                    TAssign::class,
+                    TIntegerLiteral::class,
+                    TSemicolon::class,
+                    TDocComment::class,
+                    TVariable::class,
+                    TAssign::class,
+                    TIntegerLiteral::class,
+                    TSemicolon::class,
+                ],
+            ],
         ];
     }
 

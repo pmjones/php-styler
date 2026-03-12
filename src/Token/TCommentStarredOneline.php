@@ -1,8 +1,0 @@
-<?php
-declare(strict_types=1);
-
-namespace PhpStyler\Token;
-
-class TCommentStarredOneline extends T implements TCommentary
-{
-}
