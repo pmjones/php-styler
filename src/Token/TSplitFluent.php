@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-class TSplitFluent extends TSplitPoint
+class TSplitFluent extends TSplit
 {
     private bool $isMethodCall = false;
 

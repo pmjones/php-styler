@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-class TSplitOperator extends TSplitPoint
+class TSplitOperator extends TSplit
 {
     private int $priority = 0;
 

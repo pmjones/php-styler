@@ -8,7 +8,7 @@ use PhpToken;
 
 class TMemberDoubleColon extends T implements TSplittableFluent
 {
-    public function splitPointBefore() : ?TSplitPoint
+    public function splitBefore() : ?TSplit
     {
         return new TSplitStaticFluent(T_WHITESPACE, '');
     }

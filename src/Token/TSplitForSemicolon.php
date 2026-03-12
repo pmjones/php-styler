@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-class TSplitForSemicolon extends TSplitPoint
+class TSplitForSemicolon extends TSplit
 {
     public function splitPriority() : int
     {

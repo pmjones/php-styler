@@ -5,7 +5,7 @@ namespace PhpStyler\Token;
 
 class TDot extends T implements TSplittableOperator
 {
-    public function splitPointBefore() : ?TSplitPoint
+    public function splitBefore() : ?TSplit
     {
         return TSplitOperator::new (self::TIGHT_OPERATOR);
     }

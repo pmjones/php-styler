@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-class TSplitComma extends TSplitPoint
+class TSplitComma extends TSplit
 {
     public function splitPriority() : int
     {

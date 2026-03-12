@@ -31,7 +31,7 @@ use PhpStyler\Token\TMatchOpeningParen;
 use PhpStyler\Token\TParamsComma;
 use PhpStyler\Token\TParamsOpeningParen;
 use PhpStyler\Token\TSpace;
-use PhpStyler\Token\TSplitPoint;
+use PhpStyler\Token\TSplit;
 use PhpStyler\Token\TSplittableComma;
 use PhpStyler\Token\TSwitchOpeningParen;
 use PhpStyler\Token\TUseVariablesComma;
@@ -182,12 +182,11 @@ class Splitter
             $tokens = $lines[$i]->getTokens();
             $peek = 0;
 
-            // Skip leading TSpace/TSplitPoint
+            // Skip leading TSpace/TSplit
             while (
                 isset($tokens[$peek])
                 && (
-                    $tokens[$peek] instanceof TSpace
-                    || $tokens[$peek] instanceof TSplitPoint
+                    $tokens[$peek] instanceof TSpace || $tokens[$peek] instanceof TSplit
                 )
             ) {
                 $peek ++;
@@ -206,7 +205,7 @@ class Splitter
             for ($j = $commentEnd; $j < count($tokens); $j ++) {
                 $t = $tokens[$j];
 
-                if ($t instanceof TSpace || $t instanceof TSplitPoint) {
+                if ($t instanceof TSpace || $t instanceof TSplit) {
                     continue;
                 }
 
@@ -655,10 +654,10 @@ class Splitter
         $tokens = $line->getTokens();
         $indent = $line->indent;
 
-        // Include trailing TSplitPoint with the comma (before the split)
+        // Include trailing TSplit with the comma (before the split)
         $splitAt = $commaIndex + 1;
 
-        while (isset($tokens[$splitAt]) && $tokens[$splitAt] instanceof TSplitPoint) {
+        while (isset($tokens[$splitAt]) && $tokens[$splitAt] instanceof TSplit) {
             $splitAt ++;
         }
 
@@ -748,14 +747,14 @@ class Splitter
         $tokens = $lines[$lastItemLineIndex]->getTokens();
         $count = count($tokens);
 
-        // Walk backward, skipping TSpace and TSplitPoint, to find last content token
+        // Walk backward, skipping TSpace and TSplit, to find last content token
         $lastContentPos = $count - 1;
 
         while (
             $lastContentPos >= 0
             && (
                 $tokens[$lastContentPos] instanceof TSpace
-                || $tokens[$lastContentPos] instanceof TSplitPoint
+                || $tokens[$lastContentPos] instanceof TSplit
             )
         ) {
             $lastContentPos --;
@@ -781,12 +780,12 @@ class Splitter
         while ($insertAfterPos >= 0 && self::isComment($tokens[$insertAfterPos])) {
             $insertAfterPos --;
 
-            // Skip TSpace and TSplitPoint before the comment
+            // Skip TSpace and TSplit before the comment
             while (
                 $insertAfterPos >= 0
                 && (
                     $tokens[$insertAfterPos] instanceof TSpace
-                    || $tokens[$insertAfterPos] instanceof TSplitPoint
+                    || $tokens[$insertAfterPos] instanceof TSplit
                 )
             ) {
                 $insertAfterPos --;
@@ -849,12 +848,12 @@ class Splitter
 
         $tokens = $line->getTokens();
 
-        // Walk backward from closer, skipping TSpace and TSplitPoint
+        // Walk backward from closer, skipping TSpace and TSplit
         $pos = $closerPos - 1;
 
         while (
             $pos >= 0
-            && ($tokens[$pos] instanceof TSpace || $tokens[$pos] instanceof TSplitPoint)
+            && ($tokens[$pos] instanceof TSpace || $tokens[$pos] instanceof TSplit)
         ) {
             $pos --;
         }
@@ -863,7 +862,7 @@ class Splitter
             return;
         }
 
-        // Remove the comma (and any TSpace/TSplitPoint between comma and closer)
+        // Remove the comma (and any TSpace/TSplit between comma and closer)
         array_splice($tokens, $pos, $closerPos - $pos);
 
         $lines[$lineIndex] = $this->lineFactory->new($tokens, $line->indent);

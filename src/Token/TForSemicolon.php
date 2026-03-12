@@ -8,7 +8,7 @@ use PhpToken;
 
 class TForSemicolon extends T implements TSplittableComma
 {
-    public function splitPointAfter() : ?TSplitPoint
+    public function splitAfter() : ?TSplit
     {
         return new TSplitForSemicolon(T_WHITESPACE, '');
     }

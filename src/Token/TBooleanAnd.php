@@ -12,7 +12,7 @@ namespace PhpStyler\Token;
  */
 class TBooleanAnd extends T implements TSplittableOperator
 {
-    public function splitPointBefore() : ?TSplitPoint
+    public function splitBefore() : ?TSplit
     {
         return TSplitOperator::new (self::TIGHT_OPERATOR);
     }

@@ -56,12 +56,12 @@ abstract class T extends PhpToken
             && ! $this->transparentOpener;
     }
 
-    public function splitPointBefore() : ?TSplitPoint
+    public function splitBefore() : ?TSplit
     {
         return null;
     }
 
-    public function splitPointAfter() : ?TSplitPoint
+    public function splitAfter() : ?TSplit
     {
         return null;
     }

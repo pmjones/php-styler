@@ -15,7 +15,7 @@ use PhpToken;
  */
 class TObjectOperator extends T implements TSplittableFluent
 {
-    public function splitPointBefore() : ?TSplitPoint
+    public function splitBefore() : ?TSplit
     {
         return new TSplitFluent(T_WHITESPACE, '');
     }

@@ -19,7 +19,7 @@ use PhpStyler\Token\TDocCommentBlankLine;
 use PhpStyler\Token\TDocCommentMidStatement;
 use PhpStyler\Token\TDocCommentLineBreak;
 use PhpStyler\Token\TSpace;
-use PhpStyler\Token\TSplitPoint;
+use PhpStyler\Token\TSplit;
 use PhpStyler\Token\TSplittableComma;
 
 class Line
@@ -116,7 +116,7 @@ class Line
     public function firstContentToken() : ?T
     {
         foreach ($this->tokens as $token) {
-            if (! $token instanceof TSplitPoint && ! $token instanceof TSpace) {
+            if (! $token instanceof TSplit && ! $token instanceof TSpace) {
                 return $token;
             }
         }
@@ -128,7 +128,7 @@ class Line
     {
         for ($i = count($this->tokens) - 1; $i >= 0; $i --) {
             if (
-                ! $this->tokens[$i] instanceof TSplitPoint
+                ! $this->tokens[$i] instanceof TSplit
                 && ! $this->tokens[$i] instanceof TSpace
             ) {
                 return $this->tokens[$i];
@@ -142,7 +142,7 @@ class Line
     {
         for ($i = count($this->tokens) - 1; $i >= 0; $i --) {
             if (
-                ! $this->tokens[$i] instanceof TSplitPoint
+                ! $this->tokens[$i] instanceof TSplit
                 && ! $this->tokens[$i] instanceof TSpace
             ) {
                 return $i;
@@ -157,7 +157,7 @@ class Line
         $count = 0;
 
         foreach ($this->tokens as $token) {
-            if (! $token instanceof TSplitPoint && ! $token instanceof TSpace) {
+            if (! $token instanceof TSplit && ! $token instanceof TSpace) {
                 $count ++;
             }
         }
@@ -172,7 +172,7 @@ class Line
 
         for ($i = count($keys) - 1; $i >= 0; $i --) {
             if (
-                ! $topLevel[$keys[$i]] instanceof TSplitPoint
+                ! $topLevel[$keys[$i]] instanceof TSplit
                 && ! $topLevel[$keys[$i]] instanceof TSpace
             ) {
                 return $keys[$i];
@@ -260,7 +260,7 @@ class Line
                 continue;
             }
 
-            if ($token instanceof TSpace || $token instanceof TSplitPoint) {
+            if ($token instanceof TSpace || $token instanceof TSplit) {
                 continue;
             }
 
@@ -348,7 +348,7 @@ class Line
         $groups = [];
 
         foreach ($this->getTopLevelTokens() as $i => $token) {
-            if ($i === 0 || ! $token instanceof TSplitPoint) {
+            if ($i === 0 || ! $token instanceof TSplit) {
                 continue;
             }
 
@@ -361,7 +361,7 @@ class Line
         }
 
         foreach ($groups as $priority => &$group) {
-            /** @var TSplitPoint $firstSplit */
+            /** @var TSplit $firstSplit */
             $firstSplit = $tokens[$group['positions'][0]];
 
             $firstPos = $group['positions'][0];

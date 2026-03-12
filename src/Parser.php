@@ -11,7 +11,7 @@ use PhpStyler\Token\TIndentDecrement;
 use PhpStyler\Token\TIndentIncrement;
 use PhpStyler\Token\TLineBreak;
 use PhpStyler\Token\TSpace;
-use PhpStyler\Token\TSplitPoint;
+use PhpStyler\Token\TSplit;
 use PhpStyler\Token\TSplittableComma;
 use PhpToken;
 
@@ -110,7 +110,7 @@ class Parser
 
     protected int $parenDepth = 0;
 
-    public ?TSplitPoint $lastSplitPoint = null;
+    public ?TSplit $lastSplit = null;
 
     public function __construct(?StyleLocator $styles = null)
     {
@@ -138,7 +138,7 @@ class Parser
         $this->sourceCount = count($this->source);
         $this->sourceOffset = 0;
         $this->parenDepth = 0;
-        $this->lastSplitPoint = null;
+        $this->lastSplit = null;
 
         for (
             $this->sourceOffset = 0;
@@ -229,19 +229,19 @@ class Parser
             $this->nesting[array_key_last($this->nesting)]->argCount ++;
         }
 
-        $splitPointBefore = $token->splitPointBefore();
+        $splitBefore = $token->splitBefore();
 
-        if ($splitPointBefore !== null) {
-            $this->addSplitPoint($splitPointBefore);
+        if ($splitBefore !== null) {
+            $this->addSplit($splitBefore);
         }
 
         $this->lastAddedIndex = $this->parsedCount;
         $this->emit($token);
 
-        $splitPointAfter = $token->splitPointAfter();
+        $splitAfter = $token->splitAfter();
 
-        if ($splitPointAfter !== null) {
-            $this->addSplitPoint($splitPointAfter);
+        if ($splitAfter !== null) {
+            $this->addSplit($splitAfter);
         }
 
         if ($style->spaceAfter === true) {
@@ -257,10 +257,10 @@ class Parser
         return $token;
     }
 
-    public function addSplitPoint(TSplitPoint $splitPoint) : void
+    public function addSplit(TSplit $split) : void
     {
-        $this->emit($splitPoint);
-        $this->lastSplitPoint = $splitPoint;
+        $this->emit($split);
+        $this->lastSplit = $split;
     }
 
     public function indentIncr() : void

@@ -8,7 +8,7 @@ use PhpToken;
 
 class TFnDoubleArrow extends T implements TSplittableOperator
 {
-    public function splitPointBefore() : ?TSplitPoint
+    public function splitBefore() : ?TSplit
     {
         return TSplitOperator::new (self::FN_DOUBLE_ARROW);
     }

@@ -8,7 +8,7 @@ use PhpToken;
 
 class TArgsComma extends T implements TSplittableComma
 {
-    public function splitPointAfter() : ?TSplitPoint
+    public function splitAfter() : ?TSplit
     {
         return new TSplitComma(T_WHITESPACE, '');
     }

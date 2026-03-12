@@ -7,7 +7,7 @@ use PhpStyler\Token\T;
 use PhpStyler\Token\TIndentDecrement;
 use PhpStyler\Token\TIndentIncrement;
 use PhpStyler\Token\TSpace;
-use PhpStyler\Token\TSplitPoint;
+use PhpStyler\Token\TSplit;
 use PhpStyler\Token\TForeachAs;
 use PhpStyler\Token\TAssign;
 use PhpStyler\Token\TBinaryPlus;
@@ -145,7 +145,7 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                         => $class !== TIndentIncrement::class
                             && $class !== TIndentDecrement::class
                             && $class !== TSpace::class
-                            && ! is_a($class, TSplitPoint::class, true),
+                            && ! is_a($class, TSplit::class, true),
                 ),
             );
             $actual[] = $classes;

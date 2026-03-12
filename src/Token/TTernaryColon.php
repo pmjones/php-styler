@@ -8,7 +8,7 @@ use PhpToken;
 
 class TTernaryColon extends T implements TSplittableOperator
 {
-    public function splitPointBefore() : ?TSplitPoint
+    public function splitBefore() : ?TSplit
     {
         return TSplitOperator::new (self::LOOSE_OPERATOR);
     }

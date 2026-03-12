@@ -42,7 +42,7 @@ abstract class TTestCase extends \PHPUnit\Framework\TestCase
         };
 
         foreach ($tokens as $token) {
-            if ($token instanceof TSplitPoint || in_array(get_class($token), $skip)) {
+            if ($token instanceof TSplit || in_array(get_class($token), $skip)) {
                 continue;
             }
 
