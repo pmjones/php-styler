@@ -12,9 +12,8 @@ class TCommentStarred extends T
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         if (! $parser->hasPrevSourceNewline() || ! $parser->hasNextEol()) {
-            $token = $parser->add($source, TCommentStarredInline::class);
+            $parser->add($source, TCommentStarredInline::class);
             $parser->space();
-            $parser->transferLineBreakAfter($token);
             return;
         }
 

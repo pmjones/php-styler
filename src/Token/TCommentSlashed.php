@@ -15,12 +15,7 @@ class TCommentSlashed extends T
             return;
         }
 
-        $token = $parser->add($source, TCommentSlashedInline::class);
+        $parser->add($source, TCommentSlashedMidStatement::class);
         $parser->space();
-        $transferred = $parser->transferLineBreakAfter($token);
-
-        if (! $transferred && $parser->getNextSource() !== null) {
-            $parser->replaceLastParsed($source, TCommentSlashedMidStatement::class);
-        }
     }
 }

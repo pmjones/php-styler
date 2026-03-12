@@ -10,13 +10,21 @@ use PhpStyler\Token\TArrayComma;
 use PhpStyler\Token\TArrayOpeningBracket;
 use PhpStyler\Token\TArrayConstructOpeningParen;
 use PhpStyler\Token\TBlankLine;
+use PhpStyler\Token\TCommentHashedBlankLine;
 use PhpStyler\Token\TCommentHashedInline;
+use PhpStyler\Token\TCommentHashedLineBreak;
 use PhpStyler\Token\TCommentHashedMidStatement;
+use PhpStyler\Token\TCommentSlashedBlankLine;
 use PhpStyler\Token\TCommentSlashedInline;
+use PhpStyler\Token\TCommentSlashedLineBreak;
 use PhpStyler\Token\TCommentSlashedMidStatement;
+use PhpStyler\Token\TCommentStarredBlankLine;
 use PhpStyler\Token\TCommentStarredInline;
+use PhpStyler\Token\TCommentStarredLineBreak;
 use PhpStyler\Token\TCommentStarredOneline;
+use PhpStyler\Token\TDocCommentBlankLine;
 use PhpStyler\Token\TDocCommentInline;
+use PhpStyler\Token\TDocCommentLineBreak;
 use PhpStyler\Token\TElseifOpeningParen;
 use PhpStyler\Token\TForOpeningParen;
 use PhpStyler\Token\TForeachOpeningParen;
@@ -198,6 +206,14 @@ class Splitter
                     || $tokens[$peek] instanceof TCommentSlashedMidStatement
                     || $tokens[$peek] instanceof TCommentHashedMidStatement
                     || $tokens[$peek] instanceof TDocCommentInline
+                    || $tokens[$peek] instanceof TCommentSlashedLineBreak
+                    || $tokens[$peek] instanceof TCommentSlashedBlankLine
+                    || $tokens[$peek] instanceof TCommentHashedLineBreak
+                    || $tokens[$peek] instanceof TCommentHashedBlankLine
+                    || $tokens[$peek] instanceof TCommentStarredLineBreak
+                    || $tokens[$peek] instanceof TCommentStarredBlankLine
+                    || $tokens[$peek] instanceof TDocCommentLineBreak
+                    || $tokens[$peek] instanceof TDocCommentBlankLine
                 )
             ) {
                 continue;
@@ -793,6 +809,14 @@ class Splitter
                 || $tokens[$insertAfterPos] instanceof TCommentSlashedMidStatement
                 || $tokens[$insertAfterPos] instanceof TCommentHashedMidStatement
                 || $tokens[$insertAfterPos] instanceof TDocCommentInline
+                || $tokens[$insertAfterPos] instanceof TCommentSlashedLineBreak
+                || $tokens[$insertAfterPos] instanceof TCommentSlashedBlankLine
+                || $tokens[$insertAfterPos] instanceof TCommentHashedLineBreak
+                || $tokens[$insertAfterPos] instanceof TCommentHashedBlankLine
+                || $tokens[$insertAfterPos] instanceof TCommentStarredLineBreak
+                || $tokens[$insertAfterPos] instanceof TCommentStarredBlankLine
+                || $tokens[$insertAfterPos] instanceof TDocCommentLineBreak
+                || $tokens[$insertAfterPos] instanceof TDocCommentBlankLine
             )
         ) {
             $insertAfterPos --;

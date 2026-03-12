@@ -89,7 +89,7 @@ class TCommentStarredInlineTest extends TTestCase
                     TAssign::class,
                     TIntegerLiteral::class,
                     TSemicolon::class,
-                    TCommentStarredInline::class,
+                    TCommentStarredLineBreak::class,
                 ],
             ],
         ];

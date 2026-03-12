@@ -47,14 +47,17 @@ use PhpStyler\Token\TMatchReturnComma;
 use PhpStyler\Token\TParamsComma;
 use PhpStyler\Token\TCommentHashed;
 use PhpStyler\Token\TCommentHashedInline;
+use PhpStyler\Token\TCommentHashedLineBreak;
 use PhpStyler\Token\TCommentHashedMidStatement;
 use PhpStyler\Token\TCommentHashedOwnLine;
 use PhpStyler\Token\TCommentSlashed;
 use PhpStyler\Token\TCommentSlashedInline;
+use PhpStyler\Token\TCommentSlashedLineBreak;
 use PhpStyler\Token\TCommentSlashedMidStatement;
 use PhpStyler\Token\TCommentSlashedOwnLine;
 use PhpStyler\Token\TCommentStarred;
 use PhpStyler\Token\TCommentStarredInline;
+use PhpStyler\Token\TCommentStarredLineBreak;
 use PhpStyler\Token\TCommentStarredOneline;
 use PhpStyler\Token\TPostDecrement;
 use PhpStyler\Token\TDefaultAfterCase;
@@ -332,7 +335,7 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                         TAssign::class,
                         TIntegerLiteral::class,
                         TSemicolon::class,
-                        TCommentSlashedInline::class,
+                        TCommentSlashedLineBreak::class,
                     ],
                     [
                         TVariable::class,
@@ -425,7 +428,7 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                         TAssign::class,
                         TIntegerLiteral::class,
                         TSemicolon::class,
-                        TCommentSlashedInline::class,
+                        TCommentSlashedLineBreak::class,
                     ],
                     [
                         TVariable::class,
@@ -450,7 +453,7 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                         TAssign::class,
                         TIntegerLiteral::class,
                         TSemicolon::class,
-                        TCommentHashedInline::class,
+                        TCommentHashedLineBreak::class,
                     ],
                     [
                         TVariable::class,
@@ -475,7 +478,7 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                         TAssign::class,
                         TIntegerLiteral::class,
                         TSemicolon::class,
-                        TCommentStarredInline::class,
+                        TCommentStarredLineBreak::class,
                     ],
                     [
                         TVariable::class,
@@ -972,7 +975,7 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                         TVariable::class,
                         TPostIncrement::class,
                         TSemicolon::class,
-                        TCommentSlashedInline::class,
+                        TCommentSlashedLineBreak::class,
                     ],
                     [
                         TDoContinuationBrace::class,
@@ -1023,7 +1026,7 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                         TCase::class,
                         TIntegerLiteral::class,
                         TCaseColon::class,
-                        TCommentSlashedInline::class,
+                        TCommentSlashedLineBreak::class,
                     ],
                     [
                         TBreak::class,
@@ -1032,7 +1035,7 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                     [
                         TDefaultAfterCase::class,
                         TCaseColon::class,
-                        TCommentSlashedInline::class,
+                        TCommentSlashedLineBreak::class,
                     ],
                     [
                         TBreak::class,
@@ -1124,7 +1127,7 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                         TAssign::class,
                         TIntegerLiteral::class,
                         TSemicolon::class,
-                        TCommentSlashedInline::class,
+                        TCommentSlashedLineBreak::class,
                     ],
                     [
                         TTryContinuationBrace::class,
@@ -1144,7 +1147,7 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                         TAssign::class,
                         TIntegerLiteral::class,
                         TSemicolon::class,
-                        TCommentSlashedInline::class,
+                        TCommentSlashedLineBreak::class,
                     ],
                     [
                         TCatchContinuationBrace::class,
@@ -1156,7 +1159,7 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                         TAssign::class,
                         TIntegerLiteral::class,
                         TSemicolon::class,
-                        TCommentSlashedInline::class,
+                        TCommentSlashedLineBreak::class,
                     ],
                     [
                         TFinallyClosingBrace::class,

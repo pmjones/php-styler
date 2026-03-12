@@ -143,7 +143,8 @@ class Parser
         $this->parenDepth = 0;
         $this->lastSplitPoint = null;
 
-        foreach ($this->source as $this->sourceOffset => $source) {
+        for ($this->sourceOffset = 0; $this->sourceOffset < $this->sourceCount; $this->sourceOffset ++) {
+            $source = $this->source[$this->sourceOffset];
             /** @var class-string<T> $parseClass */
             $parseClass = $this->getParseClass($source);
             $this->parse($source, $parseClass);
@@ -156,6 +157,10 @@ class Parser
 
     protected function getParseClass(PhpToken $source) : string
     {
+        if ($source instanceof T) {
+            return get_class($source);
+        }
+
         $name = (string) $source->getTokenName();
 
         if (str_starts_with($name, 'T_')) {
@@ -285,6 +290,17 @@ class Parser
             return;
         }
 
+        $this->removeTrailingSpaces();
+
+        if (! $this->hasPrevLineBreakToken()) {
+            $commentIndex = $this->findUpcomingInlineComment();
+
+            if ($commentIndex !== null) {
+                $this->replaceSourceComment($commentIndex, blankLine: true);
+                return;
+            }
+        }
+
         $this->lineBreak();
         $this->emit(new Token\TBlankLine(T_WHITESPACE, ''));
         $this->lineBreak();
@@ -307,6 +323,24 @@ class Parser
 
     public function lineBreak() : void
     {
+        $this->removeTrailingSpaces();
+
+        if ($this->hasPrevLineBreakToken()) {
+            return;
+        }
+
+        $commentIndex = $this->findUpcomingInlineComment();
+
+        if ($commentIndex !== null) {
+            $this->replaceSourceComment($commentIndex, blankLine: false);
+            return;
+        }
+
+        $this->emit(new TLineBreak(T_WHITESPACE, ''));
+    }
+
+    private function removeTrailingSpaces() : void
+    {
         for ($i = $this->parsedCount - 1; $i >= 0; $i --) {
             $prev = $this->parsed[$i];
 
@@ -317,15 +351,12 @@ class Parser
                 break;
             }
         }
+    }
 
-        if (
-            $this->parsedCount > 0
-            && $this->parsed[$this->parsedCount - 1] instanceof TLineBreak
-        ) {
-            return;
-        }
-
-        $this->emit(new TLineBreak(T_WHITESPACE, ''));
+    private function hasPrevLineBreakToken() : bool
+    {
+        return $this->parsedCount > 0
+            && $this->parsed[$this->parsedCount - 1] instanceof TLineBreak;
     }
 
     public function space() : void
@@ -597,41 +628,6 @@ class Parser
         return null;
     }
 
-    public function transferLineBreakAfter(T $to) : bool
-    {
-        for ($i = $this->parsedCount - 1; $i >= 0; $i --) {
-            if ($this->parsed[$i] === $to) {
-                continue;
-            }
-
-            if ($this->parsed[$i] instanceof TLineBreak) {
-                array_splice($this->parsed, $i, 1, [new TSpace(T_WHITESPACE, ' ')]);
-
-                // clean up adjacent TBlankLine and its preceding TLineBreak
-                while ($i > 0 && $this->parsed[$i - 1] instanceof Token\TBlankLine) {
-                    array_splice($this->parsed, $i - 1, 1);
-                    $this->parsedCount --;
-                    $i --;
-                }
-
-                if ($i > 0 && $this->parsed[$i - 1] instanceof TLineBreak) {
-                    array_splice($this->parsed, $i - 1, 1);
-                    $this->parsedCount --;
-                    $i --;
-                }
-
-                $this->lineBreak();
-                return true;
-            }
-
-            if (! $this->parsed[$i]->is(T_WHITESPACE)) {
-                return false;
-            }
-        }
-
-        return false;
-    }
-
     public function hasPrevSourceNewline() : bool
     {
         $source = $this->source[$this->sourceOffset - 1] ?? null;
@@ -712,5 +708,87 @@ class Parser
         }
 
         return false;
+    }
+
+    protected function findUpcomingInlineComment() : ?int
+    {
+        $currentText = $this->source[$this->sourceOffset]->text;
+
+        if (strpos($currentText, "\r") !== false || strpos($currentText, "\n") !== false) {
+            return null;
+        }
+
+        for ($i = $this->sourceOffset + 1; $i < $this->sourceCount; $i ++) {
+            $source = $this->source[$i];
+
+            if ($source->is(T_WHITESPACE)) {
+                if (strpos($source->text, "\r") !== false
+                    || strpos($source->text, "\n") !== false
+                ) {
+                    return null; // newline before comment
+                }
+
+                continue;
+            }
+
+            // Skip already-replaced tokens
+            if ($source instanceof T) {
+                return null;
+            }
+
+            if (! $source->is(T_COMMENT) && ! $source->is(T_DOC_COMMENT)) {
+                return null; // non-comment token
+            }
+
+            // // and # always end the line
+            if (str_starts_with($source->text, '//') || str_starts_with($source->text, '#')) {
+                return $i;
+            }
+
+            // /* */ and /** */ — must have EOL after to be end-of-line
+            $next = $this->source[$i + 1] ?? null;
+
+            if ($next === null) {
+                return $i; // end of file
+            }
+
+            if ($next->is(T_WHITESPACE)
+                && (strpos($next->text, "\r") !== false
+                    || strpos($next->text, "\n") !== false)
+            ) {
+                return $i;
+            }
+
+            return null; // code continues after comment
+        }
+
+        return null;
+    }
+
+    protected function replaceSourceComment(int $index, bool $blankLine) : void
+    {
+        $source = $this->source[$index];
+
+        $class = match (true) {
+            $source->is(T_DOC_COMMENT) => $blankLine
+                ? Token\TDocCommentBlankLine::class
+                : Token\TDocCommentLineBreak::class,
+            str_starts_with($source->text, '//') => $blankLine
+                ? Token\TCommentSlashedBlankLine::class
+                : Token\TCommentSlashedLineBreak::class,
+            str_starts_with($source->text, '#') => $blankLine
+                ? Token\TCommentHashedBlankLine::class
+                : Token\TCommentHashedLineBreak::class,
+            default => $blankLine
+                ? Token\TCommentStarredBlankLine::class
+                : Token\TCommentStarredLineBreak::class,
+        };
+
+        $this->source[$index] = new $class(
+            $source->id,
+            $source->text,
+            $source->line,
+            $source->pos,
+        );
     }
 }

@@ -15,12 +15,7 @@ class TCommentHashed extends T
             return;
         }
 
-        $token = $parser->add($source, TCommentHashedInline::class);
+        $parser->add($source, TCommentHashedMidStatement::class);
         $parser->space();
-        $transferred = $parser->transferLineBreakAfter($token);
-
-        if (! $transferred && $parser->getNextSource() !== null) {
-            $parser->replaceLastParsed($source, TCommentHashedMidStatement::class);
-        }
     }
 }

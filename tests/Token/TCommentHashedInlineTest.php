@@ -60,7 +60,7 @@ class TCommentHashedInlineTest extends TTestCase
                     TAssign::class,
                     TIntegerLiteral::class,
                     TSemicolon::class,
-                    TCommentHashedInline::class,
+                    TCommentHashedLineBreak::class,
                 ],
             ],
             'after-open-tag' => [
@@ -69,7 +69,7 @@ class TCommentHashedInlineTest extends TTestCase
                 CODE,
                 [
                     TPhpOpeningTagInline::class,
-                    TCommentHashedInline::class,
+                    TCommentHashedMidStatement::class,
                 ],
             ],
         ];

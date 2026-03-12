@@ -60,7 +60,7 @@ class TCommentSlashedInlineTest extends TTestCase
                     TAssign::class,
                     TIntegerLiteral::class,
                     TSemicolon::class,
-                    TCommentSlashedInline::class,
+                    TCommentSlashedLineBreak::class,
                 ],
             ],
             'after-open-tag' => [
@@ -69,7 +69,7 @@ class TCommentSlashedInlineTest extends TTestCase
                 CODE,
                 [
                     TPhpOpeningTagInline::class,
-                    TCommentSlashedInline::class,
+                    TCommentSlashedMidStatement::class,
                 ],
             ],
         ];

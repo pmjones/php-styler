@@ -19,9 +19,8 @@ class TDocComment extends T
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         if (! $parser->hasPrevSourceNewline() || ! $parser->hasNextEol()) {
-            $token = $parser->add($source, TDocCommentInline::class);
+            $parser->add($source, TDocCommentInline::class);
             $parser->space();
-            $parser->transferLineBreakAfter($token);
             return;
         }
 
