@@ -12,8 +12,8 @@ namespace PhpStyler\Token;
  */
 class TCoalesce extends T implements TSplittableOperator
 {
-    public function splitCategory() : int
+    public function splitPointBefore() : ?TSplitPoint
     {
-        return self::LOOSE_OPERATOR;
+        return TSplitOperator::new (self::LOOSE_OPERATOR);
     }
 }

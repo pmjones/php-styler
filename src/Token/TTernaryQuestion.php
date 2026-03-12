@@ -8,9 +8,9 @@ use PhpToken;
 
 class TTernaryQuestion extends T implements TSplittableOperator
 {
-    public function splitCategory() : int
+    public function splitPointBefore() : ?TSplitPoint
     {
-        return self::LOOSE_OPERATOR;
+        return TSplitOperator::new (self::LOOSE_OPERATOR);
     }
 
     public static function parse(Parser $parser, PhpToken $source) : void

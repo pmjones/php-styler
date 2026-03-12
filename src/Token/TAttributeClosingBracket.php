@@ -24,7 +24,7 @@ class TAttributeClosingBracket extends T
         ) {
             $parser->lineBreak();
         } else {
-            $parser->addSplitPoint(TSplittable::ATTRIBUTE);
+            $parser->addSplitPoint(new TSplitAttribute(T_WHITESPACE, ''));
         }
     }
 }

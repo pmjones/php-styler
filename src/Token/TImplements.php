@@ -19,6 +19,6 @@ class TImplements extends T
     {
         $parser->add($source, static::class);
         $parser->space();
-        $parser->addSplitPoint(TSplittable::COMMA);
+        $parser->addSplitPoint(new TSplitListComma(T_WHITESPACE, ''));
     }
 }

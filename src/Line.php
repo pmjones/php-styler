@@ -19,7 +19,6 @@ use PhpStyler\Token\TDocCommentBlankLine;
 use PhpStyler\Token\TDocCommentMidStatement;
 use PhpStyler\Token\TDocCommentLineBreak;
 use PhpStyler\Token\TSpace;
-use PhpStyler\Token\TMemberDoubleColon;
 use PhpStyler\Token\TSplitPoint;
 use PhpStyler\Token\TSplittableComma;
 
@@ -353,10 +352,10 @@ class Line
                 continue;
             }
 
-            $order = $token->splitPriority;
+            $order = $token->splitPriority();
             $groups[$order] ??= [
                 'positions' => [],
-                'continuation' => $token->continuation,
+                'continuation' => $token->continuation(),
             ];
             $groups[$order]['positions'][] = $i;
         }
@@ -367,10 +366,7 @@ class Line
 
             $firstPos = $group['positions'][0];
 
-            if (
-                $firstSplit->shouldSkipFirst(count($group['positions']))
-                || ($tokens[$firstPos + 1] ?? null) instanceof TMemberDoubleColon
-            ) {
+            if ($firstSplit->shouldSkipFirst(count($group['positions']))) {
                 array_shift($group['positions']);
             }
 

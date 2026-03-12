@@ -8,9 +8,9 @@ use PhpToken;
 
 class TImplementsComma extends T implements TSplittableComma
 {
-    public function splitCategory() : int
+    public function splitPointAfter() : ?TSplitPoint
     {
-        return self::COMMA;
+        return new TSplitListComma(T_WHITESPACE, '');
     }
 
     public static function parse(Parser $parser, PhpToken $source) : void

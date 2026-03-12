@@ -11,10 +11,7 @@ use PhpStyler\Token\TIndentDecrement;
 use PhpStyler\Token\TIndentIncrement;
 use PhpStyler\Token\TLineBreak;
 use PhpStyler\Token\TSpace;
-use PhpStyler\Token\TExtendsComma;
-use PhpStyler\Token\TImplementsComma;
 use PhpStyler\Token\TSplitPoint;
-use PhpStyler\Token\TSplittable;
 use PhpStyler\Token\TSplittableComma;
 use PhpToken;
 
@@ -232,19 +229,19 @@ class Parser
             $this->nesting[array_key_last($this->nesting)]->argCount ++;
         }
 
-        // Emit TSplitPoint BEFORE operators/fluent
-        if ($token instanceof TSplittable && ! $token instanceof TSplittableComma) {
-            $this->addSplitPoint($token->splitCategory());
+        $splitPointBefore = $token->splitPointBefore();
+
+        if ($splitPointBefore !== null) {
+            $this->addSplitPoint($splitPointBefore);
         }
 
         $this->lastAddedIndex = $this->parsedCount;
         $this->emit($token);
 
-        // Emit TSplitPoint AFTER commas
-        if ($token instanceof TSplittableComma) {
-            $isListComma = $token instanceof TExtendsComma
-                || $token instanceof TImplementsComma;
-            $this->addSplitPoint($token->splitCategory(), continuation: $isListComma);
+        $splitPointAfter = $token->splitPointAfter();
+
+        if ($splitPointAfter !== null) {
+            $this->addSplitPoint($splitPointAfter);
         }
 
         if ($style->spaceAfter === true) {
@@ -260,11 +257,8 @@ class Parser
         return $token;
     }
 
-    public function addSplitPoint(int $priority, bool $continuation = true) : void
+    public function addSplitPoint(TSplitPoint $splitPoint) : void
     {
-        $splitPoint = new TSplitPoint(T_WHITESPACE, '');
-        $splitPoint->splitPriority = $priority;
-        $splitPoint->continuation = $continuation;
         $this->emit($splitPoint);
         $this->lastSplitPoint = $splitPoint;
     }

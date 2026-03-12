@@ -18,6 +18,4 @@ interface TSplittable
     const int FLUENT = 50;
 
     const int FOR_SEMICOLON = 60;
-
-    public function splitCategory() : int;
 }

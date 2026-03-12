@@ -3,22 +3,21 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-class TSplitPoint extends T
+abstract class TSplitPoint extends T
 {
-    public int $splitPriority = 0;
+    abstract public function splitPriority() : int;
 
-    public bool $continuation = true;
-
-    public bool $isMethodCall = false;
+    public function continuation() : bool
+    {
+        return true;
+    }
 
     public function shouldSkipFirst(int $totalPositions) : bool
     {
-        return $this->splitPriority === TSplittable::FLUENT
-            && ($totalPositions === 1 || ! $this->isMethodCall);
+        return false;
     }
 
     public function markAsMethodCall() : void
     {
-        $this->isMethodCall = true;
     }
 }

@@ -8,9 +8,9 @@ use PhpToken;
 
 class TMemberDoubleColon extends T implements TSplittableFluent
 {
-    public function splitCategory() : int
+    public function splitPointBefore() : ?TSplitPoint
     {
-        return self::FLUENT;
+        return new TSplitStaticFluent(T_WHITESPACE, '');
     }
 
     public static function parse(Parser $parser, PhpToken $source) : void

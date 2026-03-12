@@ -56,6 +56,16 @@ abstract class T extends PhpToken
             && ! $this->transparentOpener;
     }
 
+    public function splitPointBefore() : ?TSplitPoint
+    {
+        return null;
+    }
+
+    public function splitPointAfter() : ?TSplitPoint
+    {
+        return null;
+    }
+
     public function render(Line $line) : string
     {
         return $this->text;

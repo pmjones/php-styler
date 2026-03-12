@@ -8,9 +8,9 @@ use PhpToken;
 
 class TForSemicolon extends T implements TSplittableComma
 {
-    public function splitCategory() : int
+    public function splitPointAfter() : ?TSplitPoint
     {
-        return self::FOR_SEMICOLON;
+        return new TSplitForSemicolon(T_WHITESPACE, '');
     }
 
     public static function parse(Parser $parser, PhpToken $source) : void
