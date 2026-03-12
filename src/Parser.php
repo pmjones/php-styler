@@ -143,8 +143,16 @@ class Parser
         $this->parenDepth = 0;
         $this->lastSplitPoint = null;
 
-        for ($this->sourceOffset = 0; $this->sourceOffset < $this->sourceCount; $this->sourceOffset ++) {
+        for (
+            $this->sourceOffset = 0;
+            $this
+                ->sourceOffset < $this
+                ->sourceCount;
+                $this
+                ->sourceOffset ++
+        ) {
             $source = $this->source[$this->sourceOffset];
+
             /** @var class-string<T> $parseClass */
             $parseClass = $this->getParseClass($source);
             $this->parse($source, $parseClass);
@@ -497,7 +505,7 @@ class Parser
      */
     public function listNesting() : array
     {
-        return array_map(fn(Nesting $n) => get_class($n->token), $this->nesting);
+        return array_map(fn (Nesting $n) => get_class($n->token), $this->nesting);
     }
 
     public function popTernaryNesting() : void
@@ -704,7 +712,9 @@ class Parser
     {
         $currentText = $this->source[$this->sourceOffset]->text;
 
-        if (strpos($currentText, "\r") !== false || strpos($currentText, "\n") !== false) {
+        if (
+            strpos($currentText, "\r") !== false || strpos($currentText, "\n") !== false
+        ) {
             return null;
         }
 
@@ -712,7 +722,8 @@ class Parser
             $source = $this->source[$i];
 
             if ($source->is(T_WHITESPACE)) {
-                if (strpos($source->text, "\r") !== false
+                if (
+                    strpos($source->text, "\r") !== false
                     || strpos($source->text, "\n") !== false
                 ) {
                     return null; // newline before comment
@@ -731,7 +742,10 @@ class Parser
             }
 
             // // and # always end the line
-            if (str_starts_with($source->text, '//') || str_starts_with($source->text, '#')) {
+            if (
+                str_starts_with($source->text, '//')
+                || str_starts_with($source->text, '#')
+            ) {
                 return $i;
             }
 
@@ -742,9 +756,12 @@ class Parser
                 return $i; // end of file
             }
 
-            if ($next->is(T_WHITESPACE)
-                && (strpos($next->text, "\r") !== false
-                    || strpos($next->text, "\n") !== false)
+            if (
+                $next->is(T_WHITESPACE)
+                && (
+                    strpos($next->text, "\r") !== false
+                    || strpos($next->text, "\n") !== false
+                )
             ) {
                 return $i;
             }

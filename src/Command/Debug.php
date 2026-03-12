@@ -24,11 +24,7 @@ class Debug extends Command
         $code = (string) file_get_contents($sourceFile);
         $tokens = $styler->parse($code);
 
-        if (
-            ! $options->parse
-            && ! $options->assemble
-            && ! $options->split
-        ) {
+        if (! $options->parse && ! $options->assemble && ! $options->split) {
             var_export($tokens);
             return 0;
         }
