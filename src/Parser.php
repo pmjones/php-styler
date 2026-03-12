@@ -229,7 +229,7 @@ class Parser
             $this->nesting[array_key_last($this->nesting)]->argCount ++;
         }
 
-        $splitBefore = $token->splitBefore();
+        $splitBefore = $token->splitBefore($this);
 
         if ($splitBefore !== null) {
             $this->addSplit($splitBefore);
@@ -238,7 +238,7 @@ class Parser
         $this->lastAddedIndex = $this->parsedCount;
         $this->emit($token);
 
-        $splitAfter = $token->splitAfter();
+        $splitAfter = $token->splitAfter($this);
 
         if ($splitAfter !== null) {
             $this->addSplit($splitAfter);
@@ -261,6 +261,17 @@ class Parser
     {
         $this->emit($split);
         $this->lastSplit = $split;
+    }
+
+    public function replaceLastSplit(TSplit $replacement) : void
+    {
+        for ($i = $this->parsedCount - 1; $i >= 0; $i --) {
+            if ($this->parsed[$i] === $this->lastSplit) {
+                $this->parsed[$i] = $replacement;
+                $this->lastSplit = $replacement;
+                return;
+            }
+        }
     }
 
     public function indentIncr() : void

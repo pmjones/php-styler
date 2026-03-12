@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-class TSplitStaticFluent extends TSplitFluent
+class TSplitPropertyAccess extends TSplitFluent
 {
     public function shouldSkipFirst(int $totalPositions) : bool
     {

@@ -15,9 +15,9 @@ use PhpToken;
  */
 class TNullsafeObjectOperator extends T implements TSplittableFluent
 {
-    public function splitBefore() : ?TSplit
+    public function splitBefore(Parser $parser) : ?TSplit
     {
-        return new TSplitFluent(T_WHITESPACE, '');
+        return new TSplitPropertyAccess(T_WHITESPACE, '');
     }
 
     public static function parse(Parser $parser, PhpToken $source) : void

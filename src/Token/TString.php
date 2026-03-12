@@ -180,16 +180,12 @@ class TString extends T
         if ($parser->getNextSource()?->is('(')) {
             if ($prev?->is([T_OBJECT_OPERATOR, T_NULLSAFE_OBJECT_OPERATOR])) {
                 if ($parser->lastSplit !== null) {
-                    $parser->lastSplit->markAsMethodCall();
+                    $parser->replaceLastSplit(new TSplitMethodCall(T_WHITESPACE, ''));
                 }
 
                 $parser->add($source, TMethodCallName::class);
                 $parser->space();
             } elseif ($prev?->is(T_DOUBLE_COLON)) {
-                if ($parser->lastSplit !== null) {
-                    $parser->lastSplit->markAsMethodCall();
-                }
-
                 $parser->add($source, TStaticMethodCallName::class);
                 $parser->space();
             } else {

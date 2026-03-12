@@ -16,8 +16,4 @@ abstract class TSplit extends T
     {
         return false;
     }
-
-    public function markAsMethodCall() : void
-    {
-    }
 }

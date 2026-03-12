@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
+use PhpStyler\Parser;
+
 /**
  * Token: T_BOOLEAN_OR
  *
@@ -12,7 +14,7 @@ namespace PhpStyler\Token;
  */
 class TBooleanOr extends T implements TSplittableOperator
 {
-    public function splitBefore() : ?TSplit
+    public function splitBefore(Parser $parser) : ?TSplit
     {
         return TSplitOperator::new (self::LOOSE_OPERATOR);
     }

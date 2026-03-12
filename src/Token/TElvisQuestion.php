@@ -8,7 +8,7 @@ use PhpToken;
 
 class TElvisQuestion extends T implements TSplittableOperator
 {
-    public function splitBefore() : ?TSplit
+    public function splitBefore(Parser $parser) : ?TSplit
     {
         return TSplitOperator::new (self::LOOSE_OPERATOR);
     }
