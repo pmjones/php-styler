@@ -837,6 +837,8 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                     [
                         TForeach::class,
                         TForeachOpeningParen::class,
+                    ],
+                    [
                         TVariable::class,
                         TCommentSlashedMidStatement::class,
                         TForeachAs::class,
@@ -845,6 +847,8 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                         TCommentSlashedMidStatement::class,
                         TVariable::class,
                         TCommentSlashedMidStatement::class,
+                    ],
+                    [
                         TForeachClosingParen::class,
                         TForeachOpeningBrace::class,
                     ],
@@ -975,10 +979,14 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                         TDoContinuationBrace::class,
                         TWhile::class,
                         TWhileOpeningParen::class,
+                    ],
+                    [
                         TVariable::class,
                         TSmallerThan::class,
                         TIntegerLiteral::class,
                         TCommentSlashedMidStatement::class,
+                    ],
+                    [
                         TWhileClosingParen::class,
                         TSemicolon::class,
                     ],
@@ -1127,12 +1135,17 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                         TTryContinuationBrace::class,
                         TCatch::class,
                         TParamsOpeningParen::class,
+                    ],
+                    [
                         TFullyQualifiedName::class,
                         TCommentSlashedMidStatement::class,
                         TUnion::class,
                         TFullyQualifiedName::class,
                         TVariable::class,
+                        TParamsComma::class,
                         TCommentSlashedMidStatement::class,
+                    ],
+                    [
                         TParamsClosingParen::class,
                         TCatchOpeningBrace::class,
                     ],

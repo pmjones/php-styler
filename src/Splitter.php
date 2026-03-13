@@ -46,6 +46,10 @@ class Splitter
     {
         $lines = [$line];
 
+        if (! $line->forceExpand && $line->hasInteriorComment()) {
+            $line->forceExpand = true;
+        }
+
         if (
             ! $line->forceExpand
             && (

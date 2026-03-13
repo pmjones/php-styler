@@ -23,6 +23,11 @@ $longAgain = [
     'veryLongElement', /** comment */
 ];
 
+$shortWithCommentary = [
+    'a', // a commentary
+    'b', // b commentary
+];
+
 $longWithComments = [
     // one
     'veryLongElement',

@@ -135,6 +135,19 @@ class Line
         return 0;
     }
 
+    public function hasInteriorComment() : bool
+    {
+        $lastIdx = $this->lastContentIndex();
+
+        foreach ($this->tokens as $i => $token) {
+            if ($token instanceof TCommentary && $i < $lastIdx) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function contentTokenCount() : int
     {
         $count = 0;
