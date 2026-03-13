@@ -22,7 +22,7 @@ class TUse_ImportTest extends TTestCase
                     TUse::class,
                     TUnqualifiedName::class,
                     TUseEndSemicolon::class,
-                ]
+                ],
             ],
             'namespaced' => [
                 <<<'CODE'
@@ -34,7 +34,7 @@ class TUse_ImportTest extends TTestCase
                     TUse::class,
                     TQualifiedName::class,
                     TUseEndSemicolon::class,
-                ]
+                ],
             ],
             'string-as' => [
                 <<<'CODE'
@@ -48,7 +48,7 @@ class TUse_ImportTest extends TTestCase
                     TUseAs::class,
                     TUseAlias::class,
                     TUseEndSemicolon::class,
-                ]
+                ],
             ],
             'namespaced-as' => [
                 <<<'CODE'
@@ -62,7 +62,7 @@ class TUse_ImportTest extends TTestCase
                     TUseAs::class,
                     TUseAlias::class,
                     TUseEndSemicolon::class,
-                ]
+                ],
             ],
             'grouped' => [
                 <<<'CODE'
@@ -80,7 +80,7 @@ class TUse_ImportTest extends TTestCase
                     TUseComma::class,
                     TUnqualifiedName::class,
                     TUseEndSemicolon::class,
-                ]
+                ],
             ],
             'prefixed' => [
                 <<<'CODE'

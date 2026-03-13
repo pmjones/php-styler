@@ -26,7 +26,8 @@ class TLineBreakTest extends TTestCase
                     TSemicolon::class,
                     TLineBreak::class,
                 ],
-                [],
+                [
+                ],
                 self::REPORT_SYNTHETIC,
             ],
             'after-opening-brace' => [
@@ -51,7 +52,8 @@ class TLineBreakTest extends TTestCase
                     TLineBreak::class,
                     TLineBreak::class,
                 ],
-                [],
+                [
+                ],
                 self::REPORT_SYNTHETIC,
             ],
             'own-line-comment' => [
@@ -77,7 +79,8 @@ class TLineBreakTest extends TTestCase
                     TSemicolon::class,
                     TLineBreak::class,
                 ],
-                [],
+                [
+                ],
                 self::REPORT_SYNTHETIC,
             ],
         ];

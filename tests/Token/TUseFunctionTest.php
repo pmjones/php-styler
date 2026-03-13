@@ -23,7 +23,7 @@ class TUseFunctionTest extends TTestCase
                     TUseFunction::class,
                     TFunctionName::class,
                     TUseEndSemicolon::class,
-                ]
+                ],
             ],
             'namespaced' => [
                 <<<'CODE'
@@ -36,7 +36,7 @@ class TUseFunctionTest extends TTestCase
                     TUseFunction::class,
                     TQualifiedName::class,
                     TUseEndSemicolon::class,
-                ]
+                ],
             ],
             'string-as' => [
                 <<<'CODE'
@@ -51,7 +51,7 @@ class TUseFunctionTest extends TTestCase
                     TUseAs::class,
                     TFunctionName::class,
                     TUseEndSemicolon::class,
-                ]
+                ],
             ],
             'namespaced-as' => [
                 <<<'CODE'
@@ -66,7 +66,7 @@ class TUseFunctionTest extends TTestCase
                     TUseAs::class,
                     TFunctionName::class,
                     TUseEndSemicolon::class,
-                ]
+                ],
             ],
             'grouped' => [
                 <<<'CODE'
@@ -85,7 +85,7 @@ class TUseFunctionTest extends TTestCase
                     TUseComma::class,
                     TFunctionName::class,
                     TUseEndSemicolon::class,
-                ]
+                ],
             ],
             'prefixed' => [
                 <<<'CODE'

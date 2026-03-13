@@ -40,7 +40,8 @@ class TAssignTest extends TTestCase
                     TDeclareDirectivesClosingParen::class,
                     TDeclareEndSemicolon::class,
                 ],
-                [],
+                [
+                ],
             ],
         ];
     }

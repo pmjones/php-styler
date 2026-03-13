@@ -27,7 +27,8 @@ class TDeclareDirectivesClosingParenTest extends TTestCase
                     TDeclareDirectivesClosingParen::class,
                     TDeclareEndSemicolon::class,
                 ],
-                [],
+                [
+                ],
             ],
         ];
     }

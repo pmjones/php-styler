@@ -11,6 +11,8 @@ return new Config(
     cache: __DIR__ . '/.php-styler.cache',
     files: new Files(
         __DIR__ . '/src',
+        __DIR__ . '/tests/Style',
+        __DIR__ . '/tests/Token',
         __DIR__ . '/tests/AssemblerTest.php',
         __DIR__ . '/tests/ConfigTest.php',
         __DIR__ . '/tests/ExamplesTest.php',

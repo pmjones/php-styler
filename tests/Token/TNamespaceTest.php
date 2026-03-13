@@ -23,7 +23,8 @@ class TNamespaceTest extends TTestCase
                     TUnqualifiedName::class,
                     TNamespaceEndSemicolon::class,
                 ],
-                [],
+                [
+                ],
             ],
             'minimal-name-qualified' => [
                 <<<'CODE'
@@ -36,7 +37,8 @@ class TNamespaceTest extends TTestCase
                     TQualifiedName::class,
                     TNamespaceEndSemicolon::class,
                 ],
-                [],
+                [
+                ],
             ],
             'braced-global' => [
                 <<<'CODE'

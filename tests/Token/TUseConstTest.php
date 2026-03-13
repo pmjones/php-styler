@@ -23,7 +23,7 @@ class TUseConstTest extends TTestCase
                     TUseConst::class,
                     TConstName::class,
                     TUseEndSemicolon::class,
-                ]
+                ],
             ],
             'namespaced' => [
                 <<<'CODE'
@@ -36,7 +36,7 @@ class TUseConstTest extends TTestCase
                     TUseConst::class,
                     TQualifiedName::class,
                     TUseEndSemicolon::class,
-                ]
+                ],
             ],
             'string-as' => [
                 <<<'CODE'
@@ -51,7 +51,7 @@ class TUseConstTest extends TTestCase
                     TUseAs::class,
                     TConstName::class,
                     TUseEndSemicolon::class,
-                ]
+                ],
             ],
             'namespaced-as' => [
                 <<<'CODE'
@@ -66,7 +66,7 @@ class TUseConstTest extends TTestCase
                     TUseAs::class,
                     TConstName::class,
                     TUseEndSemicolon::class,
-                ]
+                ],
             ],
             'grouped' => [
                 <<<'CODE'
@@ -85,7 +85,7 @@ class TUseConstTest extends TTestCase
                     TUseComma::class,
                     TConstName::class,
                     TUseEndSemicolon::class,
-                ]
+                ],
             ],
             'prefixed' => [
                 <<<'CODE'

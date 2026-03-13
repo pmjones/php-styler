@@ -31,7 +31,8 @@ class TRelativeNameTest extends TTestCase
                     TArgsClosingParen::class,
                     TSemicolon::class,
                 ],
-                [],
+                [
+                ],
             ],
         ];
     }

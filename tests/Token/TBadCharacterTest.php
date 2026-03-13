@@ -13,7 +13,11 @@ class TBadCharacterTest extends TTestCase
         /** @php-styler-expansive */
         return [
             'control-character' => [
-                "<?php\n" . chr(1) . "\n",
+                "<?php\n"
+                    . chr(
+                        1,
+                    )
+                    . "\n",
                 [
                     TPhpOpeningTag::class,
                     TBadCharacter::class,

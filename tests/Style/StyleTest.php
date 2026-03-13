@@ -156,23 +156,29 @@ class StyleTest extends TestCase
                 EXPECT,
             ],
             'semicolon-no-linebreak-after' => [
-                (function () {
-                    $styles = new StyleLocator();
-                    $styles->get(TSemicolon::class)->lineBreakAfter = null;
-                    return $styles;
-                })(),
+                (
+                    function (
+                    ) {
+                        $styles = new StyleLocator();
+                        $styles->get(TSemicolon::class)->lineBreakAfter = null;
+                        return $styles;
+                    }
+                )(),
                 <<<'CODE'
                 <?php $a = 1; $b = 2;
                 CODE,
                 "<?php \$a = 1; \$b = 2; \n",
+            
             ],
             'closing-brace-linebreak-instead-of-blankline' => [
-                (function () {
-                    $styles = new StyleLocator();
-                    $styles->get(TIfClosingBrace::class)->blankLineAfter = null;
-                    $styles->get(TIfClosingBrace::class)->lineBreakAfter = true;
-                    return $styles;
-                })(),
+                (
+                    function () {
+                        $styles = new StyleLocator();
+                        $styles->get(TIfClosingBrace::class)->blankLineAfter = null;
+                        $styles->get(TIfClosingBrace::class)->lineBreakAfter = true;
+                        return $styles;
+                    }
+                )(),
                 <<<'CODE'
                 <?php if ($a) { $b = 1; } $c = 2;
                 CODE,
@@ -183,13 +189,16 @@ class StyleTest extends TestCase
                 $c = 2;
 
                 EXPECT,
+            
             ],
             'opening-brace-no-linebreak-before' => [
-                (function () {
-                    $styles = new StyleLocator();
-                    $styles->get(TClassOpeningBrace::class)->lineBreakBefore = null;
-                    return $styles;
-                })(),
+                (
+                    function () {
+                        $styles = new StyleLocator();
+                        $styles->get(TClassOpeningBrace::class)->lineBreakBefore = null;
+                        return $styles;
+                    }
+                )(),
                 <<<'CODE'
                 <?php class Foo {}
                 CODE,
@@ -198,6 +207,7 @@ class StyleTest extends TestCase
                 }
 
                 EXPECT,
+            
             ],
             'case-default-strtolower' => [
                 null,
@@ -212,11 +222,13 @@ class StyleTest extends TestCase
                 EXPECT,
             ],
             'case-override-strtoupper' => [
-                (function () {
-                    $styles = new StyleLocator();
-                    $styles->get(TTrue::class)->case = 'strtoupper';
-                    return $styles;
-                })(),
+                (
+                    function () {
+                        $styles = new StyleLocator();
+                        $styles->get(TTrue::class)->case = 'strtoupper';
+                        return $styles;
+                    }
+                )(),
                 <<<'CODE'
                 <?php $a = true;
                 CODE,
@@ -224,13 +236,16 @@ class StyleTest extends TestCase
                 <?php $a = TRUE;
 
                 EXPECT,
+            
             ],
             'case-disable-with-null' => [
-                (function () {
-                    $styles = new StyleLocator();
-                    $styles->get(TTrue::class)->case = null;
-                    return $styles;
-                })(),
+                (
+                    function () {
+                        $styles = new StyleLocator();
+                        $styles->get(TTrue::class)->case = null;
+                        return $styles;
+                    }
+                )(),
                 <<<'CODE'
                 <?php $a = TRUE;
                 CODE,
@@ -238,6 +253,7 @@ class StyleTest extends TestCase
                 <?php $a = TRUE;
 
                 EXPECT,
+            
             ],
             'empty-style-default-behavior' => [
                 null,
@@ -249,6 +265,7 @@ class StyleTest extends TestCase
 
                 EXPECT,
             ],
+        
         ];
     }
 }

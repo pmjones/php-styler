@@ -24,9 +24,11 @@ class TWhitespaceEolTest extends TTestCase
                     TAssign::class,
                     TIntegerLiteral::class,
                     TSemicolon::class,
+                
                 ],
                 [],
                 self::REPORT_WHITESPACE,
+            
             ],
             'blank-line' => [
                 "<?php\n\$a = 1;\n\n\$b = 2;\n",
@@ -46,6 +48,7 @@ class TWhitespaceEolTest extends TTestCase
                 ],
                 [],
                 self::REPORT_WHITESPACE,
+            
             ],
             'blank-line-with-indent' => [
                 "<?php\n\$a = 1;\n    \n\$b = 2;\n",

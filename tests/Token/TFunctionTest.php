@@ -70,7 +70,7 @@ class TFunctionTest extends TTestCase
                     TUnqualifiedName::class,
                     TFunctionOpeningBrace::class,
                     TFunctionClosingBrace::class,
-                ]
+                ],
             ],
         ];
     }

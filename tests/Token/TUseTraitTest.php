@@ -33,7 +33,7 @@ class TUseTraitTest extends TTestCase
                     TFullyQualifiedName::class,
                     TUseTraitEndSemicolon::class,
                     TClassClosingBrace::class,
-                ]
+                ],
             ],
             'talker' => [
                 <<<'CODE'
@@ -70,7 +70,7 @@ class TUseTraitTest extends TTestCase
                     TSemicolon::class,
                     TUseTraitClosingBrace::class,
                     TClassClosingBrace::class,
-                ]
+                ],
             ],
             'aliased-talker' => [
                 <<<'CODE'
@@ -114,7 +114,7 @@ class TUseTraitTest extends TTestCase
                     TSemicolon::class,
                     TUseTraitClosingBrace::class,
                     TClassClosingBrace::class,
-                ]
+                ],
             ],
         ];
     }

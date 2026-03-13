@@ -45,6 +45,7 @@ class TOpeningParenTest extends TTestCase
                     TSemicolon::class,
                 ],
             ],
+        
         ];
     }
 }

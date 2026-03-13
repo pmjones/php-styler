@@ -29,7 +29,7 @@ class TAttributeTest extends TTestCase
                     TClassName::class,
                     TClassOpeningBrace::class,
                     TClassClosingBrace::class,
-                ]
+                ],
             ],
             'name-qualified' => [
                 <<<'CODE'
@@ -48,7 +48,7 @@ class TAttributeTest extends TTestCase
                     TClassName::class,
                     TClassOpeningBrace::class,
                     TClassClosingBrace::class,
-                ]
+                ],
             ],
             'name-fully-qualified' => [
                 <<<'CODE'
@@ -67,7 +67,7 @@ class TAttributeTest extends TTestCase
                     TClassName::class,
                     TClassOpeningBrace::class,
                     TClassClosingBrace::class,
-                ]
+                ],
             ],
             'params' => [
                 <<<'CODE'
@@ -88,7 +88,7 @@ class TAttributeTest extends TTestCase
                     TClassName::class,
                     TClassOpeningBrace::class,
                     TClassClosingBrace::class,
-                ]
+                ],
             ],
             'multiple' => [
                 <<<'CODE'
@@ -112,7 +112,7 @@ class TAttributeTest extends TTestCase
                     TClassName::class,
                     TClassOpeningBrace::class,
                     TClassClosingBrace::class,
-                ]
+                ],
             ],
             'multiple-params' => [
                 <<<'CODE'
@@ -142,7 +142,7 @@ class TAttributeTest extends TTestCase
                     TClassName::class,
                     TClassOpeningBrace::class,
                     TClassClosingBrace::class,
-                ]
+                ],
             ],
         ];
     }

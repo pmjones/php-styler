@@ -27,7 +27,8 @@ class TDeclareTest extends TTestCase
                     TDeclareDirectivesClosingParen::class,
                     TDeclareEndSemicolon::class,
                 ],
-                [],
+                [
+                ],
             ],
             'multiple' => [
                 <<<'CODE'
@@ -48,7 +49,8 @@ class TDeclareTest extends TTestCase
                     TDeclareDirectivesClosingParen::class,
                     TDeclareEndSemicolon::class,
                 ],
-                [],
+                [
+                ],
             ],
             'braced' => [
                 <<<'CODE'

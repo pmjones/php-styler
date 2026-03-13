@@ -17,7 +17,8 @@ class TPhpOpeningTagTest extends TTestCase
                 [
                     TPhpOpeningTagInline::class,
                 ],
-                [],
+                [
+                ],
                 self::REPORT_WHITESPACE,
             ],
             'space' => [
@@ -25,7 +26,8 @@ class TPhpOpeningTagTest extends TTestCase
                 [
                     TPhpOpeningTagInline::class,
                 ],
-                [],
+                [
+                ],
                 self::REPORT_WHITESPACE,
             ],
             'spaces' => [
@@ -33,7 +35,8 @@ class TPhpOpeningTagTest extends TTestCase
                 [
                     TPhpOpeningTagInline::class,
                 ],
-                [],
+                [
+                ],
                 self::REPORT_WHITESPACE,
             ],
             'tab' => [
@@ -41,7 +44,8 @@ class TPhpOpeningTagTest extends TTestCase
                 [
                     TPhpOpeningTagInline::class,
                 ],
-                [],
+                [
+                ],
                 self::REPORT_WHITESPACE,
             ],
             'tabs' => [
@@ -49,7 +53,8 @@ class TPhpOpeningTagTest extends TTestCase
                 [
                     TPhpOpeningTagInline::class,
                 ],
-                [],
+                [
+                ],
                 self::REPORT_WHITESPACE,
             ],
             'newline' => [
@@ -60,13 +65,11 @@ class TPhpOpeningTagTest extends TTestCase
                 ],
                 [],
                 self::REPORT_WHITESPACE,
+            
             ],
             'newlines' => [
                 "<?php\n\n\n\n",
-                [
-                    TPhpOpeningTag::class,
-                    TBlankLine::class,
-                ],
+                [TPhpOpeningTag::class, TBlankLine::class],
                 [],
                 self::REPORT_WHITESPACE,
             ],
@@ -78,6 +81,7 @@ class TPhpOpeningTagTest extends TTestCase
                 ],
                 [],
                 self::REPORT_WHITESPACE,
+            
             ],
             'newline-and-tabs' => [
                 "<?php\n\t\t\t\t",

@@ -29,7 +29,7 @@ class TReturnColonTest extends TTestCase
                     TUnqualifiedName::class,
                     TFunctionOpeningBrace::class,
                     TFunctionClosingBrace::class,
-                ]
+                ],
             ],
             'function-name-qualified' => [
                 <<<'CODE'

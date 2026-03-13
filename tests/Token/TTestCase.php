@@ -25,7 +25,7 @@ abstract class TTestCase extends \PHPUnit\Framework\TestCase
         string $code,
         array $expect,
         array $finalNesting = [],
-        string $reporting = self::IGNORE_WHITESPACE
+        string $reporting = self::IGNORE_WHITESPACE,
     ) : void
     {
         $parser = new Parser();
@@ -34,10 +34,32 @@ abstract class TTestCase extends \PHPUnit\Framework\TestCase
         $actual = [];
 
         $skip = match ($reporting) {
-            self::REPORT_WHITESPACE => [TSpace::class, TIndentIncrement::class, TIndentDecrement::class, TLineBreak::class],
-            self::REPORT_SYNTHETIC => [TWhitespace::class, TBlankLine::class, TSpace::class],
-            self::REPORT_LINEBREAKS => [TWhitespace::class, TSpace::class, TIndentIncrement::class, TIndentDecrement::class, TLineBreak::class],
-            self::IGNORE_WHITESPACE => [TWhitespace::class, TBlankLine::class, TSpace::class, TIndentIncrement::class, TIndentDecrement::class, TLineBreak::class],
+            self::REPORT_WHITESPACE => [
+                TSpace::class,
+                TIndentIncrement::class,
+                TIndentDecrement::class,
+                TLineBreak::class,
+            ],
+            self::REPORT_SYNTHETIC => [
+                TWhitespace::class,
+                TBlankLine::class,
+                TSpace::class,
+            ],
+            self::REPORT_LINEBREAKS => [
+                TWhitespace::class,
+                TSpace::class,
+                TIndentIncrement::class,
+                TIndentDecrement::class,
+                TLineBreak::class,
+            ],
+            self::IGNORE_WHITESPACE => [
+                TWhitespace::class,
+                TBlankLine::class,
+                TSpace::class,
+                TIndentIncrement::class,
+                TIndentDecrement::class,
+                TLineBreak::class,
+            ],
             default => [],
         };
 
@@ -52,7 +74,7 @@ abstract class TTestCase extends \PHPUnit\Framework\TestCase
         }
 
         if (empty($expect)) {
-            $message =  'Actual token classes:' . PHP_EOL;
+            $message = 'Actual token classes:' . PHP_EOL;
 
             foreach ($actual as $class) {
                 $parts = explode('\\', $class);

@@ -25,7 +25,7 @@ class TTraitTest extends TTestCase
                     TTraitName::class,
                     TTraitOpeningBrace::class,
                     TTraitClosingBrace::class,
-                ]
+                ],
             ],
         ];
     }

@@ -32,7 +32,8 @@ class TIndentIncrementDecrementTest extends TTestCase
                     TLineBreak::class,
                     TLineBreak::class,
                 ],
-                [],
+                [
+                ],
                 self::REPORT_SYNTHETIC,
             ],
             'function-body' => [
@@ -62,7 +63,8 @@ class TIndentIncrementDecrementTest extends TTestCase
                     TLineBreak::class,
                     TLineBreak::class,
                 ],
-                [],
+                [
+                ],
                 self::REPORT_SYNTHETIC,
             ],
         ];

@@ -27,7 +27,8 @@ class TAssignDirectiveTest extends TTestCase
                     TDeclareDirectivesClosingParen::class,
                     TDeclareEndSemicolon::class,
                 ],
-                [],
+                [
+                ],
             ],
         ];
     }

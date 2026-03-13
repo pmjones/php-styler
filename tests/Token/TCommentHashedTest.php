@@ -8,6 +8,7 @@ class TCommentHashedTest extends TTestCase
     /**
      * @inheritdoc
      */
+
     /**
      * @inheritdoc
      */
