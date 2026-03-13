@@ -57,3 +57,13 @@ $foo = [
     'bar',
     'baz',
 ];
+
+#[Help(
+    <<<'HELP'
+        Apply styling to these space-separated files and directories;
+        overrides the files specified in config.
+    HELP,
+)]
+function zim()
+{
+}
