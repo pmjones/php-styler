@@ -7,7 +7,6 @@ use PhpStyler\Token\T;
 use PhpStyler\Token\TBlankLine;
 use PhpStyler\Token\TCommentary;
 use PhpStyler\Token\TCommaSeparated;
-use PhpStyler\Token\TConditionOpener;
 use PhpStyler\Token\TSpace;
 use PhpStyler\Token\TSplit;
 use PhpStyler\Token\TSplittableComma;
@@ -80,7 +79,7 @@ class Splitter
     private function trySplit(Line $line) : ?array
     {
         // For condition parens, split at the paren before trying operator splits
-        $conditionPair = $this->findConditionPair($line);
+        $conditionPair = $line->findConditionPair();
 
         if ($conditionPair !== null) {
             $split = $this->splitAtParens($line, $conditionPair);
@@ -105,30 +104,6 @@ class Splitter
         }
 
         return $this->splitAtParens($line);
-    }
-
-    /**
-     * @return array{int, int, int}|null
-     */
-    private function findConditionPair(Line $line) : ?array
-    {
-        $tokens = $line->getTokens();
-
-        foreach ($tokens as $i => $token) {
-            if (! $token instanceof TConditionOpener || $token->closingToken === null) {
-                continue;
-            }
-
-            $closerPos = $line->findTokenIndex($token->closingToken);
-
-            if ($closerPos === null || $closerPos - $i <= 1) {
-                continue;
-            }
-
-            return [$i, $closerPos, $token->argCount];
-        }
-
-        return null;
     }
 
     /**

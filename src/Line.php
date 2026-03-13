@@ -6,6 +6,7 @@ namespace PhpStyler;
 use PhpStyler\Token\T;
 use PhpStyler\Token\TBlankLine;
 use PhpStyler\Token\TCommentary;
+use PhpStyler\Token\TConditionOpener;
 use PhpStyler\Token\TSpace;
 use PhpStyler\Token\TSplit;
 use PhpStyler\Token\TSplittableComma;
@@ -114,16 +115,10 @@ class Line
 
     public function lastContentToken() : ?T
     {
-        for ($i = count($this->tokens) - 1; $i >= 0; $i --) {
-            if (
-                ! $this->tokens[$i] instanceof TSplit
-                && ! $this->tokens[$i] instanceof TSpace
-            ) {
-                return $this->tokens[$i];
-            }
-        }
+        $i = $this->lastContentIndex();
+        $token = $this->tokens[$i] ?? null;
 
-        return null;
+        return ($token instanceof TSplit || $token instanceof TSpace) ? null : $token;
     }
 
     public function lastContentIndex() : int
@@ -153,7 +148,7 @@ class Line
         return $count;
     }
 
-    public function lastTopLevelContentIndex() : int
+    private function lastTopLevelContentIndex() : int
     {
         $topLevel = $this->getTopLevelTokens();
         $keys = array_keys($topLevel);
@@ -223,8 +218,7 @@ class Line
                 // For actual commas (not semicolons), skip if the only remaining
                 // content after the comma is an inline comment
                 if (
-                    $token->text === ','
-                    && $this->hasOnlyInlineCommentAfter($topLevel, $i)
+                    $token->text === ',' && $topLevel[$lastIndex] instanceof TCommentary
                 ) {
                     continue;
                 }
@@ -236,32 +230,24 @@ class Line
         return null;
     }
 
-    /**
-     * @param array<int, T> $topLevel
-     */
-    private function hasOnlyInlineCommentAfter(array $topLevel, int $commaIndex) : bool
+    /** @return array{int, int, int}|null */
+    public function findConditionPair() : ?array
     {
-        $foundComment = false;
-
-        foreach ($topLevel as $j => $token) {
-            if ($j <= $commaIndex) {
+        foreach ($this->tokens as $i => $token) {
+            if (! $token instanceof TConditionOpener || $token->closingToken === null) {
                 continue;
             }
 
-            if ($token instanceof TSpace || $token instanceof TSplit) {
+            $closerPos = $this->findTokenIndex($token->closingToken);
+
+            if ($closerPos === null || $closerPos - $i <= 1) {
                 continue;
             }
 
-            if (! $foundComment && $token instanceof TCommentary) {
-                $foundComment = true;
-                continue;
-            }
-
-            // Found a non-comment content token after the comma
-            return false;
+            return [$i, $closerPos, $token->argCount];
         }
 
-        return $foundComment;
+        return null;
     }
 
     /** @return array{int, int, int}|null */
@@ -335,8 +321,6 @@ class Line
             /** @var TSplit $firstSplit */
             $firstSplit = $tokens[$group['positions'][0]];
 
-            $firstPos = $group['positions'][0];
-
             if ($firstSplit->shouldSkipFirst(count($group['positions']))) {
                 array_shift($group['positions']);
             }
@@ -351,17 +335,5 @@ class Line
         ksort($groups);
 
         return array_values($groups);
-    }
-
-    /** @return class-string<T>[] */
-    public function getTokenClasses() : array
-    {
-        $classes = [];
-
-        foreach ($this->tokens as $token) {
-            $classes[] = get_class($token);
-        }
-
-        return $classes;
     }
 }

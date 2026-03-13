@@ -138,7 +138,7 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
         foreach ($lines as $line) {
             $classes = array_values(
                 array_filter(
-                    $line->getTokenClasses(),
+                    array_map(get_class(...), $line->getTokens()),
                     fn (string $class)
                         => $class !== TIndentIncrement::class
                             && $class !== TIndentDecrement::class
