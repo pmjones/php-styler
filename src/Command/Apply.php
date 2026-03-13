@@ -17,9 +17,9 @@ class Apply extends Command
 
         #[Help(
             <<<'HELP'
-        Apply styling to these space-separated files and directories;
+                Apply styling to these space-separated files and directories;
                 overrides the files specified in config.
-        HELP,
+            HELP,
         )]
         string ...$paths,
     ) : int
