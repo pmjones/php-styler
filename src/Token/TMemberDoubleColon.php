@@ -11,8 +11,8 @@ class TMemberDoubleColon extends T implements TSplittableFluent
     public function splitBefore(Parser $parser) : ?TSplit
     {
         return $parser->getNextSource()?->is(T_VARIABLE)
-            ? new TSplitStaticMember(T_WHITESPACE, '')
-            : new TSplitStaticMethodCall(T_WHITESPACE, '');
+            ? new TSplitStaticMember(T::SYNTHETIC, '')
+            : new TSplitStaticMethodCall(T::SYNTHETIC, '');
     }
 
     public static function parse(Parser $parser, PhpToken $source) : void

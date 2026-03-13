@@ -276,7 +276,7 @@ class Parser
 
     public function indentIncr() : void
     {
-        $this->emit(new TIndentIncrement(T_WHITESPACE, ''));
+        $this->emit(new TIndentIncrement(T::SYNTHETIC, ''));
     }
 
     public function indentDecr() : void
@@ -289,7 +289,7 @@ class Parser
             return;
         }
 
-        $this->emit(new TIndentDecrement(T_WHITESPACE, ''));
+        $this->emit(new TIndentDecrement(T::SYNTHETIC, ''));
     }
 
     public function blankLine() : void
@@ -314,7 +314,7 @@ class Parser
         }
 
         $this->lineBreak();
-        $this->emit(new Token\TBlankLine(T_WHITESPACE, ''));
+        $this->emit(new Token\TBlankLine(T_WHITESPACE, "\n\n"));
         $this->lineBreak();
     }
 
@@ -326,7 +326,7 @@ class Parser
                 return;
             }
 
-            if (! $this->parsed[$i]->is(T_WHITESPACE)) {
+            if (! $this->parsed[$i]->is([T::SYNTHETIC, T_WHITESPACE])) {
                 return;
             }
         }
@@ -347,7 +347,7 @@ class Parser
             return;
         }
 
-        $this->emit(new TLineBreak(T_WHITESPACE, ''));
+        $this->emit(new TLineBreak(T_WHITESPACE, "\n"));
     }
 
     private function removeTrailingSpaces() : void
@@ -357,7 +357,7 @@ class Parser
 
             if ($prev instanceof TSpace) {
                 $this->removeParsedAt($i);
-            } elseif (! $prev->is(T_WHITESPACE)) {
+            } elseif (! $prev->is([T::SYNTHETIC, T_WHITESPACE])) {
                 break;
             }
         }
@@ -386,7 +386,7 @@ class Parser
                 return;
             }
 
-            if (! $prev->is(T_WHITESPACE)) {
+            if (! $prev->is([T::SYNTHETIC, T_WHITESPACE])) {
                 break;
             }
         }
@@ -420,7 +420,7 @@ class Parser
                 return;
             }
 
-            if (! $prev->is(T_WHITESPACE)) {
+            if (! $prev->is([T::SYNTHETIC, T_WHITESPACE])) {
                 return;
             }
         }
@@ -439,7 +439,7 @@ class Parser
                 continue;
             }
 
-            if (! $prev->is(T_WHITESPACE)) {
+            if (! $prev->is([T::SYNTHETIC, T_WHITESPACE])) {
                 return;
             }
         }
@@ -670,7 +670,7 @@ class Parser
 
             if ($parsed instanceof $class) {
                 return true;
-            } elseif (! $parsed->is(T_WHITESPACE)) {
+            } elseif (! $parsed->is([T::SYNTHETIC, T_WHITESPACE])) {
                 return false;
             }
         }

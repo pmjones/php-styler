@@ -180,7 +180,7 @@ class TString extends T
         if ($parser->getNextSource()?->is('(')) {
             if ($prev?->is([T_OBJECT_OPERATOR, T_NULLSAFE_OBJECT_OPERATOR])) {
                 if ($parser->lastSplit !== null) {
-                    $parser->replaceLastSplit(new TSplitMethodCall(T_WHITESPACE, ''));
+                    $parser->replaceLastSplit(new TSplitMethodCall(T::SYNTHETIC, ''));
                 }
 
                 $parser->add($source, TMethodCallName::class);

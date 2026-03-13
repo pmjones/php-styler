@@ -10,7 +10,7 @@ class TForSemicolon extends T implements TSplittableComma
 {
     public function splitAfter(Parser $parser) : ?TSplit
     {
-        return new TSplitForSemicolon(T_WHITESPACE, '');
+        return new TSplitForSemicolon(T::SYNTHETIC, '');
     }
 
     public static function parse(Parser $parser, PhpToken $source) : void

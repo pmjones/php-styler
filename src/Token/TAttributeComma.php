@@ -10,7 +10,7 @@ class TAttributeComma extends T implements TSplittableComma
 {
     public function splitAfter(Parser $parser) : ?TSplit
     {
-        return new TSplitComma(T_WHITESPACE, '');
+        return new TSplitComma(T::SYNTHETIC, '');
     }
 
     public static function parse(Parser $parser, PhpToken $source) : void

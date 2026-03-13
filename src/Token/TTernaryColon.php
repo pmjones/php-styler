@@ -10,7 +10,7 @@ class TTernaryColon extends T implements TSplittableOperator
 {
     public function splitBefore(Parser $parser) : ?TSplit
     {
-        return new TSplitLooseOperator(T_WHITESPACE, '');
+        return new TSplitLooseOperator(T::SYNTHETIC, '');
     }
 
     public static function parse(Parser $parser, PhpToken $source) : void

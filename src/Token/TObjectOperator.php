@@ -17,7 +17,7 @@ class TObjectOperator extends T implements TSplittableFluent
 {
     public function splitBefore(Parser $parser) : ?TSplit
     {
-        return new TSplitPropertyAccess(T_WHITESPACE, '');
+        return new TSplitPropertyAccess(T::SYNTHETIC, '');
     }
 
     public static function parse(Parser $parser, PhpToken $source) : void

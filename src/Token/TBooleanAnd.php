@@ -16,6 +16,6 @@ class TBooleanAnd extends T implements TSplittableOperator
 {
     public function splitBefore(Parser $parser) : ?TSplit
     {
-        return new TSplitTightOperator(T_WHITESPACE, '');
+        return new TSplitTightOperator(T::SYNTHETIC, '');
     }
 }

@@ -10,7 +10,7 @@ class TExtendsComma extends T implements TSplittableComma
 {
     public function splitAfter(Parser $parser) : ?TSplit
     {
-        return new TSplitListComma(T_WHITESPACE, '');
+        return new TSplitListComma(T::SYNTHETIC, '');
     }
 
     public static function parse(Parser $parser, PhpToken $source) : void

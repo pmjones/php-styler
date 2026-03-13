@@ -9,6 +9,8 @@ use PhpToken;
 
 abstract class T extends PhpToken
 {
+    public const SYNTHETIC = -1;
+
     protected bool $rejoinOrphanBefore = false;
 
     public int $parenDepth = 0;
@@ -20,6 +22,11 @@ abstract class T extends PhpToken
     public ?T $closingToken = null;
 
     public bool $transparentOpener = false;
+
+    public function isIgnorable() : bool
+    {
+        return $this->id === self::SYNTHETIC || parent::isIgnorable();
+    }
 
     public static function parse(Parser $parser, PhpToken $source) : void
     {

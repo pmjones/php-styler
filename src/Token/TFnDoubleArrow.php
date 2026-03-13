@@ -10,7 +10,7 @@ class TFnDoubleArrow extends T implements TSplittableOperator
 {
     public function splitBefore(Parser $parser) : ?TSplit
     {
-        return new TSplitFnDoubleArrow(T_WHITESPACE, '');
+        return new TSplitFnDoubleArrow(T::SYNTHETIC, '');
     }
 
     public static function parse(Parser $parser, PhpToken $source) : void
