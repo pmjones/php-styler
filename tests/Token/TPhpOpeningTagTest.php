@@ -65,7 +65,7 @@ class TPhpOpeningTagTest extends TTestCase
                 ],
                 [],
                 self::REPORT_WHITESPACE,
-            
+
             ],
             'newlines' => [
                 "<?php\n\n\n\n",
@@ -81,7 +81,7 @@ class TPhpOpeningTagTest extends TTestCase
                 ],
                 [],
                 self::REPORT_WHITESPACE,
-            
+
             ],
             'newline-and-tabs' => [
                 "<?php\n\t\t\t\t",

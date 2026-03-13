@@ -25,7 +25,7 @@ class TWhitespaceTest extends TTestCase
                 ],
                 [],
                 self::REPORT_WHITESPACE,
-            
+
             ],
             'newline-tab' => [
                 "<?php\n\t1;\n\t2;\n",
@@ -41,7 +41,7 @@ class TWhitespaceTest extends TTestCase
                 ],
                 [],
                 self::REPORT_WHITESPACE,
-            
+
             ],
             'newline-space' => [
                 "<?php\n    1;\n    2;\n    3;\n",

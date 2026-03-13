@@ -168,7 +168,7 @@ class StyleTest extends TestCase
                 <?php $a = 1; $b = 2;
                 CODE,
                 "<?php \$a = 1; \$b = 2; \n",
-            
+
             ],
             'closing-brace-linebreak-instead-of-blankline' => [
                 (
@@ -189,7 +189,7 @@ class StyleTest extends TestCase
                 $c = 2;
 
                 EXPECT,
-            
+
             ],
             'opening-brace-no-linebreak-before' => [
                 (
@@ -207,7 +207,7 @@ class StyleTest extends TestCase
                 }
 
                 EXPECT,
-            
+
             ],
             'case-default-strtolower' => [
                 null,
@@ -236,7 +236,7 @@ class StyleTest extends TestCase
                 <?php $a = TRUE;
 
                 EXPECT,
-            
+
             ],
             'case-disable-with-null' => [
                 (
@@ -253,7 +253,7 @@ class StyleTest extends TestCase
                 <?php $a = TRUE;
 
                 EXPECT,
-            
+
             ],
             'empty-style-default-behavior' => [
                 null,
@@ -265,7 +265,7 @@ class StyleTest extends TestCase
 
                 EXPECT,
             ],
-        
+
         ];
     }
 }
