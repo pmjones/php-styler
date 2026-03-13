@@ -18,7 +18,11 @@ class TDocComment extends T
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
-        if (! $parser->hasPrevLineBreak() || ! $parser->hasNextEol()) {
+        if (
+            (! str_contains($source->text, "\n") && $parser->hasPrevSplittableComma())
+            || ! $parser->hasPrevLineBreak()
+            || ! $parser->hasNextEol()
+        ) {
             $parser->add($source, TDocCommentMidStatement::class);
             $parser->space();
             return;

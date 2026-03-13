@@ -11,6 +11,9 @@ $long = [
     'veryLongElement' => 'longValue', // comment
     'veryLongElement',
     'veryLongElement', /* comment */
+];
+
+$longAgain = [
     'veryLongElement',
     'veryLongElement',
     'veryLongElement',

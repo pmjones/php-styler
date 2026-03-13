@@ -648,6 +648,11 @@ class Parser
             || $this->hasPrev(Token\TWhitespaceEol::class);
     }
 
+    public function hasPrevSplittableComma() : bool
+    {
+        return $this->hasPrev(Token\TSplittableComma::class);
+    }
+
     public function hasPrevEol() : bool
     {
         return $this->hasPrev(Token\TWhitespaceEol::class);
