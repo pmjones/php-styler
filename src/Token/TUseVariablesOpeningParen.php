@@ -6,8 +6,13 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TUseVariablesOpeningParen extends T
+class TUseVariablesOpeningParen extends T implements TCommaSeparated
 {
+    public function commaClass() : string
+    {
+        return TUseVariablesComma::class;
+    }
+
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->addNesting($source, self::class);

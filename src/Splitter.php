@@ -4,21 +4,13 @@ declare(strict_types=1);
 namespace PhpStyler;
 
 use PhpStyler\Token\T;
-use PhpStyler\Token\TArgsComma;
-use PhpStyler\Token\TArgsOpeningParen;
-use PhpStyler\Token\TArrayComma;
-use PhpStyler\Token\TArrayOpeningBracket;
-use PhpStyler\Token\TArrayConstructOpeningParen;
 use PhpStyler\Token\TBlankLine;
 use PhpStyler\Token\TCommentary;
+use PhpStyler\Token\TCommaSeparated;
 use PhpStyler\Token\TConditionOpener;
-use PhpStyler\Token\TParamsComma;
-use PhpStyler\Token\TParamsOpeningParen;
 use PhpStyler\Token\TSpace;
 use PhpStyler\Token\TSplit;
 use PhpStyler\Token\TSplittableComma;
-use PhpStyler\Token\TUseVariablesComma;
-use PhpStyler\Token\TUseVariablesOpeningParen;
 class Splitter
 {
     public function __construct(private LineFactory $lineFactory = new LineFactory())
@@ -663,18 +655,11 @@ class Splitter
                     continue;
                 }
 
-                $commaClass = match (true) {
-                    $token instanceof TArgsOpeningParen => TArgsComma::class,
-                    $token instanceof TParamsOpeningParen => TParamsComma::class,
-                    $token instanceof TArrayOpeningBracket,
-                    $token instanceof TArrayConstructOpeningParen => TArrayComma::class,
-                    $token instanceof TUseVariablesOpeningParen => TUseVariablesComma::class,
-                    default => null,
-                };
-
-                if ($commaClass === null) {
+                if (! $token instanceof TCommaSeparated) {
                     continue;
                 }
+
+                $commaClass = $token->commaClass();
 
                 $closerLineIndex = $tokenLineMap[spl_object_id($token->closingToken)]
                     ?? null;
