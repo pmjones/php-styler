@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
+use PhpStyler\Rule\NormalizeTrailingCommas;
 use PhpStyler\Styler;
 use PHPUnit\Framework\TestCase;
 
@@ -10,7 +11,7 @@ class SplitterTest extends TestCase
 {
     private function assertSplit(string $code, string $expect, int $lineLen) : void
     {
-        $styler = new Styler(lineLen: $lineLen, eol: "\n");
+        $styler = new Styler(lineLen: $lineLen, eol: "\n", rules: [new NormalizeTrailingCommas()]);
         $actual = $styler($code);
         $this->assertSame($expect, $actual);
     }
@@ -536,70 +537,6 @@ class SplitterTest extends TestCase
                 <<<'EXPECT'
                 <?php
                 $veryLongVariableNameThatCannotBeSplitAtAllBecauseItIsOneToken = 1;
-
-                EXPECT,
-            ],
-
-            'trailing-comma-removed-single-line' => [
-                <<<'CODE'
-                <?php
-                foo($a, $b,);
-                CODE,
-                <<<'EXPECT'
-                <?php
-                foo($a, $b);
-
-                EXPECT,
-            ],
-
-            'trailing-comma-added-multi-line' => [
-                <<<'CODE'
-                <?php
-                someFunction($veryLongArgumentOne, $veryLongArgumentTwo, $veryLongArgumentThree);
-                CODE,
-                <<<'EXPECT'
-                <?php
-                someFunction(
-                    $veryLongArgumentOne,
-                    $veryLongArgumentTwo,
-                    $veryLongArgumentThree,
-                );
-
-                EXPECT,
-            ],
-
-            'trailing-comma-preserved-multi-line' => [
-                <<<'CODE'
-                <?php
-                someFunc($longArgAlpha, $longArgBravo, $longArgCharlie,);
-                CODE,
-                <<<'EXPECT'
-                <?php
-                someFunc(
-                    $longArgAlpha,
-                    $longArgBravo,
-                    $longArgCharlie,
-                );
-
-                EXPECT,
-            ],
-
-            'trailing-comma-with-comment' => [
-                <<<'CODE'
-                <?php
-                function foo($longParamAlpha, $longParamBravo, $longParamCharlie) // comment
-                {
-                }
-                CODE,
-                <<<'EXPECT'
-                <?php
-                function foo(
-                    $longParamAlpha,
-                    $longParamBravo,
-                    $longParamCharlie,
-                ) // comment
-                {
-                }
 
                 EXPECT,
             ],

@@ -1142,7 +1142,6 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                         TUnion::class,
                         TFullyQualifiedName::class,
                         TVariable::class,
-                        TParamsComma::class,
                         TCommentSlashedMidStatement::class,
                     ],
                     [
