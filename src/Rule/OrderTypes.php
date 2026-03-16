@@ -29,7 +29,6 @@ use PhpStyler\Token\TStaticType;
 use PhpStyler\Token\TString;
 use PhpStyler\Token\TTrue;
 use PhpStyler\Token\TUnion;
-use PhpStyler\Token\TUnknownString;
 use PhpStyler\Token\TUnqualifiedName;
 use PhpStyler\Token\TVoid;
 

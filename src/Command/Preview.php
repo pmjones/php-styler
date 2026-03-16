@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace PhpStyler\Command;
 
 use AutoShell\Help;
-use PhpStyler\Service;
 use PhpStyler\Styler;
 
 #[Help("Prints a preview of a styled source file.")]

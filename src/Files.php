@@ -9,8 +9,6 @@ use RecursiveCallbackFilterIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
-use Traversable;
-
 /**
  * @implements IteratorAggregate<int, string>
  */

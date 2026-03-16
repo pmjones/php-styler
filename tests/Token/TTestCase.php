@@ -4,8 +4,6 @@ declare(strict_types=1);
 namespace PhpStyler\Token;
 
 use PhpStyler\Parser;
-use PhpToken;
-
 abstract class TTestCase extends \PHPUnit\Framework\TestCase
 {
     protected const IGNORE_WHITESPACE = 'IGNORE_WHITESPACE';
