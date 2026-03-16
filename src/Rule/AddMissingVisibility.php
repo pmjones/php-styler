@@ -22,7 +22,7 @@ use PhpStyler\Token\TSpace;
 use PhpStyler\Token\TStatic;
 use PhpStyler\Token\TVar;
 
-class AddPublicVisibility implements TokenRule
+class AddMissingVisibility implements TokenRule
 {
     /**
      * @param T[] $tokens

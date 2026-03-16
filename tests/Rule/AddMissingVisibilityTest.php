@@ -6,14 +6,14 @@ namespace PhpStyler\Rule;
 use PHPUnit\Framework\TestCase;
 use PhpStyler\Styler;
 
-class AddPublicVisibilityTest extends TestCase
+class AddMissingVisibilityTest extends TestCase
 {
     /**
      * @dataProvider provide
      */
     public function test(string $code, string $expect) : void
     {
-        $styler = new Styler(eol: "\n", rules: [new AddPublicVisibility()]);
+        $styler = new Styler(eol: "\n", rules: [new AddMissingVisibility()]);
         $actual = $styler($code);
         $this->assertSame($expect, $actual);
     }
