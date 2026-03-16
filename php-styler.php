@@ -10,6 +10,7 @@ use PhpStyler\Rule\NormalizeTrailingCommas;
 use PhpStyler\Rule\OrderImports;
 use PhpStyler\Rule\OrderModifiers;
 use PhpStyler\Rule\OrderTypes;
+use PhpStyler\Rule\RemoveUnusedImports;
 use PhpStyler\Token;
 
 return new Config(
@@ -22,6 +23,7 @@ return new Config(
         new ConvertLongArrayToShort(),
         new ConvertElseIf(),
         new ExpandImports(),
+        new RemoveUnusedImports(),
         new OrderImports(),
         new AddMissingVisibility(),
         new OrderModifiers(),
