@@ -20,9 +20,9 @@ class TDoubleQuoteTest extends TTestCase
                 [
                     TPhpOpeningTag::class,
                     TEcho::class,
-                    TDoubleQuote::class,
+                    TDoubleQuoteOpening::class,
                     TEncapsedVariable::class,
-                    TDoubleQuote::class,
+                    TDoubleQuoteClosing::class,
                     TEchoEndSemicolon::class,
                 ],
             ],

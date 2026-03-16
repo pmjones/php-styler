@@ -519,9 +519,9 @@ class Parser
     {
         return $this->atNesting(Token\TCurlyOpen::class)
             || $this->atNesting(Token\TDollarOpenCurlyBraces::class)
-            || $this->atNesting(Token\TDoubleQuote::class)
+            || $this->atNesting(Token\TDoubleQuoteOpening::class)
             || $this->atNesting(Token\THeredocStart::class)
-            || $this->atNesting(Token\TBacktick::class);
+            || $this->atNesting(Token\TBacktickOpening::class);
     }
 
     public function popTernaryNesting() : void

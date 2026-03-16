@@ -20,11 +20,11 @@ class TCurlyCloseTest extends TTestCase
                 [
                     TPhpOpeningTag::class,
                     TEcho::class,
-                    TDoubleQuote::class,
+                    TDoubleQuoteOpening::class,
                     TCurlyOpen::class,
                     TEncapsedVariable::class,
                     TCurlyClose::class,
-                    TDoubleQuote::class,
+                    TDoubleQuoteClosing::class,
                     TEchoEndSemicolon::class,
                 ],
             ],

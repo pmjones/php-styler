@@ -20,11 +20,11 @@ class TStringVarnameTest extends TTestCase
                 [
                     TPhpOpeningTag::class,
                     TEcho::class,
-                    TDoubleQuote::class,
+                    TDoubleQuoteOpening::class,
                     TDollarOpenCurlyBraces::class,
                     TStringVarname::class,
                     TDollarCloseCurlyBraces::class,
-                    TDoubleQuote::class,
+                    TDoubleQuoteClosing::class,
                     TEchoEndSemicolon::class,
                 ],
             ],

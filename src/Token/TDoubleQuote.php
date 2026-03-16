@@ -10,12 +10,10 @@ class TDoubleQuote extends T
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
-        if ($parser->atNesting(self::class)) {
-            $parser->noSpace();
-            $parser->closeNesting($source, self::class, self::class);
-            $parser->space();
+        if ($parser->atNesting(TDoubleQuoteOpening::class)) {
+            $parser->parse($source, TDoubleQuoteClosing::class);
         } else {
-            $parser->addNesting($source, self::class);
+            $parser->parse($source, TDoubleQuoteOpening::class);
         }
     }
 }

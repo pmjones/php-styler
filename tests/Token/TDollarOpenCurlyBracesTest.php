@@ -19,11 +19,11 @@ class TDollarOpenCurlyBracesTest extends TTestCase
                 CODE,
                 [
                     TPhpOpeningTag::class,
-                    TDoubleQuote::class,
+                    TDoubleQuoteOpening::class,
                     TDollarOpenCurlyBraces::class,
                     TStringVarname::class,
                     TDollarCloseCurlyBraces::class,
-                    TDoubleQuote::class,
+                    TDoubleQuoteClosing::class,
                     TSemicolon::class,
                 ],
             ],
