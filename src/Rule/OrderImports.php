@@ -12,11 +12,14 @@ use PhpStyler\Token\TUse;
 use PhpStyler\Token\TUseConst;
 use PhpStyler\Token\TUseEndSemicolon;
 use PhpStyler\Token\TUseFunction;
-use PhpStyler\Token\TUseTrait;
 use PhpStyler\Token\TWhitespaceEol;
 
 class OrderImports implements TokenRule
 {
+    /**
+     * @param T[] $tokens
+     * @return T[]
+     */
     public function apply(array $tokens) : array
     {
         $result = [];
@@ -93,12 +96,9 @@ class OrderImports implements TokenRule
 
     private function isUseKeyword(T $token) : bool
     {
-        return (
-            $token instanceof TUse
+        return $token instanceof TUse
             || $token instanceof TUseConst
-            || $token instanceof TUseFunction
-        )
-            && ! $token instanceof TUseTrait;
+            || $token instanceof TUseFunction;
     }
 
     private function isSeparator(T $token) : bool
@@ -108,7 +108,9 @@ class OrderImports implements TokenRule
             || $token instanceof TBlankLine;
     }
 
-    /** @param T[] $statement */
+    /**
+     * @param T[] $statement
+     */
     private function statementKind(array $statement) : int
     {
         foreach ($statement as $token) {
@@ -124,6 +126,9 @@ class OrderImports implements TokenRule
         return 0; // classlike
     }
 
+    /**
+     * @param array{kind: int, tokens: T[]} $statement
+     */
     private function sortKey(array $statement) : string
     {
         foreach ($statement['tokens'] as $token) {
@@ -137,7 +142,10 @@ class OrderImports implements TokenRule
         return '';
     }
 
-    /** @param array[] $block @param T[] &$result */
+    /**
+     * @param array{kind: int, tokens: T[]}[] $block
+     * @param T[] $result
+     */
     private function emitBlock(array $block, array &$result) : void
     {
         if (count($block) === 0) {

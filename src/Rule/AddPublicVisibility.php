@@ -24,6 +24,10 @@ use PhpStyler\Token\TVar;
 
 class AddPublicVisibility implements TokenRule
 {
+    /**
+     * @param T[] $tokens
+     * @return T[]
+     */
     public function apply(array $tokens) : array
     {
         $result = [];
@@ -74,7 +78,9 @@ class AddPublicVisibility implements TokenRule
         return $result;
     }
 
-    /** @param T[] $result */
+    /**
+     * @param T[] $result
+     */
     private function hasVisibilityBefore(array $result) : bool
     {
         for ($i = count($result) - 1; $i >= 0; $i --) {

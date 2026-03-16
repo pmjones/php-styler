@@ -16,7 +16,9 @@ use PhpStyler\Token\TVar;
 
 class OrderModifiers implements TokenRule
 {
-    /** @var array<class-string<T>, int> */
+    /**
+     * @var array<class-string<T>, int>
+     */
     private const PRIORITY = [
         TAbstract::class => 1,
         TFinal::class => 1,
@@ -28,6 +30,10 @@ class OrderModifiers implements TokenRule
         TReadonly::class => 4,
     ];
 
+    /**
+     * @param T[] $tokens
+     * @return T[]
+     */
     public function apply(array $tokens) : array
     {
         $result = [];

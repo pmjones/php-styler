@@ -26,6 +26,10 @@ use PhpStyler\Token\TUseOpeningBrace;
 
 class ExpandImports implements TokenRule
 {
+    /**
+     * @param T[] $tokens
+     * @return T[]
+     */
     public function apply(array $tokens) : array
     {
         $result = [];

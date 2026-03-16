@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Rule;
 
+use PhpStyler\Token\T;
 use PhpStyler\Token\TArgsClosingParen;
 use PhpStyler\Token\TArgsComma;
 use PhpStyler\Token\TArgsOpeningParen;
@@ -14,6 +15,10 @@ use PhpStyler\Token\TSpace;
 
 class ConvertListToArray implements TokenRule
 {
+    /**
+     * @param T[] $tokens
+     * @return T[]
+     */
     public function apply(array $tokens) : array
     {
         $result = [];
@@ -44,6 +49,11 @@ class ConvertListToArray implements TokenRule
                 );
                 $newOpener->argCount = $token->argCount;
                 $newOpener->parenDepth = $token->parenDepth;
+                if ($token->closingToken === null) {
+                    $result[] = $token;
+                    continue;
+                }
+
                 $closerOid = spl_object_id($token->closingToken);
                 $pendingClosers[$closerOid] = $newOpener;
                 $activeClosers[$closerOid] = true;

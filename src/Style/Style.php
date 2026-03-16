@@ -17,7 +17,9 @@ class Style
 
     public ?bool $blankLineAfter = null;
 
-    /** @var ?callable(string):string */
+    /**
+     * @var ?callable(string):string
+     */
     public mixed $case = null;
 
     /**

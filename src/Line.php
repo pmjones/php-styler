@@ -17,7 +17,9 @@ class Line
 
     public bool $forceExpand = false;
 
-    /** @param T[] $tokens */
+    /**
+     * @param T[] $tokens
+     */
     public function __construct(
         private array $tokens = [],
         public int $indent = 0,
@@ -45,7 +47,9 @@ class Line
         return $this->tokens !== [];
     }
 
-    /** @return T[] */
+    /**
+     * @return T[]
+     */
     public function getTokens() : array
     {
         return $this->tokens;
@@ -61,7 +65,9 @@ class Line
         return $this->isExpanded ? $this->indent : $this->indent + 1;
     }
 
-    /** @return array<int, T> */
+    /**
+     * @return array<int, T>
+     */
     public function getTopLevelTokens() : array
     {
         $tokens = $this->tokens;
@@ -243,7 +249,9 @@ class Line
         return null;
     }
 
-    /** @return array{int, int, int}|null */
+    /**
+     * @return ?array{int, int, int}
+     */
     public function findConditionPair() : ?array
     {
         foreach ($this->tokens as $i => $token) {
@@ -263,7 +271,9 @@ class Line
         return null;
     }
 
-    /** @return array{int, int, int}|null */
+    /**
+     * @return ?array{int, int, int}
+     */
     public function findBestPair() : ?array
     {
         $tokens = $this->tokens;
@@ -309,7 +319,9 @@ class Line
         return $pairs[0];
     }
 
-    /** @return list<array{positions: int[], continuation: bool}> */
+    /**
+     * @return list<array{positions: int[], continuation: bool}>
+     */
     public function collectSplitGroups() : array
     {
         $tokens = $this->tokens;

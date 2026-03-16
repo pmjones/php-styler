@@ -15,10 +15,14 @@ class Styler
 
     private Splitter $splitter;
 
-    /** @var TokenRule[] */
+    /**
+     * @var TokenRule[]
+     */
     private array $tokenRules = [];
 
-    /** @var LineRule[] */
+    /**
+     * @var LineRule[]
+     */
     private array $lineRules = [];
 
     public static function fromConfig(Config $config) : self

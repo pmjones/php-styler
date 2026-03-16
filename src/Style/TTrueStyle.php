@@ -5,6 +5,8 @@ namespace PhpStyler\Style;
 
 class TTrueStyle extends Style
 {
-    /** @var ?callable(string): string */
+    /**
+     * @var ?callable(string): string
+     */
     public mixed $case = 'strtolower';
 }

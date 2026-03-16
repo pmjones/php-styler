@@ -75,7 +75,9 @@ class Splitter
         return $lines;
     }
 
-    /** @return Line[]|null */
+    /**
+     * @return ?Line[]
+     */
     private function trySplit(Line $line) : ?array
     {
         // For condition parens, split at the paren before trying operator splits
@@ -106,7 +108,9 @@ class Splitter
         return $this->splitAtParens($line);
     }
 
-    /** @param T[] $tokens */
+    /**
+     * @param T[] $tokens
+     */
     private function positionPastTrailingComment(array $tokens, int $pos) : int
     {
         $peek = $pos;
@@ -131,7 +135,7 @@ class Splitter
      * With continuation=false, all segments keep original indent.
      *
      * @param int[] $positions
-     * @return Line[]|null
+     * @return ?Line[]
      */
     private function splitAtPositions(
         Line $line,
@@ -180,8 +184,8 @@ class Splitter
     }
 
     /**
-     * @param array{int, int, int}|null $pair
-     * @return Line[]|null
+     * @param ?array{int, int, int} $pair
+     * @return ?Line[]
      */
     private function splitAtParens(Line $line, ?array $pair = null) : ?array
     {

@@ -10,7 +10,9 @@ use PhpStyler\Token\TLineBreak;
 
 class Assembler
 {
-    /** @var Line[] */
+    /**
+     * @var Line[]
+     */
     private array $lines = [];
 
     private int $indent = 0;

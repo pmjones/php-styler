@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Rule;
 
+use PhpStyler\Token\T;
 use PhpStyler\Token\TElse;
 use PhpStyler\Token\TElseif;
 use PhpStyler\Token\TIf;
@@ -10,6 +11,10 @@ use PhpStyler\Token\TSpace;
 
 class ConvertElseIf implements TokenRule
 {
+    /**
+     * @param T[] $tokens
+     * @return T[]
+     */
     public function apply(array $tokens) : array
     {
         $result = [];

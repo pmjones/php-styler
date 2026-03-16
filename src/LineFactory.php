@@ -17,7 +17,9 @@ class LineFactory
         $this->indentStr = $indentTab ? "\t" : str_repeat(' ', $indentLen);
     }
 
-    /** @param T[] $tokens */
+    /**
+     * @param T[] $tokens
+     */
     public function new(array $tokens = [], int $indent = 0) : Line
     {
         return new Line($tokens, $indent, $this->indentStr, $this->indentLen);

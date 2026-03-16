@@ -7,6 +7,9 @@ use PhpStyler\Line;
 
 interface LineRule
 {
-    /** @param Line[] $lines @return Line[] */
+    /**
+     * @param Line[] $lines
+     * @return Line[]
+     */
     public function apply(array $lines) : array;
 }

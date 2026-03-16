@@ -55,7 +55,9 @@ abstract class T extends PhpToken
         return $this->rejoinOrphanBefore;
     }
 
-    /** @phpstan-assert-if-true T $this->closingToken */
+    /**
+     * @phpstan-assert-if-true T $this->closingToken
+     */
     public function isOpener() : bool
     {
         return ($this->text === '(' || $this->text === '[')

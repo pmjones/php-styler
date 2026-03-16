@@ -7,7 +7,9 @@ use PhpStyler\Token\T;
 
 class StyleLocator
 {
-    /** @var array<class-string<T>, Style> */
+    /**
+     * @var array<class-string<T>, Style>
+     */
     private array $instances = [];
 
     /**
