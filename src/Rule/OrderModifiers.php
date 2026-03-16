@@ -39,7 +39,7 @@ class OrderModifiers implements TokenRule
 
             if (! $this->isModifier($token)) {
                 $result[] = $token;
-                $i++;
+                $i ++;
                 continue;
             }
 
@@ -47,13 +47,17 @@ class OrderModifiers implements TokenRule
             $groupStart = $i;
             $modifiers = [];
             $modifiers[] = $token;
-            $i++;
+            $i ++;
 
             while ($i < $count) {
-                if ($tokens[$i] instanceof TSpace && isset($tokens[$i + 1]) && $this->isModifier($tokens[$i + 1])) {
-                    $i++; // skip TSpace
+                if (
+                    $tokens[$i] instanceof TSpace
+                    && isset($tokens[$i + 1])
+                    && $this->isModifier($tokens[$i + 1])
+                ) {
+                    $i ++; // skip TSpace
                     $modifiers[] = $tokens[$i];
-                    $i++;
+                    $i ++;
                 } else {
                     break;
                 }
@@ -62,7 +66,12 @@ class OrderModifiers implements TokenRule
             // convert var to public
             foreach ($modifiers as $idx => $mod) {
                 if ($mod instanceof TVar) {
-                    $modifiers[$idx] = new TPublic(T_PUBLIC, 'public', $mod->line, $mod->pos);
+                    $modifiers[$idx] = new TPublic(
+                        T_PUBLIC,
+                        'public',
+                        $mod->line,
+                        $mod->pos,
+                    );
                 }
             }
 
@@ -82,8 +91,12 @@ class OrderModifiers implements TokenRule
             // check if already in correct order
             $alreadySorted = true;
 
-            for ($k = 1; $k < count($modifiers); $k++) {
-                if ($this->priority($modifiers[$k]) < $this->priority($modifiers[$k - 1])) {
+            for ($k = 1; $k < count($modifiers); $k ++) {
+                if (
+                    $this
+                    ->priority($modifiers[$k]) < $this
+                    ->priority($modifiers[$k - 1])
+                ) {
                     $alreadySorted = false;
                     break;
                 }
@@ -103,7 +116,11 @@ class OrderModifiers implements TokenRule
             }
 
             // sort by canonical priority (stable sort)
-            usort($modifiers, fn (T $a, T $b) => $this->priority($a) <=> $this->priority($b));
+            usort(
+                $modifiers,
+                fn (T $a, T $b)
+                    => $this->priority($a) <=> $this->priority($b),
+            );
 
             // rebuild: modifier, space, modifier, space, ...
             foreach ($modifiers as $idx => $mod) {

@@ -18,19 +18,24 @@ class ConvertLongArrayToShort implements TokenRule
         $count = count($tokens);
         $pendingClosers = [];
 
-        for ($i = 0; $i < $count; $i++) {
+        for ($i = 0; $i < $count; $i ++) {
             $token = $tokens[$i];
 
             if ($token instanceof TArrayConstruct) {
                 if (isset($tokens[$i + 1]) && $tokens[$i + 1] instanceof TSpace) {
-                    $i++;
+                    $i ++;
                 }
 
                 continue;
             }
 
             if ($token instanceof TArrayConstructOpeningParen) {
-                $newOpener = new TArrayOpeningBracket(ord('['), '[', $token->line, $token->pos);
+                $newOpener = new TArrayOpeningBracket(
+                    ord('['),
+                    '[',
+                    $token->line,
+                    $token->pos,
+                );
                 $newOpener->argCount = $token->argCount;
                 $newOpener->parenDepth = $token->parenDepth;
                 $pendingClosers[spl_object_id($token->closingToken)] = $newOpener;
@@ -39,7 +44,12 @@ class ConvertLongArrayToShort implements TokenRule
             }
 
             if ($token instanceof TArrayConstructClosingParen) {
-                $newCloser = new TArrayClosingBracket(ord(']'), ']', $token->line, $token->pos);
+                $newCloser = new TArrayClosingBracket(
+                    ord(']'),
+                    ']',
+                    $token->line,
+                    $token->pos,
+                );
                 $newCloser->parenDepth = $token->parenDepth;
                 $oid = spl_object_id($token);
 

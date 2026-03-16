@@ -5,8 +5,8 @@ namespace PhpStyler\Command;
 
 use AutoShell\Help;
 use PhpStyler\Config;
+use PhpStyler\Exception;
 use PhpStyler\Styler;
-use PhpParser\Error;
 
 #[Help("Checks if any of the configured files need styling.")]
 class Check extends Command
@@ -29,7 +29,7 @@ class Check extends Command
         // apply styling
         try {
             $count = $this->checkStyle($config);
-        } catch (Error $e) {
+        } catch (Exception $e) {
             echo $e->getMessage() . PHP_EOL;
             return 1;
         }

@@ -26,7 +26,11 @@ class StyleTest extends TestCase
      */
     public function test(?StyleLocator $styles, string $code, string $expect) : void
     {
-        $styler = new Styler(eol: "\n", styles: $styles, rules: [new NormalizeTrailingCommas()]);
+        $styler = new Styler(
+            eol: "\n",
+            styles: $styles,
+            rules: [new NormalizeTrailingCommas()],
+        );
         $actual = $styler($code);
         $this->assertSame($expect, $actual);
     }

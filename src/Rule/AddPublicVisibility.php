@@ -53,9 +53,17 @@ class AddPublicVisibility implements TokenRule
             // insert public if needed
             $atClassBody = $structureStack !== [] && end($structureStack) === true;
 
-            if ($atClassBody && ($token instanceof TFunction || $token instanceof TConst)) {
+            if (
+                $atClassBody
+                && ($token instanceof TFunction || $token instanceof TConst)
+            ) {
                 if (! $this->hasVisibilityBefore($result)) {
-                    $result[] = new TPublic(T_PUBLIC, 'public', $token->line, $token->pos);
+                    $result[] = new TPublic(
+                        T_PUBLIC,
+                        'public',
+                        $token->line,
+                        $token->pos,
+                    );
                     $result[] = new TSpace(T::SYNTHETIC, ' ');
                 }
             }
@@ -69,7 +77,7 @@ class AddPublicVisibility implements TokenRule
     /** @param T[] $result */
     private function hasVisibilityBefore(array $result) : bool
     {
-        for ($i = count($result) - 1; $i >= 0; $i--) {
+        for ($i = count($result) - 1; $i >= 0; $i --) {
             $prev = $result[$i];
 
             if (

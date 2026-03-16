@@ -15,7 +15,7 @@ class ConvertElseIf implements TokenRule
         $result = [];
         $count = count($tokens);
 
-        for ($i = 0; $i < $count; $i++) {
+        for ($i = 0; $i < $count; $i ++) {
             $token = $tokens[$i];
 
             if (

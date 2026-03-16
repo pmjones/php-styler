@@ -5,9 +5,9 @@ namespace PhpStyler\Command;
 
 use AutoShell\Help;
 use PhpStyler\Config;
-use PhpStyler\Styler;
-use PhpParser\Error;
+use PhpStyler\Exception;
 use PhpStyler\Files;
+use PhpStyler\Styler;
 
 #[Help("Applies styling to the configured files, rewriting them in place.")]
 class Apply extends Command
@@ -39,7 +39,7 @@ class Apply extends Command
         // apply styling
         try {
             $count = $this->applyStyle($config, $paths, $cacheTime);
-        } catch (Error $e) {
+        } catch (Exception $e) {
             echo $e->getMessage() . PHP_EOL;
             return 1;
         }

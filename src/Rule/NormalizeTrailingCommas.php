@@ -5,8 +5,8 @@ namespace PhpStyler\Rule;
 
 use PhpStyler\Line;
 use PhpStyler\Token\T;
-use PhpStyler\Token\TCommentary;
 use PhpStyler\Token\TCommaSeparated;
+use PhpStyler\Token\TCommentary;
 use PhpStyler\Token\TSpace;
 use PhpStyler\Token\TSplit;
 use PhpStyler\Token\TSplittableComma;

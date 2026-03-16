@@ -28,7 +28,7 @@ class OrderImports implements TokenRule
 
             if (! $this->isUseKeyword($token)) {
                 $result[] = $token;
-                $i++;
+                $i ++;
                 continue;
             }
 
@@ -36,7 +36,7 @@ class OrderImports implements TokenRule
             $block = []; // array of statements, each is [kind, tokens[]]
             $currentStatement = [$token];
 
-            $i++;
+            $i ++;
 
             while ($i < $count) {
                 $token = $tokens[$i];
@@ -48,20 +48,20 @@ class OrderImports implements TokenRule
                         'tokens' => $currentStatement,
                     ];
                     $currentStatement = [];
-                    $i++;
+                    $i ++;
 
                     // now consume separator tokens between statements
                     $separators = [];
 
                     while ($i < $count && $this->isSeparator($tokens[$i])) {
                         $separators[] = $tokens[$i];
-                        $i++;
+                        $i ++;
                     }
 
                     // check if next token starts another use statement
                     if ($i < $count && $this->isUseKeyword($tokens[$i])) {
                         $currentStatement = [$tokens[$i]];
-                        $i++;
+                        $i ++;
                         continue;
                     }
 
@@ -77,7 +77,7 @@ class OrderImports implements TokenRule
                 }
 
                 $currentStatement[] = $token;
-                $i++;
+                $i ++;
             }
 
             // handle edge case: unclosed statement at end of tokens
@@ -93,9 +93,11 @@ class OrderImports implements TokenRule
 
     private function isUseKeyword(T $token) : bool
     {
-        return ($token instanceof TUse
+        return (
+            $token instanceof TUse
             || $token instanceof TUseConst
-            || $token instanceof TUseFunction)
+            || $token instanceof TUseFunction
+        )
             && ! $token instanceof TUseTrait;
     }
 
@@ -125,7 +127,9 @@ class OrderImports implements TokenRule
     private function sortKey(array $statement) : string
     {
         foreach ($statement['tokens'] as $token) {
-            if ($token instanceof TQualifiedName || $token instanceof TUnqualifiedName) {
+            if (
+                $token instanceof TQualifiedName || $token instanceof TUnqualifiedName
+            ) {
                 return strtolower($token->text);
             }
         }
@@ -141,15 +145,18 @@ class OrderImports implements TokenRule
         }
 
         // sort by kind, then alphabetically within kind
-        usort($block, function (array $a, array $b) : int {
-            $kindCmp = $a['kind'] <=> $b['kind'];
+        usort(
+            $block,
+            function (array $a, array $b) : int {
+                $kindCmp = $a['kind'] <=> $b['kind'];
 
-            if ($kindCmp !== 0) {
-                return $kindCmp;
-            }
+                if ($kindCmp !== 0) {
+                    return $kindCmp;
+                }
 
-            return strcasecmp($this->sortKey($a), $this->sortKey($b));
-        });
+                return strcasecmp($this->sortKey($a), $this->sortKey($b));
+            },
+        );
 
         // use the first token for synthetic positioning
         $firstToken = $block[0]['tokens'][0];

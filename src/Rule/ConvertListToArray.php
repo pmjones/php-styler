@@ -22,12 +22,12 @@ class ConvertListToArray implements TokenRule
         $pendingClosers = [];
         $activeClosers = [];
 
-        for ($i = 0; $i < $count; $i++) {
+        for ($i = 0; $i < $count; $i ++) {
             $token = $tokens[$i];
 
             if ($token instanceof TList) {
                 if (isset($tokens[$i + 1]) && $tokens[$i + 1] instanceof TSpace) {
-                    $i++;
+                    $i ++;
                 }
 
                 $expectOpener = true;
@@ -36,7 +36,12 @@ class ConvertListToArray implements TokenRule
 
             if ($expectOpener && $token instanceof TArgsOpeningParen) {
                 $expectOpener = false;
-                $newOpener = new TArrayOpeningBracket(ord('['), '[', $token->line, $token->pos);
+                $newOpener = new TArrayOpeningBracket(
+                    ord('['),
+                    '[',
+                    $token->line,
+                    $token->pos,
+                );
                 $newOpener->argCount = $token->argCount;
                 $newOpener->parenDepth = $token->parenDepth;
                 $closerOid = spl_object_id($token->closingToken);
@@ -52,7 +57,12 @@ class ConvertListToArray implements TokenRule
                 $oid = spl_object_id($token);
 
                 if (isset($activeClosers[$oid])) {
-                    $newCloser = new TArrayClosingBracket(ord(']'), ']', $token->line, $token->pos);
+                    $newCloser = new TArrayClosingBracket(
+                        ord(']'),
+                        ']',
+                        $token->line,
+                        $token->pos,
+                    );
                     $newCloser->parenDepth = $token->parenDepth;
 
                     if (isset($pendingClosers[$oid])) {
@@ -68,7 +78,7 @@ class ConvertListToArray implements TokenRule
                 }
             }
 
-            if ($token instanceof TArgsComma && !empty($activeClosers)) {
+            if ($token instanceof TArgsComma && ! empty($activeClosers)) {
                 $result[] = new TArrayComma(ord(','), ',', $token->line, $token->pos);
                 continue;
             }

@@ -576,5 +576,4 @@ class Splitter
 
         return array_values($lines);
     }
-
 }

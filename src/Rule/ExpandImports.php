@@ -41,7 +41,7 @@ class ExpandImports implements TokenRule
                 && ! $token instanceof TUseConstOpeningBrace
             ) {
                 $result[] = $token;
-                $i++;
+                $i ++;
                 continue;
             }
 
@@ -61,7 +61,7 @@ class ExpandImports implements TokenRule
             $usePos = null;
             $prefix = '';
 
-            for ($b = $openingBracePos - 1; $b >= 0; $b--) {
+            for ($b = $openingBracePos - 1; $b >= 0; $b --) {
                 $backToken = $result[$b] ?? null;
 
                 if ($backToken === null) {
@@ -80,7 +80,7 @@ class ExpandImports implements TokenRule
 
             if ($usePos === null) {
                 $result[] = $token;
-                $i++;
+                $i ++;
                 continue;
             }
 
@@ -88,7 +88,7 @@ class ExpandImports implements TokenRule
             // excluding TUse, TSpace, TSplit, and TNamespaceSeparator at the end)
             $prefixParts = [];
 
-            for ($b = $usePos + 1; $b < count($result); $b++) {
+            for ($b = $usePos + 1; $b < count($result); $b ++) {
                 $backToken = $result[$b];
 
                 if ($backToken instanceof TSpace || $backToken instanceof TSplit) {
@@ -101,7 +101,10 @@ class ExpandImports implements TokenRule
                     continue;
                 }
 
-                if ($backToken instanceof TQualifiedName || $backToken instanceof TUnqualifiedName) {
+                if (
+                    $backToken instanceof TQualifiedName
+                    || $backToken instanceof TUnqualifiedName
+                ) {
                     $prefixParts[] = $backToken->text;
                 }
             }
@@ -122,7 +125,7 @@ class ExpandImports implements TokenRule
             $closingBracePos = null;
             $semicolonPos = null;
 
-            for ($j = $openingBracePos + 1; $j < $count; $j++) {
+            for ($j = $openingBracePos + 1; $j < $count; $j ++) {
                 if ($tokens[$j] instanceof $closingBraceClass) {
                     $closingBracePos = $j;
                     break;
@@ -131,25 +134,27 @@ class ExpandImports implements TokenRule
 
             if ($closingBracePos === null) {
                 // malformed, restore and continue
-                for ($b = $usePos; $b <= $openingBracePos; $b++) {
+                for ($b = $usePos; $b <= $openingBracePos; $b ++) {
                     if ($b < $openingBracePos) {
                         $result[] = $tokens[$b] ?? $token; // approximate
                     }
                 }
 
                 $result[] = $token;
-                $i++;
+                $i ++;
                 continue;
             }
 
             // find the semicolon after the closing brace
-            for ($j = $closingBracePos + 1; $j < $count; $j++) {
+            for ($j = $closingBracePos + 1; $j < $count; $j ++) {
                 if ($tokens[$j] instanceof TUseEndSemicolon) {
                     $semicolonPos = $j;
                     break;
                 }
 
-                if (! $tokens[$j] instanceof TSpace && ! $tokens[$j] instanceof TSplit) {
+                if (
+                    ! $tokens[$j] instanceof TSpace && ! $tokens[$j] instanceof TSplit
+                ) {
                     break;
                 }
             }
@@ -162,7 +167,7 @@ class ExpandImports implements TokenRule
             $segments = [];
             $currentSegment = [];
 
-            for ($j = $openingBracePos + 1; $j < $closingBracePos; $j++) {
+            for ($j = $openingBracePos + 1; $j < $closingBracePos; $j ++) {
                 $innerToken = $tokens[$j];
 
                 if ($innerToken instanceof TUseComma) {
@@ -226,7 +231,12 @@ class ExpandImports implements TokenRule
                 }
 
                 $fullName = $prefix . $segmentName;
-                $result[] = new TQualifiedName(T_NAME_QUALIFIED, $fullName, $line, $pos);
+                $result[] = new TQualifiedName(
+                    T_NAME_QUALIFIED,
+                    $fullName,
+                    $line,
+                    $pos,
+                );
 
                 // check for alias
                 foreach ($segment as $idx => $segToken) {
@@ -235,10 +245,15 @@ class ExpandImports implements TokenRule
                         $result[] = new TUseAs(T_AS, 'as', $line, $pos);
 
                         // find the alias token after TUseAs
-                        for ($a = $idx + 1; $a < count($segment); $a++) {
+                        for ($a = $idx + 1; $a < count($segment); $a ++) {
                             if ($segment[$a] instanceof TUseAlias) {
                                 $result[] = new TSpace(T::SYNTHETIC, ' ', $line, $pos);
-                                $result[] = new TUseAlias(T_STRING, $segment[$a]->text, $line, $pos);
+                                $result[] = new TUseAlias(
+                                    T_STRING,
+                                    $segment[$a]->text,
+                                    $line,
+                                    $pos,
+                                );
                                 break;
                             }
                         }

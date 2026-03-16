@@ -3,9 +3,6 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
-use PhpParser\ParserFactory;
-use PhpParser\NodeTraverser;
-
 abstract class TestCase extends \PHPUnit\Framework\TestCase
 {
     protected Styler $styler;
