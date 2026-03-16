@@ -12,8 +12,6 @@ class TClassClosingBrace extends TClasslikeClosingBrace
     {
         $parser->removeTrailingBlankLine();
         $parser->indentDecr();
-        $parser->noSpace();
         $parser->closeNesting($source, self::class, TClass::class);
-        $parser->space();
     }
 }

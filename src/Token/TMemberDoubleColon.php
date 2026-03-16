@@ -15,9 +15,4 @@ class TMemberDoubleColon extends T implements TSplittableFluent
             : new TSplitStaticMethodCall(T::SYNTHETIC, '');
     }
 
-    public static function parse(Parser $parser, PhpToken $source) : void
-    {
-        $parser->noSpace();
-        $parser->add($source, static::class);
-    }
 }

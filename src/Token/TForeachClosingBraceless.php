@@ -12,8 +12,6 @@ class TForeachClosingBraceless extends T implements TClosingStructure
     {
         $parser->popNesting(TForeach::class);
         $parser->indentDecr();
-        $parser->noSpace();
         $parser->add($source, self::class);
-        $parser->space();
     }
 }

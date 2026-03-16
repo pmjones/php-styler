@@ -10,9 +10,7 @@ class TAttributeClosingBracket extends T
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
-        $parser->noSpace();
         $token = $parser->closeNesting($source, self::class, TAttribute::class);
-        $parser->space();
 
         if (
             ! $parser->atNesting(TParamsOpeningParen::class)

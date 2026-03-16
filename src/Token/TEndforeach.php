@@ -22,6 +22,5 @@ class TEndforeach extends T implements TClosingStructure
         $parser->popNesting(TForeach::class);
         $parser->indentDecr();
         $parser->add($source, self::class);
-        $parser->space();
     }
 }

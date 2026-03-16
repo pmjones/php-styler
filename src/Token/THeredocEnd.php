@@ -19,6 +19,5 @@ class THeredocEnd extends T
     {
         $parser->popNesting(THeredocStart::class);
         $parser->add($source, self::class);
-        $parser->space();
     }
 }

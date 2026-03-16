@@ -5,7 +5,7 @@ namespace PhpStyler\Style;
 
 class TPhpOpeningTagInlineStyle extends Style
 {
-    public ?bool $spaceBefore = true;
+    public ?bool $spaceBefore = false;
 
     public ?bool $spaceAfter = true;
 }

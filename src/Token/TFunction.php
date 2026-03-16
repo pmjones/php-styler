@@ -20,7 +20,6 @@ class TFunction extends T
         if ($parser->atNesting(TUse::class)) {
             $parser->popNesting(TUse::class);
             $parser->addNesting($source, TUseFunction::class);
-            $parser->space();
             return;
         }
 
@@ -30,6 +29,5 @@ class TFunction extends T
         }
 
         $parser->addNesting($source, self::class);
-        $parser->space();
     }
 }

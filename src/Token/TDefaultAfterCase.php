@@ -12,6 +12,5 @@ class TDefaultAfterCase extends T
     {
         $parser->indentDecr();
         $parser->addNesting($source, self::class);
-        $parser->space();
     }
 }

@@ -35,6 +35,5 @@ class TEndswitch extends T implements TClosingStructure
         $parser->popNesting(TSwitch::class);
         $parser->indentDecr();
         $parser->add($source, $closesCase ? TEndswitchAfterCase::class : self::class);
-        $parser->space();
     }
 }

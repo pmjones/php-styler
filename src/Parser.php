@@ -193,7 +193,9 @@ class Parser
         $this->removePrevWhitespace();
         $style = $this->getStyle($parseClass);
 
-        if ($style->spaceBefore === false) {
+        if ($style->spaceBefore === true) {
+            $this->space();
+        } elseif ($style->spaceBefore === false) {
             $this->noSpace();
         }
 

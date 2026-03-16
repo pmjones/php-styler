@@ -35,11 +35,6 @@ class TAmpersandNotFollowedByVarOrVararg extends T
             default => TBitwiseAnd::class,
         };
 
-        if ($class === TIntersection::class || $class === TReference::class) {
-            $parser->add($source, $class);
-        } else {
-            $parser->add($source, $class);
-            $parser->space();
-        }
+        $parser->add($source, $class);
     }
 }

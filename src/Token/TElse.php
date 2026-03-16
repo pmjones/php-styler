@@ -27,12 +27,10 @@ class TElse extends T
 
         if ($parser->getNextSource()?->is(T_IF)) {
             $parser->add($source, self::class);
-            $parser->space();
             return;
         }
 
         $parser->addNesting($source, self::class);
-        $parser->space();
 
         if (! $parser->getNextSource()?->is(['{', ':'])) {
             $parser->parse($source, TOpeningBraceless::class);

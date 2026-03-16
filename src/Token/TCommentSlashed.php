@@ -19,7 +19,6 @@ class TCommentSlashed extends T implements TDocblock
         }
 
         $parser->add($source, TCommentSlashedMidStatement::class);
-        $parser->space();
     }
 
     public function getDocblock() : Docblock

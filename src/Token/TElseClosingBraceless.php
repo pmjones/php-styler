@@ -12,8 +12,6 @@ class TElseClosingBraceless extends T implements TClosingStructure
     {
         $parser->popNesting(TElse::class);
         $parser->indentDecr();
-        $parser->noSpace();
         $parser->add($source, self::class);
-        $parser->space();
     }
 }

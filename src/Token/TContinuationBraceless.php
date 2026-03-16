@@ -12,7 +12,6 @@ class TContinuationBraceless extends T
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->add($source, TSemicolon::class);
-        $parser->space();
         $parser->popNesting(TOpeningBraceless::class);
 
         $nesting = $parser->getNesting();

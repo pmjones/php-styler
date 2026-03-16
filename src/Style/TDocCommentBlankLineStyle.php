@@ -1,0 +1,11 @@
+<?php
+declare(strict_types=1);
+
+namespace PhpStyler\Style;
+
+class TDocCommentBlankLineStyle extends Style
+{
+    public ?bool $spaceBefore = true;
+
+    public ?bool $blankLineAfter = true;
+}

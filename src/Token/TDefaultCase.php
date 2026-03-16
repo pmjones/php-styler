@@ -23,6 +23,5 @@ class TDefaultCase extends T
         }
 
         $parser->addNesting($source, self::class);
-        $parser->space();
     }
 }

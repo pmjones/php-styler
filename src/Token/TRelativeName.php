@@ -30,11 +30,9 @@ class TRelativeName extends T
             && ! $parser->atNesting(TAttribute::class)
         ) {
             $parser->add($source, TFunctionCallRelative::class);
-            $parser->space();
             return;
         }
 
         $parser->add($source, self::class);
-        $parser->space();
     }
 }

@@ -24,10 +24,6 @@ class TAssign extends T
             default => self::class,
         };
 
-        if ($parseClass === TAssignDirective::class) {
-            $parser->noSpace();
-        }
-
         $parser->add($source, $parseClass);
     }
 }

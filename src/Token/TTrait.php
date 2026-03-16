@@ -18,6 +18,5 @@ class TTrait extends T
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->addNesting($source, self::class);
-        $parser->space();
     }
 }

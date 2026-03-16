@@ -22,6 +22,5 @@ class TEndwhile extends T implements TClosingStructure
         $parser->popNesting(TWhile::class);
         $parser->indentDecr();
         $parser->add($source, self::class);
-        $parser->space();
     }
 }

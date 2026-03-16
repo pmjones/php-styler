@@ -27,7 +27,6 @@ class TDocComment extends T implements TDocblock
             || ! $parser->hasNextEol()
         ) {
             $parser->add($source, TDocCommentMidStatement::class);
-            $parser->space();
             return;
         }
 

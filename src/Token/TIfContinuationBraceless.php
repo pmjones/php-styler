@@ -13,6 +13,5 @@ class TIfContinuationBraceless extends T implements TClosingStructure
         $parser->popNesting(TIf::class);
         $parser->indentDecr();
         $parser->add($source, self::class);
-        $parser->space();
     }
 }

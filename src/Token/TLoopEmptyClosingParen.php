@@ -11,7 +11,6 @@ class TLoopEmptyClosingParen extends T
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->closeNesting($source, self::class, TForOpeningParen::class);
-        $parser->space();
 
         if (! $parser->getNextSource()?->is(['{', ':', ';'])) {
             $parser->parse($source, TOpeningBraceless::class);

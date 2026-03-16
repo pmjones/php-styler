@@ -32,10 +32,6 @@ class TPhpOpeningTag extends T
 
         $parser->add($openTagToken, $class);
 
-        if ($eol) {
-            $parser->lineBreak();
-        }
-
         $whitespace = substr($source->text, strlen($trimmed));
 
         if ($whitespace === '') {

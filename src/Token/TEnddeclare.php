@@ -22,6 +22,5 @@ class TEnddeclare extends T implements TClosingStructure
         $parser->popNesting(TDeclare::class);
         $parser->indentDecr();
         $parser->add($source, self::class);
-        $parser->space();
     }
 }

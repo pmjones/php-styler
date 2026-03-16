@@ -12,8 +12,6 @@ class TEnumClosingBrace extends TClasslikeClosingBrace
     {
         $parser->removeTrailingBlankLine();
         $parser->indentDecr();
-        $parser->noSpace();
         $parser->closeNesting($source, self::class, TEnum::class);
-        $parser->space();
     }
 }

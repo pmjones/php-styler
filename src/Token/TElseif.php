@@ -26,6 +26,5 @@ class TElseif extends T
         }
 
         $parser->addNesting($source, self::class);
-        $parser->space();
     }
 }

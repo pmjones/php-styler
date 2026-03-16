@@ -12,8 +12,6 @@ class TElseifClosingBraceless extends T implements TClosingStructure
     {
         $parser->popNesting(TElseif::class);
         $parser->indentDecr();
-        $parser->noSpace();
         $parser->add($source, self::class);
-        $parser->space();
     }
 }

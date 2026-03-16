@@ -41,10 +41,6 @@ class TPipe extends T
         };
 
         $parser->add($source, $class);
-
-        if ($class !== TUnion::class) {
-            $parser->space();
-        }
     }
 
     private static function isTypeContext(Parser $parser) : bool

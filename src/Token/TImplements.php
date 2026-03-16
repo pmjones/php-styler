@@ -18,7 +18,6 @@ class TImplements extends T
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->add($source, static::class);
-        $parser->space();
         $parser->addSplit(new TSplitListComma(T::SYNTHETIC, ''));
     }
 }

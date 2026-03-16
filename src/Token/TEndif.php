@@ -22,6 +22,5 @@ class TEndif extends T implements TClosingStructure
         $parser->popNesting(TIf::class, TElse::class, TElseif::class);
         $parser->indentDecr();
         $parser->add($source, self::class);
-        $parser->space();
     }
 }

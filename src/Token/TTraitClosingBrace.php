@@ -12,8 +12,6 @@ class TTraitClosingBrace extends TClasslikeClosingBrace
     {
         $parser->removeTrailingBlankLine();
         $parser->indentDecr();
-        $parser->noSpace();
         $parser->closeNesting($source, self::class, TTrait::class);
-        $parser->space();
     }
 }

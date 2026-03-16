@@ -10,7 +10,6 @@ class TDeclareDirectivesOpeningParen extends T
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
-        $parser->noSpace();
         $parser->addNesting($source, self::class);
     }
 }

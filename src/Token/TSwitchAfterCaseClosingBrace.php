@@ -13,8 +13,6 @@ class TSwitchAfterCaseClosingBrace extends T implements TClosingStructure
         $parser->removeTrailingBlankLine();
         $parser->indentDecr();
         $parser->indentDecr();
-        $parser->noSpace();
         $parser->closeNesting($source, self::class, TSwitch::class);
-        $parser->space();
     }
 }

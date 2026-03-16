@@ -22,6 +22,5 @@ class TEndfor extends T implements TClosingStructure
         $parser->popNesting(TFor::class);
         $parser->indentDecr();
         $parser->add($source, self::class);
-        $parser->space();
     }
 }

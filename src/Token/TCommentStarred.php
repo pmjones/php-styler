@@ -16,7 +16,6 @@ class TCommentStarred extends T implements TDocblock
     {
         if (! $parser->hasPrevLineBreak() || ! $parser->hasNextEol()) {
             $parser->add($source, TCommentStarredMidStatement::class);
-            $parser->space();
             return;
         }
 

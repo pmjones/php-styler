@@ -22,7 +22,6 @@ class TString extends T
 
         if ($text === 'string') {
             $parser->add($source, static::class);
-            $parser->space();
             return;
         }
 
@@ -64,7 +63,6 @@ class TString extends T
 
         if ($classlikeName !== null) {
             $parser->add($source, $classlikeName);
-            $parser->space();
             return;
         }
 
@@ -96,7 +94,6 @@ class TString extends T
             || $prev instanceof TInsteadofComma
         ) {
             $parser->add($source, TUnqualifiedName::class);
-            $parser->space();
             return;
         }
 
@@ -114,12 +111,6 @@ class TString extends T
 
         if ($nestingAddClass) {
             $parser->add($source, $nestingAddClass);
-
-            if ($nestingAddClass === TFunctionName::class) {
-            } else {
-                $parser->space();
-            }
-
             return;
         }
 
@@ -146,19 +137,16 @@ class TString extends T
 
         if ($prevAddClass) {
             $parser->add($source, $prevAddClass);
-            $parser->space();
             return;
         }
 
         if ($prev instanceof TUseComma || $prev instanceof TUseOpeningBrace) {
             $parser->add($source, TUnqualifiedName::class);
-            $parser->space();
             return;
         }
 
         if ($parser->getNextSource()?->is(T_DOUBLE_COLON)) {
             $parser->add($source, TUnqualifiedName::class);
-            $parser->space();
             return;
         }
 
@@ -167,13 +155,11 @@ class TString extends T
             && $parser->atNesting(TArgsOpeningParen::class)
         ) {
             $parser->add($source, TNamedArgName::class);
-            $parser->space();
             return;
         }
 
         if ($prev instanceof TGoto || $parser->getNextSource()?->is(':')) {
             $parser->add($source, TGotoLabel::class);
-            $parser->space();
             return;
         }
 
@@ -184,13 +170,10 @@ class TString extends T
                 }
 
                 $parser->add($source, TMethodCallName::class);
-                $parser->space();
             } elseif ($prev?->is(T_DOUBLE_COLON)) {
                 $parser->add($source, TStaticMethodCallName::class);
-                $parser->space();
             } else {
                 $parser->add($source, TFunctionCallName::class);
-                $parser->space();
             }
 
             return;
@@ -198,11 +181,9 @@ class TString extends T
 
         if ($prev?->is([T_OBJECT_OPERATOR, T_NULLSAFE_OBJECT_OPERATOR])) {
             if ($parser->inEncapsedString()) {
-                $parser->noSpace();
                 $parser->add($source, TEncapsedPropertyAccessName::class);
             } else {
                 $parser->add($source, TPropertyAccessName::class);
-                $parser->space();
             }
 
             return;
@@ -210,11 +191,9 @@ class TString extends T
 
         if ($prev?->is(T_DOUBLE_COLON)) {
             $parser->add($source, TStaticMemberName::class);
-            $parser->space();
             return;
         }
 
         $parser->add($source, TUnknownString::class);
-        $parser->space();
     }
 }

@@ -32,6 +32,5 @@ class TDefault extends T
         }
 
         $parser->add($source, self::class);
-        $parser->space();
     }
 }

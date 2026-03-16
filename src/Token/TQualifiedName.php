@@ -30,11 +30,9 @@ class TQualifiedName extends T
             && ! $parser->atNesting(TAttribute::class)
         ) {
             $parser->add($source, TFunctionCallQualified::class);
-            $parser->space();
             return;
         }
 
         $parser->add($source, self::class);
-        $parser->space();
     }
 }

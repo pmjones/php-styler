@@ -19,7 +19,6 @@ class TCommentHashed extends T implements TDocblock
         }
 
         $parser->add($source, TCommentHashedMidStatement::class);
-        $parser->space();
     }
 
     public function getDocblock() : Docblock

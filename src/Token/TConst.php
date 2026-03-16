@@ -20,11 +20,9 @@ class TConst extends T
         if ($parser->atNesting(TUse::class)) {
             $parser->popNesting(TUse::class);
             $parser->addNesting($source, TUseConst::class);
-            $parser->space();
             return;
         }
 
         $parser->addNesting($source, self::class);
-        $parser->space();
     }
 }
