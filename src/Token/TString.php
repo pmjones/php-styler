@@ -197,8 +197,14 @@ class TString extends T
         }
 
         if ($prev?->is([T_OBJECT_OPERATOR, T_NULLSAFE_OBJECT_OPERATOR])) {
-            $parser->add($source, TPropertyAccessName::class);
-            $parser->space();
+            if ($parser->inEncapsedString()) {
+                $parser->noSpace();
+                $parser->add($source, TEncapsedPropertyAccessName::class);
+            } else {
+                $parser->add($source, TPropertyAccessName::class);
+                $parser->space();
+            }
+
             return;
         }
 

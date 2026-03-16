@@ -11,6 +11,9 @@ class TArrayElementOpeningBracket extends T
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->noSpace();
-        $parser->addNesting($source, self::class);
+        $class = $parser->inEncapsedString()
+            ? TEncapsedArrayElementOpeningBracket::class
+            : self::class;
+        $parser->addNesting($source, $class);
     }
 }

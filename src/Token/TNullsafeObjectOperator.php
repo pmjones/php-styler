@@ -22,8 +22,7 @@ class TNullsafeObjectOperator extends T implements TSplittableFluent
 
     public static function parse(Parser $parser, PhpToken $source) : void
     {
-        $class = $parser->atNesting(TCurlyOpen::class)
-            || $parser->atNesting(TDollarOpenCurlyBraces::class)
+        $class = $parser->inEncapsedString()
             ? TEncapsedNullsafeObjectOperator::class
             : static::class;
         $parser->add($source, $class);

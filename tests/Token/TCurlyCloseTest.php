@@ -22,7 +22,7 @@ class TCurlyCloseTest extends TTestCase
                     TEcho::class,
                     TDoubleQuote::class,
                     TCurlyOpen::class,
-                    TVariable::class,
+                    TEncapsedVariable::class,
                     TCurlyClose::class,
                     TDoubleQuote::class,
                     TEchoEndSemicolon::class,

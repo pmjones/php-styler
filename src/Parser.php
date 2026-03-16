@@ -513,6 +513,15 @@ class Parser
         return array_map(fn (Nesting $n) => get_class($n->token), $this->nesting);
     }
 
+    public function inEncapsedString() : bool
+    {
+        return $this->atNesting(Token\TCurlyOpen::class)
+            || $this->atNesting(Token\TDollarOpenCurlyBraces::class)
+            || $this->atNesting(Token\TDoubleQuote::class)
+            || $this->atNesting(Token\THeredocStart::class)
+            || $this->atNesting(Token\TBacktick::class);
+    }
+
     public function popTernaryNesting() : void
     {
         while (true) {

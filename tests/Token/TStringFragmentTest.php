@@ -23,7 +23,7 @@ class TStringFragmentTest extends TTestCase
                     TAssign::class,
                     TDoubleQuote::class,
                     TStringFragment::class,
-                    TVariable::class,
+                    TEncapsedVariable::class,
                     TStringFragment::class,
                     TDoubleQuote::class,
                     TSemicolon::class,
