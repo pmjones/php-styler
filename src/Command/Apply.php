@@ -98,7 +98,7 @@ class Apply extends Command
     protected function applyStyle(
         Config $config,
         array $paths,
-        int|false $cacheTime,
+        false|int $cacheTime,
     ) : int
     {
         $count = 0;

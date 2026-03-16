@@ -9,6 +9,7 @@ use PhpStyler\Rule\ExpandImports;
 use PhpStyler\Rule\NormalizeTrailingCommas;
 use PhpStyler\Rule\OrderImports;
 use PhpStyler\Rule\OrderModifiers;
+use PhpStyler\Rule\OrderTypes;
 use PhpStyler\Token;
 
 return new Config(
@@ -24,6 +25,7 @@ return new Config(
         new OrderImports(),
         new AddPublicVisibility(),
         new OrderModifiers(),
+        new OrderTypes(),
         new NormalizeTrailingCommas(),
     ],
     cache: __DIR__ . '/.php-styler.cache',
