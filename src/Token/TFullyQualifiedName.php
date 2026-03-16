@@ -27,7 +27,7 @@ class TFullyQualifiedName extends T
                     T_DOUBLE_COLON,
                     T_NEW,
                 ])
-            && ! $parser->atNesting(TAttribute::class)
+            && ! $parser->atNesting(TAttribution::class)
         ) {
             $parser->add($source, TFunctionCallFullyQualified::class);
             return;

@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace PhpStyler\Style;
 
-class TAttributeClosingBracketStyle extends Style
+class TInlineAttributeClosingBracketStyle extends Style
 {
     public ?bool $spaceBefore = false;
 
-    public ?bool $lineBreakAfter = true;
+    public ?bool $spaceAfter = true;
 }

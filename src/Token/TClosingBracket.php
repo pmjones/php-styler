@@ -12,13 +12,18 @@ class TClosingBracket extends T
     {
         $parser->popTernaryNesting();
 
+        if (! $parser->atNesting(TAttribution::class)) {
+            /** @var class-string<T> $closingBracketClass */
+            $closingBracketClass = str_replace('Opening', 'Closing', $parser->getNesting());
+            $parser->parse($source, $closingBracketClass);
+            return;
+        }
+
         if ($parser->atNesting(TAttribute::class)) {
             $parser->parse($source, TAttributeClosingBracket::class);
             return;
         }
 
-        /** @var class-string<T> $closingBracketClass */
-        $closingBracketClass = str_replace('Opening', 'Closing', $parser->getNesting());
-        $parser->parse($source, $closingBracketClass);
+        $parser->parse($source, TInlineAttributeClosingBracket::class);
     }
 }

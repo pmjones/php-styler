@@ -13,22 +13,15 @@ use PhpToken;
  *
  * Reference: https://www.php.net/manual/en/language.attributes.php attributes (available as of PHP 8.0.0)
  */
-class TAttribute extends T
+class TAttribute extends T implements TAttribution
 {
-    public bool $ownLine = false;
-
     public static function parse(Parser $parser, PhpToken $source) : void
     {
-        $inParams = $parser->atNesting(TParamsOpeningParen::class);
-        $blankLine = $parser->hasPrevBlankLine();
-        $ownLine = $inParams && $blankLine;
-
-        if ($ownLine) {
-            $parser->lineBreak();
+        if ($parser->atNesting(TParamsOpeningParen::class)) {
+            $parser->parse($source, TInlineAttribute::class);
+            return;
         }
 
-        /** @var TAttribute $token */
-        $token = $parser->addNesting($source, self::class);
-        $token->ownLine = $ownLine;
+        $parser->addNesting($source, self::class);
     }
 }

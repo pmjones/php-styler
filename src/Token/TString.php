@@ -69,7 +69,7 @@ class TString extends T
         if (
             $prev instanceof TUse
             || $prev instanceof TNamespace
-            || $prev instanceof TAttribute
+            || $prev instanceof TAttribution
             || $prev instanceof TUseTrait
             || $prev instanceof TExtends
             || $prev instanceof TImplements

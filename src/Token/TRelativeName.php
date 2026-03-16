@@ -27,7 +27,7 @@ class TRelativeName extends T
                     T_DOUBLE_COLON,
                     T_NEW,
                 ])
-            && ! $parser->atNesting(TAttribute::class)
+            && ! $parser->atNesting(TAttribution::class)
         ) {
             $parser->add($source, TFunctionCallRelative::class);
             return;

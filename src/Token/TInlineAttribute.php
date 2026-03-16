@@ -6,10 +6,10 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TAttributeClosingBracket extends T
+class TInlineAttribute extends T implements TAttribution
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
-        $parser->closeNesting($source, self::class, TAttribute::class);
+        $parser->addNesting($source, self::class);
     }
 }
