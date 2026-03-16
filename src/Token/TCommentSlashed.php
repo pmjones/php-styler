@@ -3,11 +3,14 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
+use PhpStyler\Docblock;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TCommentSlashed extends T
+class TCommentSlashed extends T implements TDocblock
 {
+    protected ?Docblock $docblock = null;
+
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         if ($parser->hasPrevLineBreak()) {
@@ -17,5 +20,10 @@ class TCommentSlashed extends T
 
         $parser->add($source, TCommentSlashedMidStatement::class);
         $parser->space();
+    }
+
+    public function getDocblock() : Docblock
+    {
+        return $this->docblock ??= Docblock::parse($this->text);
     }
 }

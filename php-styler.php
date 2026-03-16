@@ -1,7 +1,7 @@
 <?php
 use PhpStyler\Config;
 use PhpStyler\Files;
-use PhpStyler\Rule\AddPublicVisibility;
+use PhpStyler\Rule\AddMissingVisibility;
 use PhpStyler\Rule\ConvertElseIf;
 use PhpStyler\Rule\ConvertListToArray;
 use PhpStyler\Rule\ConvertLongArrayToShort;
@@ -23,7 +23,7 @@ return new Config(
         new ConvertElseIf(),
         new ExpandImports(),
         new OrderImports(),
-        new AddPublicVisibility(),
+        new AddMissingVisibility(),
         new OrderModifiers(),
         new OrderTypes(),
         new NormalizeTrailingCommas(),

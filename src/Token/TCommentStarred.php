@@ -3,12 +3,15 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
+use PhpStyler\Docblock;
 use PhpStyler\Line;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TCommentStarred extends T
+class TCommentStarred extends T implements TDocblock
 {
+    protected ?Docblock $docblock = null;
+
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         if (! $parser->hasPrevLineBreak() || ! $parser->hasNextEol()) {
@@ -18,6 +21,11 @@ class TCommentStarred extends T
         }
 
         $parser->add($source, self::class);
+    }
+
+    public function getDocblock() : Docblock
+    {
+        return $this->docblock ??= Docblock::parse($this->text);
     }
 
     public function render(Line $line) : string

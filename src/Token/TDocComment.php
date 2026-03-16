@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
+use PhpStyler\Docblock;
 use PhpStyler\Line;
 use PhpStyler\Parser;
 use PhpToken;
@@ -14,8 +15,10 @@ use PhpToken;
  *
  * Reference: https://www.php.net/manual/en/language.basic-syntax.comments.php PHPDoc style comments
  */
-class TDocComment extends T
+class TDocComment extends T implements TDocblock
 {
+    protected ?Docblock $docblock = null;
+
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         if (
@@ -29,6 +32,11 @@ class TDocComment extends T
         }
 
         $parser->add($source, self::class);
+    }
+
+    public function getDocblock() : Docblock
+    {
+        return $this->docblock ??= Docblock::parse($this->text);
     }
 
     public function render(Line $line) : string
