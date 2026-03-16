@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace PhpStyler;
 
 use PhpStyler\Rule\NormalizeTrailingCommas;
+use PhpStyler\Rule\RemoveTrailingBlankLines;
 use PhpStyler\Styler;
 use PHPUnit\Framework\TestCase;
 
@@ -14,7 +15,7 @@ class SplitterTest extends TestCase
         $styler = new Styler(
             lineLen: $lineLen,
             eol: "\n",
-            rules: [new NormalizeTrailingCommas()],
+            rules: [new NormalizeTrailingCommas(), new RemoveTrailingBlankLines()],
         );
         $actual = $styler($code);
         $this->assertSame($expect, $actual);

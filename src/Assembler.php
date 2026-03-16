@@ -38,11 +38,6 @@ class Assembler
         }
 
         $this->flushLine();
-
-        while ($this->lines !== [] && end($this->lines)->isBlank()) {
-            array_pop($this->lines);
-        }
-
         return $this->lines;
     }
 

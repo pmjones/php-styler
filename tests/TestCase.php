@@ -3,13 +3,15 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
+use PhpStyler\Rule\RemoveTrailingBlankLines;
+
 abstract class TestCase extends \PHPUnit\Framework\TestCase
 {
     protected Styler $styler;
 
     protected function setUp() : void
     {
-        $this->styler = new Styler();
+        $this->styler = new Styler(rules: [new RemoveTrailingBlankLines()]);
     }
 
     protected function print(string $source) : string

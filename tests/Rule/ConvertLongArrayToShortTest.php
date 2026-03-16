@@ -13,7 +13,7 @@ class ConvertLongArrayToShortTest extends TestCase
      */
     public function test(string $code, string $expect) : void
     {
-        $styler = new Styler(eol: "\n", rules: [new ConvertLongArrayToShort()]);
+        $styler = new Styler(eol: "\n", rules: [new ConvertLongArrayToShort(), new RemoveTrailingBlankLines()]);
         $actual = $styler($code);
         $this->assertSame($expect, $actual);
     }

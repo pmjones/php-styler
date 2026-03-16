@@ -1,35 +1,13 @@
 <?php
 use PhpStyler\Config;
 use PhpStyler\Files;
-use PhpStyler\Rule\AddMissingVisibility;
-use PhpStyler\Rule\ConvertElseIf;
-use PhpStyler\Rule\ConvertListToArray;
-use PhpStyler\Rule\ConvertLongArrayToShort;
-use PhpStyler\Rule\ExpandImports;
-use PhpStyler\Rule\NormalizeTrailingCommas;
-use PhpStyler\Rule\OrderImports;
-use PhpStyler\Rule\OrderModifiers;
-use PhpStyler\Rule\OrderTypes;
-use PhpStyler\Rule\RemoveUnusedImports;
-use PhpStyler\Token;
+use PhpStyler\Rule;
 
 return new Config(
     eol: "\n",
     lineLen: 88,
     indentLen: 4,
     indentTab: false,
-    rules: [
-        new ConvertListToArray(),
-        new ConvertLongArrayToShort(),
-        new ConvertElseIf(),
-        new ExpandImports(),
-        new RemoveUnusedImports(),
-        new OrderImports(),
-        new AddMissingVisibility(),
-        new OrderModifiers(),
-        new OrderTypes(),
-        new NormalizeTrailingCommas(),
-    ],
     cache: __DIR__ . '/.php-styler.cache',
     files: new Files(
         __DIR__ . '/src',
@@ -43,4 +21,17 @@ return new Config(
         __DIR__ . '/tests/StylerTest.php',
         __DIR__ . '/tests/TestCase.php',
     ),
+    rules: [
+        new Rule\ConvertListToArray(),
+        new Rule\ConvertLongArrayToShort(),
+        new Rule\ConvertElseIf(),
+        new Rule\ExpandImports(),
+        new Rule\RemoveUnusedImports(),
+        new Rule\OrderImports(),
+        new Rule\AddMissingVisibility(),
+        new Rule\OrderModifiers(),
+        new Rule\OrderTypes(),
+        new Rule\NormalizeTrailingCommas(),
+        new Rule\RemoveTrailingBlankLines(),
+    ],
 );

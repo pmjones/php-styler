@@ -13,7 +13,7 @@ class ConvertListToArrayTest extends TestCase
      */
     public function test(string $code, string $expect) : void
     {
-        $styler = new Styler(eol: "\n", rules: [new ConvertListToArray()]);
+        $styler = new Styler(eol: "\n", rules: [new ConvertListToArray(), new RemoveTrailingBlankLines()]);
         $actual = $styler($code);
         $this->assertSame($expect, $actual);
     }

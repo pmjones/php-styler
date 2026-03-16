@@ -15,7 +15,7 @@ class RemoveUnusedImportsTest extends TestCase
     {
         $styler = new Styler(
             eol: "\n",
-            rules: [new ExpandImports(), new RemoveUnusedImports()],
+            rules: [new ExpandImports(), new RemoveUnusedImports(), new RemoveTrailingBlankLines()],
         );
         $actual = $styler($code);
         $this->assertSame($expect, $actual);

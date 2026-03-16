@@ -13,7 +13,7 @@ class OrderTypesTest extends TestCase
      */
     public function test(string $code, string $expect) : void
     {
-        $styler = new Styler(eol: "\n", rules: [new OrderTypes()]);
+        $styler = new Styler(eol: "\n", rules: [new OrderTypes(), new RemoveTrailingBlankLines()]);
         $actual = $styler($code);
         $this->assertSame($expect, $actual);
     }

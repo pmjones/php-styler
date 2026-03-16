@@ -78,10 +78,6 @@ class Styler
      */
     public function render(array $lines) : string
     {
-        while ($lines !== [] && end($lines)->isBlank()) {
-            array_pop($lines);
-        }
-
         $rendered = [];
 
         foreach ($lines as $line) {

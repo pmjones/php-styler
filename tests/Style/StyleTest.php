@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace PhpStyler\Style;
 
 use PhpStyler\Rule\NormalizeTrailingCommas;
+use PhpStyler\Rule\RemoveTrailingBlankLines;
 use PhpStyler\Styler;
 use PhpStyler\Token\TAssign;
 use PhpStyler\Token\TBinaryPlus;
@@ -27,7 +28,7 @@ class StyleTest extends TestCase
         $styler = new Styler(
             eol: "\n",
             styles: $styles,
-            rules: [new NormalizeTrailingCommas()],
+            rules: [new NormalizeTrailingCommas(), new RemoveTrailingBlankLines()],
         );
         $actual = $styler($code);
         $this->assertSame($expect, $actual);

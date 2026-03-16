@@ -17,7 +17,7 @@ class NormalizeTrailingCommasTest extends TestCase
         $styler = new Styler(
             lineLen: $lineLen,
             eol: "\n",
-            rules: [new NormalizeTrailingCommas()],
+            rules: [new NormalizeTrailingCommas(), new RemoveTrailingBlankLines()],
         );
         $actual = $styler($code);
         $this->assertSame($expect, $actual);

@@ -234,6 +234,9 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                     [
                         TClassClosingBrace::class,
                     ],
+                    [
+                        TBlankLine::class,
+                    ],
                 ],
             ],
             'namespace-and-use' => [
@@ -360,6 +363,9 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                     [
                         TIfClosingBrace::class,
                     ],
+                    [
+                        TBlankLine::class,
+                    ],
                 ],
             ],
             'function-with-params' => [
@@ -386,6 +392,9 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                     ],
                     [
                         TFunctionClosingBrace::class,
+                    ],
+                    [
+                        TBlankLine::class,
                     ],
                 ],
             ],
@@ -689,6 +698,9 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                     [
                         TForClosingBrace::class,
                     ],
+                    [
+                        TBlankLine::class,
+                    ],
                 ],
             ],
             'for-loop-with-comma-expressions' => [
@@ -732,6 +744,9 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                     ],
                     [
                         TForClosingBrace::class,
+                    ],
+                    [
+                        TBlankLine::class,
                     ],
                 ],
             ],
@@ -808,6 +823,9 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                     [
                         TForClosingBrace::class,
                     ],
+                    [
+                        TBlankLine::class,
+                    ],
                 ],
             ],
             'foreach-with-comments' => [
@@ -852,6 +870,9 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                     [
                         TForeachClosingBrace::class,
                     ],
+                    [
+                        TBlankLine::class,
+                    ],
                 ],
             ],
             'while-with-comments-and-blank-line' => [
@@ -892,6 +913,9 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                     ],
                     [
                         TWhileClosingBrace::class,
+                    ],
+                    [
+                        TBlankLine::class,
                     ],
                 ],
             ],
@@ -941,6 +965,9 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                     ],
                     [
                         TIfClosingBrace::class,
+                    ],
+                    [
+                        TBlankLine::class,
                     ],
                 ],
             ],
@@ -1037,6 +1064,9 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                     ],
                     [
                         TSwitchAfterCaseClosingBrace::class,
+                    ],
+                    [
+                        TBlankLine::class,
                     ],
                 ],
             ],
@@ -1161,6 +1191,9 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                     ],
                     [
                         TFinallyClosingBrace::class,
+                    ],
+                    [
+                        TBlankLine::class,
                     ],
                 ],
             ],

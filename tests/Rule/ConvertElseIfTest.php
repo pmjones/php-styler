@@ -13,7 +13,7 @@ class ConvertElseIfTest extends TestCase
      */
     public function test(string $code, string $expect) : void
     {
-        $styler = new Styler(eol: "\n", rules: [new ConvertElseIf()]);
+        $styler = new Styler(eol: "\n", rules: [new ConvertElseIf(), new RemoveTrailingBlankLines()]);
         $actual = $styler($code);
         $this->assertSame($expect, $actual);
     }
