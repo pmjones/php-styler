@@ -8,6 +8,9 @@ use PhpStyler\Format\Format;
 
 class Config
 {
+    /**
+     * @param string[] $files
+     */
     public function __construct(
         public readonly iterable $files,
         public readonly ?string $cache,

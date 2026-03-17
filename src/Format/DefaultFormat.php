@@ -32,7 +32,46 @@ class DefaultFormat implements Format
 
     public function styles() : StyleLocator
     {
-        return new StyleLocator();
+        return StyleLocator::fromFormat($this);
+    }
+
+    /** @return 'same_line'|'next_line' */
+    public function classBracePosition() : string
+    {
+        return 'next_line';
+    }
+
+    /** @return 'same_line'|'next_line' */
+    public function functionBracePosition() : string
+    {
+        return 'next_line';
+    }
+
+    /** @return 'same_line'|'next_line' */
+    public function controlBracePosition() : string
+    {
+        return 'same_line';
+    }
+
+    /** @return 'lower'|'upper' */
+    public function keywordCase() : string
+    {
+        return 'lower';
+    }
+
+    public function concatenationSpacing() : bool
+    {
+        return true;
+    }
+
+    public function returnTypeColonSpacing() : bool
+    {
+        return true;
+    }
+
+    public function blankLineAfterBlock() : bool
+    {
+        return true;
     }
 
     /** @return array<TokenRule|LineRule> */

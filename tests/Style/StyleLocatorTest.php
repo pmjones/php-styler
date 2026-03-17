@@ -27,7 +27,10 @@ class StyleLocatorTest extends TestCase
     public function testConstructorOverrides() : void
     {
         $locator = new StyleLocator([
-            'TClassOpeningBrace' => ['lineBreakBefore' => null, 'spaceBefore' => true],
+            TClassOpeningBrace::class => [
+                'lineBreakBefore' => null,
+                'spaceBefore' => true,
+            ],
         ]);
         $style = $locator->get(TClassOpeningBrace::class);
         $this->assertNull($style->lineBreakBefore);
