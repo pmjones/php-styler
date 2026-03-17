@@ -33,8 +33,7 @@ class TOpeningParen extends T
 
             TAnonymousClass::class => TAnonymousClassArgsOpeningParen::class,
 
-            TAttribute::class,
-            TInlineAttribute::class => TArgsOpeningParen::class,
+            TAttribute::class, TInlineAttribute::class => TArgsOpeningParen::class,
 
             TPropertyHookSet::class => TPropertyHookSetOpeningParen::class,
 

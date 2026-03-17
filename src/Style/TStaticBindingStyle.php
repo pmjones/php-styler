@@ -5,7 +5,7 @@ namespace PhpStyler\Style;
 
 class TStaticBindingStyle extends Style
 {
-    public ?bool $spaceBefore = true;
+    public ?bool $spaceBefore = null;
 
     public ?bool $spaceAfter = true;
 }

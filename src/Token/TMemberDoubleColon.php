@@ -4,8 +4,6 @@ declare(strict_types=1);
 namespace PhpStyler\Token;
 
 use PhpStyler\Parser;
-use PhpToken;
-
 class TMemberDoubleColon extends T implements TSplittableFluent
 {
     public function splitBefore(Parser $parser) : ?TSplit
@@ -14,5 +12,4 @@ class TMemberDoubleColon extends T implements TSplittableFluent
             ? new TSplitStaticMember(T::SYNTHETIC, '')
             : new TSplitStaticMethodCall(T::SYNTHETIC, '');
     }
-
 }

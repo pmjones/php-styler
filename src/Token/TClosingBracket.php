@@ -14,7 +14,11 @@ class TClosingBracket extends T
 
         if (! $parser->atNesting(TAttribution::class)) {
             /** @var class-string<T> $closingBracketClass */
-            $closingBracketClass = str_replace('Opening', 'Closing', $parser->getNesting());
+            $closingBracketClass = str_replace(
+                'Opening',
+                'Closing',
+                $parser->getNesting(),
+            );
             $parser->parse($source, $closingBracketClass);
             return;
         }
