@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
+use PhpStyler\Format\Format;
 use PhpStyler\Rule\LineRule;
 use PhpStyler\Rule\TokenRule;
-use PhpStyler\Style\StyleLocator;
 
 class Styler
 {
@@ -34,7 +34,7 @@ class Styler
             lineLen: $format->lineLen(),
             indentLen: $format->indentLen(),
             indentTab: $format->indentTab(),
-            styles: $format->styles(),
+            format: $format,
             rules: $format->rules(),
         );
     }
@@ -47,11 +47,11 @@ class Styler
         int $lineLen = 88,
         int $indentLen = 4,
         bool $indentTab = false,
-        ?StyleLocator $styles = null,
+        ?Format $format = null,
         array $rules = [],
     ) {
         $lineFactory = new LineFactory($lineLen, $indentLen, $indentTab);
-        $this->parser = new Parser($styles);
+        $this->parser = new Parser($format);
         $this->assembler = new Assembler($lineFactory);
         $this->splitter = new Splitter($lineFactory);
 

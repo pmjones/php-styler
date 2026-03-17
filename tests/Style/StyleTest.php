@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Style;
 
+use PhpStyler\Format\Format;
 use PhpStyler\Rule\NormalizeTrailingCommas;
 use PhpStyler\Rule\RemoveTrailingBlankLines;
 use PhpStyler\Styler;
@@ -23,49 +24,49 @@ class StyleTest extends TestCase
     /**
      * @dataProvider provide
      */
-    public function test(?StyleLocator $styles, string $code, string $expect) : void
+    public function test(?Format $format, string $code, string $expect) : void
     {
         $styler = new Styler(
             eol: "\n",
-            styles: $styles,
+            format: $format,
             rules: [new NormalizeTrailingCommas(), new RemoveTrailingBlankLines()],
         );
         $actual = $styler($code);
         $this->assertSame($expect, $actual);
     }
 
-    /** @return array<string, array{0: ?StyleLocator, 1: string, 2: string}> */
+    /** @return array<string, array{0: ?Format, 1: string, 2: string}> */
     public static function provide() : array
     {
-        $returnColonNoSpaceBefore = new StyleLocator();
-        $returnColonNoSpaceBefore->get(TReturnColon::class)->spaceBefore = false;
+        $returnColonNoSpaceBefore = new Format();
+        $returnColonNoSpaceBefore->getStyle(TReturnColon::class)->spaceBefore = false;
 
-        $returnColonNoSpaceAfter = new StyleLocator();
-        $returnColonNoSpaceAfter->get(TReturnColon::class)->spaceAfter = false;
+        $returnColonNoSpaceAfter = new Format();
+        $returnColonNoSpaceAfter->getStyle(TReturnColon::class)->spaceAfter = false;
 
-        $returnColonNoSpaces = new StyleLocator();
-        $returnColonNoSpaces->get(TReturnColon::class)->spaceBefore = false;
-        $returnColonNoSpaces->get(TReturnColon::class)->spaceAfter = false;
+        $returnColonNoSpaces = new Format();
+        $returnColonNoSpaces->getStyle(TReturnColon::class)->spaceBefore = false;
+        $returnColonNoSpaces->getStyle(TReturnColon::class)->spaceAfter = false;
 
-        $dotNoSpaces = new StyleLocator();
-        $dotNoSpaces->get(TDot::class)->spaceBefore = false;
-        $dotNoSpaces->get(TDot::class)->spaceAfter = false;
+        $dotNoSpaces = new Format();
+        $dotNoSpaces->getStyle(TDot::class)->spaceBefore = false;
+        $dotNoSpaces->getStyle(TDot::class)->spaceAfter = false;
 
-        $unionWithSpaces = new StyleLocator();
-        $unionWithSpaces->get(TUnion::class)->spaceBefore = true;
-        $unionWithSpaces->get(TUnion::class)->spaceAfter = true;
+        $unionWithSpaces = new Format();
+        $unionWithSpaces->getStyle(TUnion::class)->spaceBefore = true;
+        $unionWithSpaces->getStyle(TUnion::class)->spaceAfter = true;
 
-        $intersectionWithSpaces = new StyleLocator();
-        $intersectionWithSpaces->get(TIntersection::class)->spaceBefore = true;
-        $intersectionWithSpaces->get(TIntersection::class)->spaceAfter = true;
+        $intersectionWithSpaces = new Format();
+        $intersectionWithSpaces->getStyle(TIntersection::class)->spaceBefore = true;
+        $intersectionWithSpaces->getStyle(TIntersection::class)->spaceAfter = true;
 
-        $assignNoSpaces = new StyleLocator();
-        $assignNoSpaces->get(TAssign::class)->spaceBefore = false;
-        $assignNoSpaces->get(TAssign::class)->spaceAfter = false;
+        $assignNoSpaces = new Format();
+        $assignNoSpaces->getStyle(TAssign::class)->spaceBefore = false;
+        $assignNoSpaces->getStyle(TAssign::class)->spaceAfter = false;
 
-        $binaryPlusNoSpaces = new StyleLocator();
-        $binaryPlusNoSpaces->get(TBinaryPlus::class)->spaceBefore = false;
-        $binaryPlusNoSpaces->get(TBinaryPlus::class)->spaceAfter = false;
+        $binaryPlusNoSpaces = new Format();
+        $binaryPlusNoSpaces->getStyle(TBinaryPlus::class)->spaceBefore = false;
+        $binaryPlusNoSpaces->getStyle(TBinaryPlus::class)->spaceAfter = false;
 
         /** @php-styler-expansive */
         return [
@@ -163,9 +164,9 @@ class StyleTest extends TestCase
                 (
                     function (
                     ) {
-                        $styles = new StyleLocator();
-                        $styles->get(TSemicolon::class)->lineBreakAfter = null;
-                        return $styles;
+                        $format = new Format();
+                        $format->getStyle(TSemicolon::class)->lineBreakAfter = null;
+                        return $format;
                     }
                 )(),
                 <<<'CODE'
@@ -177,10 +178,10 @@ class StyleTest extends TestCase
             'closing-brace-linebreak-instead-of-blankline' => [
                 (
                     function () {
-                        $styles = new StyleLocator();
-                        $styles->get(TIfClosingBrace::class)->blankLineAfter = null;
-                        $styles->get(TIfClosingBrace::class)->lineBreakAfter = true;
-                        return $styles;
+                        $format = new Format();
+                        $format->getStyle(TIfClosingBrace::class)->blankLineAfter = null;
+                        $format->getStyle(TIfClosingBrace::class)->lineBreakAfter = true;
+                        return $format;
                     }
                 )(),
                 <<<'CODE'
@@ -198,9 +199,9 @@ class StyleTest extends TestCase
             'opening-brace-no-linebreak-before' => [
                 (
                     function () {
-                        $styles = new StyleLocator();
-                        $styles->get(TClassOpeningBrace::class)->lineBreakBefore = null;
-                        return $styles;
+                        $format = new Format();
+                        $format->getStyle(TClassOpeningBrace::class)->lineBreakBefore = null;
+                        return $format;
                     }
                 )(),
                 <<<'CODE'
@@ -228,9 +229,9 @@ class StyleTest extends TestCase
             'case-override-strtoupper' => [
                 (
                     function () {
-                        $styles = new StyleLocator();
-                        $styles->get(TTrue::class)->case = 'strtoupper';
-                        return $styles;
+                        $format = new Format();
+                        $format->getStyle(TTrue::class)->case = 'strtoupper';
+                        return $format;
                     }
                 )(),
                 <<<'CODE'
@@ -245,9 +246,9 @@ class StyleTest extends TestCase
             'case-disable-with-null' => [
                 (
                     function () {
-                        $styles = new StyleLocator();
-                        $styles->get(TTrue::class)->case = null;
-                        return $styles;
+                        $format = new Format();
+                        $format->getStyle(TTrue::class)->case = null;
+                        return $format;
                     }
                 )(),
                 <<<'CODE'

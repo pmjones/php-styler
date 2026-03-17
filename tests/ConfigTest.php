@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
-use PhpStyler\Format\DefaultFormat;
+use PhpStyler\Format\Format;
 
 class ConfigTest extends TestCase
 {
@@ -11,12 +11,12 @@ class ConfigTest extends TestCase
     {
         $actual = new Config(new Files(), null);
         $this->assertInstanceof(Config::class, $actual);
-        $this->assertInstanceof(DefaultFormat::class, $actual->format);
+        $this->assertInstanceof(Format::class, $actual->format);
     }
 
-    public function testDefaultFormatProperties() : void
+    public function testFormatProperties() : void
     {
-        $format = new DefaultFormat();
+        $format = new Format();
         $this->assertSame('next_line', $format->classBracePosition());
         $this->assertSame('next_line', $format->functionBracePosition());
         $this->assertSame('same_line', $format->controlBracePosition());

@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
+use PhpStyler\Format\Format;
 use PhpStyler\Style\Style;
-use PhpStyler\Style\StyleLocator;
 use PhpStyler\Token;
 use PhpStyler\Token\T;
 use PhpStyler\Token\TIndentDecrement;
@@ -17,7 +17,7 @@ use PhpToken;
 
 class Parser
 {
-    private StyleLocator $styles;
+    private Format $format;
 
     public const PARSE_CLASS = [
         '$' => Token\TDollar::class,
@@ -112,9 +112,9 @@ class Parser
 
     public ?TSplit $lastSplit = null;
 
-    public function __construct(?StyleLocator $styles = null)
+    public function __construct(?Format $format = null)
     {
-        $this->styles = $styles ?? new StyleLocator();
+        $this->format = $format ?? new Format();
     }
 
     /**
@@ -122,7 +122,7 @@ class Parser
      */
     public function getStyle(string $class) : Style
     {
-        return $this->styles->get($class);
+        return $this->format->getStyle($class);
     }
 
     /**
