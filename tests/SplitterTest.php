@@ -13,10 +13,12 @@ class SplitterTest extends TestCase
 {
     private function assertSplit(string $code, string $expect, int $lineLen) : void
     {
-        $styler = new Styler(new Format(
-            lineLen: $lineLen,
-            rules: [new NormalizeTrailingCommas(), new RemoveTrailingBlankLines()],
-        ));
+        $styler = new Styler(
+            new Format(
+                lineLen: $lineLen,
+                rules: [new NormalizeTrailingCommas(), new RemoveTrailingBlankLines()],
+            ),
+        );
         $actual = $styler($code);
         $this->assertSame($expect, $actual);
     }

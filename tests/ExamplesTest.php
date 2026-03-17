@@ -14,9 +14,11 @@ class ExamplesTest extends TestCase
 
     protected function setUp() : void
     {
-        $this->styler = new Styler(new Format(
-            rules: [new NormalizeTrailingCommas(), new RemoveTrailingBlankLines()],
-        ));
+        $this->styler = new Styler(
+            new Format(
+                rules: [new NormalizeTrailingCommas(), new RemoveTrailingBlankLines()],
+            ),
+        );
     }
 
     /**

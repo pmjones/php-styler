@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace PhpStyler\Rule;
 
-use PHPUnit\Framework\TestCase;
 use PhpStyler\Format;
 use PhpStyler\Styler;
+use PHPUnit\Framework\TestCase;
 
 class OrderTypesTest extends TestCase
 {
@@ -14,7 +14,9 @@ class OrderTypesTest extends TestCase
      */
     public function test(string $code, string $expect) : void
     {
-        $styler = new Styler(new Format(rules: [new OrderTypes(), new RemoveTrailingBlankLines()]));
+        $styler = new Styler(
+            new Format(rules: [new OrderTypes(), new RemoveTrailingBlankLines()]),
+        );
         $actual = $styler($code);
         $this->assertSame($expect, $actual);
     }

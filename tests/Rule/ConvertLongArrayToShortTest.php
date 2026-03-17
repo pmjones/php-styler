@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace PhpStyler\Rule;
 
-use PHPUnit\Framework\TestCase;
 use PhpStyler\Format;
 use PhpStyler\Styler;
+use PHPUnit\Framework\TestCase;
 
 class ConvertLongArrayToShortTest extends TestCase
 {
@@ -14,7 +14,12 @@ class ConvertLongArrayToShortTest extends TestCase
      */
     public function test(string $code, string $expect) : void
     {
-        $styler = new Styler(new Format(rules: [new ConvertLongArrayToShort(), new RemoveTrailingBlankLines()]));
+        $styler = new Styler(
+            new Format(rules: [
+                new ConvertLongArrayToShort(),
+                new RemoveTrailingBlankLines(),
+            ]),
+        );
         $actual = $styler($code);
         $this->assertSame($expect, $actual);
     }

@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace PhpStyler\Rule;
 
-use PHPUnit\Framework\TestCase;
 use PhpStyler\Format;
 use PhpStyler\Styler;
+use PHPUnit\Framework\TestCase;
 
 class RemoveUnusedImportsTest extends TestCase
 {
@@ -14,9 +14,15 @@ class RemoveUnusedImportsTest extends TestCase
      */
     public function test(string $code, string $expect) : void
     {
-        $styler = new Styler(new Format(
-            rules: [new ExpandImports(), new RemoveUnusedImports(), new RemoveTrailingBlankLines()],
-        ));
+        $styler = new Styler(
+            new Format(
+                rules: [
+                    new ExpandImports(),
+                    new RemoveUnusedImports(),
+                    new RemoveTrailingBlankLines(),
+                ],
+            ),
+        );
         $actual = $styler($code);
         $this->assertSame($expect, $actual);
     }

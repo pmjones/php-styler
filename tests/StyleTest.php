@@ -159,7 +159,10 @@ class StyleTest extends TestCase
             ],
             'semicolon-no-linebreak-after' => [
                 (
-                    function () use ($rules) {
+                    function (
+                    ) use (
+                        $rules,
+                    ) {
                         $format = new Format(rules: $rules);
                         $format->getStyle(TSemicolon::class)->lineBreakAfter = null;
                         return $format;

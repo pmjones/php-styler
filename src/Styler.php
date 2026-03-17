@@ -29,10 +29,13 @@ class Styler
         return new self($config->format);
     }
 
-    public function __construct(
-        private Format $format = new Format(),
-    ) {
-        $lineFactory = new LineFactory($format->lineLen, $format->indentLen, $format->indentTab);
+    public function __construct(private Format $format = new Format())
+    {
+        $lineFactory = new LineFactory(
+            $format->lineLen,
+            $format->indentLen,
+            $format->indentTab,
+        );
         $this->parser = new Parser($format);
         $this->assembler = new Assembler($lineFactory);
         $this->splitter = new Splitter($lineFactory);
