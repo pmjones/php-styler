@@ -15,7 +15,7 @@ class ConvertElseIfTest extends TestCase
     public function test(string $code, string $expect) : void
     {
         $styler = new Styler(
-            new Format(rules: [new ConvertElseIf(), new RemoveTrailingBlankLines()]),
+            new Format(rules: [ConvertElseIf::class, RemoveTrailingBlankLines::class]),
         );
         $actual = $styler($code);
         $this->assertSame($expect, $actual);

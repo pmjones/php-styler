@@ -16,7 +16,10 @@ class SplitterTest extends TestCase
         $styler = new Styler(
             new Format(
                 lineLen: $lineLen,
-                rules: [new NormalizeTrailingCommas(), new RemoveTrailingBlankLines()],
+                rules: [
+                    NormalizeTrailingCommas::class,
+                    RemoveTrailingBlankLines::class,
+                ],
             ),
         );
         $actual = $styler($code);

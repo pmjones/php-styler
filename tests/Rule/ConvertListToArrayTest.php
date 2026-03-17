@@ -16,8 +16,8 @@ class ConvertListToArrayTest extends TestCase
     {
         $styler = new Styler(
             new Format(rules: [
-                new ConvertListToArray(),
-                new RemoveTrailingBlankLines(),
+                ConvertListToArray::class,
+                RemoveTrailingBlankLines::class,
             ]),
         );
         $actual = $styler($code);

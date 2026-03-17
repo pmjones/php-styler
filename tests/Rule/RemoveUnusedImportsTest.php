@@ -17,9 +17,9 @@ class RemoveUnusedImportsTest extends TestCase
         $styler = new Styler(
             new Format(
                 rules: [
-                    new ExpandImports(),
-                    new RemoveUnusedImports(),
-                    new RemoveTrailingBlankLines(),
+                    ExpandImports::class,
+                    RemoveUnusedImports::class,
+                    RemoveTrailingBlankLines::class,
                 ],
             ),
         );

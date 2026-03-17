@@ -15,7 +15,7 @@ class ExpandImportsTest extends TestCase
     public function test(string $code, string $expect) : void
     {
         $styler = new Styler(
-            new Format(rules: [new ExpandImports(), new RemoveTrailingBlankLines()]),
+            new Format(rules: [ExpandImports::class, RemoveTrailingBlankLines::class]),
         );
         $actual = $styler($code);
         $this->assertSame($expect, $actual);

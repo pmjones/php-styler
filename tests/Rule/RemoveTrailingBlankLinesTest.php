@@ -11,7 +11,7 @@ class RemoveTrailingBlankLinesTest extends TestCase
 {
     private function assertStyled(string $code, string $expect) : void
     {
-        $styler = new Styler(new Format(rules: [new RemoveTrailingBlankLines()]));
+        $styler = new Styler(new Format(rules: [RemoveTrailingBlankLines::class]));
         $actual = $styler($code);
         $this->assertSame($expect, $actual);
     }

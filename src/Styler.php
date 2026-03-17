@@ -40,7 +40,9 @@ class Styler
         $this->assembler = new Assembler($lineFactory);
         $this->splitter = new Splitter($lineFactory);
 
-        foreach ($format->rules as $rule) {
+        foreach ($format->rules as $class => $args) {
+            $rule = new $class(...$args);
+
             if ($rule instanceof TokenRule) {
                 $this->tokenRules[] = $rule;
             }

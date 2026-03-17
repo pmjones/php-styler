@@ -16,9 +16,9 @@ class OrderImportsTest extends TestCase
     {
         $styler = new Styler(
             new Format(rules: [
-                new ExpandImports(),
-                new OrderImports(),
-                new RemoveTrailingBlankLines(),
+                ExpandImports::class,
+                OrderImports::class,
+                RemoveTrailingBlankLines::class,
             ]),
         );
         $actual = $styler($code);

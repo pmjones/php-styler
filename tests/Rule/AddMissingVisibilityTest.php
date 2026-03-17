@@ -16,8 +16,8 @@ class AddMissingVisibilityTest extends TestCase
     {
         $styler = new Styler(
             new Format(rules: [
-                new AddMissingVisibility(),
-                new RemoveTrailingBlankLines(),
+                AddMissingVisibility::class,
+                RemoveTrailingBlankLines::class,
             ]),
         );
         $actual = $styler($code);

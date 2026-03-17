@@ -16,8 +16,8 @@ class ConvertImplicitInterpolationTest extends TestCase
     {
         $styler = new Styler(
             new Format(rules: [
-                new ConvertImplicitInterpolation(),
-                new RemoveTrailingBlankLines(),
+                ConvertImplicitInterpolation::class,
+                RemoveTrailingBlankLines::class,
             ]),
         );
         $actual = $styler($code);

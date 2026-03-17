@@ -12,7 +12,9 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
 
     protected function setUp() : void
     {
-        $this->styler = new Styler(new Format(rules: [new RemoveTrailingBlankLines()]));
+        $this->styler = new Styler(
+            new Format(rules: [RemoveTrailingBlankLines::class]),
+        );
     }
 
     protected function print(string $source) : string

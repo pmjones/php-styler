@@ -32,7 +32,7 @@ class StyleTest extends TestCase
     /** @return array<string, array{0: Format, 1: string, 2: string}> */
     public static function provide() : array
     {
-        $rules = [new NormalizeTrailingCommas(), new RemoveTrailingBlankLines()];
+        $rules = [NormalizeTrailingCommas::class, RemoveTrailingBlankLines::class];
 
         $returnColonNoSpaceBefore = new Format(
             rules: $rules,

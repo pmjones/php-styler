@@ -16,8 +16,8 @@ class ConvertLongArrayToShortTest extends TestCase
     {
         $styler = new Styler(
             new Format(rules: [
-                new ConvertLongArrayToShort(),
-                new RemoveTrailingBlankLines(),
+                ConvertLongArrayToShort::class,
+                RemoveTrailingBlankLines::class,
             ]),
         );
         $actual = $styler($code);

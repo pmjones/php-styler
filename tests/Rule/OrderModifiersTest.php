@@ -15,7 +15,7 @@ class OrderModifiersTest extends TestCase
     public function test(string $code, string $expect) : void
     {
         $styler = new Styler(
-            new Format(rules: [new OrderModifiers(), new RemoveTrailingBlankLines()]),
+            new Format(rules: [OrderModifiers::class, RemoveTrailingBlankLines::class]),
         );
         $actual = $styler($code);
         $this->assertSame($expect, $actual);

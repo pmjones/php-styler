@@ -1205,12 +1205,17 @@ class Format
     public readonly array $styles;
 
     /**
+     * @var array<class-string<TokenRule|LineRule>, array<string, mixed>>
+     */
+    public readonly array $rules;
+
+    /**
      * @param styles_array $styles
      * @param 'same_line'|'next_line' $classBracePosition
      * @param 'same_line'|'next_line' $functionBracePosition
      * @param 'same_line'|'next_line' $controlBracePosition
      * @param 'lower'|'upper' $keywordCase
-     * @param array<TokenRule|LineRule> $rules
+     * @param array<int, class-string<TokenRule|LineRule>>|array<class-string<TokenRule|LineRule>, array<string, mixed>> $rules
      */
     public function __construct(
         public readonly string $eol = "\n",
@@ -1225,19 +1230,19 @@ class Format
         bool $returnTypeColonSpacing = true,
         bool $blankLineAfterBlock = true,
         array $styles = [],
-        public readonly array $rules = [
-            new Rule\RemoveBom(),
-            new Rule\ConvertListToArray(),
-            new Rule\ConvertLongArrayToShort(),
-            new Rule\ConvertElseIf(),
-            new Rule\ExpandImports(),
-            new Rule\RemoveUnusedImports(),
-            new Rule\OrderImports(),
-            new Rule\AddMissingVisibility(),
-            new Rule\OrderModifiers(),
-            new Rule\OrderTypes(),
-            new Rule\NormalizeTrailingCommas(),
-            new Rule\RemoveTrailingBlankLines(),
+        array $rules = [
+            Rule\RemoveBom::class,
+            Rule\ConvertListToArray::class,
+            Rule\ConvertLongArrayToShort::class,
+            Rule\ConvertElseIf::class,
+            Rule\ExpandImports::class,
+            Rule\RemoveUnusedImports::class,
+            Rule\OrderImports::class,
+            Rule\AddMissingVisibility::class,
+            Rule\OrderModifiers::class,
+            Rule\OrderTypes::class,
+            Rule\NormalizeTrailingCommas::class,
+            Rule\RemoveTrailingBlankLines::class,
         ],
     ) {
         $default = self::STYLES;
@@ -1256,6 +1261,20 @@ class Format
         }
 
         $this->styles = $default;
+        $r = [];
+
+        foreach ($rules as $key => $val) {
+            if (is_int($key)) {
+                /** @var class-string<TokenRule|LineRule> $val */
+                $r[$val] = [];
+            } else {
+                /** @var class-string<TokenRule|LineRule> $key */
+                /** @var array<string, mixed> $val */
+                $r[$key] = $val;
+            }
+        }
+
+        $this->rules = $r;
     }
 
     /**

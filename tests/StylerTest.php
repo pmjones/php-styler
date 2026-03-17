@@ -16,7 +16,10 @@ class StylerTest extends TestCase
     {
         $this->styler = new Styler(
             new Format(
-                rules: [new NormalizeTrailingCommas(), new RemoveTrailingBlankLines()],
+                rules: [
+                    NormalizeTrailingCommas::class,
+                    RemoveTrailingBlankLines::class,
+                ],
             ),
         );
     }
