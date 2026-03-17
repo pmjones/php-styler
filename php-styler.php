@@ -22,6 +22,7 @@ return new Config(
         __DIR__ . '/tests/TestCase.php',
     ),
     rules: [
+        new Rule\RemoveBom(),
         new Rule\ConvertListToArray(),
         new Rule\ConvertLongArrayToShort(),
         new Rule\ConvertElseIf(),
