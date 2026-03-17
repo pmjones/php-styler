@@ -42,9 +42,9 @@
     "scripts": {
         "analyze": "./vendor/bin/phpstan --memory-limit=256M",
         "check": "composer test && composer analyze && composer cs-check",
-        "cs-check": "php bin/php-styler check -c php-styler.php",
-        "cs-fix": "php bin/php-styler apply -c php-styler.php",
-        "cs-preview": "php bin/php-styler preview -c php-styler.php",
+        "cs-check": "php bin/php-styler check",
+        "cs-fix": "php bin/php-styler apply",
+        "cs-preview": "php bin/php-styler preview",
         "test": "./vendor/bin/phpunit",
         "test-coverage": "./vendor/bin/phpunit --coverage-html=./tmp/coverage"
     }

@@ -16,7 +16,7 @@ abstract class Command
 
     protected function findConfigFile() : string
     {
-        $file = dirname(__DIR__, 5) . DIRECTORY_SEPARATOR . "php-styler.php";
+        $file = getcwd() . DIRECTORY_SEPARATOR . "php-styler.php";
 
         if (file_exists($file)) {
             return $file;
