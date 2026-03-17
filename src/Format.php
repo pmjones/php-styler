@@ -1200,11 +1200,6 @@ class Format
     ];
 
     /**
-     * @var array<token_class_string, Style>
-     */
-    private array $instances = [];
-
-    /**
      * @var styles_array
      */
     public readonly array $styles;
@@ -1261,21 +1256,6 @@ class Format
         }
 
         $this->styles = $default;
-    }
-
-    /**
-     * @param token_class_string $class
-     */
-    public function getStyle(string $class) : Style
-    {
-        if (isset($this->instances[$class])) {
-            return $this->instances[$class];
-        }
-
-        $args = $this->styles[$class] ?? [];
-        $style = new Style(...$args);
-        $this->instances[$class] = $style;
-        return $style;
     }
 
     /**

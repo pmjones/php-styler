@@ -18,7 +18,8 @@ class FormatStyleTest extends TestCase
     public function testNoOverrides() : void
     {
         $format = new Format();
-        $style = $format->getStyle(TClassOpeningBrace::class);
+        $parser = new Parser($format);
+        $style = $parser->getStyle(TClassOpeningBrace::class);
         $this->assertTrue($style->lineBreakBefore);
         $this->assertTrue($style->lineBreakAfter);
     }
@@ -31,7 +32,8 @@ class FormatStyleTest extends TestCase
                 'spaceBefore' => true,
             ],
         ]);
-        $style = $format->getStyle(TClassOpeningBrace::class);
+        $parser = new Parser($format);
+        $style = $parser->getStyle(TClassOpeningBrace::class);
         $this->assertNull($style->lineBreakBefore);
         $this->assertTrue($style->spaceBefore);
         $this->assertTrue($style->lineBreakAfter);
@@ -40,31 +42,33 @@ class FormatStyleTest extends TestCase
     public function testDefaults() : void
     {
         $format = new Format();
+        $parser = new Parser($format);
 
         // Default format should produce no overrides
-        $classStyle = $format->getStyle(TClassOpeningBrace::class);
+        $classStyle = $parser->getStyle(TClassOpeningBrace::class);
         $this->assertTrue($classStyle->lineBreakBefore);
 
-        $ifStyle = $format->getStyle(TIfOpeningBrace::class);
+        $ifStyle = $parser->getStyle(TIfOpeningBrace::class);
         $this->assertNull($ifStyle->lineBreakBefore);
 
-        $dotStyle = $format->getStyle(TDot::class);
+        $dotStyle = $parser->getStyle(TDot::class);
         $this->assertNull($dotStyle->spaceBefore);
 
-        $returnColonStyle = $format->getStyle(TReturnColon::class);
+        $returnColonStyle = $parser->getStyle(TReturnColon::class);
         $this->assertTrue($returnColonStyle->spaceBefore);
 
-        $trueStyle = $format->getStyle(TTrue::class);
+        $trueStyle = $parser->getStyle(TTrue::class);
         $this->assertSame('strtolower', $trueStyle->case);
 
-        $ifClosingStyle = $format->getStyle(TIfClosingBrace::class);
+        $ifClosingStyle = $parser->getStyle(TIfClosingBrace::class);
         $this->assertTrue($ifClosingStyle->blankLineAfter);
     }
 
     public function testClassBraceSameLine() : void
     {
         $format = new Format(classBracePosition: 'same_line');
-        $style = $format->getStyle(TClassOpeningBrace::class);
+        $parser = new Parser($format);
+        $style = $parser->getStyle(TClassOpeningBrace::class);
         $this->assertNull($style->lineBreakBefore);
         $this->assertTrue($style->spaceBefore);
     }
@@ -72,7 +76,8 @@ class FormatStyleTest extends TestCase
     public function testFunctionBraceSameLine() : void
     {
         $format = new Format(functionBracePosition: 'same_line');
-        $style = $format->getStyle(TFunctionOpeningBrace::class);
+        $parser = new Parser($format);
+        $style = $parser->getStyle(TFunctionOpeningBrace::class);
         $this->assertNull($style->lineBreakBefore);
         $this->assertTrue($style->spaceBefore);
     }
@@ -80,11 +85,12 @@ class FormatStyleTest extends TestCase
     public function testControlBraceNextLine() : void
     {
         $format = new Format(controlBracePosition: 'next_line');
+        $parser = new Parser($format);
 
-        $ifStyle = $format->getStyle(TIfOpeningBrace::class);
+        $ifStyle = $parser->getStyle(TIfOpeningBrace::class);
         $this->assertTrue($ifStyle->lineBreakBefore);
 
-        $contStyle = $format->getStyle(TCatchContinuationBrace::class);
+        $contStyle = $parser->getStyle(TCatchContinuationBrace::class);
         $this->assertNull($contStyle->spaceAfter);
         $this->assertTrue($contStyle->lineBreakAfter);
     }
@@ -92,14 +98,16 @@ class FormatStyleTest extends TestCase
     public function testKeywordCaseUpper() : void
     {
         $format = new Format(keywordCase: 'upper');
-        $style = $format->getStyle(TTrue::class);
+        $parser = new Parser($format);
+        $style = $parser->getStyle(TTrue::class);
         $this->assertSame('strtoupper', $style->case);
     }
 
     public function testConcatenationSpacingFalse() : void
     {
         $format = new Format(concatenationSpacing: false);
-        $style = $format->getStyle(TDot::class);
+        $parser = new Parser($format);
+        $style = $parser->getStyle(TDot::class);
         $this->assertFalse($style->spaceBefore);
         $this->assertFalse($style->spaceAfter);
     }
@@ -107,14 +115,16 @@ class FormatStyleTest extends TestCase
     public function testReturnTypeColonSpacingFalse() : void
     {
         $format = new Format(returnTypeColonSpacing: false);
-        $style = $format->getStyle(TReturnColon::class);
+        $parser = new Parser($format);
+        $style = $parser->getStyle(TReturnColon::class);
         $this->assertFalse($style->spaceBefore);
     }
 
     public function testBlankLineAfterBlockFalse() : void
     {
         $format = new Format(blankLineAfterBlock: false);
-        $style = $format->getStyle(TIfClosingBrace::class);
+        $parser = new Parser($format);
+        $style = $parser->getStyle(TIfClosingBrace::class);
         $this->assertNull($style->blankLineAfter);
         $this->assertTrue($style->lineBreakAfter);
     }

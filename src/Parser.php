@@ -110,6 +110,9 @@ class Parser
 
     public ?TSplit $lastSplit = null;
 
+    /** @var array<class-string<T>, Style> */
+    private array $styles = [];
+
     public function __construct(?Format $format = null)
     {
         $this->format = $format ?? new Format();
@@ -120,7 +123,14 @@ class Parser
      */
     public function getStyle(string $class) : Style
     {
-        return $this->format->getStyle($class);
+        if (isset($this->styles[$class])) {
+            return $this->styles[$class];
+        }
+
+        $args = $this->format->styles[$class] ?? [];
+        $style = new Style(...$args);
+        $this->styles[$class] = $style;
+        return $style;
     }
 
     /**

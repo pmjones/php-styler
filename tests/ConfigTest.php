@@ -15,33 +15,34 @@ class ConfigTest extends TestCase
     public function testFormatProperties() : void
     {
         $format = new Format();
+        $parser = new Parser($format);
 
         // classBracePosition default: 'next_line'
-        $style = $format->getStyle(Token\TClassOpeningBrace::class);
+        $style = $parser->getStyle(Token\TClassOpeningBrace::class);
         $this->assertTrue($style->lineBreakBefore);
 
         // functionBracePosition default: 'next_line'
-        $style = $format->getStyle(Token\TFunctionOpeningBrace::class);
+        $style = $parser->getStyle(Token\TFunctionOpeningBrace::class);
         $this->assertTrue($style->lineBreakBefore);
 
         // controlBracePosition default: 'same_line'
-        $style = $format->getStyle(Token\TIfOpeningBrace::class);
+        $style = $parser->getStyle(Token\TIfOpeningBrace::class);
         $this->assertNull($style->lineBreakBefore);
 
         // keywordCase default: 'lower'
-        $style = $format->getStyle(Token\TFalse::class);
+        $style = $parser->getStyle(Token\TFalse::class);
         $this->assertSame('strtolower', $style->case);
 
         // concatenationSpacing default: true
-        $style = $format->getStyle(Token\TDot::class);
+        $style = $parser->getStyle(Token\TDot::class);
         $this->assertNull($style->spaceBefore);
 
         // returnTypeColonSpacing default: true
-        $style = $format->getStyle(Token\TReturnColon::class);
+        $style = $parser->getStyle(Token\TReturnColon::class);
         $this->assertTrue($style->spaceBefore);
 
         // blankLineAfterBlock default: true
-        $style = $format->getStyle(Token\TFunctionClosingBrace::class);
+        $style = $parser->getStyle(Token\TFunctionClosingBrace::class);
         $this->assertTrue($style->blankLineAfter);
     }
 }
