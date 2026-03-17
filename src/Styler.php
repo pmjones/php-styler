@@ -27,12 +27,15 @@ class Styler
 
     public static function fromConfig(Config $config) : self
     {
+        $format = $config->format;
+
         return new self(
-            eol: $config->eol,
-            lineLen: $config->lineLen,
-            indentLen: $config->indentLen,
-            indentTab: $config->indentTab,
-            rules: $config->rules,
+            eol: $format->eol(),
+            lineLen: $format->lineLen(),
+            indentLen: $format->indentLen(),
+            indentTab: $format->indentTab(),
+            styles: $format->styles(),
+            rules: $format->rules(),
         );
     }
 

@@ -1,13 +1,8 @@
 <?php
 use PhpStyler\Config;
 use PhpStyler\Files;
-use PhpStyler\Rule;
 
 return new Config(
-    eol: "\n",
-    lineLen: 88,
-    indentLen: 4,
-    indentTab: false,
     cache: __DIR__ . '/.php-styler.cache',
     files: new Files(
         __DIR__ . '/src',
@@ -21,18 +16,4 @@ return new Config(
         __DIR__ . '/tests/StylerTest.php',
         __DIR__ . '/tests/TestCase.php',
     ),
-    rules: [
-        new Rule\RemoveBom(),
-        new Rule\ConvertListToArray(),
-        new Rule\ConvertLongArrayToShort(),
-        new Rule\ConvertElseIf(),
-        new Rule\ExpandImports(),
-        new Rule\RemoveUnusedImports(),
-        new Rule\OrderImports(),
-        new Rule\AddMissingVisibility(),
-        new Rule\OrderModifiers(),
-        new Rule\OrderTypes(),
-        new Rule\NormalizeTrailingCommas(),
-        new Rule\RemoveTrailingBlankLines(),
-    ],
 );
