@@ -26,35 +26,18 @@ class Styler
 
     public static function fromConfig(Config $config) : self
     {
-        $format = $config->format;
-
-        return new self(
-            eol: $format->eol(),
-            lineLen: $format->lineLen(),
-            indentLen: $format->indentLen(),
-            indentTab: $format->indentTab(),
-            format: $format,
-            rules: $format->rules(),
-        );
+        return new self($config->format);
     }
 
-    /**
-     * @param array<TokenRule|LineRule> $rules
-     */
     public function __construct(
-        private string $eol = "\n",
-        int $lineLen = 88,
-        int $indentLen = 4,
-        bool $indentTab = false,
-        ?Format $format = null,
-        array $rules = [],
+        private Format $format = new Format(),
     ) {
-        $lineFactory = new LineFactory($lineLen, $indentLen, $indentTab);
+        $lineFactory = new LineFactory($format->lineLen, $format->indentLen, $format->indentTab);
         $this->parser = new Parser($format);
         $this->assembler = new Assembler($lineFactory);
         $this->splitter = new Splitter($lineFactory);
 
-        foreach ($rules as $rule) {
+        foreach ($format->rules as $rule) {
             if ($rule instanceof TokenRule) {
                 $this->tokenRules[] = $rule;
             }
@@ -86,7 +69,7 @@ class Styler
             $rendered[] = $line->render();
         }
 
-        return implode($this->eol, $rendered) . $this->eol;
+        return implode($this->format->eol, $rendered) . $this->format->eol;
     }
 
     /**

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
+use PhpStyler\Format;
 use PhpStyler\Rule\NormalizeTrailingCommas;
 use PhpStyler\Rule\RemoveTrailingBlankLines;
 use PhpStyler\Styler;
@@ -12,11 +13,10 @@ class SplitterTest extends TestCase
 {
     private function assertSplit(string $code, string $expect, int $lineLen) : void
     {
-        $styler = new Styler(
+        $styler = new Styler(new Format(
             lineLen: $lineLen,
-            eol: "\n",
             rules: [new NormalizeTrailingCommas(), new RemoveTrailingBlankLines()],
-        );
+        ));
         $actual = $styler($code);
         $this->assertSame($expect, $actual);
     }

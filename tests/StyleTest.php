@@ -23,47 +23,45 @@ class StyleTest extends TestCase
     /**
      * @dataProvider provide
      */
-    public function test(?Format $format, string $code, string $expect) : void
+    public function test(Format $format, string $code, string $expect) : void
     {
-        $styler = new Styler(
-            eol: "\n",
-            format: $format,
-            rules: [new NormalizeTrailingCommas(), new RemoveTrailingBlankLines()],
-        );
+        $styler = new Styler($format);
         $actual = $styler($code);
         $this->assertSame($expect, $actual);
     }
 
-    /** @return array<string, array{0: ?Format, 1: string, 2: string}> */
+    /** @return array<string, array{0: Format, 1: string, 2: string}> */
     public static function provide() : array
     {
-        $returnColonNoSpaceBefore = new Format();
+        $rules = [new NormalizeTrailingCommas(), new RemoveTrailingBlankLines()];
+
+        $returnColonNoSpaceBefore = new Format(rules: $rules);
         $returnColonNoSpaceBefore->getStyle(TReturnColon::class)->spaceBefore = false;
 
-        $returnColonNoSpaceAfter = new Format();
+        $returnColonNoSpaceAfter = new Format(rules: $rules);
         $returnColonNoSpaceAfter->getStyle(TReturnColon::class)->spaceAfter = false;
 
-        $returnColonNoSpaces = new Format();
+        $returnColonNoSpaces = new Format(rules: $rules);
         $returnColonNoSpaces->getStyle(TReturnColon::class)->spaceBefore = false;
         $returnColonNoSpaces->getStyle(TReturnColon::class)->spaceAfter = false;
 
-        $dotNoSpaces = new Format();
+        $dotNoSpaces = new Format(rules: $rules);
         $dotNoSpaces->getStyle(TDot::class)->spaceBefore = false;
         $dotNoSpaces->getStyle(TDot::class)->spaceAfter = false;
 
-        $unionWithSpaces = new Format();
+        $unionWithSpaces = new Format(rules: $rules);
         $unionWithSpaces->getStyle(TUnion::class)->spaceBefore = true;
         $unionWithSpaces->getStyle(TUnion::class)->spaceAfter = true;
 
-        $intersectionWithSpaces = new Format();
+        $intersectionWithSpaces = new Format(rules: $rules);
         $intersectionWithSpaces->getStyle(TIntersection::class)->spaceBefore = true;
         $intersectionWithSpaces->getStyle(TIntersection::class)->spaceAfter = true;
 
-        $assignNoSpaces = new Format();
+        $assignNoSpaces = new Format(rules: $rules);
         $assignNoSpaces->getStyle(TAssign::class)->spaceBefore = false;
         $assignNoSpaces->getStyle(TAssign::class)->spaceAfter = false;
 
-        $binaryPlusNoSpaces = new Format();
+        $binaryPlusNoSpaces = new Format(rules: $rules);
         $binaryPlusNoSpaces->getStyle(TBinaryPlus::class)->spaceBefore = false;
         $binaryPlusNoSpaces->getStyle(TBinaryPlus::class)->spaceAfter = false;
 
@@ -161,9 +159,8 @@ class StyleTest extends TestCase
             ],
             'semicolon-no-linebreak-after' => [
                 (
-                    function (
-                    ) {
-                        $format = new Format();
+                    function () use ($rules) {
+                        $format = new Format(rules: $rules);
                         $format->getStyle(TSemicolon::class)->lineBreakAfter = null;
                         return $format;
                     }
@@ -176,8 +173,8 @@ class StyleTest extends TestCase
             ],
             'closing-brace-linebreak-instead-of-blankline' => [
                 (
-                    function () {
-                        $format = new Format();
+                    function () use ($rules) {
+                        $format = new Format(rules: $rules);
                         $format->getStyle(TIfClosingBrace::class)->blankLineAfter = null;
                         $format->getStyle(TIfClosingBrace::class)->lineBreakAfter = true;
                         return $format;
@@ -197,8 +194,8 @@ class StyleTest extends TestCase
             ],
             'opening-brace-no-linebreak-before' => [
                 (
-                    function () {
-                        $format = new Format();
+                    function () use ($rules) {
+                        $format = new Format(rules: $rules);
                         $format->getStyle(TClassOpeningBrace::class)->lineBreakBefore = null;
                         return $format;
                     }
@@ -214,7 +211,7 @@ class StyleTest extends TestCase
 
             ],
             'case-default-strtolower' => [
-                null,
+                new Format(rules: $rules),
                 <<<'CODE'
                 <?php $a = TRUE; $b = FALSE; $c = NULL;
                 CODE,
@@ -227,8 +224,8 @@ class StyleTest extends TestCase
             ],
             'case-override-strtoupper' => [
                 (
-                    function () {
-                        $format = new Format();
+                    function () use ($rules) {
+                        $format = new Format(rules: $rules);
                         $format->getStyle(TTrue::class)->case = 'strtoupper';
                         return $format;
                     }
@@ -244,8 +241,8 @@ class StyleTest extends TestCase
             ],
             'case-disable-with-null' => [
                 (
-                    function () {
-                        $format = new Format();
+                    function () use ($rules) {
+                        $format = new Format(rules: $rules);
                         $format->getStyle(TTrue::class)->case = null;
                         return $format;
                     }
@@ -260,7 +257,7 @@ class StyleTest extends TestCase
 
             ],
             'empty-style-default-behavior' => [
-                null,
+                new Format(rules: $rules),
                 <<<'CODE'
                 <?php $a = $b + $c . $d;
                 CODE,

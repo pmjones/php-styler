@@ -5,6 +5,7 @@ namespace PhpStyler\Command;
 
 use PhpStyler\Config;
 use PhpStyler\Exception;
+
 abstract class Command
 {
     protected function loadConfigFile(string $configFile) : Config

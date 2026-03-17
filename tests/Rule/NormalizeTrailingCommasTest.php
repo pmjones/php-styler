@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace PhpStyler\Rule;
 
 use PHPUnit\Framework\TestCase;
+use PhpStyler\Format;
 use PhpStyler\Styler;
 
 class NormalizeTrailingCommasTest extends TestCase
@@ -14,11 +15,10 @@ class NormalizeTrailingCommasTest extends TestCase
         int $lineLen = 44,
     ) : void
     {
-        $styler = new Styler(
+        $styler = new Styler(new Format(
             lineLen: $lineLen,
-            eol: "\n",
             rules: [new NormalizeTrailingCommas(), new RemoveTrailingBlankLines()],
-        );
+        ));
         $actual = $styler($code);
         $this->assertSame($expect, $actual);
     }

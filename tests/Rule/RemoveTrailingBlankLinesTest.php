@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace PhpStyler\Rule;
 
 use PHPUnit\Framework\TestCase;
+use PhpStyler\Format;
 use PhpStyler\Styler;
 
 class RemoveTrailingBlankLinesTest extends TestCase
@@ -13,10 +14,9 @@ class RemoveTrailingBlankLinesTest extends TestCase
         string $expect,
     ) : void
     {
-        $styler = new Styler(
-            eol: "\n",
+        $styler = new Styler(new Format(
             rules: [new RemoveTrailingBlankLines()],
-        );
+        ));
         $actual = $styler($code);
         $this->assertSame($expect, $actual);
     }

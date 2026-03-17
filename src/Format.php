@@ -29,7 +29,7 @@ class Format
      * @var styles_array
      * @php-styler-expansive
      */
-    private array $props = [
+    private array $styles = [
         Token\TAbstractMethodEndSemicolon::class => [
             'spaceBefore' => false,
             'spaceAfter' => true,
@@ -1205,101 +1205,27 @@ class Format
     private array $instances = [];
 
     /**
-     * @param styles_array $custom
+     * @param styles_array $styles
+     * @param 'same_line'|'next_line' $classBracePosition
+     * @param 'same_line'|'next_line' $functionBracePosition
+     * @param 'same_line'|'next_line' $controlBracePosition
+     * @param 'lower'|'upper' $keywordCase
+     * @param array<TokenRule|LineRule> $rules
      */
-    public function __construct(array $custom = [])
-    {
-        $formatOverrides = $this->buildFormatOverrides();
-
-        foreach ($formatOverrides as $class => $props) {
-            $this->props[$class] ??= [];
-            $this->props[$class] = array_merge($this->props[$class], $props);
-        }
-
-        foreach ($custom as $class => $props) {
-            $this->props[$class] ??= [];
-            $this->props[$class] = array_merge($this->props[$class], $props);
-        }
-    }
-
-    public function eol() : string
-    {
-        return "\n";
-    }
-
-    public function lineLen() : int
-    {
-        return 88;
-    }
-
-    public function indentLen() : int
-    {
-        return 4;
-    }
-
-    public function indentTab() : bool
-    {
-        return false;
-    }
-
-    /**
-     * @param token_class_string $class
-     */
-    public function getStyle(string $class) : Style
-    {
-        if (isset($this->instances[$class])) {
-            return $this->instances[$class];
-        }
-
-        $props = $this->props[$class] ?? [];
-        $style = new Style(...$props);
-        $this->instances[$class] = $style;
-        return $style;
-    }
-
-    /** @return 'same_line'|'next_line' */
-    public function classBracePosition() : string
-    {
-        return 'next_line';
-    }
-
-    /** @return 'same_line'|'next_line' */
-    public function functionBracePosition() : string
-    {
-        return 'next_line';
-    }
-
-    /** @return 'same_line'|'next_line' */
-    public function controlBracePosition() : string
-    {
-        return 'same_line';
-    }
-
-    /** @return 'lower'|'upper' */
-    public function keywordCase() : string
-    {
-        return 'lower';
-    }
-
-    public function concatenationSpacing() : bool
-    {
-        return true;
-    }
-
-    public function returnTypeColonSpacing() : bool
-    {
-        return true;
-    }
-
-    public function blankLineAfterBlock() : bool
-    {
-        return true;
-    }
-
-    /** @return array<TokenRule|LineRule> */
-    public function rules() : array
-    {
-        return [
+    public function __construct(
+        public readonly string $eol = "\n",
+        public readonly int $lineLen = 88,
+        public readonly int $indentLen = 4,
+        public readonly bool $indentTab = false,
+        string $classBracePosition = 'next_line',
+        string $functionBracePosition = 'next_line',
+        string $controlBracePosition = 'same_line',
+        string $keywordCase = 'lower',
+        bool $concatenationSpacing = true,
+        bool $returnTypeColonSpacing = true,
+        bool $blankLineAfterBlock = true,
+        array $styles = [],
+        public readonly array $rules = [
             new Rule\RemoveBom(),
             new Rule\ConvertListToArray(),
             new Rule\ConvertLongArrayToShort(),
@@ -1312,142 +1238,238 @@ class Format
             new Rule\OrderTypes(),
             new Rule\NormalizeTrailingCommas(),
             new Rule\RemoveTrailingBlankLines(),
-        ];
+        ],
+    ) {
+        $this->setClassBracePosition($classBracePosition);
+        $this->setFunctionBracePosition($functionBracePosition);
+        $this->setControlBracePosition($controlBracePosition);
+        $this->setKeywordCase($keywordCase);
+        $this->setConcatenationSpacing($concatenationSpacing);
+        $this->setReturnTypeColonSpacing($returnTypeColonSpacing);
+        $this->setBlankLineAfterBlock($blankLineAfterBlock);
+
+        foreach ($styles as $class => $args) {
+            $this->styles[$class] ??= [];
+            $this->styles[$class] = array_merge($this->styles[$class], $args);
+        }
     }
 
     /**
-     * @return styles_array
+     * @param token_class_string $class
      */
-    private function buildFormatOverrides() : array
+    public function getStyle(string $class) : Style
     {
-        /** @var styles_array $custom */
-        $custom = [];
-
-        if ($this->classBracePosition() === 'same_line') {
-            $sameLineOverride = ['lineBreakBefore' => null, 'spaceBefore' => true];
-
-            foreach (
-                [
-                    Token\TClassOpeningBrace::class,
-                    Token\TClasslikeOpeningBrace::class,
-                    Token\TInterfaceOpeningBrace::class,
-                    Token\TEnumOpeningBrace::class,
-                    Token\TTraitOpeningBrace::class,
-                    Token\TNamespaceOpeningBrace::class,
-                ] as $class
-            ) {
-                $custom[$class] = $sameLineOverride;
-            }
+        if (isset($this->instances[$class])) {
+            return $this->instances[$class];
         }
 
-        if ($this->functionBracePosition() === 'same_line') {
-            $custom[Token\TFunctionOpeningBrace::class] = [
-                'lineBreakBefore' => null,
-                'spaceBefore' => true,
-            ];
+        $args = $this->styles[$class] ?? [];
+        $style = new Style(...$args);
+        $this->instances[$class] = $style;
+        return $style;
+    }
+
+    /**
+     * @param null|'next_line'|'same_line' $spec
+     */
+    private function setClassBracePosition(?string $spec) : void
+    {
+        if ($spec === null) {
+            return;
         }
 
-        if ($this->controlBracePosition() === 'next_line') {
-            foreach (
-                [
-                    Token\TIfOpeningBrace::class,
-                    Token\TElseOpeningBrace::class,
-                    Token\TElseifOpeningBrace::class,
-                    Token\TForOpeningBrace::class,
-                    Token\TForeachOpeningBrace::class,
-                    Token\TDoOpeningBrace::class,
-                    Token\TCatchOpeningBrace::class,
-                    Token\TFinallyOpeningBrace::class,
-                    Token\TMatchOpeningBrace::class,
-                    Token\TSwitchOpeningBrace::class,
-                    Token\TWhileOpeningBrace::class,
-                    Token\TAnonymousOpeningBrace::class,
-                    Token\TTryOpeningBrace::class,
-                ] as $class
-            ) {
-                $custom[$class] = ['lineBreakBefore' => true];
-            }
+        $args = match ($spec) {
+            'same_line' => ['lineBreakBefore' => null, 'spaceBefore' => true],
+            'next_line' => ['lineBreakBefore' => true, 'spaceBefore' => null],
+        };
 
-            foreach (
-                [
-                    Token\TCatchContinuationBrace::class,
-                    Token\TDoContinuationBrace::class,
-                    Token\TElseifContinuationBrace::class,
-                    Token\TIfContinuationBrace::class,
-                    Token\TTryContinuationBrace::class,
-                ] as $class
-            ) {
-                $custom[$class] = ['spaceAfter' => null, 'lineBreakAfter' => true];
-            }
+        foreach (
+            [
+                Token\TClassOpeningBrace::class,
+                Token\TClasslikeOpeningBrace::class,
+                Token\TInterfaceOpeningBrace::class,
+                Token\TEnumOpeningBrace::class,
+                Token\TTraitOpeningBrace::class,
+                Token\TNamespaceOpeningBrace::class,
+            ] as $class
+        ) {
+            $this->styles[$class] = array_merge($this->styles[$class], $args);
+        }
+    }
+
+    private function setConcatenationSpacing(?bool $spec) : void
+    {
+        if ($spec === null) {
+            return;
         }
 
-        if ($this->keywordCase() === 'upper') {
-            $caseOverride = ['case' => 'strtoupper'];
+        $args = match ($spec) {
+            false => ['spaceBefore' => false, 'spaceAfter' => false],
+            true => ['spaceBefore' => null, 'spaceAfter' => null],
+        };
 
-            foreach (
-                [
-                    Token\TArray::class,
-                    Token\TArrayConstruct::class,
-                    Token\TFalse::class,
-                    Token\TNull::class,
-                    Token\TTrue::class,
-                ] as $class
-            ) {
-                $custom[$class] = $caseOverride;
-            }
+        $class = Token\TDot::class;
+        $this->styles[$class] ??= [];
+        $this->styles[$class] = array_merge($this->styles[$class], $args);
+    }
+
+    /**
+     * @param null|'next_line'|'same_line' $spec
+     */
+    private function setControlBracePosition(?string $spec) : void
+    {
+        if ($spec === null) {
+            return;
         }
 
-        if ($this->concatenationSpacing() === false) {
-            $custom[Token\TDot::class] = [
-                'spaceBefore' => false,
-                'spaceAfter' => false,
-            ];
+        $args = match ($spec) {
+            'next_line' => ['lineBreakBefore' => true],
+            'same_line' => ['lineBreakBefore' => null],
+        };
+
+        foreach (
+            [
+                Token\TIfOpeningBrace::class,
+                Token\TElseOpeningBrace::class,
+                Token\TElseifOpeningBrace::class,
+                Token\TForOpeningBrace::class,
+                Token\TForeachOpeningBrace::class,
+                Token\TDoOpeningBrace::class,
+                Token\TCatchOpeningBrace::class,
+                Token\TFinallyOpeningBrace::class,
+                Token\TMatchOpeningBrace::class,
+                Token\TSwitchOpeningBrace::class,
+                Token\TWhileOpeningBrace::class,
+                Token\TAnonymousOpeningBrace::class,
+                Token\TTryOpeningBrace::class,
+            ] as $class
+        ) {
+            $this->styles[$class] = array_merge($this->styles[$class], $args);
         }
 
-        if ($this->returnTypeColonSpacing() === false) {
-            $custom[Token\TReturnColon::class] = ['spaceBefore' => false];
+        $args = match ($spec) {
+            'next_line' => ['spaceAfter' => null, 'lineBreakAfter' => true],
+            'same_line' => ['spaceAfter' => true, 'lineBreakAfter' => null],
+        };
+
+        foreach (
+            [
+                Token\TCatchContinuationBrace::class,
+                Token\TDoContinuationBrace::class,
+                Token\TElseifContinuationBrace::class,
+                Token\TIfContinuationBrace::class,
+                Token\TTryContinuationBrace::class,
+            ] as $class
+        ) {
+            $this->styles[$class] = array_merge($this->styles[$class], $args);
+        }
+    }
+
+    /**
+     * @param null|'next_line'|'same_line' $spec
+     */
+    private function setFunctionBracePosition(?string $spec) : void
+    {
+        if ($spec === null) {
+            return;
         }
 
-        if ($this->blankLineAfterBlock() === false) {
-            $blankLineOverride = ['blankLineAfter' => null, 'lineBreakAfter' => true];
+        $args = match ($spec) {
+            'same_line' => ['lineBreakBefore' => null, 'spaceBefore' => true],
+            'next_line' => ['lineBreakBefore' => true, 'spaceBefore' => null],
+        };
 
-            foreach (
-                [
-                    Token\TAbstractMethodEndSemicolon::class,
-                    Token\TCatchClosingBrace::class,
-                    Token\TClassClosingBrace::class,
-                    Token\TClasslikeClosingBrace::class,
-                    Token\TCommentHashedBlankLine::class,
-                    Token\TCommentSlashedBlankLine::class,
-                    Token\TCommentStarredBlankLine::class,
-                    Token\TConstEndSemicolon::class,
-                    Token\TDeclareEndSemicolon::class,
-                    Token\TDocCommentBlankLine::class,
-                    Token\TElseClosingBrace::class,
-                    Token\TElseifClosingBrace::class,
-                    Token\TEnumCaseEndSemicolon::class,
-                    Token\TEnumClosingBrace::class,
-                    Token\TFinallyClosingBrace::class,
-                    Token\TForClosingBrace::class,
-                    Token\TForeachClosingBrace::class,
-                    Token\TFunctionClosingBrace::class,
-                    Token\TIfClosingBrace::class,
-                    Token\TInterfaceClosingBrace::class,
-                    Token\TNamespaceEndSemicolon::class,
-                    Token\TPropertyEndSemicolon::class,
-                    Token\TPropertyHooksClosingBrace::class,
-                    Token\TSwitchAfterCaseClosingBrace::class,
-                    Token\TSwitchClosingBrace::class,
-                    Token\TTraitClosingBrace::class,
-                    Token\TUseTraitClosingBrace::class,
-                    Token\TUseTraitEndSemicolon::class,
-                    Token\TWhileClosingBrace::class,
-                ] as $class
-            ) {
-                $custom[$class] = $blankLineOverride;
-            }
+        $class = Token\TFunctionOpeningBrace::class;
+        $this->styles[$class] = array_merge($this->styles[$class], $args);
+    }
+
+    /**
+     * @param null|'lower'|'upper' $spec
+     */
+    private function setKeywordCase(?string $spec) : void
+    {
+        if ($spec === null) {
+            return;
         }
 
-        return $custom;
+        $args = match ($spec) {
+            'upper' => ['case' => 'strtoupper'],
+            'lower' => ['case' => 'strtolower'],
+        };
+
+        foreach (
+            [
+                Token\TArray::class,
+                Token\TArrayConstruct::class,
+                Token\TFalse::class,
+                Token\TNull::class,
+                Token\TTrue::class,
+            ] as $class
+        ) {
+            $this->styles[$class] = array_merge($this->styles[$class], $args);
+        }
+    }
+
+    private function setReturnTypeColonSpacing(?bool $spec) : void
+    {
+        if ($spec === null) {
+            return;
+        }
+
+        $args = match ($spec) {
+            false => ['spaceBefore' => false],
+            true => ['spaceBefore' => true],
+        };
+
+        $class = Token\TReturnColon::class;
+        $this->styles[$class] = array_merge($this->styles[$class], $args);
+    }
+
+    private function setBlankLineAfterBlock(?bool $spec) : void
+    {
+        if ($spec === null) {
+            return;
+        }
+
+        $args = match ($spec) {
+            false => ['blankLineAfter' => null, 'lineBreakAfter' => true],
+            true => ['blankLineAfter' => true, 'lineBreakAfter' => null],
+        };
+
+        foreach (
+            [
+                Token\TAbstractMethodEndSemicolon::class,
+                Token\TCatchClosingBrace::class,
+                Token\TClassClosingBrace::class,
+                Token\TClasslikeClosingBrace::class,
+                Token\TCommentHashedBlankLine::class,
+                Token\TCommentSlashedBlankLine::class,
+                Token\TCommentStarredBlankLine::class,
+                Token\TConstEndSemicolon::class,
+                Token\TDeclareEndSemicolon::class,
+                Token\TDocCommentBlankLine::class,
+                Token\TElseClosingBrace::class,
+                Token\TElseifClosingBrace::class,
+                Token\TEnumCaseEndSemicolon::class,
+                Token\TEnumClosingBrace::class,
+                Token\TFinallyClosingBrace::class,
+                Token\TForClosingBrace::class,
+                Token\TForeachClosingBrace::class,
+                Token\TFunctionClosingBrace::class,
+                Token\TIfClosingBrace::class,
+                Token\TInterfaceClosingBrace::class,
+                Token\TNamespaceEndSemicolon::class,
+                Token\TPropertyEndSemicolon::class,
+                Token\TPropertyHooksClosingBrace::class,
+                Token\TSwitchAfterCaseClosingBrace::class,
+                Token\TSwitchClosingBrace::class,
+                Token\TTraitClosingBrace::class,
+                Token\TUseTraitClosingBrace::class,
+                Token\TUseTraitEndSemicolon::class,
+                Token\TWhileClosingBrace::class,
+            ] as $class
+        ) {
+            $this->styles[$class] = array_merge($this->styles[$class], $args);
+        }
     }
 }

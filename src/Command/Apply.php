@@ -102,7 +102,7 @@ class Apply extends Command
     ) : int
     {
         $count = 0;
-        $styler = Styler::fromConfig($config);
+        $styler = new Styler($config->format);
 
         if ($paths) {
             $cacheTime = false;

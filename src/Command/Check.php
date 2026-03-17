@@ -60,7 +60,7 @@ class Check extends Command
     protected function checkStyle(Config $config) : int
     {
         $count = 0;
-        $styler = Styler::fromConfig($config);
+        $styler = new Styler($config->format);
 
         foreach ($config->files as $file) {
             $file = (string) $file;

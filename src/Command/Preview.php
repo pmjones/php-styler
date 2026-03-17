@@ -19,7 +19,7 @@ class Preview extends Command
         $configFile = $options->configFile ?? $this->findConfigFile();
         $config = $this->loadConfigFile($configFile);
 
-        $styler = Styler::fromConfig($config);
+        $styler = new Styler($config->format);
         echo $styler((string) file_get_contents($sourceFile));
         return 0;
     }
