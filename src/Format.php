@@ -1241,6 +1241,7 @@ class Format
             Rule\AddMissingVisibility::class,
             Rule\OrderModifiers::class,
             Rule\OrderTypes::class,
+            Rule\MergeParenBracket::class,
             Rule\NormalizeTrailingCommas::class,
             Rule\RemoveTrailingBlankLines::class,
         ],

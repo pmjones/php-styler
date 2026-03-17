@@ -6,6 +6,7 @@ namespace PhpStyler;
 use PhpStyler\Format;
 use PhpStyler\Rule\NormalizeTrailingCommas;
 use PhpStyler\Rule\RemoveTrailingBlankLines;
+use PhpStyler\Rule\MergeParenBracket;
 use PHPUnit\Framework\TestCase;
 
 class ExamplesTest extends TestCase
@@ -17,6 +18,7 @@ class ExamplesTest extends TestCase
         $this->styler = new Styler(
             new Format(
                 rules: [
+                    MergeParenBracket::class,
                     NormalizeTrailingCommas::class,
                     RemoveTrailingBlankLines::class,
                 ],

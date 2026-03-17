@@ -571,23 +571,11 @@ class Parser
     {
         $current = end($this->nesting);
         $argCount = $current !== false ? $current->argCount : 0;
-        $containsBracket = $current !== false ? $current->containsBracket : false;
         $opener = $this->popNesting($openerClass, ...$openerClasses);
         $opener->argCount = $argCount;
         $closer = $this->add($source, $closerClass);
         $opener->closingToken = $closer;
         $closer->openingToken = $opener;
-
-        if ($opener->text === '[' && $this->nesting !== []) {
-            $this->nesting[array_key_last($this->nesting)]->containsBracket = true;
-        } elseif (
-            $argCount === 0
-            && $opener->text === '('
-            && $containsBracket
-            && ! $this->containsSplittableOperator($opener)
-        ) {
-            $opener->transparentOpener = true;
-        }
 
         return $closer;
     }
@@ -714,28 +702,6 @@ class Parser
         return false;
     }
 
-    private function containsSplittableOperator(T $opener) : bool
-    {
-        $depth = 0;
-
-        for ($i = $this->lastAddedIndex - 1; $i >= 0; $i --) {
-            $token = $this->parsed[$i];
-
-            if ($token === $opener) {
-                return false;
-            }
-
-            if ($token->text === ')' || $token->text === ']') {
-                $depth ++;
-            } elseif ($token->text === '(' || $token->text === '[') {
-                $depth --;
-            } elseif ($depth === 0 && $token instanceof Token\TSplittableOperator) {
-                return true;
-            }
-        }
-
-        return false;
-    }
 
     protected function findUpcomingInlineComment() : ?int
     {
