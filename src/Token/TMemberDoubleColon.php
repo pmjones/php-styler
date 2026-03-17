@@ -8,7 +8,10 @@ class TMemberDoubleColon extends T implements TSplittableFluent
 {
     public function splitBefore(Parser $parser) : ?TSplit
     {
-        return $parser->getNextSource()?->is(T_VARIABLE)
+        $next = $parser->getNextSource();
+
+        return $next?->is(T_VARIABLE)
+            || $next?->is('{')
             ? new TSplitStaticMember(T::SYNTHETIC, '')
             : new TSplitStaticMethodCall(T::SYNTHETIC, '');
     }

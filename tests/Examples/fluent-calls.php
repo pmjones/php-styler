@@ -61,3 +61,24 @@ function static_fluency()
         }
     }
 }
+
+// dynamic instance method calls
+$result = $this
+    ->{$veryLongMethodName}()
+    ->{$veryLongMethodName}()
+    ->{$veryLongMethodName}();
+
+// dynamic static method calls
+$result = ClassName::{$veryLongMethodName}()
+    ->{$veryLongMethodName}()
+    ->{$veryLongMethodName}();
+
+// dynamic instance property access
+$result = $this->{$veryLongPropertyName}
+    ->{$veryLongPropertyName}
+    ->{$veryLongPropertyName};
+
+// dynamic static method calls
+$result = ClassName::{$veryLongPropertyName}
+    ->{$veryLongPropertyName}
+    ->{$veryLongPropertyName};
