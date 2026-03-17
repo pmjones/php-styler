@@ -1,9 +1,8 @@
 <?php
 declare(strict_types=1);
 
-namespace PhpStyler\Style;
+namespace PhpStyler;
 
-use PhpStyler\Format\Format;
 use PhpStyler\Rule\NormalizeTrailingCommas;
 use PhpStyler\Rule\RemoveTrailingBlankLines;
 use PhpStyler\Styler;

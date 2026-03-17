@@ -1,12 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace PhpStyler\Format;
+namespace PhpStyler;
 
 use PhpStyler\Rule;
 use PhpStyler\Rule\LineRule;
 use PhpStyler\Rule\TokenRule;
-use PhpStyler\Style\Style;
 use PhpStyler\Token;
 
 /**

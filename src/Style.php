@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace PhpStyler\Style;
+namespace PhpStyler;
 
 class Style
 {

@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
-use PhpStyler\Format\Format;
-use PhpStyler\Style\Style;
 use PhpStyler\Token;
 use PhpStyler\Token\T;
 use PhpStyler\Token\TIndentDecrement;

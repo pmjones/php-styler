@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
-use PhpStyler\Format\Format;
-
 class ConfigTest extends TestCase
 {
     public function test() : void

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace PhpStyler\Format;
+namespace PhpStyler;
 
 use PhpStyler\Token\TCatchContinuationBrace;
 use PhpStyler\Token\TClassOpeningBrace;
