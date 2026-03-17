@@ -1268,8 +1268,10 @@ class Format
                 /** @var class-string<TokenRule|LineRule> $val */
                 $r[$val] = [];
             } else {
-                /** @var class-string<TokenRule|LineRule> $key */
-                /** @var array<string, mixed> $val */
+                /**
+                 * @var class-string<TokenRule|LineRule> $key
+                 * @var array<string, mixed> $val
+                 */
                 $r[$key] = $val;
             }
         }
