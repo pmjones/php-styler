@@ -5,6 +5,7 @@ namespace PhpStyler\Format;
 
 use PhpStyler\Rule\LineRule;
 use PhpStyler\Rule\TokenRule;
+
 /**
  * @phpstan-type token_class_string class-string<Token\T>
  *

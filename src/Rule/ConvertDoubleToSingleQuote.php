@@ -17,10 +17,7 @@ class ConvertDoubleToSingleQuote implements TokenRule
         $result = [];
 
         foreach ($tokens as $token) {
-            if (
-                $token instanceof TStringLiteral
-                && $token->text[0] === '"'
-            ) {
+            if ($token instanceof TStringLiteral && $token->text[0] === '"') {
                 $inner = substr($token->text, 1, -1);
 
                 if (str_contains($inner, "'")) {

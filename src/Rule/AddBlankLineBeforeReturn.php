@@ -49,18 +49,12 @@ class AddBlankLineBeforeReturn implements TokenRule
                 $k --;
             }
 
-            if (
-                $k >= 0
-                && $result[$k] instanceof TBlankLine
-            ) {
+            if ($k >= 0 && $result[$k] instanceof TBlankLine) {
                 $result[] = $token;
                 continue;
             }
 
-            if (
-                $k >= 0
-                && $result[$k] instanceof TOpeningStructure
-            ) {
+            if ($k >= 0 && $result[$k] instanceof TOpeningStructure) {
                 $result[] = $token;
                 continue;
             }

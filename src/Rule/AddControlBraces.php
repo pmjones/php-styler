@@ -7,21 +7,21 @@ use PhpStyler\Token\T;
 use PhpStyler\Token\TElse;
 use PhpStyler\Token\TElseClosingBrace;
 use PhpStyler\Token\TElseClosingBraceless;
-use PhpStyler\Token\TElseOpeningBrace;
 use PhpStyler\Token\TElseifClosingBrace;
 use PhpStyler\Token\TElseifClosingBraceless;
 use PhpStyler\Token\TElseifClosingParen;
 use PhpStyler\Token\TElseifContinuationBrace;
 use PhpStyler\Token\TElseifContinuationBraceless;
 use PhpStyler\Token\TElseifOpeningBrace;
+use PhpStyler\Token\TElseOpeningBrace;
 use PhpStyler\Token\TForClosingBrace;
 use PhpStyler\Token\TForClosingBraceless;
 use PhpStyler\Token\TForClosingParen;
-use PhpStyler\Token\TForOpeningBrace;
 use PhpStyler\Token\TForeachClosingBrace;
 use PhpStyler\Token\TForeachClosingBraceless;
 use PhpStyler\Token\TForeachClosingParen;
 use PhpStyler\Token\TForeachOpeningBrace;
+use PhpStyler\Token\TForOpeningBrace;
 use PhpStyler\Token\TIfClosingBrace;
 use PhpStyler\Token\TIfClosingBraceless;
 use PhpStyler\Token\TIfClosingParen;
@@ -78,13 +78,23 @@ class AddControlBraces implements TokenRule
 
             if (isset(self::CLOSING_BRACE_MAP[$class])) {
                 $braceClass = self::CLOSING_BRACE_MAP[$class];
-                $result[] = new $braceClass(T::SYNTHETIC, '}', $token->line, $token->pos);
+                $result[] = new $braceClass(
+                    T::SYNTHETIC,
+                    '}',
+                    $token->line,
+                    $token->pos,
+                );
                 continue;
             }
 
             if (isset(self::CONTINUATION_BRACE_MAP[$class])) {
                 $braceClass = self::CONTINUATION_BRACE_MAP[$class];
-                $result[] = new $braceClass(T::SYNTHETIC, '}', $token->line, $token->pos);
+                $result[] = new $braceClass(
+                    T::SYNTHETIC,
+                    '}',
+                    $token->line,
+                    $token->pos,
+                );
                 continue;
             }
 
@@ -97,7 +107,10 @@ class AddControlBraces implements TokenRule
     /**
      * @param T[] $result
      */
-    protected function replaceOpeningBraceless(TOpeningBraceless $token, array $result) : T
+    protected function replaceOpeningBraceless(
+        TOpeningBraceless $token,
+        array $result,
+    ) : T
     {
         for ($i = count($result) - 1; $i >= 0; $i --) {
             if ($result[$i] instanceof TSpace) {

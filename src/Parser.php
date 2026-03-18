@@ -546,7 +546,7 @@ class Parser
                 Token\TElseif::class => Token\TElseifContinuationBraceless::class,
                 default => throw new Exception(
                     "Unknown continuation braceless in nesting "
-                    . var_export($this->listNesting(), true),
+                        . var_export($this->listNesting(), true),
                 ),
             };
 
@@ -567,7 +567,7 @@ class Parser
             Token\TForeach::class => Token\TForeachClosingBraceless::class,
             default => throw new Exception(
                 "Unknown closing braceless in nesting "
-                . var_export($this->listNesting(), true),
+                    . var_export($this->listNesting(), true),
             ),
         };
 

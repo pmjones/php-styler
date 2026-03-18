@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace PhpStyler\Format;
 
 use PhpStyler\Rule;
+
 class ExtendedFormat extends PlainFormat
 {
     /**

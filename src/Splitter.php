@@ -7,6 +7,7 @@ use PhpStyler\Token\T;
 use PhpStyler\Token\TCommentary;
 use PhpStyler\Token\TSpace;
 use PhpStyler\Token\TSplit;
+
 class Splitter
 {
     public function __construct(private LineFactory $lineFactory = new LineFactory())
