@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
-use PhpStyler\Format\ExtendedFormat;
+use PhpStyler\Format\DeclarationFormat;
 use PhpStyler\Rule\RemoveTrailingBlankLines;
 
 abstract class TestCase extends \PHPUnit\Framework\TestCase
@@ -13,7 +13,7 @@ abstract class TestCase extends \PHPUnit\Framework\TestCase
     protected function setUp() : void
     {
         $this->styler = new Styler(
-            new ExtendedFormat(rules: [RemoveTrailingBlankLines::class]),
+            new DeclarationFormat(rules: [RemoveTrailingBlankLines::class]),
         );
     }
 

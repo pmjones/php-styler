@@ -1,11 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace PhpStyler\Format;
+namespace PhpStyler\Format\Vendor;
 
+use PhpStyler\Format\DeclarationFormat;
 use PhpStyler\Rule;
 
-class ExtendedFormat extends PlainFormat
+class SymfonyFormat extends DeclarationFormat
 {
     /**
      * @inheritdoc
@@ -16,6 +17,7 @@ class ExtendedFormat extends PlainFormat
         Rule\ConvertLongArrayToShort::class => [],
         Rule\ConvertElseIf::class => [],
         Rule\AddControlBraces::class => [],
+        Rule\ConvertDoubleToSingleQuote::class => [],
         Rule\ExpandImports::class => [],
         Rule\RemoveUnusedImports::class => [],
         Rule\OrderImports::class => [],
@@ -25,6 +27,10 @@ class ExtendedFormat extends PlainFormat
         Rule\MergeParenBracket::class => [],
         Rule\NormalizeTrailingCommas::class => [],
         Rule\RemoveTrailingBlankLines::class => [],
+        Rule\ConvertToYodaConditions::class => [],
+        Rule\AddBlankLineBeforeReturn::class => [],
+        Rule\AddInstantiationParentheses::class => [],
+        Rule\ConvertSwitchContinueToBreak::class => [],
     ];
 
     /**
@@ -32,7 +38,7 @@ class ExtendedFormat extends PlainFormat
      */
     public function __construct(
         string $eol = "\n",
-        int $lineLen = 88,
+        int $lineLen = 120,
         int $indentLen = 4,
         bool $indentTab = false,
         array $styles = [],
@@ -43,15 +49,10 @@ class ExtendedFormat extends PlainFormat
             lineLen: $lineLen,
             indentLen: $indentLen,
             indentTab: $indentTab,
-            classBracePosition: 'next_line',
-            functionBracePosition: 'next_line',
-            controlBracePosition: 'same_line',
-            keywordCase: 'lower',
-            concatenationSpacing: true,
-            returnTypeColonSpacing: true,
-            blankLineAfterBlock: true,
             styles: $styles,
             rules: $rules,
         );
+        $this->setConcatenationSpacing(false);
+        $this->setReturnTypeColonSpacing(false);
     }
 }

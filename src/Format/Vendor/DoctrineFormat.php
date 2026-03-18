@@ -1,9 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace PhpStyler\Format;
+namespace PhpStyler\Format\Vendor;
 
-class DoctrineFormat extends ExtendedFormat
+use PhpStyler\Format\DeclarationFormat;
+
+class DoctrineFormat extends DeclarationFormat
 {
     /**
      * @inheritdoc

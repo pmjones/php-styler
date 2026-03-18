@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Rule;
 
-use PhpStyler\Format\ExtendedFormat;
+use PhpStyler\Format\DeclarationFormat;
 use PhpStyler\Styler;
 use PHPUnit\Framework\TestCase;
 
@@ -16,7 +16,7 @@ class NormalizeTrailingCommasTest extends TestCase
     ) : void
     {
         $styler = new Styler(
-            new ExtendedFormat(
+            new DeclarationFormat(
                 lineLen: $lineLen,
                 rules: [
                     NormalizeTrailingCommas::class,

@@ -5,7 +5,7 @@ namespace PhpStyler\Format;
 
 use PhpStyler\Rule;
 
-class SymfonyFormat extends ExtendedFormat
+class DeclarationFormat extends PlainFormat
 {
     /**
      * @inheritdoc
@@ -16,7 +16,6 @@ class SymfonyFormat extends ExtendedFormat
         Rule\ConvertLongArrayToShort::class => [],
         Rule\ConvertElseIf::class => [],
         Rule\AddControlBraces::class => [],
-        Rule\ConvertDoubleToSingleQuote::class => [],
         Rule\ExpandImports::class => [],
         Rule\RemoveUnusedImports::class => [],
         Rule\OrderImports::class => [],
@@ -26,10 +25,6 @@ class SymfonyFormat extends ExtendedFormat
         Rule\MergeParenBracket::class => [],
         Rule\NormalizeTrailingCommas::class => [],
         Rule\RemoveTrailingBlankLines::class => [],
-        Rule\ConvertToYodaConditions::class => [],
-        Rule\AddBlankLineBeforeReturn::class => [],
-        Rule\AddInstantiationParentheses::class => [],
-        Rule\ConvertSwitchContinueToBreak::class => [],
     ];
 
     /**
@@ -37,7 +32,7 @@ class SymfonyFormat extends ExtendedFormat
      */
     public function __construct(
         string $eol = "\n",
-        int $lineLen = 120,
+        int $lineLen = 88,
         int $indentLen = 4,
         bool $indentTab = false,
         array $styles = [],
@@ -48,10 +43,15 @@ class SymfonyFormat extends ExtendedFormat
             lineLen: $lineLen,
             indentLen: $indentLen,
             indentTab: $indentTab,
+            classBracePosition: 'next_line',
+            functionBracePosition: 'next_line',
+            controlBracePosition: 'same_line',
+            keywordCase: 'lower',
+            concatenationSpacing: true,
+            returnTypeColonSpacing: true,
+            blankLineAfterBlock: true,
             styles: $styles,
             rules: $rules,
         );
-        $this->setConcatenationSpacing(false);
-        $this->setReturnTypeColonSpacing(false);
     }
 }
