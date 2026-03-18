@@ -12,6 +12,7 @@ class TForeachClosingBraceless extends T implements TClosingStructure
     {
         $parser->popNesting(TForeach::class);
         $parser->indentDecr();
-        $parser->add($source, self::class);
+        $synthetic = new \PhpToken($source->id, '', $source->line, $source->pos);
+        $parser->add($synthetic, self::class);
     }
 }

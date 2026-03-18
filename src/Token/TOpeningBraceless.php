@@ -10,7 +10,8 @@ class TOpeningBraceless extends T implements TOpeningStructure
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
-        $parser->addNesting($source, self::class);
+        $synthetic = new \PhpToken($source->id, '', $source->line, $source->pos);
+        $parser->addNesting($synthetic, self::class);
         $parser->indentIncr();
     }
 }

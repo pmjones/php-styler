@@ -50,6 +50,12 @@ class TSemicolon extends T
 
         if ($parseClass) {
             $parser->parse($source, $parseClass);
+
+            // After *EndSemicolon popped its nesting, close any exposed braceless body
+            if ($parser->atNesting(TOpeningBraceless::class)) {
+                $parser->endBracelessBody($source);
+            }
+
             return;
         }
 

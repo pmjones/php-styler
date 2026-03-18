@@ -534,6 +534,46 @@ class Parser
             || $this->atNesting(Token\TBacktickOpening::class);
     }
 
+    public function endBracelessBody(PhpToken $source) : void
+    {
+        if ($this->getNextSource()?->is([T_ELSE, T_ELSEIF])) {
+            // Continuation: braceless if/elseif → else/elseif
+            $this->popNesting(Token\TOpeningBraceless::class);
+            $nesting = $this->getNesting();
+
+            $braceless = match ($nesting) {
+                Token\TIf::class => Token\TIfContinuationBraceless::class,
+                Token\TElseif::class => Token\TElseifContinuationBraceless::class,
+                default => throw new Exception(
+                    "Unknown continuation braceless in nesting "
+                    . var_export($this->listNesting(), true),
+                ),
+            };
+
+            $this->parse($source, $braceless);
+            return;
+        }
+
+        // Final closing
+        $this->popNesting(Token\TOpeningBraceless::class);
+        $nesting = $this->getNesting();
+
+        $braceless = match ($nesting) {
+            Token\TIf::class => Token\TIfClosingBraceless::class,
+            Token\TElse::class => Token\TElseClosingBraceless::class,
+            Token\TElseif::class => Token\TElseifClosingBraceless::class,
+            Token\TWhile::class => Token\TWhileClosingBraceless::class,
+            Token\TFor::class => Token\TForClosingBraceless::class,
+            Token\TForeach::class => Token\TForeachClosingBraceless::class,
+            default => throw new Exception(
+                "Unknown closing braceless in nesting "
+                . var_export($this->listNesting(), true),
+            ),
+        };
+
+        $this->parse($source, $braceless);
+    }
+
     public function popTernaryNesting() : void
     {
         while (true) {
