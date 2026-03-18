@@ -1,6 +1,7 @@
 <?php
 use PhpStyler\Config;
 use PhpStyler\Files;
+use PhpStyler\Format;
 
 return new Config(
     cache: __DIR__ . '/.php-styler.cache',
@@ -19,4 +20,5 @@ return new Config(
         __DIR__ . '/tests/StyleTest.php',
         __DIR__ . '/tests/TestCase.php',
     ),
+    format: new Format\ExtendedFormat(),
 );

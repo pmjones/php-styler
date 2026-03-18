@@ -120,7 +120,7 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
      */
     public function test(string $code, array $expect) : void
     {
-        $styler = new Styler();
+        $styler = new Styler(new Format\ExtendedFormat());
         $tokens = $styler->parse($code);
         $lines = $styler->assemble($tokens);
         $lines = $styler->split($lines);

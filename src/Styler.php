@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
+use PhpStyler\Format\Format;
+use PhpStyler\Format\PlainFormat;
 use PhpStyler\Rule\LineRule;
 use PhpStyler\Rule\TokenRule;
 
@@ -29,7 +31,7 @@ class Styler
         return new self($config->format);
     }
 
-    public function __construct(private Format $format = new Format())
+    public function __construct(private Format $format = new PlainFormat())
     {
         $lineFactory = new LineFactory(
             $format->lineLen,

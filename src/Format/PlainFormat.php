@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace PhpStyler;
+namespace PhpStyler\Format;
 
 use PhpStyler\Rule;
 use PhpStyler\Rule\LineRule;
@@ -9,27 +9,15 @@ use PhpStyler\Rule\TokenRule;
 use PhpStyler\Token;
 
 /**
- * @phpstan-type token_class_string class-string<Token\T>
- *
- * @phpstan-type styles_array array<token_class_string, style_args_array>
- *
- * @phpstan-type style_args_array array{
- *     spaceBefore?: ?bool,
- *     spaceAfter?: ?bool,
- *     lineBreakBefore?: ?bool,
- *     lineBreakAfter?: ?bool,
- *     blankLineBefore?: ?bool,
- *     blankLineAfter?: ?bool,
- *     case?: ?(callable(string): string),
- * }
+ * @phpstan-import-type styles_array from Format
  */
-class Format
+class PlainFormat implements Format
 {
     /**
      * @var styles_array
      * @php-styler-expansive
      */
-    private const array STYLES = [
+    public protected(set) array $styles = [
         Token\TAbstractMethodEndSemicolon::class => [
             'spaceBefore' => false,
             'spaceAfter' => true,
@@ -1200,14 +1188,12 @@ class Format
     ];
 
     /**
-     * @var styles_array
+     * @inheritdoc
      */
-    public readonly array $styles;
-
-    /**
-     * @var array<class-string<TokenRule|LineRule>, array<string, mixed>>
-     */
-    public readonly array $rules;
+    public protected(set) array $rules = [
+        Rule\RemoveBom::class => [],
+        Rule\RemoveTrailingBlankLines::class => [],
+    ];
 
     /**
      * @param styles_array $styles
@@ -1218,73 +1204,51 @@ class Format
      * @param array<int, class-string<TokenRule|LineRule>>|array<class-string<TokenRule|LineRule>, array<string, mixed>> $rules
      */
     public function __construct(
-        public readonly string $eol = "\n",
-        public readonly int $lineLen = 88,
-        public readonly int $indentLen = 4,
-        public readonly bool $indentTab = false,
-        string $classBracePosition = 'next_line',
-        string $functionBracePosition = 'next_line',
+        public protected(set) string $eol = "\n",
+        public protected(set) int $lineLen = 88,
+        public protected(set) int $indentLen = 4,
+        public protected(set) bool $indentTab = false,
+        string $classBracePosition = 'same_line',
+        string $functionBracePosition = 'same_line',
         string $controlBracePosition = 'same_line',
         string $keywordCase = 'lower',
         bool $concatenationSpacing = true,
         bool $returnTypeColonSpacing = true,
-        bool $blankLineAfterBlock = true,
+        bool $blankLineAfterBlock = false,
         array $styles = [],
-        array $rules = [
-            Rule\RemoveBom::class,
-            Rule\ConvertListToArray::class,
-            Rule\ConvertLongArrayToShort::class,
-            Rule\ConvertElseIf::class,
-            Rule\ExpandImports::class,
-            Rule\RemoveUnusedImports::class,
-            Rule\OrderImports::class,
-            Rule\AddMissingVisibility::class,
-            Rule\OrderModifiers::class,
-            Rule\OrderTypes::class,
-            Rule\MergeParenBracket::class,
-            Rule\NormalizeTrailingCommas::class,
-            Rule\RemoveTrailingBlankLines::class,
-        ],
+        array $rules = [],
     ) {
-        $default = self::STYLES;
-
-        $this->setClassBracePosition($classBracePosition, $default);
-        $this->setFunctionBracePosition($functionBracePosition, $default);
-        $this->setControlBracePosition($controlBracePosition, $default);
-        $this->setKeywordCase($keywordCase, $default);
-        $this->setConcatenationSpacing($concatenationSpacing, $default);
-        $this->setReturnTypeColonSpacing($returnTypeColonSpacing, $default);
-        $this->setBlankLineAfterBlock($blankLineAfterBlock, $default);
+        $this->setClassBracePosition($classBracePosition);
+        $this->setFunctionBracePosition($functionBracePosition);
+        $this->setControlBracePosition($controlBracePosition);
+        $this->setKeywordCase($keywordCase);
+        $this->setConcatenationSpacing($concatenationSpacing);
+        $this->setReturnTypeColonSpacing($returnTypeColonSpacing);
+        $this->setBlankLineAfterBlock($blankLineAfterBlock);
 
         foreach ($styles as $class => $args) {
-            $default[$class] ??= [];
-            $default[$class] = array_merge($default[$class], $args);
+            $this->styles[$class] ??= [];
+            $this->styles[$class] = array_merge($this->styles[$class], $args);
         }
-
-        $this->styles = $default;
-        $r = [];
 
         foreach ($rules as $key => $val) {
             if (is_int($key)) {
                 /** @var class-string<TokenRule|LineRule> $val */
-                $r[$val] = [];
+                $this->rules[$val] = [];
             } else {
                 /**
                  * @var class-string<TokenRule|LineRule> $key
                  * @var array<string, mixed> $val
                  */
-                $r[$key] = $val;
+                $this->rules[$key] = $val;
             }
         }
-
-        $this->rules = $r;
     }
 
     /**
      * @param null|'next_line'|'same_line' $spec
-     * @param styles_array &$styles
      */
-    private function setClassBracePosition(?string $spec, array &$styles) : void
+    protected function setClassBracePosition(?string $spec) : void
     {
         if ($spec === null) {
             return;
@@ -1305,14 +1269,11 @@ class Format
                 Token\TNamespaceOpeningBrace::class,
             ] as $class
         ) {
-            $styles[$class] = array_merge($styles[$class], $args);
+            $this->styles[$class] = array_merge($this->styles[$class], $args);
         }
     }
 
-    /**
-     * @param styles_array &$styles
-     */
-    private function setConcatenationSpacing(?bool $spec, array &$styles) : void
+    protected function setConcatenationSpacing(?bool $spec) : void
     {
         if ($spec === null) {
             return;
@@ -1324,15 +1285,14 @@ class Format
         };
 
         $class = Token\TDot::class;
-        $styles[$class] ??= [];
-        $styles[$class] = array_merge($styles[$class], $args);
+        $this->styles[$class] ??= [];
+        $this->styles[$class] = array_merge($this->styles[$class], $args);
     }
 
     /**
      * @param null|'next_line'|'same_line' $spec
-     * @param styles_array &$styles
      */
-    private function setControlBracePosition(?string $spec, array &$styles) : void
+    protected function setControlBracePosition(?string $spec) : void
     {
         if ($spec === null) {
             return;
@@ -1360,7 +1320,7 @@ class Format
                 Token\TTryOpeningBrace::class,
             ] as $class
         ) {
-            $styles[$class] = array_merge($styles[$class], $args);
+            $this->styles[$class] = array_merge($this->styles[$class], $args);
         }
 
         $args = match ($spec) {
@@ -1377,15 +1337,14 @@ class Format
                 Token\TTryContinuationBrace::class,
             ] as $class
         ) {
-            $styles[$class] = array_merge($styles[$class], $args);
+            $this->styles[$class] = array_merge($this->styles[$class], $args);
         }
     }
 
     /**
      * @param null|'next_line'|'same_line' $spec
-     * @param styles_array &$styles
      */
-    private function setFunctionBracePosition(?string $spec, array &$styles) : void
+    protected function setFunctionBracePosition(?string $spec) : void
     {
         if ($spec === null) {
             return;
@@ -1397,14 +1356,13 @@ class Format
         };
 
         $class = Token\TFunctionOpeningBrace::class;
-        $styles[$class] = array_merge($styles[$class], $args);
+        $this->styles[$class] = array_merge($this->styles[$class], $args);
     }
 
     /**
      * @param null|'lower'|'upper' $spec
-     * @param styles_array &$styles
      */
-    private function setKeywordCase(?string $spec, array &$styles) : void
+    protected function setKeywordCase(?string $spec) : void
     {
         if ($spec === null) {
             return;
@@ -1424,14 +1382,11 @@ class Format
                 Token\TTrue::class,
             ] as $class
         ) {
-            $styles[$class] = array_merge($styles[$class], $args);
+            $this->styles[$class] = array_merge($this->styles[$class], $args);
         }
     }
 
-    /**
-     * @param styles_array &$styles
-     */
-    private function setReturnTypeColonSpacing(?bool $spec, array &$styles) : void
+    protected function setReturnTypeColonSpacing(?bool $spec) : void
     {
         if ($spec === null) {
             return;
@@ -1443,13 +1398,10 @@ class Format
         };
 
         $class = Token\TReturnColon::class;
-        $styles[$class] = array_merge($styles[$class], $args);
+        $this->styles[$class] = array_merge($this->styles[$class], $args);
     }
 
-    /**
-     * @param styles_array &$styles
-     */
-    private function setBlankLineAfterBlock(?bool $spec, array &$styles) : void
+    protected function setBlankLineAfterBlock(?bool $spec) : void
     {
         if ($spec === null) {
             return;
@@ -1493,7 +1445,7 @@ class Format
                 Token\TWhileClosingBrace::class,
             ] as $class
         ) {
-            $styles[$class] = array_merge($styles[$class], $args);
+            $this->styles[$class] = array_merge($this->styles[$class], $args);
         }
     }
 }

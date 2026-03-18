@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
+use PhpStyler\Format\Format;
+use PhpStyler\Format\PlainFormat;
+
 class ConfigTest extends TestCase
 {
     public function test() : void
@@ -14,16 +17,18 @@ class ConfigTest extends TestCase
 
     public function testFormatProperties() : void
     {
-        $format = new Format();
+        $format = new PlainFormat();
         $parser = new Parser($format);
 
-        // classBracePosition default: 'next_line'
+        // classBracePosition default: 'same_line'
         $style = $parser->getStyle(Token\TClassOpeningBrace::class);
-        $this->assertTrue($style->lineBreakBefore);
+        $this->assertNull($style->lineBreakBefore);
+        $this->assertTrue($style->spaceBefore);
 
-        // functionBracePosition default: 'next_line'
+        // functionBracePosition default: 'same_line'
         $style = $parser->getStyle(Token\TFunctionOpeningBrace::class);
-        $this->assertTrue($style->lineBreakBefore);
+        $this->assertNull($style->lineBreakBefore);
+        $this->assertTrue($style->spaceBefore);
 
         // controlBracePosition default: 'same_line'
         $style = $parser->getStyle(Token\TIfOpeningBrace::class);
@@ -41,8 +46,9 @@ class ConfigTest extends TestCase
         $style = $parser->getStyle(Token\TReturnColon::class);
         $this->assertTrue($style->spaceBefore);
 
-        // blankLineAfterBlock default: true
+        // blankLineAfterBlock default: false
         $style = $parser->getStyle(Token\TFunctionClosingBrace::class);
-        $this->assertTrue($style->blankLineAfter);
+        $this->assertNull($style->blankLineAfter);
+        $this->assertTrue($style->lineBreakAfter);
     }
 }

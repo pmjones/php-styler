@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
-use PhpStyler\Format;
 use PhpStyler\Rule\NormalizeTrailingCommas;
 use PhpStyler\Rule\RemoveTrailingBlankLines;
+use PhpStyler\TestFormat;
 use PHPUnit\Framework\TestCase;
 
 class StylerTest extends TestCase
@@ -15,12 +15,10 @@ class StylerTest extends TestCase
     protected function setUp() : void
     {
         $this->styler = new Styler(
-            new Format(
-                rules: [
-                    NormalizeTrailingCommas::class,
-                    RemoveTrailingBlankLines::class,
-                ],
-            ),
+            new TestFormat(rules: [
+                NormalizeTrailingCommas::class,
+                RemoveTrailingBlankLines::class,
+            ]),
         );
     }
 

@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace PhpStyler\Rule;
 
-use PhpStyler\Format;
 use PhpStyler\Styler;
+use PhpStyler\TestFormat;
 use PHPUnit\Framework\TestCase;
 
 class AddMissingVisibilityTest extends TestCase
@@ -15,7 +15,7 @@ class AddMissingVisibilityTest extends TestCase
     public function test(string $code, string $expect) : void
     {
         $styler = new Styler(
-            new Format(rules: [
+            new TestFormat(rules: [
                 AddMissingVisibility::class,
                 RemoveTrailingBlankLines::class,
             ]),

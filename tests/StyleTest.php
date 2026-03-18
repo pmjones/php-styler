@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
+use PhpStyler\Format\ExtendedFormat;
+use PhpStyler\Format\Format;
 use PhpStyler\Rule\NormalizeTrailingCommas;
 use PhpStyler\Rule\RemoveTrailingBlankLines;
 use PhpStyler\Styler;
@@ -34,48 +36,48 @@ class StyleTest extends TestCase
     {
         $rules = [NormalizeTrailingCommas::class, RemoveTrailingBlankLines::class];
 
-        $returnColonNoSpaceBefore = new Format(
+        $returnColonNoSpaceBefore = new ExtendedFormat(
             rules: $rules,
             styles: [TReturnColon::class => ['spaceBefore' => false]],
         );
 
-        $returnColonNoSpaceAfter = new Format(
+        $returnColonNoSpaceAfter = new ExtendedFormat(
             rules: $rules,
             styles: [TReturnColon::class => ['spaceAfter' => false]],
         );
 
-        $returnColonNoSpaces = new Format(
+        $returnColonNoSpaces = new ExtendedFormat(
             rules: $rules,
             styles: [
                 TReturnColon::class => ['spaceBefore' => false, 'spaceAfter' => false],
             ],
         );
 
-        $dotNoSpaces = new Format(
+        $dotNoSpaces = new ExtendedFormat(
             rules: $rules,
             styles: [TDot::class => ['spaceBefore' => false, 'spaceAfter' => false]],
         );
 
-        $unionWithSpaces = new Format(
+        $unionWithSpaces = new ExtendedFormat(
             rules: $rules,
             styles: [TUnion::class => ['spaceBefore' => true, 'spaceAfter' => true]],
         );
 
-        $intersectionWithSpaces = new Format(
+        $intersectionWithSpaces = new ExtendedFormat(
             rules: $rules,
             styles: [
                 TIntersection::class => ['spaceBefore' => true, 'spaceAfter' => true],
             ],
         );
 
-        $assignNoSpaces = new Format(
+        $assignNoSpaces = new ExtendedFormat(
             rules: $rules,
             styles: [
                 TAssign::class => ['spaceBefore' => false, 'spaceAfter' => false],
             ],
         );
 
-        $binaryPlusNoSpaces = new Format(
+        $binaryPlusNoSpaces = new ExtendedFormat(
             rules: $rules,
             styles: [
                 TBinaryPlus::class => ['spaceBefore' => false, 'spaceAfter' => false],
@@ -175,7 +177,7 @@ class StyleTest extends TestCase
                 EXPECT,
             ],
             'semicolon-no-linebreak-after' => [
-                new Format(
+                new ExtendedFormat(
                     rules: $rules,
                     styles: [
                         Token\TSemicolon::class => [
@@ -190,7 +192,7 @@ class StyleTest extends TestCase
 
             ],
             'closing-brace-linebreak-instead-of-blankline' => [
-                new Format(
+                new ExtendedFormat(
                     rules: $rules,
                     styles: [
                         TIfClosingBrace::class => [
@@ -212,7 +214,7 @@ class StyleTest extends TestCase
 
             ],
             'opening-brace-no-linebreak-before' => [
-                new Format(
+                new ExtendedFormat(
                     rules: $rules,
                     styles: [TClassOpeningBrace::class => ['lineBreakBefore' => null]],
                 ),
@@ -227,7 +229,7 @@ class StyleTest extends TestCase
 
             ],
             'case-default-strtolower' => [
-                new Format(rules: $rules),
+                new ExtendedFormat(rules: $rules),
                 <<<'CODE'
                 <?php $a = TRUE; $b = FALSE; $c = NULL;
                 CODE,
@@ -239,7 +241,7 @@ class StyleTest extends TestCase
                 EXPECT,
             ],
             'case-override-strtoupper' => [
-                new Format(
+                new ExtendedFormat(
                     rules: $rules,
                     styles: [TTrue::class => ['case' => 'strtoupper']],
                 ),
@@ -253,7 +255,7 @@ class StyleTest extends TestCase
 
             ],
             'case-disable-with-null' => [
-                new Format(
+                new ExtendedFormat(
                     rules: $rules,
                     styles: [TTrue::class => ['case' => null]],
                 ),
@@ -267,7 +269,7 @@ class StyleTest extends TestCase
 
             ],
             'empty-style-default-behavior' => [
-                new Format(rules: $rules),
+                new ExtendedFormat(rules: $rules),
                 <<<'CODE'
                 <?php $a = $b + $c . $d;
                 CODE,

@@ -7,9 +7,7 @@ use PhpStyler\Token\T;
 
 class Nesting
 {
-    public function __construct(
-        public readonly T $token,
-        public int $argCount = 0,
-    ) {
+    public function __construct(public readonly T $token, public int $argCount = 0)
+    {
     }
 }

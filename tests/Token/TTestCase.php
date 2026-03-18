@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
+use PhpStyler\Format\ExtendedFormat;
 use PhpStyler\Parser;
+
 abstract class TTestCase extends \PHPUnit\Framework\TestCase
 {
     protected const IGNORE_WHITESPACE = 'IGNORE_WHITESPACE';
@@ -26,7 +28,7 @@ abstract class TTestCase extends \PHPUnit\Framework\TestCase
         string $reporting = self::IGNORE_WHITESPACE,
     ) : void
     {
-        $parser = new Parser();
+        $parser = new Parser(new ExtendedFormat());
         $tokens = $parser($code);
 
         $actual = [];

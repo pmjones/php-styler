@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace PhpStyler\Rule;
 
-use PhpStyler\Format;
 use PhpStyler\Styler;
+use PhpStyler\TestFormat;
 use PHPUnit\Framework\TestCase;
 
 class ExpandImportsTest extends TestCase
@@ -15,7 +15,10 @@ class ExpandImportsTest extends TestCase
     public function test(string $code, string $expect) : void
     {
         $styler = new Styler(
-            new Format(rules: [ExpandImports::class, RemoveTrailingBlankLines::class]),
+            new TestFormat(rules: [
+                ExpandImports::class,
+                RemoveTrailingBlankLines::class,
+            ]),
         );
         $actual = $styler($code);
         $this->assertSame($expect, $actual);

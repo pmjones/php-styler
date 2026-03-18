@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
-use PhpStyler\Format;
 use PhpStyler\Rule\NormalizeTrailingCommas;
 use PhpStyler\Rule\RemoveTrailingBlankLines;
 use PhpStyler\Styler;
+use PhpStyler\TestFormat;
 use PHPUnit\Framework\TestCase;
 
 class SplitterTest extends TestCase
@@ -14,7 +14,7 @@ class SplitterTest extends TestCase
     private function assertSplit(string $code, string $expect, int $lineLen) : void
     {
         $styler = new Styler(
-            new Format(
+            new TestFormat(
                 lineLen: $lineLen,
                 rules: [
                     NormalizeTrailingCommas::class,

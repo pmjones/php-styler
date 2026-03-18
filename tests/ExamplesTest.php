@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
-use PhpStyler\Format;
+use PhpStyler\Rule\MergeParenBracket;
 use PhpStyler\Rule\NormalizeTrailingCommas;
 use PhpStyler\Rule\RemoveTrailingBlankLines;
-use PhpStyler\Rule\MergeParenBracket;
+use PhpStyler\TestFormat;
 use PHPUnit\Framework\TestCase;
 
 class ExamplesTest extends TestCase
@@ -16,7 +16,7 @@ class ExamplesTest extends TestCase
     protected function setUp() : void
     {
         $this->styler = new Styler(
-            new Format(
+            new TestFormat(
                 rules: [
                     MergeParenBracket::class,
                     NormalizeTrailingCommas::class,

@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Rule;
 
-use PhpStyler\Format;
+use PhpStyler\Format\ExtendedFormat;
 use PhpStyler\Styler;
 use PHPUnit\Framework\TestCase;
 
@@ -15,7 +15,7 @@ class RemoveUnusedImportsTest extends TestCase
     public function test(string $code, string $expect) : void
     {
         $styler = new Styler(
-            new Format(
+            new ExtendedFormat(
                 rules: [
                     ExpandImports::class,
                     RemoveUnusedImports::class,

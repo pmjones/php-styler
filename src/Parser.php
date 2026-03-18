@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
+use PhpStyler\Format\Format;
+use PhpStyler\Format\PlainFormat;
 use PhpStyler\Token;
 use PhpStyler\Token\T;
 use PhpStyler\Token\TIndentDecrement;
@@ -115,7 +117,7 @@ class Parser
 
     public function __construct(?Format $format = null)
     {
-        $this->format = $format ?? new Format();
+        $this->format = $format ?? new PlainFormat();
     }
 
     /**
@@ -701,7 +703,6 @@ class Parser
 
         return false;
     }
-
 
     protected function findUpcomingInlineComment() : ?int
     {
