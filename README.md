@@ -65,7 +65,7 @@ See the [Examples](./tests/Examples) directory for a nearly-exhaustive series of
 
 [PHP CS Fixer](https://cs.symfony.com/) is the category leader for PHP here. It offers a huge range of customization options to fix (or not fix) specific elements of PHP code. However, it is extremely complex, and can be difficult to modify.
 
-The oldest PHP code fixer I know of is [PHP_Beautifier](https://pear.php.net/package/PHP_Beautifier).  Other newer fixers include [PHP_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer)/[PHPCBF](https://phpqa.io/projects/phpcbf.html) and [ECS](https://github.com/easy-coding-standard/easy-coding-standard).
+The oldest PHP code fixer I know of is [PHP_Beautifier](https://pear.php.net/package/PHP_Beautifier).  Other newer fixers include [PHP_CodeSniffer](https://github.com/PHPCSStandards/PHP_CodeSniffer)/[PHPCBF](https://phpqa.io/projects/phpcbf.html) and [ECS](https://github.com/easy-coding-standard/easy-coding-standard).
 
 The [Black](https://black.readthedocs.io/en/stable/) formatter for Python appears to have similar design goals and operation as PHP-Styler.
 
