@@ -104,6 +104,24 @@ class OrderImportsTest extends TestCase
 
                 EXPECT,
             ],
+            'imports-before-class' => [
+                <<<'CODE'
+                <?php
+                use Baz\Qux;
+                use Alpha\Beta;
+                class Foo {}
+                CODE,
+                <<<'EXPECT'
+                <?php
+                use Alpha\Beta;
+                use Baz\Qux;
+
+                class Foo
+                {
+                }
+
+                EXPECT,
+            ],
             'alphabetize-within-kind' => [
                 <<<'CODE'
                 <?php

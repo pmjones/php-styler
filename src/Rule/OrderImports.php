@@ -71,10 +71,7 @@ class OrderImports implements TokenRule
                     // block ended — rebuild and emit
                     $this->emitBlock($block, $result);
 
-                    // emit any trailing separators that came after the last statement
-                    foreach ($separators as $sep) {
-                        $result[] = $sep;
-                    }
+                    // discard trailing separators (replaced by blank line in emitBlock)
 
                     break;
                 }
@@ -190,5 +187,10 @@ class OrderImports implements TokenRule
 
             $prevKind = $statement['kind'];
         }
+
+        // blank line after last import
+        $result[] = new TLineBreak(T::SYNTHETIC, '', $line, $pos);
+        $result[] = new TBlankLine(T::SYNTHETIC, '', $line, $pos);
+        $result[] = new TLineBreak(T::SYNTHETIC, '', $line, $pos);
     }
 }
