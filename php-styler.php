@@ -20,5 +20,5 @@ return new Config(
         __DIR__ . '/tests/StyleTest.php',
         __DIR__ . '/tests/TestCase.php',
     ),
-    format: new Format\ExtendedFormat(),
+    format: new Format\DeclarationFormat(),
 );
