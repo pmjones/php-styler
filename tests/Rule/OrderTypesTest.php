@@ -188,4 +188,117 @@ class OrderTypesTest extends TestCase
             ],
         ];
     }
+
+    /**
+     * @dataProvider provideNullLast
+     */
+    public function testNullLast(string $code, string $expect) : void
+    {
+        $styler = new Styler(
+            new TestFormat(rules: [
+                OrderTypes::class => ['nullPosition' => 'last'],
+                RemoveTrailingBlankLines::class,
+            ]),
+        );
+        $actual = $styler($code);
+        $this->assertSame($expect, $actual);
+    }
+
+    /** @return array<string, array{0: string, 1: string}> */
+    public static function provideNullLast() : array
+    {
+        return [
+            'null-string-to-string-null' => [
+                <<<'CODE'
+                <?php
+                function foo(): null|string {}
+                CODE,
+                <<<'EXPECT'
+                <?php
+                function foo() : string|null
+                {
+                }
+
+                EXPECT,
+            ],
+            'string-null-stays' => [
+                <<<'CODE'
+                <?php
+                function foo(): string|null {}
+                CODE,
+                <<<'EXPECT'
+                <?php
+                function foo() : string|null
+                {
+                }
+
+                EXPECT,
+            ],
+            'three-types-null-last' => [
+                <<<'CODE'
+                <?php
+                function foo(): null|int|string {}
+                CODE,
+                <<<'EXPECT'
+                <?php
+                function foo() : int|string|null
+                {
+                }
+
+                EXPECT,
+            ],
+            'four-types-null-last' => [
+                <<<'CODE'
+                <?php
+                function foo() : int|null|string|float {}
+                CODE,
+                <<<'EXPECT'
+                <?php
+                function foo() : int|float|string|null
+                {
+                }
+
+                EXPECT,
+            ],
+            'null-int-to-int-null' => [
+                <<<'CODE'
+                <?php
+                function foo(): null|int {}
+                CODE,
+                <<<'EXPECT'
+                <?php
+                function foo() : int|null
+                {
+                }
+
+                EXPECT,
+            ],
+            'foo-null-stays' => [
+                <<<'CODE'
+                <?php
+                function foo(): Foo|null {}
+                CODE,
+                <<<'EXPECT'
+                <?php
+                function foo() : Foo|null
+                {
+                }
+
+                EXPECT,
+            ],
+            'no-null-unchanged' => [
+                <<<'CODE'
+                <?php
+                function foo() : int|string {}
+                CODE,
+                <<<'EXPECT'
+                <?php
+                function foo() : int|string
+                {
+                }
+
+                EXPECT,
+            ],
+        ];
+    }
 }

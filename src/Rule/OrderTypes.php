@@ -34,6 +34,11 @@ use PhpStyler\Token\TVoid;
 
 class OrderTypes implements TokenRule
 {
+    public function __construct(
+        private string $nullPosition = 'first',
+    ) {
+    }
+
     /**
      * @var array<class-string<T>, int>
      */
@@ -134,15 +139,29 @@ class OrderTypes implements TokenRule
 
             usort(
                 $indexed,
-                fn (array $a, array $b)
-                    => $this->priority($a[0]) <=> $this->priority($b[0])
-                        ?: $a[1] <=> $b[1],
+                function (array $a, array $b) : int {
+                    if ($this->nullPosition === 'last') {
+                        $aNull = $a[0] instanceof TNull;
+                        $bNull = $b[0] instanceof TNull;
+
+                        if ($aNull !== $bNull) {
+                            return $aNull ? 1 : -1;
+                        }
+                    }
+
+                    return $this->priority($a[0]) <=> $this->priority($b[0])
+                        ?: $a[1] <=> $b[1];
+                },
             );
 
             $sorted = array_column($indexed, 0);
 
             // nullable shorthand: exactly 2 types with null first after sort
-            if (count($sorted) === 2 && $sorted[0] instanceof TNull) {
+            if (
+                $this->nullPosition === 'first'
+                && count($sorted) === 2
+                && $sorted[0] instanceof TNull
+            ) {
                 $other = $sorted[1];
                 $result[] = new TNullable(ord('?'), '?', $other->line, $other->pos);
                 $result[] = $other;
