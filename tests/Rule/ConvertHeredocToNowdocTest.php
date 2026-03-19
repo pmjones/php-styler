@@ -53,7 +53,7 @@ class ConvertHeredocToNowdocTest extends TestCase
                 <<<'EXPECT'
                 <?php
                 $x = <<<EOT
-                hello $name
+                hello {$name}
                 EOT;
 
                 EXPECT,

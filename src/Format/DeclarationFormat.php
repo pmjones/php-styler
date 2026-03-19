@@ -19,12 +19,15 @@ class DeclarationFormat extends PlainFormat
         Rule\ExpandImports::class => [],
         Rule\RemoveUnusedImports::class => [],
         Rule\OrderImports::class => [],
+        Rule\ExpandAttributes::class => [],
         Rule\AddMissingVisibility::class => [],
         Rule\OrderModifiers::class => [],
         Rule\OrderTypes::class => [],
         Rule\MergeParenBracket::class => [],
         Rule\NormalizeTrailingCommas::class => [],
         Rule\RemoveTrailingBlankLines::class => [],
+        Rule\AddInstantiationParentheses::class => [],
+        Rule\ConvertImplicitInterpolation::class => [],
     ];
 
     /**

@@ -11,7 +11,7 @@ use PhpStyler\Token\TLineBreak;
 use PhpStyler\Token\TSpace;
 use PhpStyler\Token\TSplitComma;
 
-class SplitJoinedAttributes implements TokenRule
+class ExpandAttributes implements TokenRule
 {
     /**
      * @param T[] $tokens

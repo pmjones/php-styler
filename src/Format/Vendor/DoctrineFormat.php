@@ -36,7 +36,7 @@ class DoctrineFormat extends DeclarationFormat
         Rule\RemoveRepeatedSemicolons::class => [],
         Rule\ConvertHeredocToNowdoc::class => [],
         Rule\AddBlankLineAfterBlock::class => [],
-        Rule\SplitJoinedAttributes::class => [],
+        Rule\ExpandAttributes::class => [],
         Rule\NormalizeMemberSpacing::class => [],
     ];
 

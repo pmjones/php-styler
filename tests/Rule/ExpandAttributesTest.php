@@ -7,7 +7,7 @@ use PhpStyler\Format\DeclarationFormat;
 use PhpStyler\Styler;
 use PHPUnit\Framework\TestCase;
 
-class SplitJoinedAttributesTest extends TestCase
+class ExpandAttributesTest extends TestCase
 {
     /**
      * @dataProvider provide
@@ -16,7 +16,7 @@ class SplitJoinedAttributesTest extends TestCase
     {
         $styler = new Styler(
             new DeclarationFormat(rules: [
-                SplitJoinedAttributes::class,
+                ExpandAttributes::class,
                 RemoveTrailingBlankLines::class,
             ]),
         );
