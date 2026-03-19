@@ -30,7 +30,6 @@ class DoctrineFormat extends DeclarationFormat
         Rule\ConvertDoubleToSingleQuote::class => [],
         Rule\AddInstantiationParentheses::class => [],
         Rule\ConvertImplicitInterpolation::class => [],
-        Rule\ConvertLongTypeHints::class => [],
         Rule\ConvertFromYodaConditions::class => [],
         Rule\ConvertLogicalOperators::class => [],
         Rule\RemoveParensFromLanguageConstructs::class => [],

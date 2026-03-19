@@ -6,14 +6,11 @@ namespace PhpStyler\Rule;
 use PhpStyler\Token\T;
 use PhpStyler\Token\TArray;
 use PhpStyler\Token\TBool;
-use PhpStyler\Token\TBoolean;
 use PhpStyler\Token\TCallable;
-use PhpStyler\Token\TDouble;
 use PhpStyler\Token\TFalse;
 use PhpStyler\Token\TFloat;
 use PhpStyler\Token\TFullyQualifiedName;
 use PhpStyler\Token\TInt;
-use PhpStyler\Token\TInteger;
 use PhpStyler\Token\TIterable;
 use PhpStyler\Token\TMixed;
 use PhpStyler\Token\TNever;
@@ -22,7 +19,6 @@ use PhpStyler\Token\TNullable;
 use PhpStyler\Token\TObject;
 use PhpStyler\Token\TParent;
 use PhpStyler\Token\TQualifiedName;
-use PhpStyler\Token\TReal;
 use PhpStyler\Token\TRelativeName;
 use PhpStyler\Token\TSelf;
 use PhpStyler\Token\TStaticType;
@@ -45,14 +41,10 @@ class OrderTypes implements TokenRule
     private const PRIORITY = [
         TNull::class => 1,
         TBool::class => 2,
-        TBoolean::class => 2,
         TTrue::class => 2,
         TFalse::class => 2,
         TInt::class => 3,
-        TInteger::class => 3,
         TFloat::class => 4,
-        TDouble::class => 4,
-        TReal::class => 4,
         TString::class => 5,
         TArray::class => 6,
         TObject::class => 7,
@@ -63,12 +55,8 @@ class OrderTypes implements TokenRule
      */
     private const TYPE_TOKENS = [
         TInt::class => true,
-        TInteger::class => true,
         TFloat::class => true,
-        TDouble::class => true,
-        TReal::class => true,
         TBool::class => true,
-        TBoolean::class => true,
         TVoid::class => true,
         TNever::class => true,
         TMixed::class => true,
