@@ -30,25 +30,39 @@ use PhpStyler\Token\TVoid;
 
 class OrderTypes implements TokenRule
 {
-    public function __construct(
-        private string $nullPosition = 'first',
-    ) {
-    }
+    /** @var array<class-string<T>, int> */
+    private array $priorityMap;
+
+    private int $wildcardPriority;
 
     /**
-     * @var array<class-string<T>, int>
+     * @param array<int, class-string<T>|'*'> $order
      */
-    private const PRIORITY = [
-        TNull::class => 1,
-        TBool::class => 2,
-        TTrue::class => 2,
-        TFalse::class => 2,
-        TInt::class => 3,
-        TFloat::class => 4,
-        TString::class => 5,
-        TArray::class => 6,
-        TObject::class => 7,
-    ];
+    public function __construct(
+        array $order = [
+            TNull::class,
+            TBool::class,
+            TTrue::class,
+            TFalse::class,
+            TInt::class,
+            TFloat::class,
+            TString::class,
+            TArray::class,
+            TObject::class,
+            '*',
+        ],
+    ) {
+        $this->priorityMap = [];
+        $this->wildcardPriority = PHP_INT_MAX;
+
+        foreach ($order as $position => $entry) {
+            if ($entry === '*') {
+                $this->wildcardPriority = $position;
+            } else {
+                $this->priorityMap[$entry] = $position;
+            }
+        }
+    }
 
     /**
      * @var array<class-string<T>, true>
@@ -128,15 +142,6 @@ class OrderTypes implements TokenRule
             usort(
                 $indexed,
                 function (array $a, array $b) : int {
-                    if ($this->nullPosition === 'last') {
-                        $aNull = $a[0] instanceof TNull;
-                        $bNull = $b[0] instanceof TNull;
-
-                        if ($aNull !== $bNull) {
-                            return $aNull ? 1 : -1;
-                        }
-                    }
-
                     return $this->priority($a[0]) <=> $this->priority($b[0])
                         ?: $a[1] <=> $b[1];
                 },
@@ -146,7 +151,9 @@ class OrderTypes implements TokenRule
 
             // nullable shorthand: exactly 2 types with null first after sort
             if (
-                $this->nullPosition === 'first'
+                (
+                    $this->priorityMap[TNull::class] ?? PHP_INT_MAX
+                ) < $this->wildcardPriority
                 && count($sorted) === 2
                 && $sorted[0] instanceof TNull
             ) {
@@ -176,6 +183,6 @@ class OrderTypes implements TokenRule
 
     private function priority(T $token) : int
     {
-        return self::PRIORITY[get_class($token)] ?? PHP_INT_MAX;
+        return $this->priorityMap[get_class($token)] ?? $this->wildcardPriority;
     }
 }

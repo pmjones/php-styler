@@ -5,6 +5,7 @@ namespace PhpStyler\Rule;
 
 use PhpStyler\Styler;
 use PhpStyler\TestFormat;
+use PhpStyler\Token\TNull;
 use PHPUnit\Framework\TestCase;
 
 class OrderTypesTest extends TestCase
@@ -196,7 +197,7 @@ class OrderTypesTest extends TestCase
     {
         $styler = new Styler(
             new TestFormat(rules: [
-                OrderTypes::class => ['nullPosition' => 'last'],
+                OrderTypes::class => ['order' => ['*', TNull::class]],
                 RemoveTrailingBlankLines::class,
             ]),
         );
@@ -254,7 +255,7 @@ class OrderTypesTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
-                function foo() : int|float|string|null
+                function foo() : int|string|float|null
                 {
                 }
 

@@ -13,7 +13,6 @@ use PhpStyler\Token\TPrint;
 use PhpStyler\Token\TRequire;
 use PhpStyler\Token\TRequireOnce;
 use PhpStyler\Token\TReturn;
-use PhpStyler\Token\TSemicolon;
 use PhpStyler\Token\TSpace;
 
 class RemoveParensFromLanguageConstructs implements TokenRule

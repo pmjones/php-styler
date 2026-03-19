@@ -19,9 +19,19 @@ class ConvertLogicalOperators implements TokenRule
     {
         foreach ($tokens as $i => $token) {
             if ($token instanceof TLogicalAnd) {
-                $tokens[$i] = new TBooleanAnd(T_BOOLEAN_AND, '&&', $token->line, $token->pos);
+                $tokens[$i] = new TBooleanAnd(
+                    T_BOOLEAN_AND,
+                    '&&',
+                    $token->line,
+                    $token->pos,
+                );
             } elseif ($token instanceof TLogicalOr) {
-                $tokens[$i] = new TBooleanOr(T_BOOLEAN_OR, '||', $token->line, $token->pos);
+                $tokens[$i] = new TBooleanOr(
+                    T_BOOLEAN_OR,
+                    '||',
+                    $token->line,
+                    $token->pos,
+                );
             }
         }
 
