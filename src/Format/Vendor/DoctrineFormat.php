@@ -36,6 +36,9 @@ class DoctrineFormat extends DeclarationFormat
         Rule\RemoveParensFromLanguageConstructs::class => [],
         Rule\RemoveRepeatedSemicolons::class => [],
         Rule\ConvertHeredocToNowdoc::class => [],
+        Rule\AddBlankLineAfterBlock::class => [],
+        Rule\SplitJoinedAttributes::class => [],
+        Rule\NormalizeMemberSpacing::class => [],
     ];
 
     /**
@@ -62,6 +65,11 @@ class DoctrineFormat extends DeclarationFormat
             Token\TPostDecrement::class => ['spaceBefore' => false, 'spaceAfter' => false],
             Token\TPreIncrement::class => ['spaceBefore' => false, 'spaceAfter' => false],
             Token\TPreDecrement::class => ['spaceBefore' => false, 'spaceAfter' => false],
+            Token\TFunctionCallName::class => ['case' => 'strtolower'],
+            Token\TReturn::class => ['blankLineBefore' => true],
+            Token\TThrow::class => ['blankLineBefore' => true],
+            Token\TYield::class => ['blankLineBefore' => true],
+            Token\TYieldFrom::class => ['blankLineBefore' => true],
         ];
 
         foreach ($styles as $class => $args) {

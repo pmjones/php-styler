@@ -120,6 +120,305 @@ class DoctrineFormatTest extends TestCase
 
                 EXPECT,
             ],
+            'lowercase-function-call' => [
+                <<<'CODE'
+                <?php
+                $x = Array_Map('strtolower', $a);
+                CODE,
+                <<<'EXPECT'
+                <?php
+                $x = array_map('strtolower', $a);
+
+                EXPECT,
+            ],
+            'blank-line-before-return' => [
+                <<<'CODE'
+                <?php
+                function foo()
+                {
+                    $x = 1;
+                    return $x;
+                }
+                CODE,
+                <<<'EXPECT'
+                <?php
+                function foo()
+                {
+                    $x = 1;
+
+                    return $x;
+                }
+
+                EXPECT,
+            ],
+            'no-blank-line-before-return-first-statement' => [
+                <<<'CODE'
+                <?php
+                function foo()
+                {
+                    return 1;
+                }
+                CODE,
+                <<<'EXPECT'
+                <?php
+                function foo()
+                {
+                    return 1;
+                }
+
+                EXPECT,
+            ],
+            'blank-line-before-throw' => [
+                <<<'CODE'
+                <?php
+                function foo()
+                {
+                    $x = 1;
+                    throw new Exception();
+                }
+                CODE,
+                <<<'EXPECT'
+                <?php
+                function foo()
+                {
+                    $x = 1;
+
+                    throw new Exception();
+                }
+
+                EXPECT,
+            ],
+            'blank-line-after-if-block' => [
+                <<<'CODE'
+                <?php
+                function foo()
+                {
+                    if ($x) {
+                        bar();
+                    }
+                    baz();
+                }
+                CODE,
+                <<<'EXPECT'
+                <?php
+                function foo()
+                {
+                    if ($x) {
+                        bar();
+                    }
+
+                    baz();
+                }
+
+                EXPECT,
+            ],
+            'blank-line-after-do-while' => [
+                <<<'CODE'
+                <?php
+                function foo()
+                {
+                    do {
+                        bar();
+                    } while ($x);
+                    baz();
+                }
+                CODE,
+                <<<'EXPECT'
+                <?php
+                function foo()
+                {
+                    do {
+                        bar();
+                    } while ($x);
+
+                    baz();
+                }
+
+                EXPECT,
+            ],
+            'no-blank-line-after-block-last-statement' => [
+                <<<'CODE'
+                <?php
+                function foo()
+                {
+                    if ($x) {
+                        bar();
+                    }
+                }
+                CODE,
+                <<<'EXPECT'
+                <?php
+                function foo()
+                {
+                    if ($x) {
+                        bar();
+                    }
+                }
+
+                EXPECT,
+            ],
+            'no-blank-line-between-if-else' => [
+                <<<'CODE'
+                <?php
+                function foo()
+                {
+                    if ($x) {
+                        bar();
+                    } else {
+                        baz();
+                    }
+                    qux();
+                }
+                CODE,
+                <<<'EXPECT'
+                <?php
+                function foo()
+                {
+                    if ($x) {
+                        bar();
+                    } else {
+                        baz();
+                    }
+
+                    qux();
+                }
+
+                EXPECT,
+            ],
+            'no-blank-line-between-try-catch-finally' => [
+                <<<'CODE'
+                <?php
+                function foo()
+                {
+                    try {
+                        bar();
+                    } catch (Exception $e) {
+                        baz();
+                    } finally {
+                        qux();
+                    }
+                    done();
+                }
+                CODE,
+                <<<'EXPECT'
+                <?php
+                function foo()
+                {
+                    try {
+                        bar();
+                    } catch (Exception $e) {
+                        baz();
+                    } finally {
+                        qux();
+                    }
+
+                    done();
+                }
+
+                EXPECT,
+            ],
+            'split-joined-attributes' => [
+                <<<'CODE'
+                <?php
+                #[Foo, Bar]
+                class Baz {}
+                CODE,
+                <<<'EXPECT'
+                <?php
+                #[Foo]
+                #[Bar]
+                class Baz
+                {
+                }
+
+                EXPECT,
+            ],
+            'split-joined-attributes-with-args' => [
+                <<<'CODE'
+                <?php
+                #[Foo(1, 2), Bar]
+                class Baz {}
+                CODE,
+                <<<'EXPECT'
+                <?php
+                #[Foo(1, 2)]
+                #[Bar]
+                class Baz
+                {
+                }
+
+                EXPECT,
+            ],
+            'member-spacing-constants-grouped' => [
+                <<<'CODE'
+                <?php
+                class Foo
+                {
+                    const A = 1;
+                    const B = 2;
+                    public $x;
+                }
+                CODE,
+                <<<'EXPECT'
+                <?php
+                class Foo
+                {
+                    public const A = 1;
+                    public const B = 2;
+
+                    public $x;
+                }
+
+                EXPECT,
+            ],
+            'member-spacing-properties-grouped' => [
+                <<<'CODE'
+                <?php
+                class Foo
+                {
+                    public $x;
+                    public $y;
+                    public function bar() {}
+                }
+                CODE,
+                <<<'EXPECT'
+                <?php
+                class Foo
+                {
+                    public $x;
+                    public $y;
+
+                    public function bar()
+                    {
+                    }
+                }
+
+                EXPECT,
+            ],
+            'member-spacing-methods-separated' => [
+                <<<'CODE'
+                <?php
+                class Foo
+                {
+                    public function bar() {}
+                    public function baz() {}
+                }
+                CODE,
+                <<<'EXPECT'
+                <?php
+                class Foo
+                {
+                    public function bar()
+                    {
+                    }
+
+                    public function baz()
+                    {
+                    }
+                }
+
+                EXPECT,
+            ],
         ];
     }
 }
