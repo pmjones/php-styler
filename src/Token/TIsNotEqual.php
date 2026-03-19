@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
+use PhpStyler\Line;
+
 /**
  * Token: T_IS_NOT_EQUAL
  *
@@ -12,4 +14,8 @@ namespace PhpStyler\Token;
  */
 class TIsNotEqual extends T
 {
+    public function render(Line $line) : string
+    {
+        return '!=';
+    }
 }
