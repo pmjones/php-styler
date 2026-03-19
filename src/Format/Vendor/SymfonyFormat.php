@@ -5,6 +5,7 @@ namespace PhpStyler\Format\Vendor;
 
 use PhpStyler\Format\DeclarationFormat;
 use PhpStyler\Rule;
+use PhpStyler\Token;
 
 class SymfonyFormat extends DeclarationFormat
 {
@@ -31,6 +32,10 @@ class SymfonyFormat extends DeclarationFormat
         Rule\AddBlankLineBeforeReturn::class => [],
         Rule\AddInstantiationParentheses::class => [],
         Rule\ConvertSwitchContinueToBreak::class => [],
+        Rule\NormalizeMemberSpacing::class => [],
+        Rule\RemoveParensFromLanguageConstructs::class => [],
+        Rule\RemoveRepeatedSemicolons::class => [],
+        Rule\ConvertImplicitInterpolation::class => [],
     ];
 
     /**
