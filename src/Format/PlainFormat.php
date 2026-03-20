@@ -250,6 +250,10 @@ class PlainFormat implements Format
         Token\TConst::class => [
             'spaceAfter' => true,
         ],
+        Token\TConstComma::class => [
+            'spaceBefore' => false,
+            'spaceAfter' => true,
+        ],
         Token\TConstEndSemicolon::class => [
             'spaceBefore' => false,
             'spaceAfter' => true,
@@ -866,6 +870,10 @@ class PlainFormat implements Format
             'spaceAfter' => true,
         ],
         Token\TPropertyAccessName::class => [
+            'spaceAfter' => true,
+        ],
+        Token\TPropertyComma::class => [
+            'spaceBefore' => false,
             'spaceAfter' => true,
         ],
         Token\TPropertyEndSemicolon::class => [

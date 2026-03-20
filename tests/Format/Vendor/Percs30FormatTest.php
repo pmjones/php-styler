@@ -74,9 +74,7 @@ class Percs30FormatTest extends TestCase
                 <?php
                 class Foo
                 {
-                    public function bar()
-                    {
-                    }
+                    public function bar() {}
                 }
 
                 EXPECT,
@@ -137,8 +135,7 @@ class Percs30FormatTest extends TestCase
                     int $anotherLongParameterName,
                     int $yetAnotherLongParameterName,
                     int $andOneMoreLongParameterName,
-                ) {
-                }
+                ) {}
 
                 EXPECT,
             ],
@@ -264,9 +261,7 @@ class Percs30FormatTest extends TestCase
                 <<<'EXPECT'
                 <?php
                 $x = new class {
-                    public function foo()
-                    {
-                    }
+                    public function foo() {}
                 };
 
                 EXPECT,
@@ -280,9 +275,7 @@ class Percs30FormatTest extends TestCase
                 <<<'EXPECT'
                 <?php
                 #[Override]
-                function foo()
-                {
-                }
+                function foo() {}
 
                 EXPECT,
             ],
@@ -300,6 +293,79 @@ class Percs30FormatTest extends TestCase
                 {
                     public protected(set) static string $bar = '';
                 }
+
+                EXPECT,
+            ],
+            'heredoc-to-nowdoc' => [
+                <<<'CODE'
+                <?php
+                $x = <<<EOT
+                hello world
+                EOT;
+                CODE,
+                <<<'EXPECT'
+                <?php
+                $x = <<<'EOT'
+                hello world
+                EOT;
+
+                EXPECT,
+            ],
+            'import-leading-backslash-removed' => [
+                <<<'CODE'
+                <?php
+                use \Foo\Bar;
+                new Bar();
+                CODE,
+                <<<'EXPECT'
+                <?php
+                use Foo\Bar;
+
+                new Bar();
+
+                EXPECT,
+            ],
+            'empty-function-collapsed' => [
+                <<<'CODE'
+                <?php
+                class Foo
+                {
+                    public function bar()
+                    {
+                    }
+                }
+                CODE,
+                <<<'EXPECT'
+                <?php
+                class Foo
+                {
+                    public function bar() {}
+                }
+
+                EXPECT,
+            ],
+            'empty-class-collapsed' => [
+                <<<'CODE'
+                <?php
+                class Foo
+                {
+                }
+                CODE,
+                <<<'EXPECT'
+                <?php
+                class Foo {}
+
+                EXPECT,
+            ],
+            'empty-closure-collapsed' => [
+                <<<'CODE'
+                <?php
+                $x = function () {
+                };
+                CODE,
+                <<<'EXPECT'
+                <?php
+                $x = function () {};
 
                 EXPECT,
             ],

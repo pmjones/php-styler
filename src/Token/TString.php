@@ -125,6 +125,7 @@ class TString extends T
 
         $prevAddClass = match (true) {
             $prev instanceof TConst => TConstantName::class,
+            $prev instanceof TConstComma => TConstantName::class,
             $prev instanceof TEnumCase => TEnumCaseName::class,
             $prev instanceof TUseAs => TUseAlias::class,
             $prev instanceof TUseTraitAs => TTraitAlias::class,
