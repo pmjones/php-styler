@@ -1,22 +1,27 @@
 <?php
 declare(strict_types=1);
 
-namespace PhpStyler\Format;
+namespace PhpStyler\Format\Vendor;
 
+use PhpStyler\Format\DeclarationFormat;
 use PhpStyler\Rule;
+use PhpStyler\Token;
 
-class DeclarationFormat extends PlainFormat
+class Percs30Format extends DeclarationFormat
 {
     /**
      * @inheritdoc
      */
     public protected(set) array $rules = [
         Rule\RemoveBom::class => [],
+        Rule\RemovePhpClosingTag::class => [],
+        Rule\EnsurePhpOpeningTagNewline::class => [],
         Rule\ConvertListToArray::class => [],
         Rule\ConvertLongArrayToShort::class => [],
         Rule\ConvertElseIf::class => [],
         Rule\AddControlBraces::class => [],
         Rule\ExpandImports::class => [],
+        Rule\ExpandTraitUse::class => [],
         Rule\RemoveUnusedImports::class => [],
         Rule\OrderImports::class => [],
         Rule\ExpandAttributes::class => [],
@@ -27,8 +32,12 @@ class DeclarationFormat extends PlainFormat
         Rule\NormalizeTrailingCommas::class => [],
         Rule\RemoveTrailingBlankLines::class => [],
         Rule\AddInstantiationParentheses::class => [],
+        Rule\AddExitParentheses::class => [],
+        Rule\RemoveEmptyAnonymousClassParens::class => [],
+        Rule\RemoveEmptyAttributeParens::class => [],
         Rule\ConvertImplicitInterpolation::class => [],
         Rule\RemoveParensFromLanguageConstructs::class => [],
+        Rule\NormalizeMemberSpacing::class => [],
     ];
 
     /**
@@ -36,26 +45,28 @@ class DeclarationFormat extends PlainFormat
      */
     public function __construct(
         string $eol = "\n",
-        int $lineLen = 88,
+        int $lineLen = 120,
         int $indentLen = 4,
         bool $indentTab = false,
         array $styles = [],
         array $rules = [],
     ) {
+        $percsStyles = [
+            Token\TDeclareDirective::class => ['spaceAfter' => false],
+        ];
+
+        foreach ($styles as $class => $args) {
+            $percsStyles[$class] = array_merge($percsStyles[$class] ?? [], $args);
+        }
+
         parent::__construct(
             eol: $eol,
             lineLen: $lineLen,
             indentLen: $indentLen,
             indentTab: $indentTab,
-            classBracePosition: 'next_line',
-            functionBracePosition: 'next_line',
-            controlBracePosition: 'same_line',
-            keywordCase: 'lower',
-            concatenationSpacing: true,
-            returnTypeColonSpacing: true,
-            blankLineAfterBlock: true,
-            styles: $styles,
+            styles: $percsStyles,
             rules: $rules,
         );
+        $this->setReturnTypeColonSpacing(false);
     }
 }

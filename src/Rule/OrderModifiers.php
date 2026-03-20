@@ -7,8 +7,11 @@ use PhpStyler\Token\T;
 use PhpStyler\Token\TAbstract;
 use PhpStyler\Token\TFinal;
 use PhpStyler\Token\TPrivate;
+use PhpStyler\Token\TPrivateSet;
 use PhpStyler\Token\TProtected;
+use PhpStyler\Token\TProtectedSet;
 use PhpStyler\Token\TPublic;
+use PhpStyler\Token\TPublicSet;
 use PhpStyler\Token\TReadonly;
 use PhpStyler\Token\TSpace;
 use PhpStyler\Token\TStatic;
@@ -26,8 +29,11 @@ class OrderModifiers implements TokenRule
         TProtected::class => 2,
         TPrivate::class => 2,
         TVar::class => 2,
-        TStatic::class => 3,
-        TReadonly::class => 4,
+        TPublicSet::class => 3,
+        TProtectedSet::class => 3,
+        TPrivateSet::class => 3,
+        TStatic::class => 4,
+        TReadonly::class => 5,
     ];
 
     /**
