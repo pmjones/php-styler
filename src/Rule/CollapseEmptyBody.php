@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Rule;
 
-use PhpStyler\Token\T;
+use PhpStyler\Token\AToken;
 use PhpStyler\Token\TAnonymousOpeningBrace;
 use PhpStyler\Token\TBlankLine;
 use PhpStyler\Token\TClasslikeOpeningBrace;
@@ -17,8 +17,8 @@ use PhpStyler\Token\TSpace;
 class CollapseEmptyBody implements TokenRule
 {
     /**
-     * @param T[] $tokens
-     * @return T[]
+     * @param AToken[] $tokens
+     * @return AToken[]
      */
     public function apply(array $tokens) : array
     {
@@ -67,10 +67,7 @@ class CollapseEmptyBody implements TokenRule
             $lastIndex = count($result) - 1;
 
             if ($lastIndex >= 0 && $result[$lastIndex] instanceof TLineBreak) {
-                $result[$lastIndex] = new TSpace(
-                    T_WHITESPACE,
-                    ' ',
-                );
+                $result[$lastIndex] = new TSpace(T_WHITESPACE, ' ');
             }
 
             // emit opening brace and closing brace, skip interior tokens
@@ -84,7 +81,7 @@ class CollapseEmptyBody implements TokenRule
         return $result;
     }
 
-    private function isCollapsibleOpener(T $token) : bool
+    private function isCollapsibleOpener(AToken $token) : bool
     {
         return $token instanceof TFunctionOpeningBrace
             || $token instanceof TClasslikeOpeningBrace

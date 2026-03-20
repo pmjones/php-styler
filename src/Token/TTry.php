@@ -13,7 +13,7 @@ use PhpToken;
  *
  * Reference: https://www.php.net/manual/en/language.exceptions.php Exceptions
  */
-class TTry extends T
+class TTry extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

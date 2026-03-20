@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Rule;
 
-use PhpStyler\Token\T;
+use PhpStyler\Token\AToken;
 use PhpStyler\Token\TEcho;
 use PhpStyler\Token\TExpressionClosingParen;
 use PhpStyler\Token\TExpressionOpeningParen;
@@ -18,8 +18,8 @@ use PhpStyler\Token\TSpace;
 class RemoveParensFromLanguageConstructs implements TokenRule
 {
     /**
-     * @param T[] $tokens
-     * @return T[]
+     * @param AToken[] $tokens
+     * @return AToken[]
      */
     public function apply(array $tokens) : array
     {
@@ -93,7 +93,7 @@ class RemoveParensFromLanguageConstructs implements TokenRule
 
             // remove parens: emit construct keyword, ensure space, skip opening paren
             $result[] = $token;
-            $result[] = new TSpace(T::SYNTHETIC, ' ');
+            $result[] = new TSpace(AToken::SYNTHETIC, ' ');
 
             // skip the opening paren (and any space before it)
             $i = $j; // skip to after opening paren
@@ -105,7 +105,7 @@ class RemoveParensFromLanguageConstructs implements TokenRule
         return $result;
     }
 
-    private function isLanguageConstruct(T $token) : bool
+    private function isLanguageConstruct(AToken $token) : bool
     {
         return $token instanceof TEcho
             || $token instanceof TPrint

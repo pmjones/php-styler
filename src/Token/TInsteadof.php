@@ -10,6 +10,6 @@ namespace PhpStyler\Token;
  *
  * Reference: https://www.php.net/manual/en/language.oop5.traits.php Traits
  */
-class TInsteadof extends T
+class TInsteadof extends AToken
 {
 }

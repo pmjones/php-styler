@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Rule;
 
-use PhpStyler\Token\T;
+use PhpStyler\Token\AToken;
 use PhpStyler\Token\TBlankLine;
 use PhpStyler\Token\TConst;
 use PhpStyler\Token\TConstComma;
@@ -18,11 +18,12 @@ use PhpStyler\Token\TSplit;
 class ExpandConstants implements TokenRule
 {
     /**
-     * @param T[] $tokens
-     * @return T[]
+     * @param AToken[] $tokens
+     * @return AToken[]
      */
     public function apply(array $tokens) : array
     {
+        /** @var AToken[] $result */
         $result = [];
         $count = count($tokens);
         $i = 0;
@@ -52,6 +53,7 @@ class ExpandConstants implements TokenRule
                 continue;
             }
 
+            /** @var AToken $constToken */
             $constToken = $result[$constPos];
 
             // back-track past TConst to collect prefix tokens (modifiers, spaces)
@@ -116,6 +118,8 @@ class ExpandConstants implements TokenRule
             $segments[] = $currentSegment;
 
             // trim result back to before the prefix
+
+            /** @var AToken[] $result */
             $result = array_slice($result, 0, $prefixStart);
 
             // collect remaining segments from tokens (after the comma),
@@ -158,7 +162,7 @@ class ExpandConstants implements TokenRule
 
             foreach ($segments as $segment) {
                 if (! $first) {
-                    $result[] = new TLineBreak(T::SYNTHETIC, '', $line, $pos);
+                    $result[] = new TLineBreak(AToken::SYNTHETIC, '', $line, $pos);
                 }
 
                 $first = false;
@@ -169,7 +173,7 @@ class ExpandConstants implements TokenRule
                 }
 
                 $result[] = new TConst(T_CONST, 'const', $line, $pos);
-                $result[] = new TSpace(T::SYNTHETIC, ' ', $line, $pos);
+                $result[] = new TSpace(AToken::SYNTHETIC, ' ', $line, $pos);
 
                 foreach ($segment as $segToken) {
                     $result[] = $segToken;
@@ -182,6 +186,7 @@ class ExpandConstants implements TokenRule
             $i = $semicolonPos + 1;
         }
 
+        /** @var AToken[] $result */
         return $result;
     }
 }

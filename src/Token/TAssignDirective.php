@@ -6,6 +6,6 @@ namespace PhpStyler\Token;
 /**
  * Syntax: =
  */
-class TAssignDirective extends T
+class TAssignDirective extends AToken
 {
 }

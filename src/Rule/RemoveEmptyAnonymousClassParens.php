@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Rule;
 
-use PhpStyler\Token\T;
+use PhpStyler\Token\AToken;
 use PhpStyler\Token\TAnonymousClassArgsClosingParen;
 use PhpStyler\Token\TAnonymousClassArgsOpeningParen;
 use PhpStyler\Token\TSpace;
@@ -11,8 +11,8 @@ use PhpStyler\Token\TSpace;
 class RemoveEmptyAnonymousClassParens implements TokenRule
 {
     /**
-     * @param T[] $tokens
-     * @return T[]
+     * @param AToken[] $tokens
+     * @return AToken[]
      */
     public function apply(array $tokens) : array
     {
@@ -29,10 +29,7 @@ class RemoveEmptyAnonymousClassParens implements TokenRule
                 && isset($skipClosingIds[spl_object_id($token)])
             ) {
                 // also skip the TSpace after the closing paren
-                if (
-                    isset($tokens[$i + 1])
-                    && $tokens[$i + 1] instanceof TSpace
-                ) {
+                if (isset($tokens[$i + 1]) && $tokens[$i + 1] instanceof TSpace) {
                     $i ++;
                 }
 
@@ -51,10 +48,7 @@ class RemoveEmptyAnonymousClassParens implements TokenRule
                 $j ++;
             }
 
-            if (
-                $j < $count
-                && $tokens[$j] instanceof TAnonymousClassArgsClosingParen
-            ) {
+            if ($j < $count && $tokens[$j] instanceof TAnonymousClassArgsClosingParen) {
                 // empty parens — skip the opening paren and mark closing for removal
                 $skipClosingIds[spl_object_id($tokens[$j])] = true;
                 continue;

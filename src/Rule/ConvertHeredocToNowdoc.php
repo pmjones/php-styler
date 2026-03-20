@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Rule;
 
-use PhpStyler\Token\T;
+use PhpStyler\Token\AToken;
 use PhpStyler\Token\TCurlyOpen;
 use PhpStyler\Token\TEncapsedVariable;
 use PhpStyler\Token\THeredocEnd;
@@ -12,8 +12,8 @@ use PhpStyler\Token\THeredocStart;
 class ConvertHeredocToNowdoc implements TokenRule
 {
     /**
-     * @param T[] $tokens
-     * @return T[]
+     * @param AToken[] $tokens
+     * @return AToken[]
      */
     public function apply(array $tokens) : array
     {

@@ -5,7 +5,7 @@ namespace PhpStyler\Token;
 
 use PhpStyler\Docblock;
 
-class TCommentSlashedMidStatement extends T implements TCommentary, TDocblock
+class TCommentSlashedMidStatement extends AToken implements TCommentary, TDocblock
 {
     protected ?Docblock $docblock = null;
 

@@ -3,6 +3,6 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-class TArrayDoubleArrow extends T
+class TArrayDoubleArrow extends AToken
 {
 }

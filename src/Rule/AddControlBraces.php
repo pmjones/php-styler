@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Rule;
 
-use PhpStyler\Token\T;
+use PhpStyler\Token\AToken;
 use PhpStyler\Token\TElse;
 use PhpStyler\Token\TElseClosingBrace;
 use PhpStyler\Token\TElseClosingBraceless;
@@ -45,7 +45,6 @@ class AddControlBraces implements TokenRule
         TForeachClosingParen::class => TForeachOpeningBrace::class,
         TWhileClosingParen::class => TWhileOpeningBrace::class,
     ];
-
     protected const CLOSING_BRACE_MAP = [
         TIfClosingBraceless::class => TIfClosingBrace::class,
         TElseClosingBraceless::class => TElseClosingBrace::class,
@@ -54,15 +53,14 @@ class AddControlBraces implements TokenRule
         TForeachClosingBraceless::class => TForeachClosingBrace::class,
         TWhileClosingBraceless::class => TWhileClosingBrace::class,
     ];
-
     protected const CONTINUATION_BRACE_MAP = [
         TIfContinuationBraceless::class => TIfContinuationBrace::class,
         TElseifContinuationBraceless::class => TElseifContinuationBrace::class,
     ];
 
     /**
-     * @param T[] $tokens
-     * @return T[]
+     * @param AToken[] $tokens
+     * @return AToken[]
      */
     public function apply(array $tokens) : array
     {
@@ -79,7 +77,7 @@ class AddControlBraces implements TokenRule
             if (isset(self::CLOSING_BRACE_MAP[$class])) {
                 $braceClass = self::CLOSING_BRACE_MAP[$class];
                 $result[] = new $braceClass(
-                    T::SYNTHETIC,
+                    AToken::SYNTHETIC,
                     '}',
                     $token->line,
                     $token->pos,
@@ -90,7 +88,7 @@ class AddControlBraces implements TokenRule
             if (isset(self::CONTINUATION_BRACE_MAP[$class])) {
                 $braceClass = self::CONTINUATION_BRACE_MAP[$class];
                 $result[] = new $braceClass(
-                    T::SYNTHETIC,
+                    AToken::SYNTHETIC,
                     '}',
                     $token->line,
                     $token->pos,
@@ -105,12 +103,12 @@ class AddControlBraces implements TokenRule
     }
 
     /**
-     * @param T[] $result
+     * @param AToken[] $result
      */
     protected function replaceOpeningBraceless(
         TOpeningBraceless $token,
         array $result,
-    ) : T
+    ) : AToken
     {
         for ($i = count($result) - 1; $i >= 0; $i --) {
             if ($result[$i] instanceof TSpace) {
@@ -121,7 +119,12 @@ class AddControlBraces implements TokenRule
 
             if (isset(self::OPENING_BRACE_MAP[$class])) {
                 $braceClass = self::OPENING_BRACE_MAP[$class];
-                return new $braceClass(T::SYNTHETIC, '{', $token->line, $token->pos);
+                return new $braceClass(
+                    AToken::SYNTHETIC,
+                    '{',
+                    $token->line,
+                    $token->pos,
+                );
             }
 
             break;

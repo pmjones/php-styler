@@ -5,7 +5,7 @@ namespace PhpStyler\Token;
 
 use PhpStyler\Line;
 
-class TFloat extends T
+class TFloat extends AToken
 {
     public function render(Line $line) : string
     {

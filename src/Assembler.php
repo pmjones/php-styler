@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
-use PhpStyler\Token\T;
+use PhpStyler\Token\AToken;
 use PhpStyler\Token\TIndentDecrement;
 use PhpStyler\Token\TIndentIncrement;
 use PhpStyler\Token\TLineBreak;
@@ -14,9 +14,7 @@ class Assembler
      * @var Line[]
      */
     private array $lines = [];
-
     private int $indent = 0;
-
     private Line $line;
 
     public function __construct(private LineFactory $lineFactory = new LineFactory())
@@ -24,7 +22,7 @@ class Assembler
     }
 
     /**
-     * @param T[] $tokens
+     * @param AToken[] $tokens
      * @return Line[]
      */
     public function assemble(array $tokens) : array
@@ -41,7 +39,7 @@ class Assembler
         return $this->lines;
     }
 
-    private function assembleToken(T $token) : void
+    private function assembleToken(AToken $token) : void
     {
         if ($token instanceof TIndentIncrement) {
             $this->indent ++;

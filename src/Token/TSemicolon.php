@@ -6,7 +6,7 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TSemicolon extends T
+class TSemicolon extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

@@ -10,6 +10,6 @@ namespace PhpStyler\Token;
  *
  * Reference: https://www.php.net/manual/en/language.constants.predefined.php magic constants
  */
-class TMagicFunctionConstant extends T
+class TMagicFunctionConstant extends AToken
 {
 }

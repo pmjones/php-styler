@@ -49,9 +49,7 @@ class SymfonyFormat extends DeclarationFormat
         array $styles = [],
         array $rules = [],
     ) {
-        $symfonyStyles = [
-            Token\TReturn::class => ['blankLineBefore' => true],
-        ];
+        $symfonyStyles = [Token\TReturn::class => ['blankLineBefore' => true]];
 
         foreach ($styles as $class => $args) {
             $symfonyStyles[$class] = array_merge($symfonyStyles[$class] ?? [], $args);

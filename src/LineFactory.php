@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
-use PhpStyler\Token\T;
+use PhpStyler\Token\AToken;
 
 class LineFactory
 {
@@ -18,7 +18,7 @@ class LineFactory
     }
 
     /**
-     * @param T[] $tokens
+     * @param AToken[] $tokens
      */
     public function new(array $tokens = [], int $indent = 0) : Line
     {

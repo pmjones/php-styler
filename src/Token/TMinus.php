@@ -6,7 +6,7 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TMinus extends T
+class TMinus extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

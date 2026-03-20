@@ -6,7 +6,7 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TInlineAttribute extends T implements TAttribution
+class TInlineAttribute extends AToken implements TAttribution
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

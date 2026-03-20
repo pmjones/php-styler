@@ -6,13 +6,7 @@ namespace PhpStyler;
 use PhpStyler\Format\Format;
 use PhpStyler\Format\PlainFormat;
 use PhpStyler\Token;
-use PhpStyler\Token\T;
-use PhpStyler\Token\TIndentDecrement;
-use PhpStyler\Token\TIndentIncrement;
-use PhpStyler\Token\TLineBreak;
-use PhpStyler\Token\TSpace;
-use PhpStyler\Token\TSplit;
-use PhpStyler\Token\TSplittableComma;
+use PhpStyler\Token\AToken;
 use PhpToken;
 
 class Parser
@@ -89,30 +83,21 @@ class Parser
      * @var array<int, Nesting>
      */
     protected array $nesting = [];
-
     /**
-     * @var array<int, T>
+     * @var array<int, AToken>
      */
     protected array $parsed = [];
-
     protected int $parsedCount = 0;
-
     /**
      * @var array<PhpToken>
      */
     protected array $source = [];
-
     protected int $sourceCount = 0;
-
     protected int $sourceOffset = 0;
-
     protected int $lastAddedIndex = 0;
-
     protected int $parenDepth = 0;
-
-    public ?TSplit $lastSplit = null;
-
-    /** @var array<class-string<T>, Style> */
+    public ?Token\TSplit $lastSplit = null;
+    /** @var array<class-string<AToken>, Style> */
     private array $styles = [];
 
     public function __construct(?Format $format = null)
@@ -121,7 +106,7 @@ class Parser
     }
 
     /**
-     * @param class-string<T> $class
+     * @param class-string<AToken> $class
      */
     public function getStyle(string $class) : Style
     {
@@ -136,7 +121,7 @@ class Parser
     }
 
     /**
-     * @return array<int, T>
+     * @return array<int, AToken>
      */
     public function __invoke(string $code) : array
     {
@@ -160,7 +145,7 @@ class Parser
         ) {
             $source = $this->source[$this->sourceOffset];
 
-            /** @var class-string<T> $parseClass */
+            /** @var class-string<AToken> $parseClass */
             $parseClass = $this->getParseClass($source);
             $this->parse($source, $parseClass);
         }
@@ -172,7 +157,7 @@ class Parser
 
     protected function getParseClass(PhpToken $source) : string
     {
-        if ($source instanceof T) {
+        if ($source instanceof AToken) {
             return get_class($source);
         }
 
@@ -188,7 +173,7 @@ class Parser
     }
 
     /**
-     * @param class-string<T> $parseClass
+     * @param class-string<AToken> $parseClass
      */
     public function parse(PhpToken $source, string $parseClass) : void
     {
@@ -196,9 +181,9 @@ class Parser
     }
 
     /**
-     * @param class-string<T> $parseClass
+     * @param class-string<AToken> $parseClass
      */
-    public function add(PhpToken $source, string $parseClass) : T
+    public function add(PhpToken $source, string $parseClass) : AToken
     {
         $this->removePrevWhitespace();
         $style = $this->getStyle($parseClass);
@@ -215,7 +200,7 @@ class Parser
             $this->lineBreak();
         }
 
-        /** @var T $token */
+        /** @var AToken $token */
         $token = new $parseClass(
             $source->id,
             $source->text,
@@ -237,7 +222,7 @@ class Parser
             $this->parenDepth ++;
         }
 
-        if ($token instanceof TSplittableComma && $this->nesting !== []) {
+        if ($token instanceof Token\TSplittableComma && $this->nesting !== []) {
             $this->nesting[array_key_last($this->nesting)]->argCount ++;
         }
 
@@ -269,13 +254,13 @@ class Parser
         return $token;
     }
 
-    public function addSplit(TSplit $split) : void
+    public function addSplit(Token\TSplit $split) : void
     {
         $this->emit($split);
         $this->lastSplit = $split;
     }
 
-    public function replaceLastSplit(TSplit $replacement) : void
+    public function replaceLastSplit(Token\TSplit $replacement) : void
     {
         for ($i = $this->parsedCount - 1; $i >= 0; $i --) {
             if ($this->parsed[$i] === $this->lastSplit) {
@@ -288,20 +273,20 @@ class Parser
 
     public function indentIncr() : void
     {
-        $this->emit(new TIndentIncrement(T::SYNTHETIC, ''));
+        $this->emit(new Token\TIndentIncrement(AToken::SYNTHETIC, ''));
     }
 
     public function indentDecr() : void
     {
         if (
             $this->parsedCount > 0
-            && $this->parsed[$this->parsedCount - 1] instanceof TIndentIncrement
+            && $this->parsed[$this->parsedCount - 1] instanceof Token\TIndentIncrement
         ) {
             $this->removeParsedAt($this->parsedCount - 1);
             return;
         }
 
-        $this->emit(new TIndentDecrement(T::SYNTHETIC, ''));
+        $this->emit(new Token\TIndentDecrement(AToken::SYNTHETIC, ''));
     }
 
     public function blankLine() : void
@@ -338,7 +323,7 @@ class Parser
                 return;
             }
 
-            if (! $this->parsed[$i]->is([T::SYNTHETIC, T_WHITESPACE])) {
+            if (! $this->parsed[$i]->is([AToken::SYNTHETIC, T_WHITESPACE])) {
                 return;
             }
         }
@@ -359,7 +344,7 @@ class Parser
             return;
         }
 
-        $this->emit(new TLineBreak(T_WHITESPACE, "\n"));
+        $this->emit(new Token\TLineBreak(T_WHITESPACE, "\n"));
     }
 
     private function removeTrailingSpaces() : void
@@ -367,9 +352,9 @@ class Parser
         for ($i = $this->parsedCount - 1; $i >= 0; $i --) {
             $prev = $this->parsed[$i];
 
-            if ($prev instanceof TSpace) {
+            if ($prev instanceof Token\TSpace) {
                 $this->removeParsedAt($i);
-            } elseif (! $prev->is([T::SYNTHETIC, T_WHITESPACE])) {
+            } elseif (! $prev->is([AToken::SYNTHETIC, T_WHITESPACE])) {
                 break;
             }
         }
@@ -378,7 +363,7 @@ class Parser
     private function hasPrevLineBreakToken() : bool
     {
         return $this->parsedCount > 0
-            && $this->parsed[$this->parsedCount - 1] instanceof TLineBreak;
+            && $this->parsed[$this->parsedCount - 1] instanceof Token\TLineBreak;
     }
 
     public function space() : void
@@ -390,23 +375,23 @@ class Parser
         for ($i = $this->parsedCount - 1; $i >= 0; $i --) {
             $prev = $this->parsed[$i];
 
-            if ($prev instanceof TSpace) {
+            if ($prev instanceof Token\TSpace) {
                 return;
             }
 
-            if ($prev instanceof TLineBreak) {
+            if ($prev instanceof Token\TLineBreak) {
                 return;
             }
 
-            if (! $prev->is([T::SYNTHETIC, T_WHITESPACE])) {
+            if (! $prev->is([AToken::SYNTHETIC, T_WHITESPACE])) {
                 break;
             }
         }
 
-        $this->emit(new TSpace(T_WHITESPACE, ' '));
+        $this->emit(new Token\TSpace(T_WHITESPACE, ' '));
     }
 
-    private function emit(T $token) : void
+    private function emit(AToken $token) : void
     {
         $this->parsed[] = $token;
         $this->parsedCount ++;
@@ -423,16 +408,16 @@ class Parser
         for ($i = $this->parsedCount - 1; $i >= 0; $i --) {
             $prev = $this->parsed[$i];
 
-            if ($prev instanceof TSpace) {
+            if ($prev instanceof Token\TSpace) {
                 $this->removeParsedAt($i);
                 return;
             }
 
-            if ($prev instanceof TLineBreak) {
+            if ($prev instanceof Token\TLineBreak) {
                 return;
             }
 
-            if (! $prev->is([T::SYNTHETIC, T_WHITESPACE])) {
+            if (! $prev->is([AToken::SYNTHETIC, T_WHITESPACE])) {
                 return;
             }
         }
@@ -451,20 +436,20 @@ class Parser
                 continue;
             }
 
-            if (! $prev->is([T::SYNTHETIC, T_WHITESPACE])) {
+            if (! $prev->is([AToken::SYNTHETIC, T_WHITESPACE])) {
                 return;
             }
         }
     }
 
     /**
-     * @param class-string<T> $parseClass
+     * @param class-string<AToken> $parseClass
      */
-    public function replaceLastParsed(PhpToken $source, string $parseClass) : T
+    public function replaceLastParsed(PhpToken $source, string $parseClass) : AToken
     {
         $this->removePrevWhitespace();
 
-        /** @var T $token */
+        /** @var AToken $token */
         $token = new $parseClass(
             $source->id,
             $source->text,
@@ -477,9 +462,9 @@ class Parser
     }
 
     /**
-     * @param class-string<T> $parseClass
+     * @param class-string<AToken> $parseClass
      */
-    public function addNesting(PhpToken $source, string $parseClass) : T
+    public function addNesting(PhpToken $source, string $parseClass) : AToken
     {
         $token = $this->add($source, $parseClass);
         $this->nesting[] = new Nesting($token);
@@ -602,14 +587,14 @@ class Parser
     }
 
     /**
-     * @param class-string<T> $closerClass
+     * @param class-string<AToken> $closerClass
      */
     public function closeNesting(
         PhpToken $source,
         string $closerClass,
         string $openerClass,
         string ...$openerClasses,
-    ) : T
+    ) : AToken
     {
         $current = end($this->nesting);
         $argCount = $current !== false ? $current->argCount : 0;
@@ -622,7 +607,7 @@ class Parser
         return $closer;
     }
 
-    public function popNesting(string $expect, string ...$expects) : T
+    public function popNesting(string $expect, string ...$expects) : AToken
     {
         $expects = [$expect, ...$expects];
         $nesting = array_pop($this->nesting);
@@ -637,11 +622,11 @@ class Parser
             );
         }
 
-        /** @var T $actual */
+        /** @var AToken $actual */
         return $actual;
     }
 
-    public function getPrevParsed(int $skip = 0) : ?T
+    public function getPrevParsed(int $skip = 0) : ?AToken
     {
         $before = null;
 
@@ -724,7 +709,7 @@ class Parser
 
             if ($parsed instanceof $class) {
                 return true;
-            } elseif (! $parsed->is([T::SYNTHETIC, T_WHITESPACE])) {
+            } elseif (! $parsed->is([AToken::SYNTHETIC, T_WHITESPACE])) {
                 return false;
             }
         }
@@ -769,7 +754,7 @@ class Parser
             }
 
             // Skip already-replaced tokens
-            if ($source instanceof T) {
+            if ($source instanceof AToken) {
                 return null;
             }
 

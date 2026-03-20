@@ -5,9 +5,10 @@ namespace PhpStyler\Format;
 
 use PhpStyler\Rule\LineRule;
 use PhpStyler\Rule\TokenRule;
+use PhpStyler\Token\AToken;
 
 /**
- * @phpstan-type token_class_string class-string<Token\T>
+ * @phpstan-type token_class_string class-string<AToken>
  *
  * @phpstan-type styles_array array<token_class_string, style_args_array>
  *
@@ -32,24 +33,19 @@ interface Format
     public string $eol {
         get;
     }
-
     public int $lineLen {
         get;
     }
-
     public int $indentLen {
         get;
     }
-
     public bool $indentTab {
         get;
     }
-
     /** @var styles_array */
     public array $styles {
         get;
     }
-
     /** @var rules_array */
     public array $rules {
         get;

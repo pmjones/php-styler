@@ -7,18 +7,14 @@ use PhpStyler\Line;
 use PhpStyler\Parser;
 use PhpToken;
 
-abstract class T extends PhpToken
+abstract class AToken extends PhpToken
 {
     public const SYNTHETIC = -1;
 
     public int $parenDepth = 0;
-
     public int $argCount = 0;
-
-    public ?T $openingToken = null;
-
-    public ?T $closingToken = null;
-
+    public ?AToken $openingToken = null;
+    public ?AToken $closingToken = null;
     public bool $transparentOpener = false;
 
     public function isIgnorable() : bool
@@ -49,7 +45,7 @@ abstract class T extends PhpToken
     }
 
     /**
-     * @phpstan-assert-if-true T $this->closingToken
+     * @phpstan-assert-if-true AToken $this->closingToken
      */
     public function isOpener() : bool
     {

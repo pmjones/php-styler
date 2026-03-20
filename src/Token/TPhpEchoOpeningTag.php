@@ -10,6 +10,6 @@ namespace PhpStyler\Token;
  *
  * Reference: https://www.php.net/manual/en/language.basic-syntax.phpmode.php escaping from HTML
  */
-class TPhpEchoOpeningTag extends T
+class TPhpEchoOpeningTag extends AToken
 {
 }

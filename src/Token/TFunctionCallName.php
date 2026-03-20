@@ -5,8 +5,9 @@ namespace PhpStyler\Token;
 
 use PhpStyler\Line;
 
-class TFunctionCallName extends T
+class TFunctionCallName extends AToken
 {
+    /** @var ?array<string, int> */
     private static ?array $nativeFunctions = null;
 
     public function render(Line $line) : string

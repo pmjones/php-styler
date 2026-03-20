@@ -13,7 +13,7 @@ use PhpToken;
  *
  * Reference: https://www.php.net/manual/en/language.generators.syntax.php#control-structures.yield generators
  */
-class TYield extends T
+class TYield extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

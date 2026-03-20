@@ -13,7 +13,7 @@ use PhpToken;
  *
  * Reference: https://www.php.net/manual/en/control-structures.foreach.php foreach
  */
-class TAs extends T
+class TAs extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

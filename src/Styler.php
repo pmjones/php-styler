@@ -7,20 +7,17 @@ use PhpStyler\Format\Format;
 use PhpStyler\Format\PlainFormat;
 use PhpStyler\Rule\LineRule;
 use PhpStyler\Rule\TokenRule;
+use PhpStyler\Token\AToken;
 
 class Styler
 {
     private Parser $parser;
-
     private Assembler $assembler;
-
     private Splitter $splitter;
-
     /**
      * @var TokenRule[]
      */
     private array $tokenRules = [];
-
     /**
      * @var LineRule[]
      */
@@ -80,7 +77,7 @@ class Styler
     }
 
     /**
-     * @return Token\T[]
+     * @return AToken[]
      */
     public function parse(string $code) : array
     {
@@ -88,8 +85,8 @@ class Styler
     }
 
     /**
-     * @param Token\T[] $tokens
-     * @return Token\T[]
+     * @param AToken[] $tokens
+     * @return AToken[]
      */
     private function applyTokenRules(array $tokens) : array
     {
@@ -101,7 +98,7 @@ class Styler
     }
 
     /**
-     * @param Token\T[] $tokens
+     * @param AToken[] $tokens
      * @return Line[]
      */
     public function assemble(array $tokens) : array

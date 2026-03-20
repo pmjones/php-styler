@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Rule;
 
-use PhpStyler\Token\T;
+use PhpStyler\Token\AToken;
 use PhpStyler\Token\TLineBreak;
 use PhpStyler\Token\TSpace;
 use PhpStyler\Token\TSplit;
@@ -14,8 +14,8 @@ use PhpStyler\Token\TUseTraitEndSemicolon;
 class ExpandTraitUse implements TokenRule
 {
     /**
-     * @param T[] $tokens
-     * @return T[]
+     * @param AToken[] $tokens
+     * @return AToken[]
      */
     public function apply(array $tokens) : array
     {
@@ -120,13 +120,13 @@ class ExpandTraitUse implements TokenRule
 
             foreach ($segments as $segment) {
                 if (! $first) {
-                    $result[] = new TLineBreak(T::SYNTHETIC, '', $line, $pos);
+                    $result[] = new TLineBreak(AToken::SYNTHETIC, '', $line, $pos);
                 }
 
                 $first = false;
 
                 $result[] = new TUseTrait(T_USE, 'use', $line, $pos);
-                $result[] = new TSpace(T::SYNTHETIC, ' ', $line, $pos);
+                $result[] = new TSpace(AToken::SYNTHETIC, ' ', $line, $pos);
 
                 foreach ($segment as $segToken) {
                     $result[] = $segToken;

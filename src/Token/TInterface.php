@@ -13,7 +13,7 @@ use PhpToken;
  *
  * Reference: https://www.php.net/manual/en/language.oop5.interfaces.php Object Interfaces
  */
-class TInterface extends T
+class TInterface extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

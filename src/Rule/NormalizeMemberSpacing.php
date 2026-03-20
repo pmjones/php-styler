@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Rule;
 
-use PhpStyler\Token\T;
+use PhpStyler\Token\AToken;
 use PhpStyler\Token\TAbstractMethodEndSemicolon;
 use PhpStyler\Token\TBlankLine;
 use PhpStyler\Token\TConstEndSemicolon;
@@ -26,8 +26,8 @@ class NormalizeMemberSpacing implements TokenRule
     }
 
     /**
-     * @param T[] $tokens
-     * @return T[]
+     * @param AToken[] $tokens
+     * @return AToken[]
      */
     public function apply(array $tokens) : array
     {
@@ -76,7 +76,7 @@ class NormalizeMemberSpacing implements TokenRule
         return $result;
     }
 
-    private function memberType(T $token) : ?string
+    private function memberType(AToken $token) : ?string
     {
         return match (true) {
             $token instanceof TConstEndSemicolon => 'const',

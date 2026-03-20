@@ -10,6 +10,6 @@ namespace PhpStyler\Token;
  *
  * Reference: https://www.php.net/manual/en/language.operators.type.php type operators
  */
-class TInstanceof extends T
+class TInstanceof extends AToken
 {
 }

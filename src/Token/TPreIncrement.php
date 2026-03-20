@@ -3,6 +3,6 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-class TPreIncrement extends T
+class TPreIncrement extends AToken
 {
 }

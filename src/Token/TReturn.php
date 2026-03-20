@@ -10,6 +10,6 @@ namespace PhpStyler\Token;
  *
  * Reference: https://www.php.net/manual/en/functions.returning-values.php returning values
  */
-class TReturn extends T
+class TReturn extends AToken
 {
 }

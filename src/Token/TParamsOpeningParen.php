@@ -6,7 +6,7 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TParamsOpeningParen extends T implements TCommaSeparated
+class TParamsOpeningParen extends AToken implements TCommaSeparated
 {
     public function commaClass() : string
     {

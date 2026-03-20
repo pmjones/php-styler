@@ -6,7 +6,7 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TWhileClosingParen extends T
+class TWhileClosingParen extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

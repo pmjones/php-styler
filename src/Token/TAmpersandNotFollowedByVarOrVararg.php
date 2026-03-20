@@ -13,7 +13,7 @@ use PhpToken;
  *
  * Reference: https://www.php.net/manual/en/language.types.declarations.php Type declarations (available as of PHP 8.1.0)
  */
-class TAmpersandNotFollowedByVarOrVararg extends T
+class TAmpersandNotFollowedByVarOrVararg extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

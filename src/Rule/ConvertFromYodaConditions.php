@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Rule;
 
-use PhpStyler\Token\T;
+use PhpStyler\Token\AToken;
 use PhpStyler\Token\TFalse;
 use PhpStyler\Token\TFloatLiteral;
 use PhpStyler\Token\TIntegerLiteral;
@@ -24,8 +24,8 @@ use PhpStyler\Token\TVariable;
 class ConvertFromYodaConditions implements TokenRule
 {
     /**
-     * @param T[] $tokens
-     * @return T[]
+     * @param AToken[] $tokens
+     * @return AToken[]
      */
     public function apply(array $tokens) : array
     {
@@ -110,9 +110,9 @@ class ConvertFromYodaConditions implements TokenRule
 
             // emit: variable, TSpace, comparison, TSpace, [prefix], literal
             $result[] = $variable;
-            $result[] = new TSpace(T::SYNTHETIC, ' ');
+            $result[] = new TSpace(AToken::SYNTHETIC, ' ');
             $result[] = $token;
-            $result[] = new TSpace(T::SYNTHETIC, ' ');
+            $result[] = new TSpace(AToken::SYNTHETIC, ' ');
 
             if ($prefix !== null) {
                 $result[] = $prefix;
@@ -127,7 +127,7 @@ class ConvertFromYodaConditions implements TokenRule
         return $result;
     }
 
-    private function isComparison(T $token) : bool
+    private function isComparison(AToken $token) : bool
     {
         return $token instanceof TIsIdentical
             || $token instanceof TIsNotIdentical
@@ -135,7 +135,7 @@ class ConvertFromYodaConditions implements TokenRule
             || $token instanceof TIsNotEqual;
     }
 
-    private function isLiteral(T $token) : bool
+    private function isLiteral(AToken $token) : bool
     {
         return $token instanceof TNull
             || $token instanceof TTrue
@@ -145,7 +145,7 @@ class ConvertFromYodaConditions implements TokenRule
             || $token instanceof TStringLiteral;
     }
 
-    private function isUnaryPrefix(T $token) : bool
+    private function isUnaryPrefix(AToken $token) : bool
     {
         return $token instanceof TNot
             || $token instanceof TUnaryMinus

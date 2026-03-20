@@ -6,7 +6,7 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TDynamicMemberClosingBrace extends T
+class TDynamicMemberClosingBrace extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
@@ -14,9 +14,11 @@ class TDynamicMemberClosingBrace extends T
 
         if ($parser->getNextSource()?->is('(') && $parser->lastSplit !== null) {
             if ($parser->lastSplit instanceof TSplitStaticMember) {
-                $parser->replaceLastSplit(new TSplitStaticMethodCall(T::SYNTHETIC, ''));
+                $parser->replaceLastSplit(
+                    new TSplitStaticMethodCall(AToken::SYNTHETIC, ''),
+                );
             } else {
-                $parser->replaceLastSplit(new TSplitMethodCall(T::SYNTHETIC, ''));
+                $parser->replaceLastSplit(new TSplitMethodCall(AToken::SYNTHETIC, ''));
             }
         }
     }

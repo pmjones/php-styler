@@ -13,7 +13,7 @@ use PhpToken;
  *
  * Reference: https://www.php.net/manual/en/functions.arrow.php arrow functions (available as of PHP 7.4.0)
  */
-class TFn extends T
+class TFn extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

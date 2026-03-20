@@ -3,6 +3,6 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-class TCaret extends T
+class TCaret extends AToken
 {
 }

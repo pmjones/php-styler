@@ -3,14 +3,14 @@ declare(strict_types=1);
 
 namespace PhpStyler\Rule;
 
-use PhpStyler\Token\T;
+use PhpStyler\Token\AToken;
 use PhpStyler\Token\TSplittableOperator;
 
 class MergeParenBracket implements TokenRule
 {
     /**
-     * @param T[] $tokens
-     * @return T[]
+     * @param AToken[] $tokens
+     * @return AToken[]
      */
     public function apply(array $tokens) : array
     {
@@ -30,9 +30,9 @@ class MergeParenBracket implements TokenRule
     }
 
     /**
-     * @param T[] $tokens
+     * @param AToken[] $tokens
      */
-    private function check(T $opener, array $tokens, int $start, int $count) : void
+    private function check(AToken $opener, array $tokens, int $start, int $count) : void
     {
         $containsBracket = false;
         $depth = 0;

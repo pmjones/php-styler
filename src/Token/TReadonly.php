@@ -10,6 +10,6 @@ namespace PhpStyler\Token;
  *
  * Reference: https://www.php.net/manual/en/language.oop5.php classes and objects (available as of PHP 8.1.0)
  */
-class TReadonly extends T
+class TReadonly extends AToken
 {
 }

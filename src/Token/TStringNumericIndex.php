@@ -10,6 +10,6 @@ namespace PhpStyler\Token;
  *
  * Reference: https://www.php.net/manual/en/language.types.string.php#language.types.string.parsing numeric array index inside string
  */
-class TStringNumericIndex extends T
+class TStringNumericIndex extends AToken
 {
 }

@@ -9,11 +9,8 @@ use PhpStyler\Parser;
 abstract class TTestCase extends \PHPUnit\Framework\TestCase
 {
     protected const IGNORE_WHITESPACE = 'IGNORE_WHITESPACE';
-
     protected const REPORT_WHITESPACE = 'REPORT_WHITESPACE';
-
     protected const REPORT_LINEBREAKS = 'REPORT_LINEBREAKS';
-
     protected const REPORT_SYNTHETIC = 'REPORT_SYNTHETIC';
 
     /**

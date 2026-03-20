@@ -15,7 +15,7 @@ use PhpToken;
  *
  * Reference: https://www.php.net/manual/en/language.basic-syntax.comments.php PHPDoc style comments
  */
-class TDocComment extends T implements TDocblock
+class TDocComment extends AToken implements TDocblock
 {
     protected ?Docblock $docblock = null;
 

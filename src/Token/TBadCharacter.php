@@ -10,6 +10,6 @@ namespace PhpStyler\Token;
  *
  * Reference: anything below ASCII 32 except \t (0x09), \n (0x0a) and \r (0x0d)
  */
-class TBadCharacter extends T
+class TBadCharacter extends AToken
 {
 }

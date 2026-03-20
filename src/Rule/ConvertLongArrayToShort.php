@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Rule;
 
-use PhpStyler\Token\T;
+use PhpStyler\Token\AToken;
 use PhpStyler\Token\TArrayClosingBracket;
 use PhpStyler\Token\TArrayConstruct;
 use PhpStyler\Token\TArrayConstructClosingParen;
@@ -14,8 +14,8 @@ use PhpStyler\Token\TSpace;
 class ConvertLongArrayToShort implements TokenRule
 {
     /**
-     * @param T[] $tokens
-     * @return T[]
+     * @param AToken[] $tokens
+     * @return AToken[]
      */
     public function apply(array $tokens) : array
     {

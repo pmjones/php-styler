@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Rule;
 
-use PhpStyler\Token\T;
+use PhpStyler\Token\AToken;
 use PhpStyler\Token\TBlankLine;
 use PhpStyler\Token\TIndentDecrement;
 use PhpStyler\Token\TIndentIncrement;
@@ -17,8 +17,8 @@ use PhpStyler\Token\TVariable;
 class ExpandProperties implements TokenRule
 {
     /**
-     * @param T[] $tokens
-     * @return T[]
+     * @param AToken[] $tokens
+     * @return AToken[]
      */
     public function apply(array $tokens) : array
     {
@@ -150,7 +150,7 @@ class ExpandProperties implements TokenRule
 
             foreach ($segments as $segment) {
                 if (! $first) {
-                    $result[] = new TLineBreak(T::SYNTHETIC, '', $line, $pos);
+                    $result[] = new TLineBreak(AToken::SYNTHETIC, '', $line, $pos);
                 }
 
                 $first = false;

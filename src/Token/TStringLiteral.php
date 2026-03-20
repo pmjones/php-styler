@@ -10,6 +10,6 @@ namespace PhpStyler\Token;
  *
  * Reference: https://www.php.net/manual/en/language.types.string.php#language.types.string.syntax string syntax
  */
-class TStringLiteral extends T
+class TStringLiteral extends AToken
 {
 }

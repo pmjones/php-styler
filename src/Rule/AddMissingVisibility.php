@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Rule;
 
-use PhpStyler\Token\T;
+use PhpStyler\Token\AToken;
 use PhpStyler\Token\TAbstract;
 use PhpStyler\Token\TAnonymousClass;
 use PhpStyler\Token\TAnonymousFunction;
@@ -25,8 +25,8 @@ use PhpStyler\Token\TVar;
 class AddMissingVisibility implements TokenRule
 {
     /**
-     * @param T[] $tokens
-     * @return T[]
+     * @param AToken[] $tokens
+     * @return AToken[]
      */
     public function apply(array $tokens) : array
     {
@@ -68,7 +68,7 @@ class AddMissingVisibility implements TokenRule
                         $token->line,
                         $token->pos,
                     );
-                    $result[] = new TSpace(T::SYNTHETIC, ' ');
+                    $result[] = new TSpace(AToken::SYNTHETIC, ' ');
                 }
             }
 
@@ -79,7 +79,7 @@ class AddMissingVisibility implements TokenRule
     }
 
     /**
-     * @param T[] $result
+     * @param AToken[] $result
      */
     private function hasVisibilityBefore(array $result) : bool
     {

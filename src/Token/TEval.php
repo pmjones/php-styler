@@ -10,6 +10,6 @@ namespace PhpStyler\Token;
  *
  * Reference: https://www.php.net/manual/en/function.eval.php eval()
  */
-class TEval extends T
+class TEval extends AToken
 {
 }

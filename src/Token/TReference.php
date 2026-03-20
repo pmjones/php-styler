@@ -11,7 +11,7 @@ use PhpToken;
  *
  * Syntax: &
  */
-class TReference extends T
+class TReference extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

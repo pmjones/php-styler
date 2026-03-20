@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Rule;
 
-use PhpStyler\Token\T;
+use PhpStyler\Token\AToken;
 use PhpStyler\Token\TBlankLine;
 use PhpStyler\Token\TLineBreak;
 use PhpStyler\Token\TQualifiedName;
@@ -17,8 +17,8 @@ use PhpStyler\Token\TWhitespaceEol;
 class OrderImports implements TokenRule
 {
     /**
-     * @param T[] $tokens
-     * @return T[]
+     * @param AToken[] $tokens
+     * @return AToken[]
      */
     public function apply(array $tokens) : array
     {
@@ -91,14 +91,14 @@ class OrderImports implements TokenRule
         return $result;
     }
 
-    private function isUseKeyword(T $token) : bool
+    private function isUseKeyword(AToken $token) : bool
     {
         return $token instanceof TUse
             || $token instanceof TUseConst
             || $token instanceof TUseFunction;
     }
 
-    private function isSeparator(T $token) : bool
+    private function isSeparator(AToken $token) : bool
     {
         return $token instanceof TWhitespaceEol
             || $token instanceof TLineBreak
@@ -106,7 +106,7 @@ class OrderImports implements TokenRule
     }
 
     /**
-     * @param T[] $statement
+     * @param AToken[] $statement
      */
     private function statementKind(array $statement) : int
     {
@@ -124,7 +124,7 @@ class OrderImports implements TokenRule
     }
 
     /**
-     * @param array{kind: int, tokens: T[]} $statement
+     * @param array{kind: int, tokens: AToken[]} $statement
      */
     private function sortKey(array $statement) : string
     {
@@ -140,8 +140,8 @@ class OrderImports implements TokenRule
     }
 
     /**
-     * @param array{kind: int, tokens: T[]}[] $block
-     * @param T[] $result
+     * @param array{kind: int, tokens: AToken[]}[] $block
+     * @param AToken[] $result
      */
     private function emitBlock(array $block, array &$result) : void
     {
@@ -173,11 +173,11 @@ class OrderImports implements TokenRule
             if ($idx > 0) {
                 if ($statement['kind'] !== $prevKind) {
                     // blank line between different kinds
-                    $result[] = new TLineBreak(T::SYNTHETIC, '', $line, $pos);
-                    $result[] = new TBlankLine(T::SYNTHETIC, '', $line, $pos);
-                    $result[] = new TLineBreak(T::SYNTHETIC, '', $line, $pos);
+                    $result[] = new TLineBreak(AToken::SYNTHETIC, '', $line, $pos);
+                    $result[] = new TBlankLine(AToken::SYNTHETIC, '', $line, $pos);
+                    $result[] = new TLineBreak(AToken::SYNTHETIC, '', $line, $pos);
                 } else {
-                    $result[] = new TLineBreak(T::SYNTHETIC, '', $line, $pos);
+                    $result[] = new TLineBreak(AToken::SYNTHETIC, '', $line, $pos);
                 }
             }
 
@@ -189,8 +189,8 @@ class OrderImports implements TokenRule
         }
 
         // blank line after last import
-        $result[] = new TLineBreak(T::SYNTHETIC, '', $line, $pos);
-        $result[] = new TBlankLine(T::SYNTHETIC, '', $line, $pos);
-        $result[] = new TLineBreak(T::SYNTHETIC, '', $line, $pos);
+        $result[] = new TLineBreak(AToken::SYNTHETIC, '', $line, $pos);
+        $result[] = new TBlankLine(AToken::SYNTHETIC, '', $line, $pos);
+        $result[] = new TLineBreak(AToken::SYNTHETIC, '', $line, $pos);
     }
 }

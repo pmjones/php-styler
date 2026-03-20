@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Rule;
 
-use PhpStyler\Token\T;
+use PhpStyler\Token\AToken;
 use PhpStyler\Token\TAttribute;
 use PhpStyler\Token\TAttributeClosingBracket;
 use PhpStyler\Token\TAttributeComma;
@@ -14,8 +14,8 @@ use PhpStyler\Token\TSplitComma;
 class ExpandAttributes implements TokenRule
 {
     /**
-     * @param T[] $tokens
-     * @return T[]
+     * @param AToken[] $tokens
+     * @return AToken[]
      */
     public function apply(array $tokens) : array
     {
@@ -41,9 +41,9 @@ class ExpandAttributes implements TokenRule
             }
 
             // replace comma with: ] + line break + #[
-            $result[] = new TAttributeClosingBracket(T::SYNTHETIC, ']');
-            $result[] = new TLineBreak(T::SYNTHETIC, '');
-            $result[] = new TAttribute(T::SYNTHETIC, '#[');
+            $result[] = new TAttributeClosingBracket(AToken::SYNTHETIC, ']');
+            $result[] = new TLineBreak(AToken::SYNTHETIC, '');
+            $result[] = new TAttribute(AToken::SYNTHETIC, '#[');
         }
 
         return $result;

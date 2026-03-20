@@ -13,11 +13,11 @@ use PhpToken;
  *
  * Reference: https://www.php.net/manual/en/language.oop5.php classes and objects
  */
-class TNullsafeObjectOperator extends T implements TSplittableFluent
+class TNullsafeObjectOperator extends AToken implements TSplittableFluent
 {
     public function splitBefore(Parser $parser) : ?TSplit
     {
-        return new TSplitPropertyAccess(T::SYNTHETIC, '');
+        return new TSplitPropertyAccess(AToken::SYNTHETIC, '');
     }
 
     public static function parse(Parser $parser, PhpToken $source) : void

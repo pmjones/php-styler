@@ -3,6 +3,6 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-class TNamedArgColon extends T
+class TNamedArgColon extends AToken
 {
 }

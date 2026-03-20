@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Rule;
 
-use PhpStyler\Token\T;
+use PhpStyler\Token\AToken;
 use PhpStyler\Token\TLineBreak;
 use PhpStyler\Token\TNamespaceSeparator;
 use PhpStyler\Token\TQualifiedName;
@@ -27,8 +27,8 @@ use PhpStyler\Token\TUseOpeningBrace;
 class ExpandImports implements TokenRule
 {
     /**
-     * @param T[] $tokens
-     * @return T[]
+     * @param AToken[] $tokens
+     * @return AToken[]
      */
     public function apply(array $tokens) : array
     {
@@ -201,7 +201,7 @@ class ExpandImports implements TokenRule
 
             foreach ($segments as $segment) {
                 if (! $first) {
-                    $result[] = new TLineBreak(T::SYNTHETIC, '', $line, $pos);
+                    $result[] = new TLineBreak(AToken::SYNTHETIC, '', $line, $pos);
                 }
 
                 $first = false;
@@ -209,18 +209,18 @@ class ExpandImports implements TokenRule
                 // TUse (or TUseFunction/TUseConst)
                 $newUse = new (get_class($useToken))(T_USE, 'use', $line, $pos);
                 $result[] = $newUse;
-                $result[] = new TSpace(T::SYNTHETIC, ' ', $line, $pos);
+                $result[] = new TSpace(AToken::SYNTHETIC, ' ', $line, $pos);
 
                 // for TUseFunction, add "function " keyword
                 if ($useToken instanceof TUseFunction) {
                     $result[] = new TUseFunction(T_FUNCTION, 'function', $line, $pos);
-                    $result[] = new TSpace(T::SYNTHETIC, ' ', $line, $pos);
+                    $result[] = new TSpace(AToken::SYNTHETIC, ' ', $line, $pos);
                 }
 
                 // for TUseConst, add "const " keyword
                 if ($useToken instanceof TUseConst) {
                     $result[] = new TUseConst(T_CONST, 'const', $line, $pos);
-                    $result[] = new TSpace(T::SYNTHETIC, ' ', $line, $pos);
+                    $result[] = new TSpace(AToken::SYNTHETIC, ' ', $line, $pos);
                 }
 
                 // build the fully qualified name
@@ -245,13 +245,18 @@ class ExpandImports implements TokenRule
                 // check for alias
                 foreach ($segment as $idx => $segToken) {
                     if ($segToken instanceof TUseAs) {
-                        $result[] = new TSpace(T::SYNTHETIC, ' ', $line, $pos);
+                        $result[] = new TSpace(AToken::SYNTHETIC, ' ', $line, $pos);
                         $result[] = new TUseAs(T_AS, 'as', $line, $pos);
 
                         // find the alias token after TUseAs
                         for ($a = $idx + 1; $a < count($segment); $a ++) {
                             if ($segment[$a] instanceof TUseAlias) {
-                                $result[] = new TSpace(T::SYNTHETIC, ' ', $line, $pos);
+                                $result[] = new TSpace(
+                                    AToken::SYNTHETIC,
+                                    ' ',
+                                    $line,
+                                    $pos,
+                                );
                                 $result[] = new TUseAlias(
                                     T_STRING,
                                     $segment[$a]->text,

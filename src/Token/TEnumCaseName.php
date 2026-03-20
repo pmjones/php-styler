@@ -3,6 +3,6 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-class TEnumCaseName extends T
+class TEnumCaseName extends AToken
 {
 }

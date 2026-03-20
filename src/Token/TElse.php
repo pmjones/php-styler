@@ -13,7 +13,7 @@ use PhpToken;
  *
  * Reference: https://www.php.net/manual/en/control-structures.else.php else
  */
-class TElse extends T
+class TElse extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

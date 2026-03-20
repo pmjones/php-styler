@@ -13,7 +13,7 @@ use PhpToken;
  *
  * Reference: https://www.php.net/manual/en/control-structures.switch.php switch
  */
-class TCase extends T
+class TCase extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

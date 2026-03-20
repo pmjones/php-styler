@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Rule;
 
-use PhpStyler\Token\T;
+use PhpStyler\Token\AToken;
 use PhpStyler\Token\TArgsClosingParen;
 use PhpStyler\Token\TArgsOpeningParen;
 use PhpStyler\Token\TAttribute;
@@ -15,8 +15,8 @@ use PhpStyler\Token\TSpace;
 class RemoveEmptyAttributeParens implements TokenRule
 {
     /**
-     * @param T[] $tokens
-     * @return T[]
+     * @param AToken[] $tokens
+     * @return AToken[]
      */
     public function apply(array $tokens) : array
     {
@@ -29,10 +29,7 @@ class RemoveEmptyAttributeParens implements TokenRule
             $token = $tokens[$i];
 
             // track attribute context
-            if (
-                $token instanceof TAttribute
-                || $token instanceof TInlineAttribute
-            ) {
+            if ($token instanceof TAttribute || $token instanceof TInlineAttribute) {
                 $inAttribute = true;
             } elseif (
                 $token instanceof TAttributeClosingBracket
@@ -49,10 +46,7 @@ class RemoveEmptyAttributeParens implements TokenRule
                 continue;
             }
 
-            if (
-                $inAttribute
-                && $token instanceof TArgsOpeningParen
-            ) {
+            if ($inAttribute && $token instanceof TArgsOpeningParen) {
                 // look ahead past optional TSpace
                 $j = $i + 1;
 
@@ -60,10 +54,7 @@ class RemoveEmptyAttributeParens implements TokenRule
                     $j ++;
                 }
 
-                if (
-                    $j < $count
-                    && $tokens[$j] instanceof TArgsClosingParen
-                ) {
+                if ($j < $count && $tokens[$j] instanceof TArgsClosingParen) {
                     // empty parens inside attribute — skip opening, mark closing
                     $skipClosingIds[spl_object_id($tokens[$j])] = true;
                     continue;

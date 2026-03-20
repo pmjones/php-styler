@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-abstract class TSplit extends T
+abstract class TSplit extends AToken
 {
     abstract public function splitPriority() : int;
 

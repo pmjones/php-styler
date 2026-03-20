@@ -13,7 +13,7 @@ use PhpToken;
  *
  * Reference: https://www.php.net/manual/en/function.halt-compiler.php __halt_compiler
  */
-class THaltCompiler extends T
+class THaltCompiler extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

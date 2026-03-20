@@ -6,7 +6,7 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TPropertyHookGetDoubleArrow extends T
+class TPropertyHookGetDoubleArrow extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

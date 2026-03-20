@@ -13,7 +13,7 @@ use PhpToken;
  *
  * Reference: https://www.php.net/manual/en/language.types.string.php#language.types.string.parsing constant part of string with variables
  */
-class TStringFragment extends T
+class TStringFragment extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Rule;
 
-use PhpStyler\Token\T;
+use PhpStyler\Token\AToken;
 use PhpStyler\Token\TAbstract;
 use PhpStyler\Token\TFinal;
 use PhpStyler\Token\TPrivate;
@@ -20,7 +20,7 @@ use PhpStyler\Token\TVar;
 class OrderModifiers implements TokenRule
 {
     /**
-     * @var array<class-string<T>, int>
+     * @var array<class-string<AToken>, int>
      */
     private const PRIORITY = [
         TAbstract::class => 1,
@@ -37,8 +37,8 @@ class OrderModifiers implements TokenRule
     ];
 
     /**
-     * @param T[] $tokens
-     * @return T[]
+     * @param AToken[] $tokens
+     * @return AToken[]
      */
     public function apply(array $tokens) : array
     {
@@ -91,7 +91,7 @@ class OrderModifiers implements TokenRule
                 // single modifier, no reordering needed
                 foreach ($modifiers as $idx => $mod) {
                     if ($idx > 0) {
-                        $result[] = new TSpace(T::SYNTHETIC, ' ');
+                        $result[] = new TSpace(AToken::SYNTHETIC, ' ');
                     }
 
                     $result[] = $mod;
@@ -118,7 +118,7 @@ class OrderModifiers implements TokenRule
                 // rebuild with modifiers and spaces in original order
                 foreach ($modifiers as $idx => $mod) {
                     if ($idx > 0) {
-                        $result[] = new TSpace(T::SYNTHETIC, ' ');
+                        $result[] = new TSpace(AToken::SYNTHETIC, ' ');
                     }
 
                     $result[] = $mod;
@@ -130,14 +130,14 @@ class OrderModifiers implements TokenRule
             // sort by canonical priority (stable sort)
             usort(
                 $modifiers,
-                fn (T $a, T $b)
+                fn (AToken $a, AToken $b)
                     => $this->priority($a) <=> $this->priority($b),
             );
 
             // rebuild: modifier, space, modifier, space, ...
             foreach ($modifiers as $idx => $mod) {
                 if ($idx > 0) {
-                    $result[] = new TSpace(T::SYNTHETIC, ' ');
+                    $result[] = new TSpace(AToken::SYNTHETIC, ' ');
                 }
 
                 $result[] = $mod;
@@ -147,12 +147,12 @@ class OrderModifiers implements TokenRule
         return $result;
     }
 
-    private function isModifier(T $token) : bool
+    private function isModifier(AToken $token) : bool
     {
         return isset(self::PRIORITY[get_class($token)]);
     }
 
-    private function priority(T $token) : int
+    private function priority(AToken $token) : int
     {
         return self::PRIORITY[get_class($token)];
     }

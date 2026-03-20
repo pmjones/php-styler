@@ -6,11 +6,11 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TTernaryQuestion extends T implements TSplittableOperator
+class TTernaryQuestion extends AToken implements TSplittableOperator
 {
     public function splitBefore(Parser $parser) : ?TSplit
     {
-        return new TSplitLooseOperator(T::SYNTHETIC, '');
+        return new TSplitLooseOperator(AToken::SYNTHETIC, '');
     }
 
     public static function parse(Parser $parser, PhpToken $source) : void

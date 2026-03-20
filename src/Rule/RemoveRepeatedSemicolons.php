@@ -3,15 +3,15 @@ declare(strict_types=1);
 
 namespace PhpStyler\Rule;
 
-use PhpStyler\Token\T;
+use PhpStyler\Token\AToken;
 use PhpStyler\Token\TForSemicolon;
 use PhpStyler\Token\TLoopEmptySemicolon;
 
 class RemoveRepeatedSemicolons implements TokenRule
 {
     /**
-     * @param T[] $tokens
-     * @return T[]
+     * @param AToken[] $tokens
+     * @return AToken[]
      */
     public function apply(array $tokens) : array
     {
@@ -37,7 +37,7 @@ class RemoveRepeatedSemicolons implements TokenRule
         return $result;
     }
 
-    private function isSemicolon(T $token) : bool
+    private function isSemicolon(AToken $token) : bool
     {
         return $token->text === ';'
             && ! $token instanceof TForSemicolon

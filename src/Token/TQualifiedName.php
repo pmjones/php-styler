@@ -13,7 +13,7 @@ use PhpToken;
  *
  * Reference: https://www.php.net/manual/en/language.namespaces.php namespaces (available as of PHP 8.0.0)
  */
-class TQualifiedName extends T
+class TQualifiedName extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

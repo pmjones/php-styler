@@ -12,7 +12,7 @@ use PhpStyler\Line;
  *
  * Reference: https://www.php.net/manual/en/language.operators.comparison.php comparison operators
  */
-class TIsNotEqual extends T
+class TIsNotEqual extends AToken
 {
     public function render(Line $line) : string
     {

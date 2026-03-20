@@ -6,7 +6,7 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TPipe extends T
+class TPipe extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

@@ -1199,7 +1199,6 @@ class PlainFormat implements Format
             'lineBreakAfter' => true,
         ],
     ];
-
     /**
      * @inheritdoc
      */

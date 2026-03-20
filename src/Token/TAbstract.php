@@ -10,6 +10,6 @@ namespace PhpStyler\Token;
  *
  * Reference: https://www.php.net/manual/en/language.oop5.abstract.php Class Abstraction
  */
-class TAbstract extends T
+class TAbstract extends AToken
 {
 }

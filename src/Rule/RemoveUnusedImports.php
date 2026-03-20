@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Rule;
 
-use PhpStyler\Token\T;
+use PhpStyler\Token\AToken;
 use PhpStyler\Token\TBlankLine;
 use PhpStyler\Token\TConstName;
 use PhpStyler\Token\TDocblock;
@@ -23,8 +23,8 @@ use PhpStyler\Token\TWhitespaceEol;
 class RemoveUnusedImports implements TokenRule
 {
     /**
-     * @param T[] $tokens
-     * @return T[]
+     * @param AToken[] $tokens
+     * @return AToken[]
      */
     public function apply(array $tokens) : array
     {
@@ -180,14 +180,14 @@ class RemoveUnusedImports implements TokenRule
         return $result;
     }
 
-    private function isUseKeyword(T $token) : bool
+    private function isUseKeyword(AToken $token) : bool
     {
         return $token instanceof TUse
             || $token instanceof TUseConst
             || $token instanceof TUseFunction;
     }
 
-    private function isSeparator(T $token) : bool
+    private function isSeparator(AToken $token) : bool
     {
         return $token instanceof TWhitespaceEol
             || $token instanceof TLineBreak

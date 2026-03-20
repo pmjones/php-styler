@@ -3,6 +3,6 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-class TParent extends T
+class TParent extends AToken
 {
 }

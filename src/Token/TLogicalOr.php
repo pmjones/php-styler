@@ -10,6 +10,6 @@ namespace PhpStyler\Token;
  *
  * Reference: https://www.php.net/manual/en/language.operators.logical.php logical operators
  */
-class TLogicalOr extends T
+class TLogicalOr extends AToken
 {
 }

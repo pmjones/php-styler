@@ -3,6 +3,6 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-class TProtectedSet extends T
+class TProtectedSet extends AToken
 {
 }

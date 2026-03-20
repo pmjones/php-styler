@@ -5,7 +5,7 @@ namespace PhpStyler\Token;
 
 use PhpStyler\Docblock;
 
-class TCommentStarredLineBreak extends T implements TCommentary, TDocblock
+class TCommentStarredLineBreak extends AToken implements TCommentary, TDocblock
 {
     protected ?Docblock $docblock = null;
 

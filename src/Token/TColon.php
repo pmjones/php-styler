@@ -7,7 +7,7 @@ use PhpStyler\Exception;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TColon extends T
+class TColon extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

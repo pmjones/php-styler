@@ -6,7 +6,7 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TUseConstOpeningBrace extends T
+class TUseConstOpeningBrace extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

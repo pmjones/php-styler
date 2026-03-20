@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Rule;
 
-use PhpStyler\Token\T;
+use PhpStyler\Token\AToken;
 use PhpStyler\Token\TAnonymousClass;
 use PhpStyler\Token\TArgsClosingParen;
 use PhpStyler\Token\TArgsOpeningParen;
@@ -17,8 +17,8 @@ use PhpStyler\Token\TVariable;
 class AddInstantiationParentheses implements TokenRule
 {
     /**
-     * @param T[] $tokens
-     * @return T[]
+     * @param AToken[] $tokens
+     * @return AToken[]
      */
     public function apply(array $tokens) : array
     {
@@ -79,8 +79,8 @@ class AddInstantiationParentheses implements TokenRule
                 continue;
             }
 
-            $result[] = new TArgsOpeningParen(T::SYNTHETIC, '(');
-            $result[] = new TArgsClosingParen(T::SYNTHETIC, ')');
+            $result[] = new TArgsOpeningParen(AToken::SYNTHETIC, '(');
+            $result[] = new TArgsClosingParen(AToken::SYNTHETIC, ')');
             $i = $j - 1;
         }
 

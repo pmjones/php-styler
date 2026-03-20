@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Rule;
 
-use PhpStyler\Token\T;
+use PhpStyler\Token\AToken;
 use PhpStyler\Token\TLineBreak;
 use PhpStyler\Token\TPhpClosingTag;
 use PhpStyler\Token\TSpace;
@@ -13,8 +13,8 @@ use PhpStyler\Token\TWhitespaceEol;
 class RemovePhpClosingTag implements TokenRule
 {
     /**
-     * @param T[] $tokens
-     * @return T[]
+     * @param AToken[] $tokens
+     * @return AToken[]
      */
     public function apply(array $tokens) : array
     {

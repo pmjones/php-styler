@@ -3,6 +3,6 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-class TPublicSet extends T
+class TPublicSet extends AToken
 {
 }

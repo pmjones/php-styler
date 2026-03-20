@@ -13,7 +13,7 @@ use PhpToken;
  *
  * Reference: https://www.php.net/manual/en/function.echo.php echo
  */
-class TEcho extends T
+class TEcho extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

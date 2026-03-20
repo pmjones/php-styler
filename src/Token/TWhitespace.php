@@ -13,7 +13,7 @@ use PhpToken;
  *
  * Reference: (n/a)
  */
-class TWhitespace extends T
+class TWhitespace extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

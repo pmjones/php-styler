@@ -14,7 +14,7 @@ use PhpToken;
  * Reference: https://www.php.net/manual/en/control-structures.while.php while,
  * https://www.php.net/manual/en/control-structures.do.while.php do..while
  */
-class TWhile extends T
+class TWhile extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Rule;
 
-use PhpStyler\Token\T;
+use PhpStyler\Token\AToken;
 use PhpStyler\Token\TFullyQualifiedName;
 use PhpStyler\Token\TQualifiedName;
 use PhpStyler\Token\TUse;
@@ -14,8 +14,8 @@ use PhpStyler\Token\TUseFunction;
 class RemoveImportLeadingBackslash implements TokenRule
 {
     /**
-     * @param T[] $tokens
-     * @return T[]
+     * @param AToken[] $tokens
+     * @return AToken[]
      */
     public function apply(array $tokens) : array
     {
@@ -39,10 +39,7 @@ class RemoveImportLeadingBackslash implements TokenRule
                 continue;
             }
 
-            if (
-                $inImport
-                && $token instanceof TFullyQualifiedName
-            ) {
+            if ($inImport && $token instanceof TFullyQualifiedName) {
                 $tokens[$i] = new TQualifiedName(
                     $token->id,
                     ltrim($token->text, '\\'),

@@ -52,7 +52,7 @@ if (true) {
         if (true) {
             if (true) {
                 $str .= '; expires='
-                    . gmdate('D, d M Y H:i:s T', $this->getExpiresTime())
+                    . gmdate('D, d M Y H:i:s Token', $this->getExpiresTime())
                     . '; Max-Age='
                     . $this->getMaxAge();
             }

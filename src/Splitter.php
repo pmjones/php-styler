@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
-use PhpStyler\Token\T;
+use PhpStyler\Token\AToken;
 use PhpStyler\Token\TCommentary;
 use PhpStyler\Token\TSpace;
 use PhpStyler\Token\TSplit;
@@ -110,7 +110,7 @@ class Splitter
     }
 
     /**
-     * @param T[] $tokens
+     * @param AToken[] $tokens
      */
     private function positionPastTrailingComment(array $tokens, int $pos) : int
     {

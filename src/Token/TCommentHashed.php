@@ -7,7 +7,7 @@ use PhpStyler\Docblock;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TCommentHashed extends T implements TDocblock
+class TCommentHashed extends AToken implements TDocblock
 {
     protected ?Docblock $docblock = null;
 

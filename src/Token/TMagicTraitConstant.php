@@ -10,6 +10,6 @@ namespace PhpStyler\Token;
  *
  * Reference: https://www.php.net/manual/en/language.constants.magic.php#constant.trait __TRAIT__
  */
-class TMagicTraitConstant extends T
+class TMagicTraitConstant extends AToken
 {
 }

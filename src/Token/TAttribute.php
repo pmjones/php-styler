@@ -13,7 +13,7 @@ use PhpToken;
  *
  * Reference: https://www.php.net/manual/en/language.attributes.php attributes (available as of PHP 8.0.0)
  */
-class TAttribute extends T implements TAttribution
+class TAttribute extends AToken implements TAttribution
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

@@ -14,7 +14,7 @@ use PhpToken;
  * Reference: identifiers, e.g. keywords like `parent` and `self`, function names,
  * class names and more are matched. See also T_CONSTANT_ENCAPSED_STRING.
  */
-class TString extends T
+class TString extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
@@ -163,7 +163,9 @@ class TString extends T
         if ($parser->getNextSource()?->is('(')) {
             if ($prev?->is([T_OBJECT_OPERATOR, T_NULLSAFE_OBJECT_OPERATOR])) {
                 if ($parser->lastSplit !== null) {
-                    $parser->replaceLastSplit(new TSplitMethodCall(T::SYNTHETIC, ''));
+                    $parser->replaceLastSplit(
+                        new TSplitMethodCall(AToken::SYNTHETIC, ''),
+                    );
                 }
 
                 $parser->add($source, TMethodCallName::class);

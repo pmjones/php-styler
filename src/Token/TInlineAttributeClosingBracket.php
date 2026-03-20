@@ -6,7 +6,7 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TInlineAttributeClosingBracket extends T
+class TInlineAttributeClosingBracket extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
@@ -15,7 +15,7 @@ class TInlineAttributeClosingBracket extends T
         if ($parser->hasNextEol()) {
             $parser->lineBreak();
         } else {
-            $parser->addSplit(new TSplitAttribute(T::SYNTHETIC, ''));
+            $parser->addSplit(new TSplitAttribute(AToken::SYNTHETIC, ''));
         }
     }
 }

@@ -10,6 +10,6 @@ namespace PhpStyler\Token;
  *
  * Reference: https://www.php.net/manual/en/language.operators.assignment.php other assignment operators
  */
-class TCoalesceEqual extends T
+class TCoalesceEqual extends AToken
 {
 }

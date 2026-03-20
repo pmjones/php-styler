@@ -13,7 +13,7 @@ use PhpToken;
  *
  * Reference: https://www.php.net/manual/en/language.types.string.php#language.types.string.syntax.heredoc heredoc syntax
  */
-class THeredocStart extends T
+class THeredocStart extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

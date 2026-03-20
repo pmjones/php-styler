@@ -14,10 +14,7 @@ class RejoinOrphansTest extends TestCase
         $styler = new Styler(
             new DeclarationFormat(
                 lineLen: 44,
-                rules: [
-                    RejoinOrphans::class,
-                    RemoveTrailingBlankLines::class,
-                ],
+                rules: [RejoinOrphans::class, RemoveTrailingBlankLines::class],
             ),
         );
         $actual = $styler($code);
@@ -87,6 +84,7 @@ class RejoinOrphansTest extends TestCase
 
                 EXPECT,
             ],
+
         ];
     }
 }

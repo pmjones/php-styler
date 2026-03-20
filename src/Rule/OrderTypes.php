@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Rule;
 
-use PhpStyler\Token\T;
+use PhpStyler\Token\AToken;
 use PhpStyler\Token\TArray;
 use PhpStyler\Token\TBool;
 use PhpStyler\Token\TCallable;
@@ -30,13 +30,12 @@ use PhpStyler\Token\TVoid;
 
 class OrderTypes implements TokenRule
 {
-    /** @var array<class-string<T>, int> */
+    /** @var array<class-string<AToken>, int> */
     private array $priorityMap;
-
     private int $wildcardPriority;
 
     /**
-     * @param array<int, class-string<T>|'*'> $order
+     * @param array<int, class-string<AToken>|'*'> $order
      */
     public function __construct(
         array $order = [
@@ -65,7 +64,7 @@ class OrderTypes implements TokenRule
     }
 
     /**
-     * @var array<class-string<T>, true>
+     * @var array<class-string<AToken>, true>
      */
     private const TYPE_TOKENS = [
         TInt::class => true,
@@ -92,8 +91,8 @@ class OrderTypes implements TokenRule
     ];
 
     /**
-     * @param T[] $tokens
-     * @return T[]
+     * @param AToken[] $tokens
+     * @return AToken[]
      */
     public function apply(array $tokens) : array
     {
@@ -176,12 +175,12 @@ class OrderTypes implements TokenRule
         return $result;
     }
 
-    private function isTypeToken(T $token) : bool
+    private function isTypeToken(AToken $token) : bool
     {
         return isset(self::TYPE_TOKENS[get_class($token)]);
     }
 
-    private function priority(T $token) : int
+    private function priority(AToken $token) : int
     {
         return $this->priorityMap[get_class($token)] ?? $this->wildcardPriority;
     }

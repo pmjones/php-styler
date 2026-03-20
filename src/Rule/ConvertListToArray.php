@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Rule;
 
-use PhpStyler\Token\T;
+use PhpStyler\Token\AToken;
 use PhpStyler\Token\TArgsClosingParen;
 use PhpStyler\Token\TArgsComma;
 use PhpStyler\Token\TArgsOpeningParen;
@@ -16,8 +16,8 @@ use PhpStyler\Token\TSpace;
 class ConvertListToArray implements TokenRule
 {
     /**
-     * @param T[] $tokens
-     * @return T[]
+     * @param AToken[] $tokens
+     * @return AToken[]
      */
     public function apply(array $tokens) : array
     {

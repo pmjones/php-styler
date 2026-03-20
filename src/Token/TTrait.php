@@ -13,7 +13,7 @@ use PhpToken;
  *
  * Reference: https://www.php.net/manual/en/language.oop5.traits.php Traits
  */
-class TTrait extends T
+class TTrait extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
