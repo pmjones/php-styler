@@ -39,6 +39,7 @@ class DeclarationFormat extends PlainFormat
         Rule\OrderTypes::class => [],
         // structural formatting
         Rule\MergeParenBracket::class => [],
+        Rule\RejoinOrphans::class => [],
         Rule\NormalizeTrailingCommas::class => [],
         Rule\RemoveTrailingBlankLines::class => [],
         // paren normalization

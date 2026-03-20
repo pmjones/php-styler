@@ -26,6 +26,7 @@ class SymfonyFormat extends DeclarationFormat
         Rule\OrderModifiers::class => [],
         Rule\OrderTypes::class => [],
         Rule\MergeParenBracket::class => [],
+        Rule\RejoinOrphans::class => [],
         Rule\NormalizeTrailingCommas::class => [],
         Rule\RemoveTrailingBlankLines::class => [],
         Rule\ConvertToYodaConditions::class => [],

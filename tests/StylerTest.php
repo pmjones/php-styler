@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace PhpStyler;
 
 use PhpStyler\Rule\NormalizeTrailingCommas;
+use PhpStyler\Rule\RejoinOrphans;
 use PhpStyler\Rule\RemoveTrailingBlankLines;
 use PhpStyler\TestFormat;
 use PHPUnit\Framework\TestCase;
@@ -16,6 +17,7 @@ class StylerTest extends TestCase
     {
         $this->styler = new Styler(
             new TestFormat(rules: [
+                RejoinOrphans::class,
                 NormalizeTrailingCommas::class,
                 RemoveTrailingBlankLines::class,
             ]),

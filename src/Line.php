@@ -55,11 +55,6 @@ class Line
         return $this->tokens;
     }
 
-    public function rejoinOrphanBefore() : bool
-    {
-        return $this->firstContentToken()?->rejoinOrphanBefore() ?? false;
-    }
-
     public function continuationIndent() : int
     {
         return $this->isExpanded ? $this->indent : $this->indent + 1;

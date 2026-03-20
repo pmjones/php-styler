@@ -5,6 +5,7 @@ namespace PhpStyler;
 
 use PhpStyler\Rule\MergeParenBracket;
 use PhpStyler\Rule\NormalizeTrailingCommas;
+use PhpStyler\Rule\RejoinOrphans;
 use PhpStyler\Rule\RemoveTrailingBlankLines;
 use PhpStyler\TestFormat;
 use PHPUnit\Framework\TestCase;
@@ -19,6 +20,7 @@ class ExamplesTest extends TestCase
             new TestFormat(
                 rules: [
                     MergeParenBracket::class,
+                    RejoinOrphans::class,
                     NormalizeTrailingCommas::class,
                     RemoveTrailingBlankLines::class,
                 ],

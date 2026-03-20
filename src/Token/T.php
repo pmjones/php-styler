@@ -11,8 +11,6 @@ abstract class T extends PhpToken
 {
     public const SYNTHETIC = -1;
 
-    protected bool $rejoinOrphanBefore = false;
-
     public int $parenDepth = 0;
 
     public int $argCount = 0;
@@ -48,11 +46,6 @@ abstract class T extends PhpToken
             ? get_class($this->closingToken)
             : null;
         return $info;
-    }
-
-    public function rejoinOrphanBefore() : bool
-    {
-        return $this->rejoinOrphanBefore;
     }
 
     /**

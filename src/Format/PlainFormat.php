@@ -1205,6 +1205,7 @@ class PlainFormat implements Format
      */
     public protected(set) array $rules = [
         Rule\RemoveBom::class => [],
+        Rule\RejoinOrphans::class => [],
         Rule\RemoveTrailingBlankLines::class => [],
     ];
 

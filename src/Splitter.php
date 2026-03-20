@@ -33,7 +33,7 @@ class Splitter
         $result = $this->expandOpenerCloser($result);
         $result = $this->normalizeIndents($result);
         $result = $this->expandCommas($result);
-        return $this->rejoinOrphans($result);
+        return $result;
     }
 
     /**
@@ -289,32 +289,6 @@ class Splitter
         }
 
         return $lines;
-    }
-
-    /**
-     * @param Line[] $lines
-     * @return Line[]
-     */
-    private function rejoinOrphans(array $lines) : array
-    {
-        for ($i = 0; $i < count($lines) - 1; $i ++) {
-            $line = $lines[$i];
-            $tokens = $line->getTokens();
-            $nextLine = $lines[$i + 1];
-
-            if ($line->contentTokenCount() === 1 && $nextLine->rejoinOrphanBefore()) {
-                $merged = array_merge(
-                    $tokens,
-                    [new TSpace(T_WHITESPACE, ' ')],
-                    $nextLine->getTokens(),
-                );
-                $lines[$i] = $this->lineFactory->new($merged, $line->indent);
-                array_splice($lines, $i + 1, 1);
-                continue;
-            }
-        }
-
-        return array_values($lines);
     }
 
     /**

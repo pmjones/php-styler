@@ -25,6 +25,7 @@ class DoctrineFormat extends DeclarationFormat
         Rule\OrderModifiers::class => [],
         Rule\OrderTypes::class => ['order' => ['*', Token\TNull::class]],
         Rule\MergeParenBracket::class => [],
+        Rule\RejoinOrphans::class => [],
         Rule\NormalizeTrailingCommas::class => [],
         Rule\RemoveTrailingBlankLines::class => [],
         Rule\ConvertDoubleToSingleQuote::class => [],

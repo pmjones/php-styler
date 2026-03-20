@@ -10,12 +10,7 @@ class TFunctionOpeningBrace extends T implements TOpeningStructure
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
-        $rejoin = $parser->getPrevParsed() instanceof TParamsClosingParen;
-        $token = $parser->addNesting($source, static::class);
+        $parser->addNesting($source, static::class);
         $parser->indentIncr();
-
-        if ($rejoin) {
-            $token->rejoinOrphanBefore = true;
-        }
     }
 }
