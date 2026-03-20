@@ -5,6 +5,7 @@ namespace PhpStyler\Format\Vendor;
 
 use PhpStyler\Format\DeclarationFormat;
 use PhpStyler\Rule;
+use PhpStyler\Token;
 
 class SymfonyFormat extends DeclarationFormat
 {
@@ -28,7 +29,6 @@ class SymfonyFormat extends DeclarationFormat
         Rule\NormalizeTrailingCommas::class => [],
         Rule\RemoveTrailingBlankLines::class => [],
         Rule\ConvertToYodaConditions::class => [],
-        Rule\AddBlankLineBeforeReturn::class => [],
         Rule\AddInstantiationParentheses::class => [],
         Rule\ConvertSwitchContinueToBreak::class => [],
         Rule\NormalizeMemberSpacing::class => [],
@@ -48,12 +48,20 @@ class SymfonyFormat extends DeclarationFormat
         array $styles = [],
         array $rules = [],
     ) {
+        $symfonyStyles = [
+            Token\TReturn::class => ['blankLineBefore' => true],
+        ];
+
+        foreach ($styles as $class => $args) {
+            $symfonyStyles[$class] = array_merge($symfonyStyles[$class] ?? [], $args);
+        }
+
         parent::__construct(
             eol: $eol,
             lineLen: $lineLen,
             indentLen: $indentLen,
             indentTab: $indentTab,
-            styles: $styles,
+            styles: $symfonyStyles,
             rules: $rules,
         );
         $this->setConcatenationSpacing(false);

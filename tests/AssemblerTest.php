@@ -30,6 +30,7 @@ use PhpStyler\Token\TDefaultMatch;
 use PhpStyler\Token\TDo;
 use PhpStyler\Token\TDocComment;
 use PhpStyler\Token\TDoContinuationBrace;
+use PhpStyler\Token\TDoWhileEndSemicolon;
 use PhpStyler\Token\TDoOpeningBrace;
 use PhpStyler\Token\TEcho;
 use PhpStyler\Token\TEchoEndSemicolon;
@@ -1007,7 +1008,10 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                     ],
                     [
                         TWhileClosingParen::class,
-                        TSemicolon::class,
+                        TDoWhileEndSemicolon::class,
+                    ],
+                    [
+                        TBlankLine::class,
                     ],
                 ],
             ],

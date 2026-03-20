@@ -15,7 +15,6 @@ class Percs30Format extends DeclarationFormat
     public protected(set) array $rules = [
         Rule\RemoveBom::class => [],
         Rule\RemovePhpClosingTag::class => [],
-        Rule\EnsurePhpOpeningTagNewline::class => [],
         Rule\ConvertListToArray::class => [],
         Rule\ConvertLongArrayToShort::class => [],
         Rule\ConvertElseIf::class => [],
@@ -57,7 +56,10 @@ class Percs30Format extends DeclarationFormat
         array $rules = [],
     ) {
         $percsStyles = [
-            Token\TDeclareDirective::class => ['spaceAfter' => false],
+            Token\TPhpOpeningTagInline::class => [
+                'spaceAfter' => false,
+                'lineBreakAfter' => true,
+            ],
         ];
 
         foreach ($styles as $class => $args) {

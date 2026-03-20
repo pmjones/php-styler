@@ -290,7 +290,7 @@ class PlainFormat implements Format
             'lineBreakAfter' => true,
         ],
         Token\TDeclareDirective::class => [
-            'spaceAfter' => true,
+            'spaceAfter' => false,
         ],
         Token\TDeclareDirectivesClosingParen::class => [
             'spaceBefore' => false,
@@ -954,6 +954,11 @@ class PlainFormat implements Format
             'spaceAfter' => true,
             'lineBreakAfter' => true,
         ],
+        Token\TDoWhileEndSemicolon::class => [
+            'spaceBefore' => false,
+            'spaceAfter' => true,
+            'lineBreakAfter' => true,
+        ],
         Token\TSpreadEllipsis::class => [
             'spaceAfter' => false,
         ],
@@ -1432,6 +1437,7 @@ class PlainFormat implements Format
                 Token\TConstEndSemicolon::class,
                 Token\TDeclareEndSemicolon::class,
                 Token\TDocCommentBlankLine::class,
+                Token\TDoWhileEndSemicolon::class,
                 Token\TElseClosingBrace::class,
                 Token\TElseifClosingBrace::class,
                 Token\TEnumCaseEndSemicolon::class,

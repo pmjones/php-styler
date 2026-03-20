@@ -41,6 +41,7 @@ class TSemicolon extends T
             TStaticVar::class => TStaticVarEndSemicolon::class,
             THaltCompiler::class => THaltCompilerSemicolon::class,
             TForOpeningParen::class => TForSemicolon::class,
+            TWhile::class => TDoWhileEndSemicolon::class,
             TClassOpeningBrace::class,
             TEnumOpeningBrace::class,
             TInterfaceOpeningBrace::class,

@@ -32,7 +32,7 @@ class TDoContinuationBraceTest extends TTestCase
                     TWhileOpeningParen::class,
                     TTrue::class,
                     TWhileClosingParen::class,
-                    TSemicolon::class,
+                    TDoWhileEndSemicolon::class,
                 ],
             ],
         ];
