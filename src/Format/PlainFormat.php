@@ -1273,16 +1273,14 @@ class PlainFormat implements Format
             'next_line' => ['lineBreakBefore' => true, 'spaceBefore' => null],
         };
 
-        foreach (
-            [
-                Token\TClassOpeningBrace::class,
-                Token\TClasslikeOpeningBrace::class,
-                Token\TInterfaceOpeningBrace::class,
-                Token\TEnumOpeningBrace::class,
-                Token\TTraitOpeningBrace::class,
-                Token\TNamespaceOpeningBrace::class,
-            ] as $class
-        ) {
+        foreach ([
+            Token\TClassOpeningBrace::class,
+            Token\TClasslikeOpeningBrace::class,
+            Token\TInterfaceOpeningBrace::class,
+            Token\TEnumOpeningBrace::class,
+            Token\TTraitOpeningBrace::class,
+            Token\TNamespaceOpeningBrace::class,
+        ] as $class) {
             $this->styles[$class] = array_merge($this->styles[$class], $args);
         }
     }
@@ -1317,23 +1315,21 @@ class PlainFormat implements Format
             'same_line' => ['lineBreakBefore' => null],
         };
 
-        foreach (
-            [
-                Token\TIfOpeningBrace::class,
-                Token\TElseOpeningBrace::class,
-                Token\TElseifOpeningBrace::class,
-                Token\TForOpeningBrace::class,
-                Token\TForeachOpeningBrace::class,
-                Token\TDoOpeningBrace::class,
-                Token\TCatchOpeningBrace::class,
-                Token\TFinallyOpeningBrace::class,
-                Token\TMatchOpeningBrace::class,
-                Token\TSwitchOpeningBrace::class,
-                Token\TWhileOpeningBrace::class,
-                Token\TAnonymousOpeningBrace::class,
-                Token\TTryOpeningBrace::class,
-            ] as $class
-        ) {
+        foreach ([
+            Token\TIfOpeningBrace::class,
+            Token\TElseOpeningBrace::class,
+            Token\TElseifOpeningBrace::class,
+            Token\TForOpeningBrace::class,
+            Token\TForeachOpeningBrace::class,
+            Token\TDoOpeningBrace::class,
+            Token\TCatchOpeningBrace::class,
+            Token\TFinallyOpeningBrace::class,
+            Token\TMatchOpeningBrace::class,
+            Token\TSwitchOpeningBrace::class,
+            Token\TWhileOpeningBrace::class,
+            Token\TAnonymousOpeningBrace::class,
+            Token\TTryOpeningBrace::class,
+        ] as $class) {
             $this->styles[$class] = array_merge($this->styles[$class], $args);
         }
 
@@ -1342,15 +1338,13 @@ class PlainFormat implements Format
             'same_line' => ['spaceAfter' => true, 'lineBreakAfter' => null],
         };
 
-        foreach (
-            [
-                Token\TCatchContinuationBrace::class,
-                Token\TDoContinuationBrace::class,
-                Token\TElseifContinuationBrace::class,
-                Token\TIfContinuationBrace::class,
-                Token\TTryContinuationBrace::class,
-            ] as $class
-        ) {
+        foreach ([
+            Token\TCatchContinuationBrace::class,
+            Token\TDoContinuationBrace::class,
+            Token\TElseifContinuationBrace::class,
+            Token\TIfContinuationBrace::class,
+            Token\TTryContinuationBrace::class,
+        ] as $class) {
             $this->styles[$class] = array_merge($this->styles[$class], $args);
         }
     }
@@ -1387,15 +1381,13 @@ class PlainFormat implements Format
             'lower' => ['case' => 'strtolower'],
         };
 
-        foreach (
-            [
-                Token\TArray::class,
-                Token\TArrayConstruct::class,
-                Token\TFalse::class,
-                Token\TNull::class,
-                Token\TTrue::class,
-            ] as $class
-        ) {
+        foreach ([
+            Token\TArray::class,
+            Token\TArrayConstruct::class,
+            Token\TFalse::class,
+            Token\TNull::class,
+            Token\TTrue::class,
+        ] as $class) {
             $this->styles[$class] = array_merge($this->styles[$class], $args);
         }
     }
@@ -1426,40 +1418,38 @@ class PlainFormat implements Format
             true => ['blankLineAfter' => true, 'lineBreakAfter' => null],
         };
 
-        foreach (
-            [
-                Token\TAbstractMethodEndSemicolon::class,
-                Token\TCatchClosingBrace::class,
-                Token\TClassClosingBrace::class,
-                Token\TClasslikeClosingBrace::class,
-                Token\TCommentHashedBlankLine::class,
-                Token\TCommentSlashedBlankLine::class,
-                Token\TCommentStarredBlankLine::class,
-                Token\TConstEndSemicolon::class,
-                Token\TDeclareEndSemicolon::class,
-                Token\TDocCommentBlankLine::class,
-                Token\TDoWhileEndSemicolon::class,
-                Token\TElseClosingBrace::class,
-                Token\TElseifClosingBrace::class,
-                Token\TEnumCaseEndSemicolon::class,
-                Token\TEnumClosingBrace::class,
-                Token\TFinallyClosingBrace::class,
-                Token\TForClosingBrace::class,
-                Token\TForeachClosingBrace::class,
-                Token\TFunctionClosingBrace::class,
-                Token\TIfClosingBrace::class,
-                Token\TInterfaceClosingBrace::class,
-                Token\TNamespaceEndSemicolon::class,
-                Token\TPropertyEndSemicolon::class,
-                Token\TPropertyHooksClosingBrace::class,
-                Token\TSwitchAfterCaseClosingBrace::class,
-                Token\TSwitchClosingBrace::class,
-                Token\TTraitClosingBrace::class,
-                Token\TUseTraitClosingBrace::class,
-                Token\TUseTraitEndSemicolon::class,
-                Token\TWhileClosingBrace::class,
-            ] as $class
-        ) {
+        foreach ([
+            Token\TAbstractMethodEndSemicolon::class,
+            Token\TCatchClosingBrace::class,
+            Token\TClassClosingBrace::class,
+            Token\TClasslikeClosingBrace::class,
+            Token\TCommentHashedBlankLine::class,
+            Token\TCommentSlashedBlankLine::class,
+            Token\TCommentStarredBlankLine::class,
+            Token\TConstEndSemicolon::class,
+            Token\TDeclareEndSemicolon::class,
+            Token\TDocCommentBlankLine::class,
+            Token\TDoWhileEndSemicolon::class,
+            Token\TElseClosingBrace::class,
+            Token\TElseifClosingBrace::class,
+            Token\TEnumCaseEndSemicolon::class,
+            Token\TEnumClosingBrace::class,
+            Token\TFinallyClosingBrace::class,
+            Token\TForClosingBrace::class,
+            Token\TForeachClosingBrace::class,
+            Token\TFunctionClosingBrace::class,
+            Token\TIfClosingBrace::class,
+            Token\TInterfaceClosingBrace::class,
+            Token\TNamespaceEndSemicolon::class,
+            Token\TPropertyEndSemicolon::class,
+            Token\TPropertyHooksClosingBrace::class,
+            Token\TSwitchAfterCaseClosingBrace::class,
+            Token\TSwitchClosingBrace::class,
+            Token\TTraitClosingBrace::class,
+            Token\TUseTraitClosingBrace::class,
+            Token\TUseTraitEndSemicolon::class,
+            Token\TWhileClosingBrace::class,
+        ] as $class) {
             $this->styles[$class] = array_merge($this->styles[$class], $args);
         }
     }
