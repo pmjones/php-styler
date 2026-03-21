@@ -12,9 +12,13 @@ abstract class AToken extends PhpToken
     public const SYNTHETIC = -1;
 
     public int $parenDepth = 0;
+
     public int $argCount = 0;
+
     public ?AToken $openingToken = null;
+
     public ?AToken $closingToken = null;
+
     public bool $transparentOpener = false;
 
     public function isIgnorable() : bool

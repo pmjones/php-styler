@@ -12,12 +12,16 @@ use PhpStyler\Token\AToken;
 class Styler
 {
     private Parser $parser;
+
     private Assembler $assembler;
+
     private Splitter $splitter;
+
     /**
      * @var TokenRule[]
      */
     private array $tokenRules = [];
+
     /**
      * @var LineRule[]
      */

@@ -32,6 +32,7 @@ class OrderTypes implements TokenRule
 {
     /** @var array<class-string<AToken>, int> */
     private array $priorityMap;
+
     private int $wildcardPriority;
 
     /**

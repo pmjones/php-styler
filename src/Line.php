@@ -14,6 +14,7 @@ use PhpStyler\Token\TSplittableComma;
 class Line
 {
     public bool $isExpanded = false;
+
     public bool $forceExpand = false;
 
     /**

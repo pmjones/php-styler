@@ -14,7 +14,9 @@ class Assembler
      * @var Line[]
      */
     private array $lines = [];
+
     private int $indent = 0;
+
     private Line $line;
 
     public function __construct(private LineFactory $lineFactory = new LineFactory())

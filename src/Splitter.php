@@ -434,13 +434,22 @@ class Splitter
         $before = array_slice($tokens, 0, $closerTokenIndex);
         $after = array_slice($tokens, $closerTokenIndex);
 
-        $lines[$closerLineIndex] = $this->lineFactory->new($before, $line->indent);
-        array_splice(
-            $lines,
-            $closerLineIndex + 1,
-            0,
-            [$this->lineFactory->new($after, $openerIndent)],
-        );
+        $beforeLine = $this->lineFactory->new($before, $line->indent);
+
+        if ($beforeLine->contentTokenCount() === 0 && $closerLineIndex > 0) {
+            $prev = $lines[$closerLineIndex - 1];
+            $lines[$closerLineIndex - 1] = $this->lineFactory
+                ->new(array_merge($prev->getTokens(), $before), $prev->indent);
+            $lines[$closerLineIndex] = $this->lineFactory->new($after, $openerIndent);
+        } else {
+            $lines[$closerLineIndex] = $beforeLine;
+            array_splice(
+                $lines,
+                $closerLineIndex + 1,
+                0,
+                [$this->lineFactory->new($after, $openerIndent)],
+            );
+        }
 
         return array_values($lines);
     }

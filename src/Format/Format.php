@@ -33,19 +33,24 @@ interface Format
     public string $eol {
         get;
     }
+
     public int $lineLen {
         get;
     }
+
     public int $indentLen {
         get;
     }
+
     public bool $indentTab {
         get;
     }
+
     /** @var styles_array */
     public array $styles {
         get;
     }
+
     /** @var rules_array */
     public array $rules {
         get;

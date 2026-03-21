@@ -51,8 +51,6 @@ class DeclarationFormat extends PlainFormat
         Rule\ConvertImplicitInterpolation::class => [],
         Rule\RemoveRepeatedSemicolons::class => [],
         Rule\RemoveParensFromLanguageConstructs::class => [],
-        // spacing (must be last — depends on expanded members)
-        Rule\NormalizeMemberSpacing::class => [],
     ];
 
     /**

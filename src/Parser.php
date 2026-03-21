@@ -83,20 +83,29 @@ class Parser
      * @var array<int, Nesting>
      */
     protected array $nesting = [];
+
     /**
      * @var array<int, AToken>
      */
     protected array $parsed = [];
+
     protected int $parsedCount = 0;
+
     /**
      * @var array<PhpToken>
      */
     protected array $source = [];
+
     protected int $sourceCount = 0;
+
     protected int $sourceOffset = 0;
+
     protected int $lastAddedIndex = 0;
+
     protected int $parenDepth = 0;
+
     public ?Token\TSplit $lastSplit = null;
+
     /** @var array<class-string<AToken>, Style> */
     private array $styles = [];
 

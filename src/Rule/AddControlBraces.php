@@ -45,6 +45,7 @@ class AddControlBraces implements TokenRule
         TForeachClosingParen::class => TForeachOpeningBrace::class,
         TWhileClosingParen::class => TWhileOpeningBrace::class,
     ];
+
     protected const CLOSING_BRACE_MAP = [
         TIfClosingBraceless::class => TIfClosingBrace::class,
         TElseClosingBraceless::class => TElseClosingBrace::class,
@@ -53,6 +54,7 @@ class AddControlBraces implements TokenRule
         TForeachClosingBraceless::class => TForeachClosingBrace::class,
         TWhileClosingBraceless::class => TWhileClosingBrace::class,
     ];
+
     protected const CONTINUATION_BRACE_MAP = [
         TIfContinuationBraceless::class => TIfContinuationBrace::class,
         TElseifContinuationBraceless::class => TElseifContinuationBrace::class,
