@@ -13,7 +13,7 @@ class Parser
 {
     private Format $format;
 
-    public const PARSE_CLASS = [
+    public const TOKEN_CLASS = [
         '$' => Token\TDollar::class,
         '"' => Token\TDoubleQuote::class,
         '(' => Token\TOpeningParen::class,
@@ -154,9 +154,9 @@ class Parser
         ) {
             $source = $this->source[$this->sourceOffset];
 
-            /** @var class-string<AToken> $parseClass */
-            $parseClass = $this->getParseClass($source);
-            $this->parse($source, $parseClass);
+            /** @var class-string<AToken> $tokenClass */
+            $tokenClass = $this->getTokenClass($source);
+            $this->parse($source, $tokenClass);
         }
 
         $this->removePrevWhitespace();
@@ -164,7 +164,7 @@ class Parser
         return $this->parsed;
     }
 
-    protected function getParseClass(PhpToken $source) : string
+    protected function getTokenClass(PhpToken $source) : string
     {
         if ($source instanceof AToken) {
             return get_class($source);
@@ -173,29 +173,31 @@ class Parser
         $name = (string) $source->getTokenName();
 
         if (str_starts_with($name, 'T_')) {
-            return self::PARSE_CLASS[$name]
+            return self::TOKEN_CLASS[$name]
                 ?? "\\PhpStyler\\Token\\"
                     . str_replace('_', '', ucwords(strtolower($name), '_'));
         }
 
-        return self::PARSE_CLASS[$source->text];
+        return self::TOKEN_CLASS[$source->text];
     }
 
     /**
-     * @param class-string<AToken> $parseClass
+     * @param class-string<AToken> $tokenClass
      */
-    public function parse(PhpToken $source, string $parseClass) : void
+    public function parse(PhpToken $source, string $tokenClass) : void
     {
-        $parseClass::parse($this, $source);
+        /** @var AToken $tokenClass */
+        $tokenClass = $this->format->parses[$tokenClass] ?? $tokenClass;
+        $tokenClass::parse($this, $source);
     }
 
     /**
-     * @param class-string<AToken> $parseClass
+     * @param class-string<AToken> $tokenClass
      */
-    public function add(PhpToken $source, string $parseClass) : AToken
+    public function add(PhpToken $source, string $tokenClass) : AToken
     {
         $this->removePrevWhitespace();
-        $style = $this->getStyle($parseClass);
+        $style = $this->getStyle($tokenClass);
 
         if ($style->spaceBefore === true) {
             $this->space();
@@ -210,7 +212,7 @@ class Parser
         }
 
         /** @var AToken $token */
-        $token = new $parseClass(
+        $token = new $tokenClass(
             $source->id,
             $source->text,
             $source->line,
@@ -452,14 +454,14 @@ class Parser
     }
 
     /**
-     * @param class-string<AToken> $parseClass
+     * @param class-string<AToken> $tokenClass
      */
-    public function replaceLastParsed(PhpToken $source, string $parseClass) : AToken
+    public function replaceLastParsed(PhpToken $source, string $tokenClass) : AToken
     {
         $this->removePrevWhitespace();
 
         /** @var AToken $token */
-        $token = new $parseClass(
+        $token = new $tokenClass(
             $source->id,
             $source->text,
             $source->line,
@@ -471,11 +473,11 @@ class Parser
     }
 
     /**
-     * @param class-string<AToken> $parseClass
+     * @param class-string<AToken> $tokenClass
      */
-    public function addNesting(PhpToken $source, string $parseClass) : AToken
+    public function addNesting(PhpToken $source, string $tokenClass) : AToken
     {
-        $token = $this->add($source, $parseClass);
+        $token = $this->add($source, $tokenClass);
         $this->nesting[] = new Nesting($token);
         return $token;
     }

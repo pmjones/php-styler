@@ -1210,6 +1210,11 @@ class PlainFormat implements Format
     ];
 
     /**
+     * @inheritdoc
+     */
+    public protected(set) array $parses = [];
+
+    /**
      * @param styles_array $styles
      * @param 'same_line'|'next_line' $classBracePosition
      * @param 'same_line'|'next_line' $functionBracePosition

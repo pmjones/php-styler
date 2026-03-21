@@ -8,6 +8,8 @@ use PhpStyler\Rule\TokenRule;
 use PhpStyler\Token\AToken;
 
 /**
+ * @phpstan-type parses_array array<token_class_string, token_class_string>
+ *
  * @phpstan-type token_class_string class-string<AToken>
  *
  * @phpstan-type styles_array array<token_class_string, style_args_array>
@@ -43,6 +45,11 @@ interface Format
     }
 
     public bool $indentTab {
+        get;
+    }
+
+    /** @var parses_array */
+    public array $parses {
         get;
     }
 
