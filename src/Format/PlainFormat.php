@@ -887,7 +887,7 @@ class PlainFormat implements Format
         Token\TPropertyHookGetClosingBrace::class => [
             'spaceBefore' => false,
             'spaceAfter' => true,
-            'lineBreakAfter' => true,
+            'blankLineAfter' => true,
         ],
         Token\TPropertyHookGetDoubleArrow::class => [
             'spaceBefore' => true,
@@ -907,7 +907,7 @@ class PlainFormat implements Format
         Token\TPropertyHookSetClosingBrace::class => [
             'spaceBefore' => false,
             'spaceAfter' => true,
-            'lineBreakAfter' => true,
+            'blankLineAfter' => true,
         ],
         Token\TPropertyHookSetClosingParen::class => [
             'spaceBefore' => false,
