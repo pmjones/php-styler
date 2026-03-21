@@ -19,8 +19,6 @@ abstract class AToken extends PhpToken
 
     public ?AToken $closingToken = null;
 
-    public bool $transparentOpener = false;
-
     public function isIgnorable() : bool
     {
         return $this->id === self::SYNTHETIC || parent::isIgnorable();
@@ -54,8 +52,7 @@ abstract class AToken extends PhpToken
     public function isOpener() : bool
     {
         return ($this->text === '(' || $this->text === '[')
-            && $this->closingToken !== null
-            && ! $this->transparentOpener;
+            && $this->closingToken !== null;
     }
 
     public function splitBefore(Parser $parser) : ?TSplit

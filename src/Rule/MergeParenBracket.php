@@ -57,8 +57,9 @@ class MergeParenBracket implements TokenRule
             }
         }
 
-        if ($containsBracket) {
-            $opener->transparentOpener = true;
+        if ($containsBracket && $opener->closingToken !== null) {
+            $opener->closingToken->openingToken = null;
+            $opener->closingToken = null;
         }
     }
 }
