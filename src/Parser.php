@@ -77,6 +77,8 @@ class Parser
         'T_START_HEREDOC' => Token\THeredocStart::class,
         'T_END_HEREDOC' => Token\THeredocEnd::class,
         'T_NS_SEPARATOR' => Token\TNamespaceSeparator::class,
+        'T_LIST' => Token\TList::class,
+        'T_ARRAY' => Token\TArray::class,
     ];
 
     /**
@@ -802,6 +804,21 @@ class Parser
         }
 
         return null;
+    }
+
+    public function getSourceOffset() : int
+    {
+        return $this->sourceOffset;
+    }
+
+    public function getSourceAt(int $index) : PhpToken
+    {
+        return $this->source[$index];
+    }
+
+    public function setSourceAt(int $index, PhpToken $token) : void
+    {
+        $this->source[$index] = $token;
     }
 
     protected function replaceSourceComment(int $index, bool $blankLine) : void

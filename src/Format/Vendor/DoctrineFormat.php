@@ -12,10 +12,16 @@ class DoctrineFormat extends DeclarationFormat
     /**
      * @inheritdoc
      */
+    public protected(set) array $parses = [
+        Token\TList::class => Token\TListAsArray::class,
+        Token\TArray::class => Token\TArrayAsShort::class,
+    ];
+
+    /**
+     * @inheritdoc
+     */
     public protected(set) array $rules = [
         Rule\RemoveBom::class => [],
-        Rule\ConvertListToArray::class => [],
-        Rule\ConvertLongArrayToShort::class => [],
         Rule\ConvertElseIf::class => [],
         Rule\AddControlBraces::class => [],
         Rule\ExpandImports::class => [],

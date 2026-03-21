@@ -1,7 +1,7 @@
 <?php
 clone $foo;
 unset($foo);
-list($foo) = $bar;
+[$foo] = $bar;
 empty($foo);
 eval($foo);
 isset($foo);

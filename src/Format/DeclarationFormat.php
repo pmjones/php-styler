@@ -4,9 +4,18 @@ declare(strict_types=1);
 namespace PhpStyler\Format;
 
 use PhpStyler\Rule;
+use PhpStyler\Token;
 
 class DeclarationFormat extends PlainFormat
 {
+    /**
+     * @inheritdoc
+     */
+    public protected(set) array $parses = [
+        Token\TList::class => Token\TListAsArray::class,
+        Token\TArray::class => Token\TArrayAsShort::class,
+    ];
+
     /**
      * @inheritdoc
      */
@@ -15,8 +24,6 @@ class DeclarationFormat extends PlainFormat
         Rule\RemoveBom::class => [],
         Rule\RemovePhpClosingTag::class => [],
         // syntax normalization
-        Rule\ConvertListToArray::class => [],
-        Rule\ConvertLongArrayToShort::class => [],
         Rule\ConvertElseIf::class => [],
         Rule\ConvertHeredocToNowdoc::class => [],
         // structural
@@ -55,6 +62,7 @@ class DeclarationFormat extends PlainFormat
 
     /**
      * @inheritdoc
+     * @param array<class-string<\PhpStyler\Token\AToken>, class-string<\PhpStyler\Token\AToken>> $parses
      */
     public function __construct(
         string $eol = "\n",
@@ -63,6 +71,7 @@ class DeclarationFormat extends PlainFormat
         bool $indentTab = false,
         array $styles = [],
         array $rules = [],
+        array $parses = [],
     ) {
         parent::__construct(
             eol: $eol,
@@ -78,6 +87,7 @@ class DeclarationFormat extends PlainFormat
             blankLineAfterBlock: true,
             styles: $styles,
             rules: $rules,
+            parses: $parses,
         );
     }
 }

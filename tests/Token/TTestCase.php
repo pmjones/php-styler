@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-use PhpStyler\Format\DeclarationFormat;
+use PhpStyler\Format\PlainFormat;
 use PhpStyler\Parser;
 
 abstract class TTestCase extends \PHPUnit\Framework\TestCase
@@ -28,7 +28,13 @@ abstract class TTestCase extends \PHPUnit\Framework\TestCase
         string $reporting = self::IGNORE_WHITESPACE,
     ) : void
     {
-        $parser = new Parser(new DeclarationFormat());
+        $parser = new Parser(
+            new PlainFormat(
+                classBracePosition: 'next_line',
+                functionBracePosition: 'next_line',
+                blankLineAfterBlock: true,
+            ),
+        );
         $tokens = $parser($code);
 
         $actual = [];

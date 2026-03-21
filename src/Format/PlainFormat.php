@@ -10,6 +10,7 @@ use PhpStyler\Token;
 
 /**
  * @phpstan-import-type styles_array from Format
+ * @phpstan-import-type parses_array from Format
  */
 class PlainFormat implements Format
 {
@@ -1221,6 +1222,7 @@ class PlainFormat implements Format
      * @param 'same_line'|'next_line' $controlBracePosition
      * @param 'lower'|'upper' $keywordCase
      * @param array<int, class-string<TokenRule|LineRule>>|array<class-string<TokenRule|LineRule>, array<string, mixed>> $rules
+     * @param parses_array $parses
      */
     public function __construct(
         public protected(set) string $eol = "\n",
@@ -1236,6 +1238,7 @@ class PlainFormat implements Format
         bool $blankLineAfterBlock = false,
         array $styles = [],
         array $rules = [],
+        array $parses = [],
     ) {
         $this->setClassBracePosition($classBracePosition);
         $this->setFunctionBracePosition($functionBracePosition);
@@ -1261,6 +1264,10 @@ class PlainFormat implements Format
                  */
                 $this->rules[$key] = $val;
             }
+        }
+
+        foreach ($parses as $from => $to) {
+            $this->parses[$from] = $to;
         }
     }
 

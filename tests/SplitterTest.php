@@ -145,18 +145,18 @@ class SplitterTest extends TestCase
                 EXPECT,
             ],
 
-            'comma-array-paren' => [
+            'comma-array-bracket' => [
                 <<<'CODE'
                 <?php
-                $x = array($longValueAlpha, $longValueBravo, $longValueCharlie);
+                $x = [$longValueAlpha, $longValueBravo, $longValueCharlie];
                 CODE,
                 <<<'EXPECT'
                 <?php
-                $x = array(
+                $x = [
                     $longValueAlpha,
                     $longValueBravo,
                     $longValueCharlie,
-                );
+                ];
 
                 EXPECT,
             ],
