@@ -1,13 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace PhpStyler\Rule;
+namespace PhpStyler\Token;
 
 use PhpStyler\Format\DeclarationFormat;
+use PhpStyler\Rule\RemoveTrailingBlankLines;
 use PhpStyler\Styler;
 use PHPUnit\Framework\TestCase;
 
-class ConvertLogicalOperatorsTest extends TestCase
+class TLogicalOrAsBooleanOrTest extends TestCase
 {
     /**
      * @dataProvider provide
@@ -15,10 +16,10 @@ class ConvertLogicalOperatorsTest extends TestCase
     public function test(string $code, string $expect) : void
     {
         $styler = new Styler(
-            new DeclarationFormat(rules: [
-                ConvertLogicalOperators::class,
-                RemoveTrailingBlankLines::class,
-            ]),
+            new DeclarationFormat(
+                parses: [TLogicalOr::class => TLogicalOrAsBooleanOr::class],
+                rules: [RemoveTrailingBlankLines::class],
+            ),
         );
         $actual = $styler($code);
         $this->assertSame($expect, $actual);
@@ -28,17 +29,6 @@ class ConvertLogicalOperatorsTest extends TestCase
     public static function provide() : array
     {
         return [
-            'and-to-boolean-and' => [
-                <<<'CODE'
-                <?php
-                $a = $b and $c;
-                CODE,
-                <<<'EXPECT'
-                <?php
-                $a = $b && $c;
-
-                EXPECT,
-            ],
             'or-to-boolean-or' => [
                 <<<'CODE'
                 <?php
@@ -50,17 +40,6 @@ class ConvertLogicalOperatorsTest extends TestCase
 
                 EXPECT,
             ],
-            'already-boolean-and' => [
-                <<<'CODE'
-                <?php
-                $a = $b && $c;
-                CODE,
-                <<<'EXPECT'
-                <?php
-                $a = $b && $c;
-
-                EXPECT,
-            ],
             'already-boolean-or' => [
                 <<<'CODE'
                 <?php
@@ -69,17 +48,6 @@ class ConvertLogicalOperatorsTest extends TestCase
                 <<<'EXPECT'
                 <?php
                 $a = $b || $c;
-
-                EXPECT,
-            ],
-            'xor-unchanged' => [
-                <<<'CODE'
-                <?php
-                $a = $b xor $c;
-                CODE,
-                <<<'EXPECT'
-                <?php
-                $a = $b xor $c;
 
                 EXPECT,
             ],

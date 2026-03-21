@@ -1,13 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace PhpStyler\Rule;
+namespace PhpStyler\Token;
 
 use PhpStyler\Format\DeclarationFormat;
+use PhpStyler\Rule\RemoveTrailingBlankLines;
 use PhpStyler\Styler;
 use PHPUnit\Framework\TestCase;
 
-class ConvertListToArrayTest extends TestCase
+class TLogicalAndAsBooleanAndTest extends TestCase
 {
     /**
      * @dataProvider provide
@@ -15,10 +16,10 @@ class ConvertListToArrayTest extends TestCase
     public function test(string $code, string $expect) : void
     {
         $styler = new Styler(
-            new DeclarationFormat(rules: [
-                ConvertListToArray::class,
-                RemoveTrailingBlankLines::class,
-            ]),
+            new DeclarationFormat(
+                parses: [TLogicalAnd::class => TLogicalAndAsBooleanAnd::class],
+                rules: [RemoveTrailingBlankLines::class],
+            ),
         );
         $actual = $styler($code);
         $this->assertSame($expect, $actual);
@@ -28,30 +29,36 @@ class ConvertListToArrayTest extends TestCase
     public static function provide() : array
     {
         return [
-            'basic-list' => [
+            'and-to-boolean-and' => [
                 <<<'CODE'
-                <?php list($a, $b) = $arr;
+                <?php
+                $a = $b and $c;
                 CODE,
                 <<<'EXPECT'
-                <?php [$a, $b] = $arr;
+                <?php
+                $a = $b && $c;
 
                 EXPECT,
             ],
-            'list-with-keys' => [
+            'already-boolean-and' => [
                 <<<'CODE'
-                <?php list('a' => $a, 'b' => $b) = $arr;
+                <?php
+                $a = $b && $c;
                 CODE,
                 <<<'EXPECT'
-                <?php ['a' => $a, 'b' => $b] = $arr;
+                <?php
+                $a = $b && $c;
 
                 EXPECT,
             ],
-            'already-short-unchanged' => [
+            'xor-unchanged' => [
                 <<<'CODE'
-                <?php [$a, $b] = $arr;
+                <?php
+                $a = $b xor $c;
                 CODE,
                 <<<'EXPECT'
-                <?php [$a, $b] = $arr;
+                <?php
+                $a = $b xor $c;
 
                 EXPECT,
             ],

@@ -77,8 +77,6 @@ class Parser
         'T_START_HEREDOC' => Token\THeredocStart::class,
         'T_END_HEREDOC' => Token\THeredocEnd::class,
         'T_NS_SEPARATOR' => Token\TNamespaceSeparator::class,
-        'T_LIST' => Token\TList::class,
-        'T_ARRAY' => Token\TArray::class,
     ];
 
     /**
@@ -176,7 +174,7 @@ class Parser
 
         if (str_starts_with($name, 'T_')) {
             return self::TOKEN_CLASS[$name]
-                ?? "\\PhpStyler\\Token\\"
+                ?? 'PhpStyler\\Token\\'
                     . str_replace('_', '', ucwords(strtolower($name), '_'));
         }
 

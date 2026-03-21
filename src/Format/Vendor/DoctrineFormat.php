@@ -15,6 +15,8 @@ class DoctrineFormat extends DeclarationFormat
     public protected(set) array $parses = [
         Token\TList::class => Token\TListAsArray::class,
         Token\TArray::class => Token\TArrayAsShort::class,
+        Token\TLogicalAnd::class => Token\TLogicalAndAsBooleanAnd::class,
+        Token\TLogicalOr::class => Token\TLogicalOrAsBooleanOr::class,
     ];
 
     /**
@@ -38,7 +40,6 @@ class DoctrineFormat extends DeclarationFormat
         Rule\AddInstantiationParentheses::class => [],
         Rule\ConvertImplicitInterpolation::class => [],
         Rule\ConvertFromYodaConditions::class => [],
-        Rule\ConvertLogicalOperators::class => [],
         Rule\RemoveParensFromLanguageConstructs::class => [],
         Rule\RemoveRepeatedSemicolons::class => [],
         Rule\ConvertHeredocToNowdoc::class => [],
