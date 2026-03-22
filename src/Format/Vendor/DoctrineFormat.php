@@ -19,6 +19,7 @@ class DoctrineFormat extends DeclarationFormat
         Token\TLogicalOr::class => Token\TLogicalOrAsBooleanOr::class,
         Token\TElse::class => Token\TElseAsElseIf::class,
         Token\TStringLiteral::class => Token\TStringLiteralAsSingleQuote::class,
+        Token\THeredocStart::class => Token\THeredocStartAsNowdoc::class,
     ];
 
     /**
@@ -42,7 +43,6 @@ class DoctrineFormat extends DeclarationFormat
         Rule\ConvertFromYodaConditions::class => [],
         Rule\RemoveParensFromLanguageConstructs::class => [],
         Rule\RemoveRepeatedSemicolons::class => [],
-        Rule\ConvertHeredocToNowdoc::class => [],
         Rule\ExpandAttributes::class => [],
         Rule\NormalizeMemberSpacing::class => [],
     ];

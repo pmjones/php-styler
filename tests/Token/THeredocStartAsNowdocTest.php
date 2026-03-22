@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace PhpStyler\Rule;
+namespace PhpStyler\Token;
 
 use PhpStyler\Format\DeclarationFormat;
 use PhpStyler\Styler;
 use PHPUnit\Framework\TestCase;
 
-class ConvertHeredocToNowdocTest extends TestCase
+class THeredocStartAsNowdocTest extends TestCase
 {
     /**
      * @dataProvider provide
@@ -15,9 +15,8 @@ class ConvertHeredocToNowdocTest extends TestCase
     public function test(string $code, string $expect) : void
     {
         $styler = new Styler(
-            new DeclarationFormat(rules: [
-                ConvertHeredocToNowdoc::class,
-                RemoveTrailingBlankLines::class,
+            new DeclarationFormat(parses: [
+                THeredocStart::class => THeredocStartAsNowdoc::class,
             ]),
         );
         $actual = $styler($code);

@@ -16,6 +16,7 @@ class Percs30Format extends DeclarationFormat
         Token\TList::class => Token\TListAsArray::class,
         Token\TArray::class => Token\TArrayAsShort::class,
         Token\TElse::class => Token\TElseAsElseIf::class,
+        Token\THeredocStart::class => Token\THeredocStartAsNowdoc::class,
     ];
 
     /**
@@ -44,7 +45,6 @@ class Percs30Format extends DeclarationFormat
         Rule\AddExitParentheses::class => [],
         Rule\RemoveEmptyAnonymousClassParens::class => [],
         Rule\RemoveEmptyAttributeParens::class => [],
-        Rule\ConvertHeredocToNowdoc::class => [],
         Rule\ConvertImplicitInterpolation::class => [],
         Rule\CollapseEmptyBody::class => [],
         Rule\RemoveParensFromLanguageConstructs::class => [],

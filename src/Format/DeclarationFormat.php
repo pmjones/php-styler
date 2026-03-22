@@ -25,7 +25,6 @@ class DeclarationFormat extends PlainFormat
         Rule\RemoveBom::class => [],
         Rule\RemovePhpClosingTag::class => [],
         // syntax normalization
-        Rule\ConvertHeredocToNowdoc::class => [],
         // structural
         Rule\AddControlBraces::class => [],
         // expansion
