@@ -17,6 +17,8 @@ class DoctrineFormat extends DeclarationFormat
         Token\TArray::class => Token\TArrayAsShort::class,
         Token\TLogicalAnd::class => Token\TLogicalAndAsBooleanAnd::class,
         Token\TLogicalOr::class => Token\TLogicalOrAsBooleanOr::class,
+        Token\TElse::class => Token\TElseAsElseIf::class,
+        Token\TStringLiteral::class => Token\TStringLiteralAsSingleQuote::class,
     ];
 
     /**
@@ -24,7 +26,6 @@ class DoctrineFormat extends DeclarationFormat
      */
     public protected(set) array $rules = [
         Rule\RemoveBom::class => [],
-        Rule\ConvertElseIf::class => [],
         Rule\AddControlBraces::class => [],
         Rule\ExpandImports::class => [],
         Rule\RemoveUnusedImports::class => [],
@@ -36,7 +37,6 @@ class DoctrineFormat extends DeclarationFormat
         Rule\RejoinOrphans::class => [],
         Rule\NormalizeTrailingCommas::class => [],
         Rule\RemoveTrailingBlankLines::class => [],
-        Rule\ConvertDoubleToSingleQuote::class => [],
         Rule\AddInstantiationParentheses::class => [],
         Rule\ConvertImplicitInterpolation::class => [],
         Rule\ConvertFromYodaConditions::class => [],

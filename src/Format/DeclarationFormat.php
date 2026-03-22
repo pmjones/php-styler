@@ -14,6 +14,7 @@ class DeclarationFormat extends PlainFormat
     public protected(set) array $parses = [
         Token\TList::class => Token\TListAsArray::class,
         Token\TArray::class => Token\TArrayAsShort::class,
+        Token\TElse::class => Token\TElseAsElseIf::class,
     ];
 
     /**
@@ -24,7 +25,6 @@ class DeclarationFormat extends PlainFormat
         Rule\RemoveBom::class => [],
         Rule\RemovePhpClosingTag::class => [],
         // syntax normalization
-        Rule\ConvertElseIf::class => [],
         Rule\ConvertHeredocToNowdoc::class => [],
         // structural
         Rule\AddControlBraces::class => [],

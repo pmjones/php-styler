@@ -15,6 +15,7 @@ class Percs30Format extends DeclarationFormat
     public protected(set) array $parses = [
         Token\TList::class => Token\TListAsArray::class,
         Token\TArray::class => Token\TArrayAsShort::class,
+        Token\TElse::class => Token\TElseAsElseIf::class,
     ];
 
     /**
@@ -23,7 +24,6 @@ class Percs30Format extends DeclarationFormat
     public protected(set) array $rules = [
         Rule\RemoveBom::class => [],
         Rule\RemovePhpClosingTag::class => [],
-        Rule\ConvertElseIf::class => [],
         Rule\AddControlBraces::class => [],
         Rule\ExpandImports::class => [],
         Rule\ExpandTraitUse::class => [],

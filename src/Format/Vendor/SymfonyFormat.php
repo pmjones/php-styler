@@ -15,6 +15,8 @@ class SymfonyFormat extends DeclarationFormat
     public protected(set) array $parses = [
         Token\TList::class => Token\TListAsArray::class,
         Token\TArray::class => Token\TArrayAsShort::class,
+        Token\TElse::class => Token\TElseAsElseIf::class,
+        Token\TStringLiteral::class => Token\TStringLiteralAsSingleQuote::class,
     ];
 
     /**
@@ -22,9 +24,7 @@ class SymfonyFormat extends DeclarationFormat
      */
     public protected(set) array $rules = [
         Rule\RemoveBom::class => [],
-        Rule\ConvertElseIf::class => [],
         Rule\AddControlBraces::class => [],
-        Rule\ConvertDoubleToSingleQuote::class => [],
         Rule\ExpandImports::class => [],
         Rule\RemoveUnusedImports::class => [],
         Rule\OrderImports::class => [],
