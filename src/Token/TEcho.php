@@ -13,10 +13,11 @@ use PhpToken;
  *
  * Reference: https://www.php.net/manual/en/function.echo.php echo
  */
-class TEcho extends AToken
+class TEcho extends ALanguageConstruct
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
+        self::tryRemoveParens($parser);
         $parser->addNesting($source, self::class);
     }
 }

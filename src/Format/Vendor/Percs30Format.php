@@ -17,6 +17,8 @@ class Percs30Format extends DeclarationFormat
         Token\TArray::class => Token\TArrayAsShort::class,
         Token\TElse::class => Token\TElseAsElseIf::class,
         Token\THeredocStart::class => Token\THeredocStartAsNowdoc::class,
+        Token\TPhpClosingTag::class => Token\TPhpClosingTagRemoved::class,
+        Token\TVariable::class => Token\TVariableWithExplicitInterpolation::class,
     ];
 
     /**
@@ -24,7 +26,6 @@ class Percs30Format extends DeclarationFormat
      */
     public protected(set) array $rules = [
         Rule\RemoveBom::class => [],
-        Rule\RemovePhpClosingTag::class => [],
         Rule\AddControlBraces::class => [],
         Rule\ExpandImports::class => [],
         Rule\ExpandTraitUse::class => [],
@@ -45,9 +46,7 @@ class Percs30Format extends DeclarationFormat
         Rule\AddExitParentheses::class => [],
         Rule\RemoveEmptyAnonymousClassParens::class => [],
         Rule\RemoveEmptyAttributeParens::class => [],
-        Rule\ConvertImplicitInterpolation::class => [],
         Rule\CollapseEmptyBody::class => [],
-        Rule\RemoveParensFromLanguageConstructs::class => [],
         Rule\NormalizeMemberSpacing::class => [],
     ];
 

@@ -17,6 +17,9 @@ class SymfonyFormat extends DeclarationFormat
         Token\TArray::class => Token\TArrayAsShort::class,
         Token\TElse::class => Token\TElseAsElseIf::class,
         Token\TStringLiteral::class => Token\TStringLiteralAsSingleQuote::class,
+        Token\TSemicolon::class => Token\TSemicolonSkipRepeats::class,
+        Token\TContinue::class => Token\TContinueAsBreak::class,
+        Token\TVariable::class => Token\TVariableWithExplicitInterpolation::class,
     ];
 
     /**
@@ -37,11 +40,7 @@ class SymfonyFormat extends DeclarationFormat
         Rule\RemoveTrailingBlankLines::class => [],
         Rule\ConvertToYodaConditions::class => [],
         Rule\AddInstantiationParentheses::class => [],
-        Rule\ConvertSwitchContinueToBreak::class => [],
         Rule\NormalizeMemberSpacing::class => [],
-        Rule\RemoveParensFromLanguageConstructs::class => [],
-        Rule\RemoveRepeatedSemicolons::class => [],
-        Rule\ConvertImplicitInterpolation::class => [],
     ];
 
     /**

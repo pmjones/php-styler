@@ -13,7 +13,7 @@ use PhpToken;
  *
  * Reference: https://www.php.net/manual/en/function.print.php print
  */
-class TPrint extends AToken
+class TPrint extends ALanguageConstruct
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
@@ -24,6 +24,7 @@ class TPrint extends AToken
             return;
         }
 
+        self::tryRemoveParens($parser);
         parent::parse($parser, $source);
     }
 }

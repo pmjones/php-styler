@@ -4,9 +4,16 @@ declare(strict_types=1);
 namespace PhpStyler;
 
 use PhpStyler\Format\DeclarationFormat;
+use PhpStyler\Token;
 
 class TestFormat extends DeclarationFormat
 {
+    public protected(set) array $parses = [
+        Token\TList::class => Token\TListAsArray::class,
+        Token\TArray::class => Token\TArrayAsShort::class,
+        Token\TElse::class => Token\TElseAsElseIf::class,
+    ];
+
     public protected(set) array $rules = [];
 
     /**

@@ -1,13 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace PhpStyler\Rule;
+namespace PhpStyler\Token;
 
 use PhpStyler\Format\DeclarationFormat;
+use PhpStyler\Rule\RemoveTrailingBlankLines;
 use PhpStyler\Styler;
 use PHPUnit\Framework\TestCase;
 
-class ConvertSwitchContinueToBreakTest extends TestCase
+class TContinueAsBreakTest extends TestCase
 {
     /**
      * @dataProvider provide
@@ -15,10 +16,10 @@ class ConvertSwitchContinueToBreakTest extends TestCase
     public function test(string $code, string $expect) : void
     {
         $styler = new Styler(
-            new DeclarationFormat(rules: [
-                ConvertSwitchContinueToBreak::class,
-                RemoveTrailingBlankLines::class,
-            ]),
+            new DeclarationFormat(
+                parses: [TContinue::class => TContinueAsBreak::class],
+                rules: [RemoveTrailingBlankLines::class],
+            ),
         );
         $actual = $styler($code);
         $this->assertSame($expect, $actual);

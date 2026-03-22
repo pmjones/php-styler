@@ -1,13 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace PhpStyler\Rule;
+namespace PhpStyler\Token;
 
 use PhpStyler\Format\DeclarationFormat;
+use PhpStyler\Rule\RemoveTrailingBlankLines;
 use PhpStyler\Styler;
 use PHPUnit\Framework\TestCase;
 
-class RemoveRepeatedSemicolonsTest extends TestCase
+class TSemicolonSkipRepeatsTest extends TestCase
 {
     /**
      * @dataProvider provide
@@ -15,10 +16,10 @@ class RemoveRepeatedSemicolonsTest extends TestCase
     public function test(string $code, string $expect) : void
     {
         $styler = new Styler(
-            new DeclarationFormat(rules: [
-                RemoveRepeatedSemicolons::class,
-                RemoveTrailingBlankLines::class,
-            ]),
+            new DeclarationFormat(
+                parses: [TSemicolon::class => TSemicolonSkipRepeats::class],
+                rules: [RemoveTrailingBlankLines::class],
+            ),
         );
         $actual = $styler($code);
         $this->assertSame($expect, $actual);

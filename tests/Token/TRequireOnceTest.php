@@ -32,9 +32,7 @@ class TRequireOnceTest extends TTestCase
                 [
                     TPhpOpeningTag::class,
                     TRequireOnce::class,
-                    TExpressionOpeningParen::class,
                     TVariable::class,
-                    TExpressionClosingParen::class,
                     TSemicolon::class,
                 ],
             ],

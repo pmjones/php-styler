@@ -20,6 +20,8 @@ class DoctrineFormat extends DeclarationFormat
         Token\TElse::class => Token\TElseAsElseIf::class,
         Token\TStringLiteral::class => Token\TStringLiteralAsSingleQuote::class,
         Token\THeredocStart::class => Token\THeredocStartAsNowdoc::class,
+        Token\TSemicolon::class => Token\TSemicolonSkipRepeats::class,
+        Token\TVariable::class => Token\TVariableWithExplicitInterpolation::class,
     ];
 
     /**
@@ -39,10 +41,7 @@ class DoctrineFormat extends DeclarationFormat
         Rule\NormalizeTrailingCommas::class => [],
         Rule\RemoveTrailingBlankLines::class => [],
         Rule\AddInstantiationParentheses::class => [],
-        Rule\ConvertImplicitInterpolation::class => [],
         Rule\ConvertFromYodaConditions::class => [],
-        Rule\RemoveParensFromLanguageConstructs::class => [],
-        Rule\RemoveRepeatedSemicolons::class => [],
         Rule\ExpandAttributes::class => [],
         Rule\NormalizeMemberSpacing::class => [],
     ];

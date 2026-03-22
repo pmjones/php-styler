@@ -312,7 +312,12 @@ class Parser
 
         $this->removeTrailingSpaces();
 
-        if (! $this->hasPrevLineBreakToken()) {
+        if (
+            ! (
+                $this->parsedCount > 0
+                && $this->parsed[$this->parsedCount - 1] instanceof Token\TLineBreak
+            )
+        ) {
             $commentIndex = $this->findUpcomingInlineComment();
 
             if ($commentIndex !== null) {
@@ -344,7 +349,10 @@ class Parser
     {
         $this->removeTrailingSpaces();
 
-        if ($this->hasPrevLineBreakToken()) {
+        if (
+            $this->parsedCount > 0
+            && $this->parsed[$this->parsedCount - 1] instanceof Token\TLineBreak
+        ) {
             return;
         }
 
@@ -369,12 +377,6 @@ class Parser
                 break;
             }
         }
-    }
-
-    private function hasPrevLineBreakToken() : bool
-    {
-        return $this->parsedCount > 0
-            && $this->parsed[$this->parsedCount - 1] instanceof Token\TLineBreak;
     }
 
     public function space() : void
@@ -414,7 +416,7 @@ class Parser
         $this->parsedCount --;
     }
 
-    public function noSpace() : void
+    private function noSpace() : void
     {
         for ($i = $this->parsedCount - 1; $i >= 0; $i --) {
             $prev = $this->parsed[$i];
@@ -532,37 +534,36 @@ class Parser
 
     public function endBracelessBody(PhpToken $source) : void
     {
-        if ($this->getNextSource()?->is([T_ELSE, T_ELSEIF])) {
-            // Continuation: braceless if/elseif → else/elseif
-            $this->popNesting(Token\TOpeningBraceless::class);
-            $nesting = $this->getNesting();
-
-            $braceless = match ($nesting) {
-                Token\TIf::class => Token\TIfContinuationBraceless::class,
-                Token\TElseif::class => Token\TElseifContinuationBraceless::class,
-                default => throw new Exception(
-                    "Unknown continuation braceless in nesting "
-                        . var_export($this->listNesting(), true),
-                ),
-            };
-
-            $this->parse($source, $braceless);
-            return;
-        }
-
-        // Final closing
+        $isContinuation = $this->getNextSource()?->is([T_ELSE, T_ELSEIF]);
         $this->popNesting(Token\TOpeningBraceless::class);
         $nesting = $this->getNesting();
 
-        $braceless = match ($nesting) {
-            Token\TIf::class => Token\TIfClosingBraceless::class,
-            Token\TElse::class => Token\TElseClosingBraceless::class,
-            Token\TElseif::class => Token\TElseifClosingBraceless::class,
-            Token\TWhile::class => Token\TWhileClosingBraceless::class,
-            Token\TFor::class => Token\TForClosingBraceless::class,
-            Token\TForeach::class => Token\TForeachClosingBraceless::class,
+        $braceless = match (true) {
+            $isContinuation
+                && $nesting === Token\TIf::class => Token\TIfContinuationBraceless
+                    ::class,
+            $isContinuation
+                && $nesting === Token\TElseif::class => Token\TElseifContinuationBraceless
+                    ::class,
+            ! $isContinuation
+                && $nesting === Token\TIf::class => Token\TIfClosingBraceless::class,
+            ! $isContinuation
+                && $nesting === Token\TElse::class => Token\TElseClosingBraceless
+                    ::class,
+            ! $isContinuation
+                && $nesting === Token\TElseif::class => Token\TElseifClosingBraceless
+                    ::class,
+            ! $isContinuation
+                && $nesting === Token\TWhile::class => Token\TWhileClosingBraceless
+                    ::class,
+            ! $isContinuation
+                && $nesting === Token\TFor::class => Token\TForClosingBraceless::class,
+            ! $isContinuation
+                && $nesting === Token\TForeach::class => Token\TForeachClosingBraceless
+                    ::class,
             default => throw new Exception(
-                "Unknown closing braceless in nesting "
+                ($isContinuation ? "Unknown continuation" : "Unknown closing")
+                    . " braceless in nesting "
                     . var_export($this->listNesting(), true),
             ),
         };
@@ -639,32 +640,16 @@ class Parser
 
     public function getPrevParsed(int $skip = 0) : ?AToken
     {
-        $before = null;
+        $found = 0;
 
-        for ($i = 0; $i <= $skip; $i ++) {
-            $before = $this->getPrevTokenOffset($before);
+        for ($i = $this->parsedCount - 1; $i >= 0; $i --) {
+            if (! $this->parsed[$i]->isIgnorable()) {
+                if ($found >= $skip) {
+                    return $this->parsed[$i];
+                }
 
-            if ($before === null) {
-                return null;
+                $found ++;
             }
-        }
-
-        /** @var int $before */
-        return $this->parsed[$before];
-    }
-
-    protected function getPrevTokenOffset(?int $before = null) : ?int
-    {
-        $parsedOffset = ($before ?? $this->parsedCount) - 1;
-
-        while ($parsedOffset >= 0) {
-            $parsed = $this->parsed[$parsedOffset];
-
-            if (! $parsed->isIgnorable()) {
-                return $parsedOffset;
-            }
-
-            $parsedOffset --;
         }
 
         return null;
@@ -685,6 +670,39 @@ class Parser
         }
 
         return null;
+    }
+
+    public function findNextNonWhitespaceOffset(?int $from = null) : ?int
+    {
+        $i = $from ?? $this->sourceOffset + 1;
+
+        while ($i < $this->sourceCount && $this->source[$i]->is(T_WHITESPACE)) {
+            $i ++;
+        }
+
+        return $i < $this->sourceCount ? $i : null;
+    }
+
+    public function findMatchingCloseParenOffset(int $openOffset) : ?int
+    {
+        $depth = 1;
+        $i = $openOffset + 1;
+
+        while ($i < $this->sourceCount && $depth > 0) {
+            $text = $this->source[$i]->text;
+
+            if ($text === '(') {
+                $depth ++;
+            } elseif ($text === ')') {
+                $depth --;
+            }
+
+            if ($depth > 0) {
+                $i ++;
+            }
+        }
+
+        return $depth === 0 ? $i : null;
     }
 
     public function hasPrevLineBreak() : bool
@@ -708,7 +726,7 @@ class Parser
         return $this->hasPrev(Token\TBlankLine::class);
     }
 
-    public function hasPrevOpeningStructure() : bool
+    private function hasPrevOpeningStructure() : bool
     {
         return $this->hasPrev(Token\TOpeningStructure::class);
     }
@@ -733,20 +751,22 @@ class Parser
         $source = $this->source[$this->sourceOffset + 1] ?? null;
 
         if ($source?->is(T_WHITESPACE)) {
-            return strpos($source->text, "\r") !== false
-                || strpos($source->text, "\n") !== false;
+            return self::hasEol($source->text);
         }
 
         return false;
+    }
+
+    private static function hasEol(string $text) : bool
+    {
+        return strpos($text, "\r") !== false || strpos($text, "\n") !== false;
     }
 
     protected function findUpcomingInlineComment() : ?int
     {
         $currentText = $this->source[$this->sourceOffset]->text;
 
-        if (
-            strpos($currentText, "\r") !== false || strpos($currentText, "\n") !== false
-        ) {
+        if (self::hasEol($currentText)) {
             return null;
         }
 
@@ -754,10 +774,7 @@ class Parser
             $source = $this->source[$i];
 
             if ($source->is(T_WHITESPACE)) {
-                if (
-                    strpos($source->text, "\r") !== false
-                    || strpos($source->text, "\n") !== false
-                ) {
+                if (self::hasEol($source->text)) {
                     return null; // newline before comment
                 }
 
@@ -788,13 +805,7 @@ class Parser
                 return $i; // end of file
             }
 
-            if (
-                $next->is(T_WHITESPACE)
-                && (
-                    strpos($next->text, "\r") !== false
-                    || strpos($next->text, "\n") !== false
-                )
-            ) {
+            if ($next->is(T_WHITESPACE) && self::hasEol($next->text)) {
                 return $i;
             }
 
@@ -817,6 +828,25 @@ class Parser
     public function setSourceAt(int $index, PhpToken $token) : void
     {
         $this->source[$index] = $token;
+    }
+
+    public function getSourceCount() : int
+    {
+        return $this->sourceCount;
+    }
+
+    public function setSourceOffset(int $offset) : void
+    {
+        $this->sourceOffset = $offset;
+    }
+
+    /**
+     * @param PhpToken[] $tokens
+     */
+    public function spliceSource(int $offset, int $deleteCount, array $tokens) : void
+    {
+        array_splice($this->source, $offset, $deleteCount, $tokens);
+        $this->sourceCount = count($this->source);
     }
 
     protected function replaceSourceComment(int $index, bool $blankLine) : void

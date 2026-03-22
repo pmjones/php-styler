@@ -10,6 +10,6 @@ namespace PhpStyler\Token;
  *
  * Reference: https://www.php.net/manual/en/function.require-once.php require_once
  */
-class TRequireOnce extends AToken
+class TRequireOnce extends ALanguageConstruct
 {
 }

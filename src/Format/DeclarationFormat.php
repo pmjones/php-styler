@@ -15,6 +15,9 @@ class DeclarationFormat extends PlainFormat
         Token\TList::class => Token\TListAsArray::class,
         Token\TArray::class => Token\TArrayAsShort::class,
         Token\TElse::class => Token\TElseAsElseIf::class,
+        Token\TPhpClosingTag::class => Token\TPhpClosingTagRemoved::class,
+        Token\TSemicolon::class => Token\TSemicolonSkipRepeats::class,
+        Token\TVariable::class => Token\TVariableWithExplicitInterpolation::class,
     ];
 
     /**
@@ -23,8 +26,6 @@ class DeclarationFormat extends PlainFormat
     public protected(set) array $rules = [
         // file-level cleanup
         Rule\RemoveBom::class => [],
-        Rule\RemovePhpClosingTag::class => [],
-        // syntax normalization
         // structural
         Rule\AddControlBraces::class => [],
         // expansion
@@ -53,10 +54,6 @@ class DeclarationFormat extends PlainFormat
         Rule\AddExitParentheses::class => [],
         Rule\RemoveEmptyAnonymousClassParens::class => [],
         Rule\RemoveEmptyAttributeParens::class => [],
-        // string and cleanup
-        Rule\ConvertImplicitInterpolation::class => [],
-        Rule\RemoveRepeatedSemicolons::class => [],
-        Rule\RemoveParensFromLanguageConstructs::class => [],
     ];
 
     /**
