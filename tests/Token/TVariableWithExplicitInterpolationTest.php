@@ -17,7 +17,9 @@ class TVariableWithExplicitInterpolationTest extends TestCase
     {
         $styler = new Styler(
             new DeclarationFormat(
-                parses: [TVariable::class => TVariableWithExplicitInterpolation::class],
+                parses: [
+                    TVariable::class => TVariableWithExplicitInterpolation::class,
+                ],
                 rules: [RemoveTrailingBlankLines::class],
             ),
         );

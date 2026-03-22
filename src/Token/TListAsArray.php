@@ -13,8 +13,16 @@ class TListAsArray extends AToken
         // Find the '(' after 'list', skipping whitespace
         $openOffset = $parser->findNextNonWhitespaceOffset();
 
+        if ($openOffset === null) {
+            return;
+        }
+
         // Find the matching ')'
         $closeOffset = $parser->findMatchingCloseParenOffset($openOffset);
+
+        if ($closeOffset === null) {
+            return;
+        }
 
         // Replace '(' with '[' and ')' with ']'
         $open = $parser->getSourceAt($openOffset);

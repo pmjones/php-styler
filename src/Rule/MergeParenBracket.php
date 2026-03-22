@@ -32,7 +32,12 @@ class MergeParenBracket implements TokenRule
     /**
      * @param AToken[] $tokens
      */
-    private function check(AToken $opener, array $tokens, int $start, int $count) : void
+    private function check(
+        AToken $opener,
+        array $tokens,
+        int $start,
+        int $count,
+    ) : void
     {
         $containsBracket = false;
         $depth = 0;
