@@ -540,27 +540,21 @@ class Parser
 
         $braceless = match (true) {
             $isContinuation
-                && $nesting === Token\TIf::class => Token\TIfContinuationBraceless
-                    ::class,
+                && $nesting === Token\TIf::class => Token\TIfContinuationBraceless::class,
             $isContinuation
-                && $nesting === Token\TElseif::class => Token\TElseifContinuationBraceless
-                    ::class,
+                && $nesting === Token\TElseif::class => Token\TElseifContinuationBraceless::class,
             ! $isContinuation
                 && $nesting === Token\TIf::class => Token\TIfClosingBraceless::class,
             ! $isContinuation
-                && $nesting === Token\TElse::class => Token\TElseClosingBraceless
-                    ::class,
+                && $nesting === Token\TElse::class => Token\TElseClosingBraceless::class,
             ! $isContinuation
-                && $nesting === Token\TElseif::class => Token\TElseifClosingBraceless
-                    ::class,
+                && $nesting === Token\TElseif::class => Token\TElseifClosingBraceless::class,
             ! $isContinuation
-                && $nesting === Token\TWhile::class => Token\TWhileClosingBraceless
-                    ::class,
+                && $nesting === Token\TWhile::class => Token\TWhileClosingBraceless::class,
             ! $isContinuation
                 && $nesting === Token\TFor::class => Token\TForClosingBraceless::class,
             ! $isContinuation
-                && $nesting === Token\TForeach::class => Token\TForeachClosingBraceless
-                    ::class,
+                && $nesting === Token\TForeach::class => Token\TForeachClosingBraceless::class,
             default => throw new Exception(
                 ($isContinuation ? "Unknown continuation" : "Unknown closing")
                     . " braceless in nesting "
