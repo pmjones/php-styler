@@ -27,7 +27,7 @@ PHP code formatter that parses source into custom token objects, applies transfo
 `Styler::__invoke(string $code): string` runs 6 stages:
 
 1. **Parse** (`Parser`) — tokenizes PHP into `AToken` objects, tracking nesting and paren depth
-2. **TokenRules** — `TokenRule` implementations transform the token array (e.g., `AddControlBraces`, `ConvertElseIf`)
+2. **TokenRules** — `TokenRule` implementations transform the token array (e.g., `AddControlBraces`, `OrderModifiers`)
 3. **Assemble** (`Assembler`) — groups tokens into `Line` objects by indent level
 4. **Split** (`Splitter`) — enforces line-length limits via prioritized split points; runs `normalizeIndents` twice (before and after expansion)
 5. **LineRules** — `LineRule` implementations transform lines (e.g., `RejoinOrphans`, `NormalizeTrailingCommas`)
