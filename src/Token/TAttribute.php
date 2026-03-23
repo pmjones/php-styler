@@ -32,27 +32,19 @@ class TAttribute extends AToken implements TAttribution
             }
 
             if ($parser->getSourceAt($offset)->is('(')) {
-                $closeOffset = $parser->findNextNonWhitespaceOffset(
-                    $offset + 1,
-                );
+                $closeOffset = $parser->findNextNonWhitespaceOffset($offset + 1);
 
                 if (
                     $closeOffset !== null
                     && $parser->getSourceAt($closeOffset)->is(')')
                 ) {
-                    $parser->spliceSource(
-                        $offset,
-                        $closeOffset - $offset + 1,
-                        [],
-                    );
+                    $parser->spliceSource($offset, $closeOffset - $offset + 1, []);
                     $offset = $parser->findNextNonWhitespaceOffset($offset);
                     continue;
                 }
 
                 // non-empty parens — skip to matching close paren
-                $matchingClose = $parser->findMatchingCloseParenOffset(
-                    $offset,
-                );
+                $matchingClose = $parser->findMatchingCloseParenOffset($offset);
 
                 if ($matchingClose !== null) {
                     $offset = $parser->findNextNonWhitespaceOffset(

@@ -18,6 +18,16 @@ class TFullyQualifiedName extends AToken
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         if (
+            $parser->atNesting(TUse::class)
+            || $parser->atNesting(TUseFunction::class)
+            || $parser->atNesting(TUseConst::class)
+        ) {
+            $source->text = ltrim($source->text, '\\');
+            $parser->add($source, TQualifiedName::class);
+            return;
+        }
+
+        if (
             $parser->getNextSource()?->is('(')
             && ! $parser
                 ->getPrevParsed()

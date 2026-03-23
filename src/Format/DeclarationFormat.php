@@ -34,7 +34,6 @@ class DeclarationFormat extends PlainFormat
         Rule\ExpandConstants::class => [],
         Rule\ExpandProperties::class => [],
         // import cleanup (after expansion)
-        Rule\RemoveImportLeadingBackslash::class => [],
         Rule\RemoveUnusedImports::class => [],
         Rule\OrderImports::class => [],
         // attributes
