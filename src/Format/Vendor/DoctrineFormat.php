@@ -41,7 +41,6 @@ class DoctrineFormat extends DeclarationFormat
         Rule\NormalizeTrailingCommas::class => [],
         Rule\RemoveTrailingBlankLines::class => [],
         Rule\ConvertFromYodaConditions::class => [],
-        Rule\ExpandAttributes::class => [],
         Rule\NormalizeMemberSpacing::class => [],
     ];
 

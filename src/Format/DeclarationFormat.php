@@ -36,8 +36,7 @@ class DeclarationFormat extends PlainFormat
         // import cleanup (after expansion)
         Rule\RemoveUnusedImports::class => [],
         Rule\OrderImports::class => [],
-        // attributes
-        Rule\ExpandAttributes::class => [],
+        //
         // visibility and modifiers
         Rule\AddMissingVisibility::class => [],
         Rule\OrderModifiers::class => [],

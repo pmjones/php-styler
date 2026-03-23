@@ -113,10 +113,6 @@ class PlainFormat implements Format
             'spaceBefore' => false,
             'lineBreakAfter' => true,
         ],
-        Token\TAttributeComma::class => [
-            'spaceBefore' => false,
-            'spaceAfter' => true,
-        ],
         Token\TBacktickClosing::class => [
             'spaceBefore' => false,
             'spaceAfter' => true,

@@ -33,7 +33,6 @@ class Percs30Format extends DeclarationFormat
         Rule\ExpandProperties::class => [],
         Rule\RemoveUnusedImports::class => [],
         Rule\OrderImports::class => [],
-        Rule\ExpandAttributes::class => [],
         Rule\AddMissingVisibility::class => [],
         Rule\OrderModifiers::class => [],
         Rule\OrderTypes::class => [],

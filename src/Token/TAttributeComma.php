@@ -6,15 +6,27 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TAttributeComma extends AToken implements TSplittableComma
+class TAttributeComma extends AToken
 {
-    public function splitAfter(Parser $parser) : ?TSplit
-    {
-        return new TSplitComma(AToken::SYNTHETIC, '');
-    }
-
     public static function parse(Parser $parser, PhpToken $source) : void
     {
-        $parser->add($source, static::class);
+        // trailing comma before ] — skip silently
+        $nextOffset = $parser->findNextNonWhitespaceOffset();
+
+        if ($nextOffset !== null && $parser->getSourceAt($nextOffset)->is(']')) {
+            return;
+        }
+
+        // expand: close current attribute group, open new one
+        $closer = new PhpToken(AToken::SYNTHETIC, ']');
+        $opener = new PhpToken(AToken::SYNTHETIC, '#[');
+
+        if ($parser->atNesting(TInlineAttribute::class)) {
+            $parser->parse($closer, TInlineAttributeClosingBracket::class);
+            $parser->addNesting($opener, TInlineAttribute::class);
+        } else {
+            $parser->parse($closer, TAttributeClosingBracket::class);
+            $parser->addNesting($opener, TAttribute::class);
+        }
     }
 }
