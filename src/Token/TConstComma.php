@@ -45,13 +45,7 @@ class TConstComma extends AToken
 
                 if (
                     $token->is(
-                        [
-                            T_PUBLIC,
-                            T_PROTECTED,
-                            T_PRIVATE,
-                            T_FINAL,
-                            T_READONLY,
-                        ],
+                        [T_PUBLIC, T_PROTECTED, T_PRIVATE, T_FINAL, T_READONLY],
                     )
                 ) {
                     $modifiers[] = $token;

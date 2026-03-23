@@ -28,9 +28,7 @@ class DeclarationFormat extends PlainFormat
         Rule\RemoveBom::class => [],
         // structural
         Rule\AddControlBraces::class => [],
-        // expansion
-        Rule\ExpandProperties::class => [],
-        // import cleanup (after expansion)
+        // import cleanup
         Rule\RemoveUnusedImports::class => [],
         Rule\OrderImports::class => [],
         //
