@@ -84,7 +84,10 @@ abstract class TTestCase extends \PHPUnit\Framework\TestCase
 
             foreach ($actual as $class) {
                 $parts = explode('\\', $class);
-                $message .= '                    ' . end($parts) . '::class,' . PHP_EOL;
+                $message .= '                    '
+                    . end($parts)
+                    . '::class,'
+                    . PHP_EOL;
             }
 
             $this->markTestIncomplete($message);

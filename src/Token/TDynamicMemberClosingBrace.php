@@ -10,7 +10,11 @@ class TDynamicMemberClosingBrace extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
-        $parser->closeNesting($source, self::class, TDynamicMemberOpeningBrace::class);
+        $parser->closeNesting(
+            $source,
+            self::class,
+            TDynamicMemberOpeningBrace::class,
+        );
 
         if ($parser->getNextSource()?->is('(') && $parser->lastSplit !== null) {
             if ($parser->lastSplit instanceof TSplitStaticMember) {
@@ -18,7 +22,9 @@ class TDynamicMemberClosingBrace extends AToken
                     new TSplitStaticMethodCall(AToken::SYNTHETIC, ''),
                 );
             } else {
-                $parser->replaceLastSplit(new TSplitMethodCall(AToken::SYNTHETIC, ''));
+                $parser->replaceLastSplit(
+                    new TSplitMethodCall(AToken::SYNTHETIC, ''),
+                );
             }
         }
     }

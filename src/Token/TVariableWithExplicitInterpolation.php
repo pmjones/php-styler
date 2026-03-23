@@ -43,7 +43,10 @@ class TVariableWithExplicitInterpolation extends AToken
             }
         } elseif (
             $next !== null
-            && ($next->is(T_OBJECT_OPERATOR) || $next->is(T_NULLSAFE_OBJECT_OPERATOR))
+            && (
+                $next->is(T_OBJECT_OPERATOR)
+                || $next->is(T_NULLSAFE_OBJECT_OPERATOR)
+            )
         ) {
             // Property access: $foo->bar
             $endOffset = $i + 1; // the operator
@@ -57,7 +60,12 @@ class TVariableWithExplicitInterpolation extends AToken
         // Splice } first (at higher offset) so it doesn't shift { position.
         $openToken = new PhpToken(T_CURLY_OPEN, '{', $source->line, $source->pos);
         $endSource = $parser->getSourceAt($endOffset);
-        $closeToken = new PhpToken(ord('}'), '}', $endSource->line, $endSource->pos);
+        $closeToken = new PhpToken(
+            ord('}'),
+            '}',
+            $endSource->line,
+            $endSource->pos,
+        );
 
         $parser->spliceSource($endOffset + 1, 0, [$closeToken]);
         $parser->spliceSource($i, 0, [$openToken]);

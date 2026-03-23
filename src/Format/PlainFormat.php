@@ -1226,7 +1226,7 @@ class PlainFormat implements Format
      */
     public function __construct(
         public protected(set) string $eol = "\n",
-        public protected(set) int $lineLen = 88,
+        public protected(set) int $lineLen = 84,
         public protected(set) int $indentLen = 4,
         public protected(set) bool $indentTab = false,
         string $classBracePosition = 'same_line',

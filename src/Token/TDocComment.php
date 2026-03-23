@@ -22,7 +22,10 @@ class TDocComment extends AToken implements TDocblock
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         if (
-            (! str_contains($source->text, "\n") && $parser->hasPrevSplittableComma())
+            (
+                ! str_contains($source->text, "\n")
+                && $parser->hasPrevSplittableComma()
+            )
             || ! $parser->hasPrevLineBreak()
             || ! $parser->hasNextEol()
         ) {

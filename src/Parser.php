@@ -291,7 +291,9 @@ class Parser
     {
         if (
             $this->parsedCount > 0
-            && $this->parsed[$this->parsedCount - 1] instanceof Token\TIndentIncrement
+            && $this->parsed[
+                $this->parsedCount - 1
+            ] instanceof Token\TIndentIncrement
         ) {
             $this->removeParsedAt($this->parsedCount - 1);
             return;
@@ -837,7 +839,11 @@ class Parser
     /**
      * @param PhpToken[] $tokens
      */
-    public function spliceSource(int $offset, int $deleteCount, array $tokens) : void
+    public function spliceSource(
+        int $offset,
+        int $deleteCount,
+        array $tokens,
+    ) : void
     {
         array_splice($this->source, $offset, $deleteCount, $tokens);
         $this->sourceCount = count($this->source);

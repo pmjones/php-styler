@@ -13,6 +13,10 @@ class TPropertyHooksClosingBrace extends AToken implements TClosingStructure
         $parser->removeTrailingBlankLine();
         $parser->indentDecr();
 
-        $parser->closeNesting($source, self::class, TPropertyHooksOpeningBrace::class);
+        $parser->closeNesting(
+            $source,
+            self::class,
+            TPropertyHooksOpeningBrace::class,
+        );
     }
 }

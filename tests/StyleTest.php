@@ -49,24 +49,34 @@ class StyleTest extends TestCase
         $returnColonNoSpaces = new DeclarationFormat(
             rules: $rules,
             styles: [
-                TReturnColon::class => ['spaceBefore' => false, 'spaceAfter' => false],
+                TReturnColon::class => [
+                    'spaceBefore' => false,
+                    'spaceAfter' => false,
+                ],
             ],
         );
 
         $dotNoSpaces = new DeclarationFormat(
             rules: $rules,
-            styles: [TDot::class => ['spaceBefore' => false, 'spaceAfter' => false]],
+            styles: [
+                TDot::class => ['spaceBefore' => false, 'spaceAfter' => false],
+            ],
         );
 
         $unionWithSpaces = new DeclarationFormat(
             rules: $rules,
-            styles: [TUnion::class => ['spaceBefore' => true, 'spaceAfter' => true]],
+            styles: [
+                TUnion::class => ['spaceBefore' => true, 'spaceAfter' => true],
+            ],
         );
 
         $intersectionWithSpaces = new DeclarationFormat(
             rules: $rules,
             styles: [
-                TIntersection::class => ['spaceBefore' => true, 'spaceAfter' => true],
+                TIntersection::class => [
+                    'spaceBefore' => true,
+                    'spaceAfter' => true,
+                ],
             ],
         );
 
@@ -80,7 +90,10 @@ class StyleTest extends TestCase
         $binaryPlusNoSpaces = new DeclarationFormat(
             rules: $rules,
             styles: [
-                TBinaryPlus::class => ['spaceBefore' => false, 'spaceAfter' => false],
+                TBinaryPlus::class => [
+                    'spaceBefore' => false,
+                    'spaceAfter' => false,
+                ],
             ],
         );
 

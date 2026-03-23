@@ -23,7 +23,9 @@ class TMemberDoubleColon extends AToken implements TSplittableFluent
             return null;
         }
 
-        $afterMemberOffset = $parser->findNextNonWhitespaceOffset($memberOffset + 1);
+        $afterMemberOffset = $parser->findNextNonWhitespaceOffset(
+            $memberOffset + 1,
+        );
 
         if (
             $afterMemberOffset !== null

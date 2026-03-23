@@ -19,8 +19,9 @@ class Assembler
 
     private Line $line;
 
-    public function __construct(private LineFactory $lineFactory = new LineFactory())
-    {
+    public function __construct(
+        private LineFactory $lineFactory = new LineFactory(),
+    ) {
     }
 
     /**

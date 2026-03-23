@@ -10,7 +10,11 @@ class TUseVariablesClosingParen extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
-        $parser->closeNesting($source, self::class, TUseVariablesOpeningParen::class);
+        $parser->closeNesting(
+            $source,
+            self::class,
+            TUseVariablesOpeningParen::class,
+        );
 
         $parser->popNesting(TUse::class);
     }

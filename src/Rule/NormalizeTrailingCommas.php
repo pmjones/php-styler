@@ -33,7 +33,9 @@ class NormalizeTrailingCommas implements LineRule
 
                 $commaClass = $token->commaClass();
 
-                $closerLineIndex = $tokenLineMap[spl_object_id($token->closingToken)]
+                $closerLineIndex = $tokenLineMap[
+                    spl_object_id($token->closingToken)
+                ]
                     ?? null;
 
                 if ($closerLineIndex === null) {
@@ -41,7 +43,11 @@ class NormalizeTrailingCommas implements LineRule
                 }
 
                 if ($closerLineIndex !== $lineIndex) {
-                    $this->ensureTrailingComma($lines, $closerLineIndex, $commaClass);
+                    $this->ensureTrailingComma(
+                        $lines,
+                        $closerLineIndex,
+                        $commaClass,
+                    );
                 } else {
                     $this->removeTrailingComma($lines, $lineIndex, $token);
                 }

@@ -102,7 +102,9 @@ class ExpandTraitUse implements TokenRule
                     continue;
                 }
 
-                if ($innerToken instanceof TSpace || $innerToken instanceof TSplit) {
+                if (
+                    $innerToken instanceof TSpace || $innerToken instanceof TSplit
+                ) {
                     continue;
                 }
 

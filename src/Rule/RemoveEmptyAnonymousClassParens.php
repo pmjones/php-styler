@@ -48,7 +48,10 @@ class RemoveEmptyAnonymousClassParens implements TokenRule
                 $j ++;
             }
 
-            if ($j < $count && $tokens[$j] instanceof TAnonymousClassArgsClosingParen) {
+            if (
+                $j < $count
+                && $tokens[$j] instanceof TAnonymousClassArgsClosingParen
+            ) {
                 // empty parens — skip the opening paren and mark closing for removal
                 $skipClosingIds[spl_object_id($tokens[$j])] = true;
                 continue;

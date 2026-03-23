@@ -18,7 +18,9 @@ abstract class ALanguageConstruct extends AToken
     {
         $openOffset = $parser->findNextNonWhitespaceOffset();
 
-        if ($openOffset === null || $parser->getSourceAt($openOffset)->text !== '(') {
+        if (
+            $openOffset === null || $parser->getSourceAt($openOffset)->text !== '('
+        ) {
             return;
         }
 
@@ -30,7 +32,9 @@ abstract class ALanguageConstruct extends AToken
 
         $afterClose = $parser->findNextNonWhitespaceOffset($closeOffset + 1);
 
-        if ($afterClose === null || $parser->getSourceAt($afterClose)->text !== ';') {
+        if (
+            $afterClose === null || $parser->getSourceAt($afterClose)->text !== ';'
+        ) {
             return;
         }
 

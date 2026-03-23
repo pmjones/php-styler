@@ -67,7 +67,11 @@ class ExpandProperties implements TokenRule
                 $prefixStart = $b;
             }
 
-            $prefix = array_slice($result, $prefixStart, $variablePos - $prefixStart);
+            $prefix = array_slice(
+                $result,
+                $prefixStart,
+                $variablePos - $prefixStart,
+            );
 
             // find the TPropertyEndSemicolon
             $semicolonPos = null;
@@ -125,7 +129,10 @@ class ExpandProperties implements TokenRule
 
                 if (
                     $skipLeading
-                    && ($innerToken instanceof TSpace || $innerToken instanceof TSplit)
+                    && (
+                        $innerToken instanceof TSpace
+                        || $innerToken instanceof TSplit
+                    )
                 ) {
                     continue;
                 }

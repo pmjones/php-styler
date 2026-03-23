@@ -62,7 +62,7 @@ class DeclarationFormat extends PlainFormat
      */
     public function __construct(
         string $eol = "\n",
-        int $lineLen = 88,
+        int $lineLen = 84,
         int $indentLen = 4,
         bool $indentTab = false,
         array $styles = [],

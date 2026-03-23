@@ -17,7 +17,9 @@ class TStringLiteralAsSingleQuoteTest extends TestCase
     {
         $styler = new Styler(
             new DeclarationFormat(
-                parses: [TStringLiteral::class => TStringLiteralAsSingleQuote::class],
+                parses: [
+                    TStringLiteral::class => TStringLiteralAsSingleQuote::class,
+                ],
                 rules: [RemoveTrailingBlankLines::class],
             ),
         );

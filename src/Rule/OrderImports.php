@@ -130,7 +130,8 @@ class OrderImports implements TokenRule
     {
         foreach ($statement['tokens'] as $token) {
             if (
-                $token instanceof TQualifiedName || $token instanceof TUnqualifiedName
+                $token instanceof TQualifiedName
+                || $token instanceof TUnqualifiedName
             ) {
                 return strtolower($token->text);
             }

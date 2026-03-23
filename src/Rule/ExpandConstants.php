@@ -106,7 +106,9 @@ class ExpandConstants implements TokenRule
 
                 if (
                     $skipLeading
-                    && ($backToken instanceof TSpace || $backToken instanceof TSplit)
+                    && (
+                        $backToken instanceof TSpace || $backToken instanceof TSplit
+                    )
                 ) {
                     continue;
                 }
@@ -142,7 +144,10 @@ class ExpandConstants implements TokenRule
 
                 if (
                     $skipLeading
-                    && ($innerToken instanceof TSpace || $innerToken instanceof TSplit)
+                    && (
+                        $innerToken instanceof TSpace
+                        || $innerToken instanceof TSplit
+                    )
                 ) {
                     continue;
                 }

@@ -157,7 +157,8 @@ class ExpandImports implements TokenRule
                 }
 
                 if (
-                    ! $tokens[$j] instanceof TSpace && ! $tokens[$j] instanceof TSplit
+                    ! $tokens[$j] instanceof TSpace
+                    && ! $tokens[$j] instanceof TSplit
                 ) {
                     break;
                 }
@@ -183,7 +184,9 @@ class ExpandImports implements TokenRule
                     continue;
                 }
 
-                if ($innerToken instanceof TSpace || $innerToken instanceof TSplit) {
+                if (
+                    $innerToken instanceof TSpace || $innerToken instanceof TSplit
+                ) {
                     continue;
                 }
 
@@ -213,7 +216,12 @@ class ExpandImports implements TokenRule
 
                 // for TUseFunction, add "function " keyword
                 if ($useToken instanceof TUseFunction) {
-                    $result[] = new TUseFunction(T_FUNCTION, 'function', $line, $pos);
+                    $result[] = new TUseFunction(
+                        T_FUNCTION,
+                        'function',
+                        $line,
+                        $pos,
+                    );
                     $result[] = new TSpace(AToken::SYNTHETIC, ' ', $line, $pos);
                 }
 
@@ -227,7 +235,10 @@ class ExpandImports implements TokenRule
                 $segmentName = '';
 
                 foreach ($segment as $segToken) {
-                    if ($segToken instanceof TUseAs || $segToken instanceof TUseAlias) {
+                    if (
+                        $segToken instanceof TUseAs
+                        || $segToken instanceof TUseAlias
+                    ) {
                         break;
                     }
 

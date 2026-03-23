@@ -29,7 +29,9 @@ class RemoveEmptyAttributeParens implements TokenRule
             $token = $tokens[$i];
 
             // track attribute context
-            if ($token instanceof TAttribute || $token instanceof TInlineAttribute) {
+            if (
+                $token instanceof TAttribute || $token instanceof TInlineAttribute
+            ) {
                 $inAttribute = true;
             } elseif (
                 $token instanceof TAttributeClosingBracket

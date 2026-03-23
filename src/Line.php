@@ -119,7 +119,9 @@ class Line
         $i = $this->lastContentIndex();
         $token = $this->tokens[$i] ?? null;
 
-        return ($token instanceof TSplit || $token instanceof TSpace) ? null : $token;
+        return ($token instanceof TSplit || $token instanceof TSpace)
+            ? null
+            : $token;
     }
 
     public function lastContentIndex() : int
@@ -232,7 +234,8 @@ class Line
                 // For actual commas (not semicolons), skip if the only remaining
                 // content after the comma is an inline comment
                 if (
-                    $token->text === ',' && $topLevel[$lastIndex] instanceof TCommentary
+                    $token->text === ','
+                    && $topLevel[$lastIndex] instanceof TCommentary
                 ) {
                     continue;
                 }
@@ -250,7 +253,10 @@ class Line
     public function findConditionPair() : ?array
     {
         foreach ($this->tokens as $i => $token) {
-            if (! $token instanceof TConditionOpener || $token->closingToken === null) {
+            if (
+                ! $token instanceof TConditionOpener
+                || $token->closingToken === null
+            ) {
                 continue;
             }
 
@@ -286,7 +292,10 @@ class Line
 
             $closerPos = $this->findTokenIndex($token->closingToken);
 
-            if ($closerPos === null || (! $this->forceExpand && $closerPos - $i <= 1)) {
+            if (
+                $closerPos === null
+                || (! $this->forceExpand && $closerPos - $i <= 1)
+            ) {
                 continue;
             }
 

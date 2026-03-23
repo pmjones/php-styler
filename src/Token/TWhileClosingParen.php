@@ -12,7 +12,9 @@ class TWhileClosingParen extends AToken
     {
         $parser->closeNesting($source, self::class, TWhileOpeningParen::class);
 
-        if ($parser->atNesting(TWhile::class) && $parser->getNextSource()?->is(';')) {
+        if (
+            $parser->atNesting(TWhile::class) && $parser->getNextSource()?->is(';')
+        ) {
             // do-while: leave TWhile nesting for TDoWhileEndSemicolon to handle
             return;
         }

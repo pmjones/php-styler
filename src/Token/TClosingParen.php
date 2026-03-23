@@ -13,7 +13,11 @@ class TClosingParen extends AToken
         $parser->popTernaryNesting();
 
         /** @var class-string<AToken> $closingParenClass */
-        $closingParenClass = str_replace('Opening', 'Closing', $parser->getNesting());
+        $closingParenClass = str_replace(
+            'Opening',
+            'Closing',
+            $parser->getNesting(),
+        );
 
         if ($closingParenClass !== self::class) {
             $parser->parse($source, $closingParenClass);
