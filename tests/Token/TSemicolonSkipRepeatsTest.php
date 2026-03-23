@@ -17,7 +17,7 @@ class TSemicolonSkipRepeatsTest extends TestCase
     {
         $styler = new Styler(
             new DeclarationFormat(
-                parses: [TSemicolon::class => TSemicolonSkipRepeats::class],
+                parseAs: [TSemicolon::class => TSemicolonSkipRepeats::class],
                 rules: [RemoveTrailingBlankLines::class],
             ),
         );

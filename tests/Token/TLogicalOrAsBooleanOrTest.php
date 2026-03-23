@@ -17,7 +17,7 @@ class TLogicalOrAsBooleanOrTest extends TestCase
     {
         $styler = new Styler(
             new DeclarationFormat(
-                parses: [TLogicalOr::class => TLogicalOrAsBooleanOr::class],
+                parseAs: [TLogicalOr::class => TLogicalOrAsBooleanOr::class],
                 rules: [RemoveTrailingBlankLines::class],
             ),
         );

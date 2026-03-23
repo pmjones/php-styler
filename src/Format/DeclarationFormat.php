@@ -11,7 +11,7 @@ class DeclarationFormat extends PlainFormat
     /**
      * @inheritdoc
      */
-    public protected(set) array $parses = [
+    public protected(set) array $parseAs = [
         Token\TList::class => Token\TListAsArray::class,
         Token\TArray::class => Token\TArrayAsShort::class,
         Token\TElse::class => Token\TElseAsElseIf::class,
@@ -57,7 +57,7 @@ class DeclarationFormat extends PlainFormat
 
     /**
      * @inheritdoc
-     * @param array<class-string<\PhpStyler\Token\AToken>, class-string<\PhpStyler\Token\AToken>> $parses
+     * @param array<class-string<\PhpStyler\Token\AToken>, class-string<\PhpStyler\Token\AToken>> $parseAs
      */
     public function __construct(
         string $eol = "\n",
@@ -66,7 +66,7 @@ class DeclarationFormat extends PlainFormat
         bool $indentTab = false,
         array $styles = [],
         array $rules = [],
-        array $parses = [],
+        array $parseAs = [],
     ) {
         parent::__construct(
             eol: $eol,
@@ -82,7 +82,7 @@ class DeclarationFormat extends PlainFormat
             blankLineAfterBlock: true,
             styles: $styles,
             rules: $rules,
-            parses: $parses,
+            parseAs: $parseAs,
         );
     }
 }

@@ -15,7 +15,7 @@ class THeredocStartAsNowdocTest extends TestCase
     public function test(string $code, string $expect) : void
     {
         $styler = new Styler(
-            new DeclarationFormat(parses: [
+            new DeclarationFormat(parseAs: [
                 THeredocStart::class => THeredocStartAsNowdoc::class,
             ]),
         );

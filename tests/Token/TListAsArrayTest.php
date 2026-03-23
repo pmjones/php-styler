@@ -19,7 +19,7 @@ class TListAsArrayTest extends TTestCase
     ) : void
     {
         $parser = new Parser(
-            new TestFormat(parses: [TList::class => TListAsArray::class]),
+            new TestFormat(parseAs: [TList::class => TListAsArray::class]),
         );
 
         $tokens = $parser($code);

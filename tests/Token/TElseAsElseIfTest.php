@@ -17,7 +17,7 @@ class TElseAsElseIfTest extends TestCase
     {
         $styler = new Styler(
             new DeclarationFormat(
-                parses: [TElse::class => TElseAsElseIf::class],
+                parseAs: [TElse::class => TElseAsElseIf::class],
                 rules: [RemoveTrailingBlankLines::class],
             ),
         );

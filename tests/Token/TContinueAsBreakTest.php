@@ -17,7 +17,7 @@ class TContinueAsBreakTest extends TestCase
     {
         $styler = new Styler(
             new DeclarationFormat(
-                parses: [TContinue::class => TContinueAsBreak::class],
+                parseAs: [TContinue::class => TContinueAsBreak::class],
                 rules: [RemoveTrailingBlankLines::class],
             ),
         );

@@ -8,7 +8,7 @@ use PhpStyler\Rule\TokenRule;
 use PhpStyler\Token\AToken;
 
 /**
- * @phpstan-type parses_array array<token_class_string, token_class_string>
+ * @phpstan-type parse_as_array array<token_class_string, token_class_string>
  *
  * @phpstan-type token_class_string class-string<AToken>
  *
@@ -48,8 +48,8 @@ interface Format
         get;
     }
 
-    /** @var parses_array */
-    public array $parses {
+    /** @var parse_as_array */
+    public array $parseAs {
         get;
     }
 

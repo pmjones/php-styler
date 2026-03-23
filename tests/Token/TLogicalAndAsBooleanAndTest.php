@@ -17,7 +17,7 @@ class TLogicalAndAsBooleanAndTest extends TestCase
     {
         $styler = new Styler(
             new DeclarationFormat(
-                parses: [TLogicalAnd::class => TLogicalAndAsBooleanAnd::class],
+                parseAs: [TLogicalAnd::class => TLogicalAndAsBooleanAnd::class],
                 rules: [RemoveTrailingBlankLines::class],
             ),
         );

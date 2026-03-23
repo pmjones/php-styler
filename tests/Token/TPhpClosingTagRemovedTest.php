@@ -17,7 +17,7 @@ class TPhpClosingTagRemovedTest extends TestCase
     {
         $styler = new Styler(
             new DeclarationFormat(
-                parses: [TPhpClosingTag::class => TPhpClosingTagRemoved::class],
+                parseAs: [TPhpClosingTag::class => TPhpClosingTagRemoved::class],
                 rules: [RemoveTrailingBlankLines::class],
             ),
         );

@@ -8,7 +8,7 @@ use PhpStyler\Token;
 
 class TestFormat extends DeclarationFormat
 {
-    public protected(set) array $parses = [
+    public protected(set) array $parseAs = [
         Token\TList::class => Token\TListAsArray::class,
         Token\TArray::class => Token\TArrayAsShort::class,
         Token\TElse::class => Token\TElseAsElseIf::class,
@@ -17,17 +17,17 @@ class TestFormat extends DeclarationFormat
     public protected(set) array $rules = [];
 
     /**
-     * @param array<class-string<\PhpStyler\Token\AToken>, class-string<\PhpStyler\Token\AToken>> $parses
+     * @param array<class-string<\PhpStyler\Token\AToken>, class-string<\PhpStyler\Token\AToken>> $parseAs
      */
     public function __construct(
         int $lineLen = 88,
         array $rules = [],
-        array $parses = [],
+        array $parseAs = [],
     ) {
         parent::__construct(
             lineLen: $lineLen,
             rules: $rules,
-            parses: $parses,
+            parseAs: $parseAs,
         );
     }
 }

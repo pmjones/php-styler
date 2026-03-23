@@ -187,7 +187,7 @@ class Parser
     public function parse(PhpToken $source, string $tokenClass) : void
     {
         /** @var AToken $tokenClass */
-        $tokenClass = $this->format->parses[$tokenClass] ?? $tokenClass;
+        $tokenClass = $this->format->parseAs[$tokenClass] ?? $tokenClass;
         $tokenClass::parse($this, $source);
     }
 

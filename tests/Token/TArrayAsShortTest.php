@@ -19,7 +19,7 @@ class TArrayAsShortTest extends TTestCase
     ) : void
     {
         $parser = new Parser(
-            new TestFormat(parses: [TArray::class => TArrayAsShort::class]),
+            new TestFormat(parseAs: [TArray::class => TArrayAsShort::class]),
         );
 
         $tokens = $parser($code);
