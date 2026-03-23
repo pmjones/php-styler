@@ -1005,7 +1005,9 @@ class StylerTest extends TestCase
                 <<<'EXPECT'
                 <?php class Foo
                 {
-                    use Bar, Baz;
+                    use Bar;
+
+                    use Baz;
                 }
 
                 EXPECT,
