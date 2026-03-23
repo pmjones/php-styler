@@ -51,7 +51,6 @@ class DeclarationFormat extends PlainFormat
         Rule\RemoveTrailingBlankLines::class => [],
         // paren normalization
         Rule\AddInstantiationParentheses::class => [],
-        Rule\AddExitParentheses::class => [],
         Rule\RemoveEmptyAnonymousClassParens::class => [],
         Rule\RemoveEmptyAttributeParens::class => [],
     ];

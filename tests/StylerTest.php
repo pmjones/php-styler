@@ -1594,7 +1594,7 @@ class StylerTest extends TestCase
                 <<<'EXPECT'
                 <?php function f() : never
                 {
-                    exit;
+                    exit();
                 }
 
                 EXPECT,
@@ -1935,7 +1935,7 @@ class StylerTest extends TestCase
                 <?php exit;
                 CODE,
                 <<<'EXPECT'
-                <?php exit;
+                <?php exit();
 
                 EXPECT,
             ],

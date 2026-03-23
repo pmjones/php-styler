@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
+use PhpStyler\Parser;
+use PhpToken;
+
 /**
  * Token: T_ETIT
  *
@@ -12,4 +15,26 @@ namespace PhpStyler\Token;
  */
 class TExit extends AToken
 {
+    public static function parse(Parser $parser, PhpToken $source) : void
+    {
+        $parser->add($source, static::class);
+        $next = $parser->getNextSource();
+
+        if ($next !== null && $next->text === '(') {
+            if ($parser->getStyle(static::class)->spaceAfter !== false) {
+                $parser->space();
+            }
+
+            return;
+        }
+
+        $synth = new PhpToken(AToken::SYNTHETIC, '(');
+        $parser->add($synth, TArgsOpeningParen::class);
+        $synth = new PhpToken(AToken::SYNTHETIC, ')');
+        $parser->add($synth, TArgsClosingParen::class);
+
+        if ($parser->getStyle(static::class)->spaceAfter !== false) {
+            $parser->space();
+        }
+    }
 }
