@@ -17,7 +17,6 @@ class RemoveUnusedImportsTest extends TestCase
         $styler = new Styler(
             new DeclarationFormat(
                 rules: [
-                    ExpandImports::class,
                     RemoveUnusedImports::class,
                     RemoveTrailingBlankLines::class,
                 ],

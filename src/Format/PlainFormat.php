@@ -813,10 +813,6 @@ class PlainFormat implements Format
             'lineBreakBefore' => true,
             'lineBreakAfter' => true,
         ],
-        Token\TNamespaceSeparator::class => [
-            'spaceBefore' => false,
-            'spaceAfter' => false,
-        ],
         Token\TNull::class => [
             'case' => 'strtolower',
         ],
@@ -1088,19 +1084,11 @@ class PlainFormat implements Format
             'spaceBefore' => true,
             'spaceAfter' => true,
         ],
-        Token\TUseClosingBrace::class => [
-            'spaceBefore' => false,
-            'spaceAfter' => true,
-        ],
         Token\TUseComma::class => [
             'spaceBefore' => false,
             'spaceAfter' => true,
         ],
         Token\TUseConst::class => [
-            'spaceAfter' => true,
-        ],
-        Token\TUseConstClosingBrace::class => [
-            'spaceBefore' => false,
             'spaceAfter' => true,
         ],
         Token\TUseEndSemicolon::class => [
@@ -1109,10 +1097,6 @@ class PlainFormat implements Format
             'lineBreakAfter' => true,
         ],
         Token\TUseFunction::class => [
-            'spaceAfter' => true,
-        ],
-        Token\TUseFunctionClosingBrace::class => [
-            'spaceBefore' => false,
             'spaceAfter' => true,
         ],
         Token\TUseTrait::class => [

@@ -1059,7 +1059,8 @@ class StylerTest extends TestCase
                 <?php use Foo\{Bar, Baz};
                 CODE,
                 <<<'EXPECT'
-                <?php use Foo\{Bar, Baz};
+                <?php use Foo\Bar;
+                use Foo\Baz;
 
                 EXPECT,
             ],

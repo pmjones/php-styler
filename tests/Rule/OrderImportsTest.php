@@ -16,7 +16,6 @@ class OrderImportsTest extends TestCase
     {
         $styler = new Styler(
             new TestFormat(rules: [
-                ExpandImports::class,
                 OrderImports::class,
                 RemoveTrailingBlankLines::class,
             ]),

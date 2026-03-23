@@ -29,7 +29,6 @@ class DeclarationFormat extends PlainFormat
         // structural
         Rule\AddControlBraces::class => [],
         // expansion
-        Rule\ExpandImports::class => [],
         Rule\ExpandTraitUse::class => [],
         Rule\ExpandConstants::class => [],
         Rule\ExpandProperties::class => [],
