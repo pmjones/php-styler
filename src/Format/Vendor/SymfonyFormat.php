@@ -39,7 +39,6 @@ class SymfonyFormat extends DeclarationFormat
         Rule\NormalizeTrailingCommas::class => [],
         Rule\RemoveTrailingBlankLines::class => [],
         Rule\ConvertToYodaConditions::class => [],
-        Rule\AddInstantiationParentheses::class => [],
         Rule\NormalizeMemberSpacing::class => [],
     ];
 

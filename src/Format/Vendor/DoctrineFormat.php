@@ -40,7 +40,6 @@ class DoctrineFormat extends DeclarationFormat
         Rule\RejoinOrphans::class => [],
         Rule\NormalizeTrailingCommas::class => [],
         Rule\RemoveTrailingBlankLines::class => [],
-        Rule\AddInstantiationParentheses::class => [],
         Rule\ConvertFromYodaConditions::class => [],
         Rule\ExpandAttributes::class => [],
         Rule\NormalizeMemberSpacing::class => [],

@@ -22,10 +22,10 @@ class TFullyQualifiedName extends AToken
             && ! $parser
                 ->getPrevParsed()
                 ?->is([
+                    T_NEW,
                     T_OBJECT_OPERATOR,
                     T_NULLSAFE_OBJECT_OPERATOR,
                     T_DOUBLE_COLON,
-                    T_NEW,
                 ])
             && ! $parser->atNesting(TAttribution::class)
         ) {
