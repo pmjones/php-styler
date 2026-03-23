@@ -42,8 +42,6 @@ class Percs30Format extends DeclarationFormat
         Rule\RejoinOrphans::class => [],
         Rule\NormalizeTrailingCommas::class => [],
         Rule\RemoveTrailingBlankLines::class => [],
-        Rule\RemoveEmptyAnonymousClassParens::class => [],
-        Rule\RemoveEmptyAttributeParens::class => [],
         Rule\CollapseEmptyBody::class => [],
         Rule\NormalizeMemberSpacing::class => [],
     ];

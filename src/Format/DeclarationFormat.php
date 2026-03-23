@@ -49,9 +49,6 @@ class DeclarationFormat extends PlainFormat
         Rule\RejoinOrphans::class => [],
         Rule\NormalizeTrailingCommas::class => [],
         Rule\RemoveTrailingBlankLines::class => [],
-        // paren normalization
-        Rule\RemoveEmptyAnonymousClassParens::class => [],
-        Rule\RemoveEmptyAttributeParens::class => [],
     ];
 
     /**

@@ -104,8 +104,6 @@ class TNewTest extends TTestCase
                     TAssign::class,
                     TNew::class,
                     TAnonymousClass::class,
-                    TAnonymousClassArgsOpeningParen::class,
-                    TAnonymousClassArgsClosingParen::class,
                     TAnonymousOpeningBrace::class,
                     TAnonymousClosingBrace::class,
                     TSemicolon::class,
