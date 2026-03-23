@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-class TConstTest extends TTestCase
+class TConstCommaTest extends TTestCase
 {
     /**
      * @inheritdoc
@@ -12,42 +12,7 @@ class TConstTest extends TTestCase
     {
         /** @php-styler-expansive */
         return [
-            'const' => [
-                <<<'CODE'
-                <?php
-                const FOO = 1;
-                CODE,
-                [
-                    TPhpOpeningTag::class,
-                    TConst::class,
-                    TConstantName::class,
-                    TAssignConst::class,
-                    TIntegerLiteral::class,
-                    TNamespaceConstEndSemicolon::class,
-                ],
-            ],
-            'class-const' => [
-                <<<'CODE'
-                <?php
-                class Foo
-                {
-                    const BAR = 1;
-                }
-                CODE,
-                [
-                    TPhpOpeningTag::class,
-                    TClass::class,
-                    TClassName::class,
-                    TClassOpeningBrace::class,
-                    TConst::class,
-                    TConstantName::class,
-                    TAssignConst::class,
-                    TIntegerLiteral::class,
-                    TConstEndSemicolon::class,
-                    TClassClosingBrace::class,
-                ],
-            ],
-            'multi-const' => [
+            'basic' => [
                 <<<'CODE'
                 <?php
                 class Foo
@@ -73,31 +38,42 @@ class TConstTest extends TTestCase
                     TClassClosingBrace::class,
                 ],
             ],
-            'namespace-multi-const' => [
-                <<<'CODE'
-                <?php
-                const A = 1, B = 2;
-                CODE,
-                [
-                    TPhpOpeningTag::class,
-                    TConst::class,
-                    TConstantName::class,
-                    TAssignConst::class,
-                    TIntegerLiteral::class,
-                    TNamespaceConstEndSemicolon::class,
-                    TConst::class,
-                    TConstantName::class,
-                    TAssignConst::class,
-                    TIntegerLiteral::class,
-                    TNamespaceConstEndSemicolon::class,
-                ],
-            ],
-            'visibility-const' => [
+            'with-array-values' => [
                 <<<'CODE'
                 <?php
                 class Foo
                 {
-                    public const A = 1;
+                    const A = [1, 2], B = 3;
+                }
+                CODE,
+                [
+                    TPhpOpeningTag::class,
+                    TClass::class,
+                    TClassName::class,
+                    TClassOpeningBrace::class,
+                    TConst::class,
+                    TConstantName::class,
+                    TAssignConst::class,
+                    TArrayOpeningBracket::class,
+                    TIntegerLiteral::class,
+                    TArrayComma::class,
+                    TIntegerLiteral::class,
+                    TArrayClosingBracket::class,
+                    TConstEndSemicolon::class,
+                    TConst::class,
+                    TConstantName::class,
+                    TAssignConst::class,
+                    TIntegerLiteral::class,
+                    TConstEndSemicolon::class,
+                    TClassClosingBrace::class,
+                ],
+            ],
+            'with-visibility' => [
+                <<<'CODE'
+                <?php
+                class Foo
+                {
+                    public const A = 1, B = 2;
                 }
                 CODE,
                 [
@@ -111,65 +87,43 @@ class TConstTest extends TTestCase
                     TAssignConst::class,
                     TIntegerLiteral::class,
                     TConstEndSemicolon::class,
-                    TClassClosingBrace::class,
-                ],
-            ],
-            'typed-const' => [
-                <<<'CODE'
-                <?php
-                class Foo
-                {
-                    const int A = 1;
-                }
-                CODE,
-                [
-                    TPhpOpeningTag::class,
-                    TClass::class,
-                    TClassName::class,
-                    TClassOpeningBrace::class,
-                    TConst::class,
-                    TInt::class,
-                    TUnknownString::class,
-                    TAssignConst::class,
-                    TIntegerLiteral::class,
-                    TConstEndSemicolon::class,
-                    TClassClosingBrace::class,
-                ],
-            ],
-            'visibility-typed-const' => [
-                <<<'CODE'
-                <?php
-                class Foo
-                {
-                    public const int A = 1;
-                }
-                CODE,
-                [
-                    TPhpOpeningTag::class,
-                    TClass::class,
-                    TClassName::class,
-                    TClassOpeningBrace::class,
                     TPublic::class,
                     TConst::class,
-                    TInt::class,
-                    TUnknownString::class,
+                    TConstantName::class,
                     TAssignConst::class,
                     TIntegerLiteral::class,
                     TConstEndSemicolon::class,
                     TClassClosingBrace::class,
                 ],
             ],
-            'use-const-import' => [
+            'with-final-visibility' => [
                 <<<'CODE'
                 <?php
-                use const Foo\BAR;
+                class Foo
+                {
+                    final public const A = 1, B = 2;
+                }
                 CODE,
                 [
                     TPhpOpeningTag::class,
-                    TUse::class,
-                    TUseConst::class,
-                    TQualifiedName::class,
-                    TUseEndSemicolon::class,
+                    TClass::class,
+                    TClassName::class,
+                    TClassOpeningBrace::class,
+                    TFinal::class,
+                    TPublic::class,
+                    TConst::class,
+                    TConstantName::class,
+                    TAssignConst::class,
+                    TIntegerLiteral::class,
+                    TConstEndSemicolon::class,
+                    TFinal::class,
+                    TPublic::class,
+                    TConst::class,
+                    TConstantName::class,
+                    TAssignConst::class,
+                    TIntegerLiteral::class,
+                    TConstEndSemicolon::class,
+                    TClassClosingBrace::class,
                 ],
             ],
         ];
