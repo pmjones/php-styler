@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace PhpStyler\Rule;
 
-use PhpStyler\Format\DeclarationFormat;
 use PhpStyler\Styler;
+use PhpStyler\TestFormat;
 use PHPUnit\Framework\TestCase;
 
-class RemoveUnusedImportsTest extends TestCase
+class NormalizeImportsTest extends TestCase
 {
     /**
      * @dataProvider provide
@@ -15,12 +15,10 @@ class RemoveUnusedImportsTest extends TestCase
     public function test(string $code, string $expect) : void
     {
         $styler = new Styler(
-            new DeclarationFormat(
-                rules: [
-                    RemoveUnusedImports::class,
-                    RemoveTrailingBlankLines::class,
-                ],
-            ),
+            new TestFormat(rules: [
+                NormalizeImports::class,
+                RemoveTrailingBlankLines::class,
+            ]),
         );
         $actual = $styler($code);
         $this->assertSame($expect, $actual);
@@ -30,6 +28,166 @@ class RemoveUnusedImportsTest extends TestCase
     public static function provide() : array
     {
         return [
+            // --- ordering tests (from OrderImportsTest) ---
+            'mixed-imports' => [
+                <<<'CODE'
+                <?php
+                use function Foo\bar;
+                use Baz\Qux;
+                use const Foo\BAR;
+                use Alpha\Beta;
+                use function Alpha\gamma;
+                use const Zed\THING;
+
+                new Qux();
+                new Beta();
+                bar();
+                gamma();
+                echo BAR;
+                echo THING;
+                CODE,
+                <<<'EXPECT'
+                <?php
+                use Alpha\Beta;
+                use Baz\Qux;
+
+                use const Foo\BAR;
+                use const Zed\THING;
+
+                use function Alpha\gamma;
+                use function Foo\bar;
+
+                new Qux();
+                new Beta();
+                bar();
+                gamma();
+                echo BAR;
+                echo THING;
+
+                EXPECT,
+            ],
+            'already-grouped' => [
+                <<<'CODE'
+                <?php
+                use Alpha\Beta;
+                use Baz\Qux;
+                use const Foo\BAR;
+                use function Foo\bar;
+
+                new Beta();
+                new Qux();
+                echo BAR;
+                bar();
+                CODE,
+                <<<'EXPECT'
+                <?php
+                use Alpha\Beta;
+                use Baz\Qux;
+
+                use const Foo\BAR;
+
+                use function Foo\bar;
+
+                new Beta();
+                new Qux();
+                echo BAR;
+                bar();
+
+                EXPECT,
+            ],
+            'only-classlikes' => [
+                <<<'CODE'
+                <?php
+                use Zed\Omega;
+                use Alpha\Beta;
+                use Foo\Bar;
+
+                new Omega();
+                new Beta();
+                new Bar();
+                CODE,
+                <<<'EXPECT'
+                <?php
+                use Alpha\Beta;
+                use Foo\Bar;
+                use Zed\Omega;
+
+                new Omega();
+                new Beta();
+                new Bar();
+
+                EXPECT,
+            ],
+            'class-and-function' => [
+                <<<'CODE'
+                <?php
+                use function Foo\bar;
+                use Alpha\Beta;
+                use function Alpha\gamma;
+                use Baz\Qux;
+
+                new Beta();
+                new Qux();
+                bar();
+                gamma();
+                CODE,
+                <<<'EXPECT'
+                <?php
+                use Alpha\Beta;
+                use Baz\Qux;
+
+                use function Alpha\gamma;
+                use function Foo\bar;
+
+                new Beta();
+                new Qux();
+                bar();
+                gamma();
+
+                EXPECT,
+            ],
+            'imports-before-class' => [
+                <<<'CODE'
+                <?php
+                use Baz\Qux;
+                use Alpha\Beta;
+                class Foo extends Beta implements Qux {}
+                CODE,
+                <<<'EXPECT'
+                <?php
+                use Alpha\Beta;
+                use Baz\Qux;
+
+                class Foo extends Beta implements Qux
+                {
+                }
+
+                EXPECT,
+            ],
+            'alphabetize-within-kind' => [
+                <<<'CODE'
+                <?php
+                use Zed\Omega;
+                use alpha\beta;
+                use Foo\Bar;
+
+                new Omega();
+                new beta();
+                new Bar();
+                CODE,
+                <<<'EXPECT'
+                <?php
+                use alpha\beta;
+                use Foo\Bar;
+                use Zed\Omega;
+
+                new Omega();
+                new beta();
+                new Bar();
+
+                EXPECT,
+            ],
+            // --- remove-unused tests (from RemoveUnusedImportsTest) ---
             'classlike-used-in-code' => [
                 <<<'CODE'
                 <?php
@@ -259,6 +417,42 @@ class RemoveUnusedImportsTest extends TestCase
                 class Baz
                 {
                 }
+
+                EXPECT,
+            ],
+            // --- combined test ---
+            'remove-unused-then-order' => [
+                <<<'CODE'
+                <?php
+                use function Zed\omega;
+                use Foo\Unused;
+                use const Alpha\BETA;
+                use Baz\Qux;
+                use function Alpha\gamma;
+                use Alpha\Beta;
+                use const Foo\UNUSED_CONST;
+
+                new Qux();
+                new Beta();
+                gamma();
+                omega();
+                echo BETA;
+                CODE,
+                <<<'EXPECT'
+                <?php
+                use Alpha\Beta;
+                use Baz\Qux;
+
+                use const Alpha\BETA;
+
+                use function Alpha\gamma;
+                use function Zed\omega;
+
+                new Qux();
+                new Beta();
+                gamma();
+                omega();
+                echo BETA;
 
                 EXPECT,
             ],

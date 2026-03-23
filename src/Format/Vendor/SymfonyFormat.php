@@ -28,8 +28,8 @@ class SymfonyFormat extends DeclarationFormat
     public protected(set) array $rules = [
         Rule\RemoveBom::class => [],
         Rule\AddControlBraces::class => [],
-        Rule\RemoveUnusedImports::class => [],
-        Rule\OrderImports::class => [],
+        // import cleanup
+        Rule\NormalizeImports::class => [],
         Rule\AddMissingVisibility::class => [],
         Rule\OrderModifiers::class => [],
         Rule\OrderTypes::class => [],

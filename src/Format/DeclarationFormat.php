@@ -29,8 +29,7 @@ class DeclarationFormat extends PlainFormat
         // structural
         Rule\AddControlBraces::class => [],
         // import cleanup
-        Rule\RemoveUnusedImports::class => [],
-        Rule\OrderImports::class => [],
+        Rule\NormalizeImports::class => [],
         //
         // visibility and modifiers
         Rule\AddMissingVisibility::class => [],
