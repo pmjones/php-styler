@@ -30,7 +30,6 @@ class DeclarationFormat extends PlainFormat
         Rule\NormalizeImports::class => [],
         //
         // visibility and modifiers
-        Rule\AddMissingVisibility::class => [],
         Rule\OrderModifiers::class => [],
         // types
         Rule\OrderTypes::class => [],

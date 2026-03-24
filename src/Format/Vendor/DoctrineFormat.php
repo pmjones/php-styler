@@ -31,7 +31,6 @@ class DoctrineFormat extends DeclarationFormat
         Rule\RemoveBom::class => [],
         // import cleanup
         Rule\NormalizeImports::class => [],
-        Rule\AddMissingVisibility::class => [],
         Rule\OrderModifiers::class => [],
         Rule\OrderTypes::class => ['order' => ['*', Token\TNull::class]],
         Rule\MergeParenBracket::class => [],

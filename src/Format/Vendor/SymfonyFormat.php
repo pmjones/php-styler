@@ -29,7 +29,6 @@ class SymfonyFormat extends DeclarationFormat
         Rule\RemoveBom::class => [],
         // import cleanup
         Rule\NormalizeImports::class => [],
-        Rule\AddMissingVisibility::class => [],
         Rule\OrderModifiers::class => [],
         Rule\OrderTypes::class => [],
         Rule\MergeParenBracket::class => [],
