@@ -36,9 +36,10 @@ PHP code formatter that parses source into custom token objects, applies transfo
 ### Key Directories
 
 - `src/Token/` — `AToken` subclasses in a flat directory (no subdirs, ~507 files). Includes whitespace tokens, split-point markers (`TSplit` subclasses with priority), and marker interfaces for classification.
-- `src/Rule/` — 11 rule implementations. TokenRules: `RemoveBom`, `NormalizeImports`, `OrderTypes`, `ConvertToYodaConditions`, `ConvertFromYodaConditions`, `MergeParenBracket`. LineRules: `RejoinOrphans`, `NormalizeTrailingCommas`, `NormalizeMemberSpacing`, `RemoveTrailingBlankLines`, `CollapseEmptyBody`. Configured in Format classes as `[RuleClass::class => [args]]`.
+- `src/Rule/` — 11 rule implementations. TokenRules: `RemoveBom`, `NormalizeImports`, `OrderTypes`, `ConvertToYodaConditions`, `ConvertFromYodaConditions`, `MergeParenBracket`, `NormalizeMemberSpacing`, `CollapseEmptyBody`. LineRules: `RejoinOrphans`, `NormalizeTrailingCommas`, `RemoveTrailingBlankLines`. Configured in Format classes as `[RuleClass::class => [args]]`.
 - `src/Format/` — `Format` interface → `PlainFormat` (base with styles) → `DeclarationFormat` (opinionated defaults: next-line braces, lower keywords, default rules). Vendor formats in `src/Format/Vendor/` (`DoctrineFormat`, `Percs30Format`, `SymfonyFormat`).
-- `src/Command/` — CLI commands (`Check`, `Apply`, `Preview`) with corresponding `*Options` classes, dispatched via `AutoShell\Console` from `bin/php-styler`.
+- `src/Parallel/` — `WorkerPool` (spawns child processes via `proc_open` for parallel file processing) and `WorkerResult` (per-file result value object).
+- `src/Command/` — CLI commands (`Apply`, `Check`, `Diff`, `Preview`) with corresponding `*Options` classes, plus an internal `Worker` command for parallel execution. Dispatched via `AutoShell\Console` from `bin/php-styler`. The `apply`, `check`, and `diff` commands accept `--workers=N` (or `auto`) to process files in parallel.
 
 ### Configuration
 

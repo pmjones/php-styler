@@ -2,199 +2,342 @@
 
 ## Overview
 
-1. [Custom _Styler_ Class](#custom-styler-class)
+All customization in PHP-Styler is declarative through *Format* objects. A
+Format defines three arrays — *Styles*, *Rules*, and *Parses* — along with
+basic layout settings (`eol`, `lineLen`, `indentLen`, `indentTab`).
 
-2. [Method Overrides](#method-overrides)
+There are two approaches to customization:
 
-3. [Operator Spacing](#operator-spacing)
+1. [Constructor Parameters](#constructor-parameters) — pass values to an
+   existing Format class.
 
-4. [Brace Placement](#brace-placement)
-
-5. [Trailing Comma](#trailing-comma)
-
-6. [Function Signatures](#function-signatures)
-
-7. [Finished Output](#finished-output)
+2. [Extending a Format Class](#extending-a-format-class) — create a subclass
+   with your own defaults.
 
 
-## Custom Styler Class
+## Constructor Parameters
 
-The easiest way to start is with an empty anonymous extension of _Styler_ in your `php-styler.php` config file; remember to include various _PhpParser_ amd _PhpStyler_ imports.
+### Basic Layout
+
+All Format classes accept these constructor parameters:
 
 ```php
-use PhpParser\Node\Expr;
-use PhpParser\Node\Stmt;
 use PhpStyler\Config;
 use PhpStyler\Files;
-use PhpStyler\Printable as P;
-use PhpStyler\Printable\Printable;
-use PhpStyler\Styler;
+use PhpStyler\Format\PlainFormat;
 
 return new Config(
     files: new Files(__DIR__ . '/src'),
-    styler: new class (lineLen: 88) extends Styler {
-    },
+    cache: __DIR__ . '/.php-styler.cache',
+    format: new PlainFormat(
+        lineLen: 120,
+        indentLen: 2,
+        indentTab: true,
+    ),
 );
 ```
 
-You might also create an entirely separate class, then load and instantiate it as the `$styler` argument.
+### Common Adjustments
+
+`PlainFormat` (and by extension `DeclarationFormat`) provides constructor
+parameters for frequently customized behavior:
+
+| Parameter | Default (Plain) | Default (Declaration) | Values |
+|---|---|---|---|
+| `classBracePosition` | `'same_line'` | `'next_line'` | `'same_line'`, `'next_line'` |
+| `functionBracePosition` | `'same_line'` | `'next_line'` | `'same_line'`, `'next_line'` |
+| `controlBracePosition` | `'same_line'` | `'same_line'` | `'same_line'`, `'next_line'` |
+| `keywordCase` | `'lower'` | `'lower'` | `'lower'`, `'upper'` |
+| `concatenationSpacing` | `true` | `true` | `true` (spaces around `.`), `false` (no spaces) |
+| `returnTypeColonSpacing` | `true` | `true` | `true` (` : Type`), `false` (`: Type`) |
+| `blankLineAfterBlock` | `false` | `true` | `true` (blank line after closing braces), `false` |
 
 ```php
-use PhpParser\Node\Expr;
-use PhpParser\Node\Stmt;
-use PhpStyler\Config;
-use PhpStyler\Files;
-use PhpStyler\Printable as P;
-use PhpStyler\Printable\Printable;
-use PhpStyler\Styler;
+use PhpStyler\Format\DeclarationFormat;
 
-class MyStyler extends Styler
+return new Config(
+    files: new Files(__DIR__ . '/src'),
+    cache: __DIR__ . '/.php-styler.cache',
+    format: new DeclarationFormat(
+        lineLen: 120,
+        controlBracePosition: 'next_line',
+        concatenationSpacing: false,
+        returnTypeColonSpacing: false,
+    ),
+);
+```
+
+### Styles
+
+The `styles` array controls per-token presentation: spacing, line breaks, blank
+lines, and casing. Each entry maps a token class name to an array of style
+arguments:
+
+```php
+use PhpStyler\Format\DeclarationFormat;
+use PhpStyler\Token;
+
+return new Config(
+    files: new Files(__DIR__ . '/src'),
+    cache: __DIR__ . '/.php-styler.cache',
+    format: new DeclarationFormat(
+        styles: [
+            // blank line before every return statement
+            Token\TReturn::class => ['blankLineBefore' => true],
+            // no space after casts
+            Token\TIntCast::class => ['spaceAfter' => false],
+            // lowercase function call names
+            Token\TFunctionCallName::class => ['case' => 'strtolower'],
+        ],
+    ),
+);
+```
+
+The available style arguments are:
+
+| Argument | Type | Effect |
+|---|---|---|
+| `spaceBefore` | `?bool` | Space before the token (`null` to clear) |
+| `spaceAfter` | `?bool` | Space after the token |
+| `lineBreakBefore` | `?bool` | Line break before the token |
+| `lineBreakAfter` | `?bool` | Line break after the token |
+| `blankLineBefore` | `?bool` | Blank line before the token |
+| `blankLineAfter` | `?bool` | Blank line after the token |
+| `case` | `?callable` | Case conversion (e.g. `'strtolower'`, `'strtoupper'`) |
+
+Passing `null` for a value clears any existing setting for that argument.
+
+Styles passed via the constructor are merged with the Format's defaults — your
+values override on a per-argument basis without discarding the rest of the
+token's style.
+
+### Rules
+
+The `rules` array controls structural transformations. Each entry maps a rule
+class name to its constructor arguments (an empty array for rules with no
+parameters):
+
+```php
+use PhpStyler\Format\PlainFormat;
+use PhpStyler\Rule;
+use PhpStyler\Token;
+
+return new Config(
+    files: new Files(__DIR__ . '/src'),
+    cache: __DIR__ . '/.php-styler.cache',
+    format: new PlainFormat(
+        rules: [
+            Rule\NormalizeImports::class => [],
+            Rule\OrderTypes::class => ['order' => ['*', Token\TNull::class]],
+        ],
+    ),
+);
+```
+
+Rules passed via the constructor are merged with the Format's existing rules.
+If a rule class already exists in the Format's defaults, the passed arguments
+replace its arguments.
+
+Available rules:
+
+| Rule | Effect |
+|---|---|
+| `CollapseEmptyBody` | Collapse empty method/function bodies to `{}` on one line |
+| `ConvertFromYodaConditions` | Convert `null === $x` to `$x === null` |
+| `ConvertToYodaConditions` | Convert `$x === null` to `null === $x` |
+| `MergeParenBracket` | Merge `])` onto the same line |
+| `NormalizeMemberSpacing` | Normalize blank lines between class members |
+| `NormalizeImports` | Remove unused and sort `use` statements |
+| `NormalizeTrailingCommas` | Normalize trailing commas in split lists |
+| `OrderTypes` | Sort union/intersection types; accepts `order` parameter |
+| `RejoinOrphans` | Rejoin orphaned tokens to the previous line |
+| `RemoveBom` | Remove UTF-8 byte-order mark |
+| `RemoveTrailingBlankLines` | Remove trailing blank lines from blocks |
+
+### Parse As
+
+The `parseAs` array substitutes one token class for another during parsing,
+changing how certain constructs are interpreted and rendered:
+
+```php
+use PhpStyler\Format\PlainFormat;
+use PhpStyler\Token;
+
+return new Config(
+    files: new Files(__DIR__ . '/src'),
+    cache: __DIR__ . '/.php-styler.cache',
+    format: new PlainFormat(
+        parseAs: [
+            // convert array() to []
+            Token\TArray::class => Token\TArrayAsShort::class,
+            // convert double-quoted strings to single-quoted
+            Token\TStringLiteral::class => Token\TStringLiteralAsSingleQuote::class,
+            // convert else-if to elseif
+            Token\TElse::class => Token\TElseAsElseIf::class,
+        ],
+    ),
+);
+```
+
+Available parse substitutions:
+
+| From | To | Effect |
+|---|---|---|
+| `TArray` | `TArrayAsShort` | `array()` to `[]` |
+| `TContinue` | `TContinueAsBreak` | `continue` to `break` in switches |
+| `TElse` | `TElseAsElseIf` | `else if` to `elseif` |
+| `THeredocStart` | `THeredocStartAsNowdoc` | Heredocs to nowdocs |
+| `TList` | `TListAsArray` | `list()` to `[]` |
+| `TLogicalAnd` | `TLogicalAndAsBooleanAnd` | `and` to `&&` |
+| `TLogicalOr` | `TLogicalOrAsBooleanOr` | `or` to `\|\|` |
+| `TPhpClosingTag` | `TPhpClosingTagRemoved` | Remove `?>` closing tags |
+| `TSemicolon` | `TSemicolonSkipRepeats` | Remove repeated semicolons |
+| `TStringLiteral` | `TStringLiteralAsSingleQuote` | Double-quoted to single-quoted strings |
+| `TVariable` | `TVariableWithExplicitInterpolation` | Explicit `{$var}` interpolation |
+
+
+## Extending a Format Class
+
+For reusable configurations, extend a Format class. Override the `$styles`,
+`$rules`, and `$parseAs` properties, and call protected setter methods in your
+constructor.
+
+Here is an example that extends `DeclarationFormat`:
+
+```php
+<?php
+declare(strict_types=1);
+
+namespace My\Project;
+
+use PhpStyler\Format\DeclarationFormat;
+use PhpStyler\Rule;
+use PhpStyler\Token;
+
+class MyFormat extends DeclarationFormat
 {
+    /**
+     * @inheritdoc
+     */
+    public protected(set) array $parseAs = [
+        Token\TList::class => Token\TListAsArray::class,
+        Token\TArray::class => Token\TArrayAsShort::class,
+        Token\TElse::class => Token\TElseAsElseIf::class,
+        Token\TStringLiteral::class => Token\TStringLiteralAsSingleQuote::class,
+        Token\TPhpClosingTag::class => Token\TPhpClosingTagRemoved::class,
+        Token\TSemicolon::class => Token\TSemicolonSkipRepeats::class,
+        Token\TVariable::class => Token\TVariableWithExplicitInterpolation::class,
+    ];
+
+    /**
+     * @inheritdoc
+     */
+    public protected(set) array $rules = [
+        Rule\RemoveBom::class => [],
+        Rule\NormalizeImports::class => [],
+        Rule\OrderTypes::class => [],
+        Rule\MergeParenBracket::class => [],
+        Rule\RejoinOrphans::class => [],
+        Rule\NormalizeTrailingCommas::class => [],
+        Rule\RemoveTrailingBlankLines::class => [],
+        Rule\NormalizeMemberSpacing::class => [],
+    ];
+
+    /**
+     * @inheritdoc
+     */
+    public function __construct(
+        string $eol = "\n",
+        int $lineLen = 120,
+        int $indentLen = 4,
+        bool $indentTab = false,
+        array $styles = [],
+        array $rules = [],
+    ) {
+        // styles specific to this format
+        $myStyles = [
+            Token\TReturn::class => ['blankLineBefore' => true],
+            Token\TIntCast::class => ['spaceAfter' => true],
+            Token\TBoolCast::class => ['spaceAfter' => true],
+        ];
+
+        // merge in caller-provided styles
+        foreach ($styles as $class => $args) {
+            $myStyles[$class] = array_merge(
+                $myStyles[$class] ?? [],
+                $args,
+            );
+        }
+
+        parent::__construct(
+            eol: $eol,
+            lineLen: $lineLen,
+            indentLen: $indentLen,
+            indentTab: $indentTab,
+            styles: $myStyles,
+            rules: $rules,
+        );
+
+        // post-construction adjustments
+        $this->setConcatenationSpacing(false);
+        $this->setReturnTypeColonSpacing(false);
+    }
 }
+```
+
+Then use it in your config file:
+
+```php
+<?php
+use My\Project\MyFormat;
+use PhpStyler\Config;
+use PhpStyler\Files;
 
 return new Config(
     files: new Files(__DIR__ . '/src'),
-    styler: new MyStyler(lineLen: 88),
+    cache: __DIR__ . '/.php-styler.cache',
+    format: new MyFormat(),
 );
 ```
 
-Then invoke the `php-styler preview` command to make sure it works without errors.
+### Property Overrides
 
-## Method Overrides
+When you declare `$parseAs`, `$rules`, or `$styles` as a property on your
+subclass, it *completely replaces* the parent's property — it is not merged.
+Build the full list you want.
 
-In general, override the `Styler::s*()` method for styling the relevant _Printable_. See the _Styler_ itself to get an idea of the very large number of methods available for override. There is really quite a lot here; you will be well-served by experimenting with trial-and-error when attempting customizations.
+### Constructor Pattern
 
-## Operator Spacing
+The constructor pattern used by the vendor formats is:
 
-The `$this->operators` property describes the spacing around operation strings. This property is used by the `Styler::sInfix*()`, `Styler::sPrefix*()`, and `Styler::sPostfix*()` method families.
+1. Define format-specific styles in a local array.
+2. Merge in any caller-provided `$styles` so users of your format can still
+   override individual tokens.
+3. Call `parent::__construct()` with the merged styles and other parameters.
+4. Call protected setter methods (`setConcatenationSpacing()`,
+   `setReturnTypeColonSpacing()`, etc.) for post-construction adjustments.
 
-Each `$this->operators` key is the class name of the operation, and each value is a three-element array consisting of the space before the operator, the operator itself, and the space after the operator.
+### Available Setter Methods
 
-You can modify the spacing around operators by overriding the `Styler::modOperators()` method returning the operators to modify. (Cf. the `Styler::$operators` property for all operator strings.) For example, to make sure there is no space around `!`:
+These protected methods modify the styles array after construction:
 
-```php
-    protected function modOperators() : array
-    {
-        return [
-            Expr\BooleanNot::class => ['', '!', ''],
-        ];
-    }
-```
-
-## Brace Placement
-
-The _Styler_ comes with several methods dedicated to brace placement.
-
-- `braceOnNextLine()` puts an opening brace on the next line.
-- `braceOnSameLine()` puts an opening brace on the same line.
-- `braceEnd()` puts a closing brace on the same line.
-
-Use these methods to place braces when overiding a `Styler::s*()` method.
-
-In addition, the standard _Styler_ uses two common methods for brace placement on class-like structures and control-flow structures:
-
-- `classBrace()` defines brace placement on class-like structures (`class`, `interface`, `trait`, etc.); defaults to `braceOnNextLine()`
-- `controlBrace()` defines brace placement on control-flow structures (`if`, `do`, `foreach`, etc.); defaults to `braceOnSameLine()`
-
-Override `classBrace()` to change brace placement on all class-like structures. Likewise, override `controlBrace()` to change brace placement on all control-flow structures. Finally, if you want to, you can override the class-like and control flow `Styler::s*()` methods to handle brace placement on each individual structure.
-
-## Function Signatures
-
-The default presentation behavior for a function signature with expansive parameters and a return typehint is to ...
-
-- put a space on either side of the return typehint colon, and
-- put the opening brace on the next line.
-
-This keeps the parameters and return typehint lined up vertically with 4-space indents, and presents visual blank space between the signature and the body, like so:
-
-```php
-    public function veryLongFunctionName(
-        $veryLongParameter1,
-        $veryLongParameter2,
-        $veryLongParameter3,
-        $veryLongParameter4,
-        $veryLongParameter5,
-    ) : ReturnTypeHint
-    {
-        // ...
-    }
-```
-
-To change the spacing around the return typehint colon, override the method that adds the colon and spaces:
-
-```php
-    protected function sReturnType(P\ReturnType $p) : void
-    {
-        $this->line[] = ': ';
-    }
-```
-
-To present the brace on the same line, override the method that sets the condition for when the space between the function signature and the function body should be condensed:
-
-```php
-    protected function functionBodyCondenseWhen(): callable
-    {
-        return fn (string $lastLine): bool => str_starts_with(trim($lastLine), ')');
-    }
-```
-
-Changing the colon and brace placement in that manner will de-align the return typehint from the rest of the signature, and remove the visual blank space between the signature and the body:
-
-```php
-    public function veryLongFunctionName(
-        $veryLongParameter1,
-        $veryLongParameter2,
-        $veryLongParameter3,
-        $veryLongParameter4,
-        $veryLongParameter5,
-    ): ReturnTypeHint {
-        // ...
-    }
-```
+| Method | Effect |
+|---|---|
+| `setClassBracePosition('same_line'\|'next_line')` | Brace position for classes, interfaces, traits, enums |
+| `setFunctionBracePosition('same_line'\|'next_line')` | Brace position for functions/methods |
+| `setControlBracePosition('same_line'\|'next_line')` | Brace position for if, do, foreach, etc. |
+| `setKeywordCase('lower'\|'upper')` | Case for `array`, `null`, `true`, `false` |
+| `setConcatenationSpacing(bool)` | Spaces around the `.` operator |
+| `setReturnTypeColonSpacing(bool)` | Space before return type colon (` : Type` vs `: Type`) |
+| `setBlankLineAfterBlock(bool)` | Blank line after closing braces and semicolons |
 
 
-## Trailing Comma
+## Discovering Token Classes
 
-By default, the _Styler_ adds a trailing comma to the last item in an argument, parameter, or array listing, when that listing has been split across lines.
+To find the token class name for a specific PHP construct, look in the
+`src/Token/` directory. Token classes are named after the construct they
+represent (e.g., `TReturn`, `TAssign`, `TIfOpeningBrace`,
+`TClassClosingBrace`).
 
-To not-add the trailing comma, override `Styler::lastSeparator()` to return an empty string:
-
-```php
-    protected function lastSeparator() : string
-    {
-        return '';
-    }
-```
-
-To not-add the comma only in some lists but not others, override the `Styler::last*Separator()` method for that type of list:
-
-```php
-    protected function lastArgSeparator() : string
-    {
-        // no trailing comma for args
-        return '';
-    }
-
-    protected function lastArraySeparator() : string
-    {
-        // trailing comma for arrays
-        return ',';
-    }
-
-    protected function lastParamSeparator() : string
-    {
-        // no trailing comma for params
-        return '';
-    }
-```
-
-## Finished Output
-
-The finished output of styled code is handled by the `finish()` method. This is where you can add or trim lines around the code. For example, to make sure there is always a double-newline at the top of the file, and no line ending at the end:
-
-```php
-    protected function finish(string $code) : string
-    {
-        return '<' . '?php' . $this->eol . $this->eol . trim($code);
-    }
-```
+Use the `preview` command to see how PHP-Styler formats a file, then look at
+the token classes in the source to identify which ones to style.
