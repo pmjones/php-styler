@@ -8,6 +8,7 @@ use PhpStyler\Rule\NormalizeTrailingCommas;
 use PhpStyler\Rule\RejoinOrphans;
 use PhpStyler\Rule\RemoveTrailingBlankLines;
 use PhpStyler\TestFormat;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class ExamplesTest extends TestCase
@@ -28,9 +29,7 @@ class ExamplesTest extends TestCase
         );
     }
 
-    /**
-     * @dataProvider provideExample
-     */
+    #[DataProvider('provideExample')]
     public function testExample(string $sourceFile) : void
     {
         $source = (string) file_get_contents($sourceFile);

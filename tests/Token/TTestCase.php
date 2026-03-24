@@ -5,6 +5,7 @@ namespace PhpStyler\Token;
 
 use PhpStyler\Format\PlainFormat;
 use PhpStyler\Parser;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 abstract class TTestCase extends \PHPUnit\Framework\TestCase
 {
@@ -19,8 +20,8 @@ abstract class TTestCase extends \PHPUnit\Framework\TestCase
     /**
      * @param array<int, class-string> $expect
      * @param array<int, class-string> $finalNesting
-     * @dataProvider provide
      */
+    #[DataProvider('provide')]
     public function test(
         string $code,
         array $expect,

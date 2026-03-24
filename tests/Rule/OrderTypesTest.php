@@ -6,13 +6,12 @@ namespace PhpStyler\Rule;
 use PhpStyler\Styler;
 use PhpStyler\TestFormat;
 use PhpStyler\Token\TNull;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class OrderTypesTest extends TestCase
 {
-    /**
-     * @dataProvider provide
-     */
+    #[DataProvider('provide')]
     public function test(string $code, string $expect) : void
     {
         $styler = new Styler(
@@ -193,9 +192,7 @@ class OrderTypesTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider provideNullLast
-     */
+    #[DataProvider('provideNullLast')]
     public function testNullLast(string $code, string $expect) : void
     {
         $styler = new Styler(

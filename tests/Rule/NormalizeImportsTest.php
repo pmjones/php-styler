@@ -5,13 +5,12 @@ namespace PhpStyler\Rule;
 
 use PhpStyler\Styler;
 use PhpStyler\TestFormat;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class NormalizeImportsTest extends TestCase
 {
-    /**
-     * @dataProvider provide
-     */
+    #[DataProvider('provide')]
     public function test(string $code, string $expect) : void
     {
         $styler = new Styler(

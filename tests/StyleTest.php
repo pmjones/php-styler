@@ -17,13 +17,12 @@ use PhpStyler\Token\TIntersection;
 use PhpStyler\Token\TReturnColon;
 use PhpStyler\Token\TTrue;
 use PhpStyler\Token\TUnion;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class StyleTest extends TestCase
 {
-    /**
-     * @dataProvider provide
-     */
+    #[DataProvider('provide')]
     public function test(Format $format, string $code, string $expect) : void
     {
         $styler = new Styler($format);

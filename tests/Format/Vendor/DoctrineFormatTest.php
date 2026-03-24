@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace PhpStyler\Format\Vendor;
 
 use PhpStyler\Styler;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class DoctrineFormatTest extends TestCase
@@ -15,9 +16,7 @@ class DoctrineFormatTest extends TestCase
         $this->styler = new Styler(new DoctrineFormat());
     }
 
-    /**
-     * @dataProvider provide
-     */
+    #[DataProvider('provide')]
     public function test(string $code, string $expect) : void
     {
         $actual = ($this->styler)($code);

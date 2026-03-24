@@ -5,12 +5,11 @@ namespace PhpStyler\Token;
 
 use PhpStyler\Parser;
 use PhpStyler\TestFormat;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class TListAsArrayTest extends TTestCase
 {
-    /**
-     * @dataProvider provide
-     */
+    #[DataProvider('provide')]
     public function test(
         string $code,
         array $expect,

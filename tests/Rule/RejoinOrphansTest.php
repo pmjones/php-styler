@@ -5,6 +5,7 @@ namespace PhpStyler\Rule;
 
 use PhpStyler\Format\DeclarationFormat;
 use PhpStyler\Styler;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class RejoinOrphansTest extends TestCase
@@ -21,9 +22,7 @@ class RejoinOrphansTest extends TestCase
         $this->assertSame($expect, $actual);
     }
 
-    /**
-     * @dataProvider provide
-     */
+    #[DataProvider('provide')]
     public function test(string $code, string $expect) : void
     {
         $this->assertStyled($code, $expect);

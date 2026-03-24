@@ -5,6 +5,7 @@ namespace PhpStyler\Rule;
 
 use PhpStyler\Format\DeclarationFormat;
 use PhpStyler\Styler;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class NormalizeTrailingCommasTest extends TestCase
@@ -28,9 +29,7 @@ class NormalizeTrailingCommasTest extends TestCase
         $this->assertSame($expect, $actual);
     }
 
-    /**
-     * @dataProvider provide
-     */
+    #[DataProvider('provide')]
     public function test(string $code, string $expect, int $lineLen = 44) : void
     {
         $this->assertStyled($code, $expect, $lineLen);

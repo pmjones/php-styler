@@ -23,7 +23,7 @@ class TUse extends AToken
         }
 
         // expand grouped imports (use Foo\{Bar, Baz}) at source level
-        static::expandGroupedImport($parser);
+        self::expandGroupedImport($parser);
 
         $parser->addNesting($source, self::class);
     }

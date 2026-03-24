@@ -8,6 +8,7 @@ use PhpStyler\Rule\RejoinOrphans;
 use PhpStyler\Rule\RemoveTrailingBlankLines;
 use PhpStyler\Styler;
 use PhpStyler\TestFormat;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class SplitterTest extends TestCase
@@ -28,9 +29,7 @@ class SplitterTest extends TestCase
         $this->assertSame($expect, $actual);
     }
 
-    /**
-     * @dataProvider provide44
-     */
+    #[DataProvider('provide44')]
     public function test44(string $code, string $expect) : void
     {
         $this->assertSplit($code, $expect, 44);
@@ -556,9 +555,7 @@ class SplitterTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider provide88
-     */
+    #[DataProvider('provide88')]
     public function test88(string $code, string $expect) : void
     {
         $this->assertSplit($code, $expect, 88);

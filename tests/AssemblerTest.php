@@ -112,13 +112,14 @@ use PhpStyler\Token\TWhileClosingBrace;
 use PhpStyler\Token\TWhileClosingParen;
 use PhpStyler\Token\TWhileOpeningBrace;
 use PhpStyler\Token\TWhileOpeningParen;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class AssemblerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @param array<int, array<int, class-string>> $expect
-     * @dataProvider provide
      */
+    #[DataProvider('provide')]
     public function test(string $code, array $expect) : void
     {
         $styler = new Styler(new Format\DeclarationFormat());

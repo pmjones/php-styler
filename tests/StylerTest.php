@@ -7,6 +7,7 @@ use PhpStyler\Rule\NormalizeTrailingCommas;
 use PhpStyler\Rule\RejoinOrphans;
 use PhpStyler\Rule\RemoveTrailingBlankLines;
 use PhpStyler\TestFormat;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class StylerTest extends TestCase
@@ -24,9 +25,7 @@ class StylerTest extends TestCase
         );
     }
 
-    /**
-     * @dataProvider provide
-     */
+    #[DataProvider('provide')]
     public function test(string $code, string $expect) : void
     {
         $actual = ($this->styler)($code);

@@ -6,13 +6,12 @@ namespace PhpStyler\Token;
 use PhpStyler\Format\DeclarationFormat;
 use PhpStyler\Rule\RemoveTrailingBlankLines;
 use PhpStyler\Styler;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class TSemicolonSkipRepeatsTest extends TestCase
 {
-    /**
-     * @dataProvider provide
-     */
+    #[DataProvider('provide')]
     public function test(string $code, string $expect) : void
     {
         $styler = new Styler(

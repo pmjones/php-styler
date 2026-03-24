@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace PhpStyler\Token;
 
 use PhpStyler\Line;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class TCommentStarredTest extends TTestCase
 {
@@ -86,9 +87,7 @@ class TCommentStarredTest extends TTestCase
         ];
     }
 
-    /**
-     * @dataProvider provideRender
-     */
+    #[DataProvider('provideRender')]
     public function testRender(string $text, int $indent, string $expect) : void
     {
         $token = new TCommentStarred(T_COMMENT, $text);
