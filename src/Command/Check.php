@@ -6,6 +6,7 @@ namespace PhpStyler\Command;
 use AutoShell\Help;
 use PhpStyler\Config;
 use PhpStyler\Exception;
+use PhpStyler\Parallel\WorkerPool;
 use PhpStyler\Styler;
 
 #[Help("Checks if any of the configured files need styling.")]
@@ -26,9 +27,10 @@ class Check extends Command
         echo "Loading config file " . $configFile . PHP_EOL;
         $config = $this->loadConfigFile($configFile);
 
-        // apply styling
+        // check styling
         try {
-            $count = $this->checkStyle($config);
+            $workerCount = $this->resolveWorkerCount($options->workers);
+            $count = $this->checkStyle($config, $configFile, $workerCount);
         } catch (Exception $e) {
             echo $e->getMessage() . PHP_EOL;
             return 1;
@@ -57,14 +59,33 @@ class Check extends Command
         return (int) $this->failure;
     }
 
-    protected function checkStyle(Config $config) : int
+    protected function checkStyle(
+        Config $config,
+        string $configFile,
+        int $workerCount,
+    ) : int
     {
-        $count = 0;
-        $styler = new Styler($config->format);
+        $files = [];
 
         foreach ($config->files as $file) {
-            $file = (string) $file;
-            $count ++;
+            $files[] = (string) $file;
+        }
+
+        if ($files === [] || $workerCount <= 1 || count($files) < 8) {
+            return $this->checkSequential($config, $files);
+        }
+
+        return $this->checkParallel($configFile, $files, $workerCount);
+    }
+
+    /**
+     * @param string[] $files
+     */
+    protected function checkSequential(Config $config, array $files) : int
+    {
+        $styler = new Styler($config->format);
+
+        foreach ($files as $file) {
             $source = (string) file_get_contents($file);
             $styled = $styler($source);
 
@@ -74,6 +95,32 @@ class Check extends Command
             }
         }
 
-        return $count;
+        return count($files);
+    }
+
+    /**
+     * @param string[] $files
+     */
+    protected function checkParallel(
+        string $configFile,
+        array $files,
+        int $workerCount,
+    ) : int
+    {
+        echo "Using {$workerCount} parallel workers." . PHP_EOL;
+        $pool = new WorkerPool();
+        $results = $pool->run($files, 'check', $configFile, $workerCount);
+
+        foreach ($results as $result) {
+            if (! $result->ok) {
+                echo $result->file . " ERROR: {$result->error}" . PHP_EOL;
+                $this->failure[] = $result->file;
+            } elseif ($result->isMatch === false) {
+                echo $result->file . PHP_EOL;
+                $this->failure[] = $result->file;
+            }
+        }
+
+        return count($results);
     }
 }

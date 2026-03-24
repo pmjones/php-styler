@@ -1,10 +1,12 @@
 <?php
+declare(strict_types=1);
+
 namespace PhpStyler\Command;
 
 use AutoShell\Option;
 use AutoShell\Options;
 
-class CheckOptions implements Options
+class WorkerOptions implements Options
 {
     public function __construct(
         #[Option(
@@ -15,11 +17,11 @@ class CheckOptions implements Options
         public readonly ?string $configFile,
 
         #[Option(
-            'w,workers',
+            'm,mode',
             mode: Option::VALUE_REQUIRED,
-            help: 'Number of parallel workers (default 1; use "auto" for CPU count).',
+            help: 'Worker mode: apply, check, or diff.',
         )]
-        public readonly ?string $workers,
+        public readonly ?string $mode,
     ) {
     }
 }

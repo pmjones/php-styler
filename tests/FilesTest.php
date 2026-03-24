@@ -52,6 +52,8 @@ class FilesTest extends TestCase
             'DiffOptions.php',
             'Preview.php',
             'PreviewOptions.php',
+            'Worker.php',
+            'WorkerOptions.php',
         ];
 
         foreach ($expect as $key => $val) {

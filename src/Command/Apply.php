@@ -7,6 +7,7 @@ use AutoShell\Help;
 use PhpStyler\Config;
 use PhpStyler\Exception;
 use PhpStyler\Files;
+use PhpStyler\Parallel\WorkerPool;
 use PhpStyler\Styler;
 
 #[Help("Applies styling to the configured files, rewriting them in place.")]
@@ -38,7 +39,14 @@ class Apply extends Command
 
         // apply styling
         try {
-            $count = $this->applyStyle($config, $paths, $cacheTime);
+            $workerCount = $this->resolveWorkerCount($options->workers);
+            $count = $this->applyStyle(
+                $config,
+                $configFile,
+                $paths,
+                $cacheTime,
+                $workerCount,
+            );
         } catch (Exception $e) {
             echo $e->getMessage() . PHP_EOL;
             return 1;
@@ -97,13 +105,12 @@ class Apply extends Command
      */
     protected function applyStyle(
         Config $config,
+        string $configFile,
         array $paths,
         false|int $cacheTime,
+        int $workerCount,
     ) : int
     {
-        $count = 0;
-        $styler = new Styler($config->format);
-
         if ($paths) {
             $cacheTime = false;
             $files = new Files(...$paths);
@@ -111,21 +118,74 @@ class Apply extends Command
             $files = $config->files;
         }
 
+        $fileList = $this->collectFiles($files, $cacheTime);
+
+        if ($fileList === [] || $workerCount <= 1 || count($fileList) < 8) {
+            return $this->applySequential($config, $fileList);
+        }
+
+        return $this->applyParallel($configFile, $fileList, $workerCount);
+    }
+
+    /**
+     * @param iterable<mixed> $files
+     * @return string[]
+     */
+    protected function collectFiles(iterable $files, false|int $cacheTime) : array
+    {
+        $collected = [];
+
         /** @var string $file */
         foreach ($files as $file) {
             $file = (string) $file;
-            $fileTime = filemtime($file);
 
-            if ($cacheTime && $fileTime <= $cacheTime) {
+            if ($cacheTime && filemtime($file) <= $cacheTime) {
                 continue;
             }
 
-            $count ++;
+            $collected[] = $file;
+        }
+
+        return $collected;
+    }
+
+    /**
+     * @param string[] $files
+     */
+    protected function applySequential(Config $config, array $files) : int
+    {
+        $styler = new Styler($config->format);
+
+        foreach ($files as $file) {
             echo $file . PHP_EOL;
             $code = $styler((string) file_get_contents($file));
             file_put_contents($file, $code);
         }
 
-        return $count;
+        return count($files);
+    }
+
+    /**
+     * @param string[] $files
+     */
+    protected function applyParallel(
+        string $configFile,
+        array $files,
+        int $workerCount,
+    ) : int
+    {
+        echo "Using {$workerCount} parallel workers." . PHP_EOL;
+        $pool = new WorkerPool();
+        $results = $pool->run($files, 'apply', $configFile, $workerCount);
+
+        foreach ($results as $result) {
+            echo $result->file . PHP_EOL;
+
+            if (! $result->ok) {
+                echo "  ERROR: {$result->error}" . PHP_EOL;
+            }
+        }
+
+        return count($results);
     }
 }
