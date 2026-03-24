@@ -26,8 +26,6 @@ class DeclarationFormat extends PlainFormat
     public protected(set) array $rules = [
         // file-level cleanup
         Rule\RemoveBom::class => [],
-        // structural
-        Rule\AddControlBraces::class => [],
         // import cleanup
         Rule\NormalizeImports::class => [],
         //

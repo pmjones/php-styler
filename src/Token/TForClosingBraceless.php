@@ -10,9 +10,7 @@ class TForClosingBraceless extends AToken implements TClosingStructure
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
-        $parser->popNesting(TFor::class);
-        $parser->indentDecr();
-        $synthetic = new \PhpToken($source->id, '', $source->line, $source->pos);
-        $parser->add($synthetic, self::class);
+        $synthetic = new \PhpToken($source->id, '}', $source->line, $source->pos);
+        $parser->parse($synthetic, TForClosingBrace::class);
     }
 }

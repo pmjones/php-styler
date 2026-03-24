@@ -140,7 +140,8 @@ class NormalizeImports implements TokenRule
         array $block,
         array $usedNames,
         array &$result,
-    ) : void {
+    ) : void
+    {
         // extract metadata and filter unused
         $statements = [];
 

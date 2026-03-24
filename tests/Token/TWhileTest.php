@@ -64,11 +64,11 @@ class TWhileTest extends TTestCase
                     TWhileOpeningParen::class,
                     TVariable::class,
                     TWhileClosingParen::class,
-                    TOpeningBraceless::class,
+                    TWhileOpeningBrace::class,
                     TVariable::class,
                     TPostIncrement::class,
                     TSemicolon::class,
-                    TWhileClosingBraceless::class,
+                    TWhileClosingBrace::class,
                 ],
             ],
         ];

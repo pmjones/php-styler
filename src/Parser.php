@@ -487,6 +487,21 @@ class Parser
     }
 
     /**
+     * @param class-string<AToken> $tokenClass
+     */
+    public function pushNesting(PhpToken $source, string $tokenClass) : void
+    {
+        /** @var AToken */
+        $token = new $tokenClass(
+            $source->id,
+            $source->text,
+            $source->line,
+            $source->pos,
+        );
+        $this->nesting[] = new Nesting($token);
+    }
+
+    /**
      * @param class-string $kind
      */
     public function atNesting(string $kind, string ...$kinds) : bool

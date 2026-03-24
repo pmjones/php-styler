@@ -26,7 +26,6 @@ class Percs30Format extends DeclarationFormat
      */
     public protected(set) array $rules = [
         Rule\RemoveBom::class => [],
-        Rule\AddControlBraces::class => [],
         // import cleanup
         Rule\NormalizeImports::class => [],
         Rule\AddMissingVisibility::class => [],
