@@ -1012,8 +1012,9 @@ class Parser
             usort(
                 $modifiers,
                 fn (PhpToken $a, PhpToken $b)
-                    => self::MODIFIER_PRIORITY[$a->id]
-                        <=> self::MODIFIER_PRIORITY[$b->id],
+                    => self::MODIFIER_PRIORITY[
+                        $a->id
+                    ] <=> self::MODIFIER_PRIORITY[$b->id],
             );
         }
 

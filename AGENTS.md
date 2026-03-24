@@ -18,7 +18,7 @@ PHP code formatter that parses source into custom token objects, applies transfo
 
 - Do not run `composer cs-fix` on in-flight code; fix style issues manually.
 - New test files at the `tests/` top level must be added to `php-styler.php` or `composer cs-check` won't cover them.
-- `src/Token/` has ~495 files — use grep/search, not directory listing.
+- `src/Token/` has ~507 files — use grep/search, not directory listing.
 
 ## Architecture
 
@@ -26,8 +26,8 @@ PHP code formatter that parses source into custom token objects, applies transfo
 
 `Styler::__invoke(string $code): string` runs 6 stages:
 
-1. **Parse** (`Parser`) — tokenizes PHP into `AToken` objects, tracking nesting and paren depth
-2. **TokenRules** — `TokenRule` implementations transform the token array (e.g., `AddControlBraces`, `OrderModifiers`)
+1. **Parse** (`Parser`) — tokenizes PHP into `AToken` objects, tracking nesting and paren depth. The Parser also handles modifier ordering and missing-visibility insertion directly during tokenization (via `handleModifier()`, `atClassBody()`, `hasPrevVisibility()`), and always adds control structure braces. These were previously separate TokenRule passes.
+2. **TokenRules** — `TokenRule` implementations transform the token array (e.g., `NormalizeImports`, `OrderTypes`)
 3. **Assemble** (`Assembler`) — groups tokens into `Line` objects by indent level
 4. **Split** (`Splitter`) — enforces line-length limits via prioritized split points; runs `normalizeIndents` twice (before and after expansion)
 5. **LineRules** — `LineRule` implementations transform lines (e.g., `RejoinOrphans`, `NormalizeTrailingCommas`)
@@ -35,8 +35,8 @@ PHP code formatter that parses source into custom token objects, applies transfo
 
 ### Key Directories
 
-- `src/Token/` — `AToken` subclasses in a flat directory (no subdirs). Includes whitespace tokens, split-point markers (`TSplit` subclasses with priority), and marker interfaces for classification.
-- `src/Rule/` — `TokenRule` and `LineRule` implementations. Configured in Format classes as `[RuleClass::class => [args]]`.
+- `src/Token/` — `AToken` subclasses in a flat directory (no subdirs, ~507 files). Includes whitespace tokens, split-point markers (`TSplit` subclasses with priority), and marker interfaces for classification.
+- `src/Rule/` — 11 rule implementations. TokenRules: `RemoveBom`, `NormalizeImports`, `OrderTypes`, `ConvertToYodaConditions`, `ConvertFromYodaConditions`, `MergeParenBracket`. LineRules: `RejoinOrphans`, `NormalizeTrailingCommas`, `NormalizeMemberSpacing`, `RemoveTrailingBlankLines`, `CollapseEmptyBody`. Configured in Format classes as `[RuleClass::class => [args]]`.
 - `src/Format/` — `Format` interface → `PlainFormat` (base with styles) → `DeclarationFormat` (opinionated defaults: next-line braces, lower keywords, default rules). Vendor formats in `src/Format/Vendor/` (`DoctrineFormat`, `Percs30Format`, `SymfonyFormat`).
 - `src/Command/` — CLI commands (`Check`, `Apply`, `Preview`) with corresponding `*Options` classes, dispatched via `AutoShell\Console` from `bin/php-styler`.
 
