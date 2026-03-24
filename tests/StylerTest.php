@@ -906,7 +906,7 @@ class StylerTest extends TestCase
                 <<<'EXPECT'
                 <?php class Foo
                 {
-                    const BAR = 1;
+                    public const BAR = 1;
                 }
 
                 EXPECT,
@@ -1731,9 +1731,9 @@ class StylerTest extends TestCase
                 <<<'EXPECT'
                 <?php class Foo
                 {
-                    const A = 1;
+                    public const A = 1;
 
-                    const B = 2;
+                    public const B = 2;
                 }
 
                 EXPECT,
@@ -1823,7 +1823,7 @@ class StylerTest extends TestCase
                 <<<'EXPECT'
                 <?php interface Foo
                 {
-                    const BAR = 1;
+                    public const BAR = 1;
                 }
 
                 EXPECT,
@@ -2060,7 +2060,7 @@ class StylerTest extends TestCase
                 <<<'EXPECT'
                 <?php class Foo
                 {
-                    var $prop;
+                    public $prop;
                 }
 
                 EXPECT,
@@ -2732,9 +2732,9 @@ class StylerTest extends TestCase
                 /** * Loggable contract. */
                 interface Loggable extends \Stringable
                 {
-                    const LOG_LEVEL_INFO = "info";
+                    public const LOG_LEVEL_INFO = "info";
 
-                    const LOG_LEVEL_ERROR = "error";
+                    public const LOG_LEVEL_ERROR = "error";
 
                     public function getLog() : string;
 
@@ -2810,7 +2810,7 @@ class StylerTest extends TestCase
 
                     case InternalError = 500;
 
-                    const DEFAULT = self::Ok;
+                    public const DEFAULT = self::Ok;
 
                     public function label() : string
                     {
@@ -2858,7 +2858,7 @@ class StylerTest extends TestCase
 
                     case Spades;
 
-                    const RED = [self::Hearts, self::Diamonds];
+                    public const RED = [self::Hearts, self::Diamonds];
 
                     public function color() : string
                     {

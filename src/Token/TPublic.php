@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
+use PhpStyler\Parser;
+use PhpToken;
+
 /**
  * Token: T_PUBLIC
  *
@@ -12,4 +15,8 @@ namespace PhpStyler\Token;
  */
 class TPublic extends AToken
 {
+    public static function parse(Parser $parser, PhpToken $source) : void
+    {
+        $parser->handleModifier();
+    }
 }

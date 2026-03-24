@@ -157,7 +157,7 @@ class OrderTypesTest extends TestCase
                 <?php
                 class Baz
                 {
-                    function foo() : ?self
+                    public function foo() : ?self
                     {
                     }
                 }

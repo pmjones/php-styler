@@ -28,9 +28,6 @@ class DeclarationFormat extends PlainFormat
         Rule\RemoveBom::class => [],
         // import cleanup
         Rule\NormalizeImports::class => [],
-        //
-        // visibility and modifiers
-        Rule\OrderModifiers::class => [],
         // types
         Rule\OrderTypes::class => [],
         // structural formatting

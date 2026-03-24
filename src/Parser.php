@@ -890,4 +890,144 @@ class Parser
             $source->pos,
         );
     }
+
+    /**
+     * @var array<int, int>
+     */
+    private const MODIFIER_PRIORITY = [
+        T_ABSTRACT => 1,
+        T_FINAL => 1,
+        T_PUBLIC => 2,
+        T_PROTECTED => 2,
+        T_PRIVATE => 2,
+        T_VAR => 2,
+        T_PUBLIC_SET => 3,
+        T_PROTECTED_SET => 3,
+        T_PRIVATE_SET => 3,
+        T_STATIC => 4,
+        T_READONLY => 5,
+    ];
+
+    public function atClassBody() : bool
+    {
+        return $this->atNesting(Token\TClasslikeOpeningBrace::class)
+            || $this->atNesting(
+                Token\TAnonymousOpeningBrace::class,
+                Token\TAnonymousClass::class,
+            );
+    }
+
+    public function hasPrevVisibility() : bool
+    {
+        for ($i = $this->parsedCount - 1; $i >= 0; $i --) {
+            $prev = $this->parsed[$i];
+
+            if (
+                $prev instanceof Token\TSpace
+                || $prev instanceof Token\TStatic
+                || $prev instanceof Token\TReadonly
+                || $prev instanceof Token\TAbstract
+                || $prev instanceof Token\TFinal
+            ) {
+                continue;
+            }
+
+            return $prev instanceof Token\TPublic
+                || $prev instanceof Token\TProtected
+                || $prev instanceof Token\TPrivate;
+        }
+
+        return false;
+    }
+
+    public function handleModifier() : void
+    {
+        $modifiers = [];
+        $i = $this->sourceOffset;
+
+        while ($i < $this->sourceCount) {
+            $source = $this->source[$i];
+
+            if ($source->is(T_WHITESPACE)) {
+                $i ++;
+                continue;
+            }
+
+            if (! isset(self::MODIFIER_PRIORITY[$source->id])) {
+                break;
+            }
+
+            $modifiers[] = $source;
+            $i ++;
+        }
+
+        foreach ($modifiers as $idx => $mod) {
+            if ($mod->id === T_VAR) {
+                $modifiers[$idx] = new PhpToken(
+                    T_PUBLIC,
+                    'public',
+                    $mod->line,
+                    $mod->pos,
+                );
+            }
+        }
+
+        $hasVisibility = false;
+
+        foreach ($modifiers as $mod) {
+            if ($mod->is([T_PUBLIC, T_PROTECTED, T_PRIVATE])) {
+                $hasVisibility = true;
+                break;
+            }
+        }
+
+        $peekOffset = $i;
+
+        while (
+            $peekOffset < $this->sourceCount
+            && $this->source[$peekOffset]->is(T_WHITESPACE)
+        ) {
+            $peekOffset ++;
+        }
+
+        $nextSource = $peekOffset < $this->sourceCount
+            ? $this->source[$peekOffset]
+            : null;
+
+        if (
+            $this->atClassBody()
+            && ! $hasVisibility
+            && $nextSource !== null
+            && ($nextSource->is(T_FUNCTION) || $nextSource->is(T_CONST))
+        ) {
+            $modifiers[] = new PhpToken(
+                T_PUBLIC,
+                'public',
+                $nextSource->line,
+                $nextSource->pos,
+            );
+        }
+
+        if (count($modifiers) > 1) {
+            usort(
+                $modifiers,
+                fn (PhpToken $a, PhpToken $b)
+                    => self::MODIFIER_PRIORITY[$a->id]
+                        <=> self::MODIFIER_PRIORITY[$b->id],
+            );
+        }
+
+        foreach ($modifiers as $idx => $mod) {
+            if ($idx > 0) {
+                $this->space();
+            }
+
+            /** @var class-string<AToken> $tokenClass */
+            $tokenClass = $this->getTokenClass($mod);
+            $this->add($mod, $tokenClass);
+        }
+
+        $this->space();
+        $this->sourceOffset = $i - 1;
+    }
 }

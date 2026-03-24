@@ -14,12 +14,7 @@ class OrderModifiersTest extends TestCase
      */
     public function test(string $code, string $expect) : void
     {
-        $styler = new Styler(
-            new DeclarationFormat(rules: [
-                OrderModifiers::class,
-                RemoveTrailingBlankLines::class,
-            ]),
-        );
+        $styler = new Styler(new DeclarationFormat());
         $actual = $styler($code);
         $this->assertSame($expect, $actual);
     }
@@ -327,6 +322,208 @@ class OrderModifiersTest extends TestCase
                     public function bar()
                     {
                     }
+                };
+
+                EXPECT,
+            ],
+            'three-modifiers-method' => [
+                <<<'CODE'
+                <?php class Foo { static final public function bar() {} }
+                CODE,
+                <<<'EXPECT'
+                <?php class Foo
+                {
+                    final public static function bar()
+                    {
+                    }
+                }
+
+                EXPECT,
+            ],
+            'three-modifiers-property' => [
+                <<<'CODE'
+                <?php class Foo { readonly static public string $bar; }
+                CODE,
+                <<<'EXPECT'
+                <?php class Foo
+                {
+                    public static readonly string $bar;
+                }
+
+                EXPECT,
+            ],
+            'final-static-method-adds-visibility' => [
+                <<<'CODE'
+                <?php class Foo { static final function bar() {} }
+                CODE,
+                <<<'EXPECT'
+                <?php class Foo
+                {
+                    final public static function bar()
+                    {
+                    }
+                }
+
+                EXPECT,
+            ],
+            'asymmetric-visibility-correct' => [
+                <<<'CODE'
+                <?php class Foo { public protected(set) string $bar; }
+                CODE,
+                <<<'EXPECT'
+                <?php class Foo
+                {
+                    public protected(set) string $bar;
+                }
+
+                EXPECT,
+            ],
+            'asymmetric-visibility-reorder' => [
+                <<<'CODE'
+                <?php class Foo { protected(set) public string $bar; }
+                CODE,
+                <<<'EXPECT'
+                <?php class Foo
+                {
+                    public protected(set) string $bar;
+                }
+
+                EXPECT,
+            ],
+            'set-visibility-with-multiple-modifiers' => [
+                <<<'CODE'
+                <?php class Foo { readonly private(set) public string $bar; }
+                CODE,
+                <<<'EXPECT'
+                <?php class Foo
+                {
+                    public private(set) readonly string $bar;
+                }
+
+                EXPECT,
+            ],
+            'promoted-param-reorder' => [
+                <<<'CODE'
+                <?php class Foo { public function __construct(readonly public string $name) {} }
+                CODE,
+                <<<'EXPECT'
+                <?php class Foo
+                {
+                    public function __construct(public readonly string $name)
+                    {
+                    }
+                }
+
+                EXPECT,
+            ],
+            'promoted-param-no-added-visibility' => [
+                <<<'CODE'
+                <?php class Foo { public function __construct(readonly string $name) {} }
+                CODE,
+                <<<'EXPECT'
+                <?php class Foo
+                {
+                    public function __construct(readonly string $name)
+                    {
+                    }
+                }
+
+                EXPECT,
+            ],
+            'readonly-class' => [
+                <<<'CODE'
+                <?php readonly class Foo { public $bar; }
+                CODE,
+                <<<'EXPECT'
+                <?php readonly class Foo
+                {
+                    public $bar;
+                }
+
+                EXPECT,
+            ],
+            'readonly-final-class-reorder' => [
+                <<<'CODE'
+                <?php readonly final class Foo {}
+                CODE,
+                <<<'EXPECT'
+                <?php final readonly class Foo
+                {
+                }
+
+                EXPECT,
+            ],
+            'top-level-const-unchanged' => [
+                <<<'CODE'
+                <?php const FOO = 1;
+                CODE,
+                <<<'EXPECT'
+                <?php const FOO = 1;
+
+                EXPECT,
+            ],
+            'enum-case-unchanged' => [
+                <<<'CODE'
+                <?php enum Foo { case Bar; }
+                CODE,
+                <<<'EXPECT'
+                <?php enum Foo
+                {
+                    case Bar;
+                }
+
+                EXPECT,
+            ],
+            'static-property-no-added-visibility' => [
+                <<<'CODE'
+                <?php class Foo { static $prop; }
+                CODE,
+                <<<'EXPECT'
+                <?php class Foo
+                {
+                    static $prop;
+                }
+
+                EXPECT,
+            ],
+            'readonly-property-no-added-visibility' => [
+                <<<'CODE'
+                <?php class Foo { readonly string $prop; }
+                CODE,
+                <<<'EXPECT'
+                <?php class Foo
+                {
+                    readonly string $prop;
+                }
+
+                EXPECT,
+            ],
+            'nested-anonymous-class-reorder' => [
+                <<<'CODE'
+                <?php class Foo { public function bar() { $x = new class { static public function baz() {} }; } }
+                CODE,
+                <<<'EXPECT'
+                <?php class Foo
+                {
+                    public function bar()
+                    {
+                        $x = new class {
+                            public static function baz()
+                            {
+                            }
+                        };
+                    }
+                }
+
+                EXPECT,
+            ],
+            'anonymous-class-const' => [
+                <<<'CODE'
+                <?php $x = new class { const BAR = 1; };
+                CODE,
+                <<<'EXPECT'
+                <?php $x = new class {
+                    public const BAR = 1;
                 };
 
                 EXPECT,

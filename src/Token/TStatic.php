@@ -45,6 +45,6 @@ class TStatic extends AToken
             return;
         }
 
-        $parser->add($source, self::class);
+        $parser->handleModifier();
     }
 }
