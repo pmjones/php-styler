@@ -8,7 +8,8 @@ PHP-Styler has been rewritten from the ground up; a custom token-based parser
 replaces the nikic/php-parser entirely. This eliminates the only non-trivial
 external dependency, fixes longstanding comment-handling bugs, introduces a
 declarative customization model, and adds parallel worker capability for
-increased performance.
+increased performance. The rewrite also allows a change from the BSD-3-Clause
+license to the MIT license.
 
 ### Breaking Changes
 

@@ -385,7 +385,7 @@ consecutive blank lines are compressed to one.
 extensive rule-based customization but is extremely complex internally.
 
 Other tools include
-[PHP_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer)/PHPCBF,
+[PHP_CodeSniffer](https://github.com/PHPCSStandards/PHP_CodeSniffer)/PHPCBF,
 [ECS](https://github.com/easy-coding-standard/easy-coding-standard), and
 [PHP_Beautifier](https://pear.php.net/package/PHP_Beautifier).
 
