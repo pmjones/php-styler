@@ -398,3 +398,4 @@ function (array $bar) : string {
 ## 0.1.0
 
 Initial release.
+
