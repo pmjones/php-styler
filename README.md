@@ -61,7 +61,6 @@ PHP-Styler uses a multi-stage pipeline to reformat PHP code:
    splitting lines that are too long by applying split points in priority
    order.
 
-The oldest PHP code fixer I know of is [PHP_Beautifier](https://pear.php.net/package/PHP_Beautifier).  Other newer fixers include [PHP_CodeSniffer](https://github.com/PHPCSStandards/PHP_CodeSniffer)/[PHPCBF](https://phpqa.io/projects/phpcbf.html) and [ECS](https://github.com/easy-coding-standard/easy-coding-standard).
 5. *Line Rules* make final adjustments (e.g., removing trailing blank lines).
 
 6. The lines are rendered back to text with the configured end-of-line string
