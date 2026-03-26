@@ -7,7 +7,7 @@
 PHP-Styler has been rewritten from the ground up; a custom token-based parser
 replaces the nikic/php-parser entirely. This eliminates the only non-trivial
 external dependency, fixes longstanding comment-handling bugs, introduces a
-declarative customization model, and adds parallel worker capabaility for
+declarative customization model, and adds parallel worker capability for
 increased performance.
 
 ### Breaking Changes
@@ -22,10 +22,10 @@ increased performance.
 
   ```php
   // old
-  new Config(styler: new Styler(lineLen: 88), files: ..., cache: ...);
+  new Config(styler: new Styler(lineLen: 84), files: ..., cache: ...);
 
   // new
-  new Config(files: ..., cache: ..., format: new PlainFormat(lineLen: 88));
+  new Config(files: ..., cache: ..., format: new PlainFormat(lineLen: 84));
   ```
 
 - **Customization model replaced.** Extending `Styler` and overriding `s*()`

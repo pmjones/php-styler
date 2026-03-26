@@ -10,7 +10,7 @@ class LineFactory
     public readonly string $indentStr;
 
     public function __construct(
-        public readonly ?int $lineLen = 88,
+        public readonly ?int $lineLen = 84,
         public readonly int $indentLen = 4,
         bool $indentTab = false,
     ) {

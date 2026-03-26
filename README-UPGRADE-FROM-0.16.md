@@ -31,7 +31,7 @@ use PhpStyler\Styler;
 return new Config(
     files: new Files(__DIR__ . '/src'),
     styler: new Styler(
-        lineLen: 88,
+        lineLen: 84,
         indentLen: 4,
     ),
     cache: __DIR__ . '/.php-styler.cache',
@@ -50,7 +50,7 @@ return new Config(
     files: new Files(__DIR__ . '/src'),
     cache: __DIR__ . '/.php-styler.cache',
     format: new PlainFormat(
-        lineLen: 88,
+        lineLen: 84,
         indentLen: 4,
     ),
 );
@@ -93,7 +93,7 @@ use PhpStyler\Styler;
 
 return new Config(
     files: new Files(__DIR__ . '/src'),
-    styler: new class (lineLen: 88) extends Styler {
+    styler: new class (lineLen: 84) extends Styler {
         // override brace placement
         protected function classBrace() : void
         {
@@ -130,7 +130,7 @@ return new Config(
     files: new Files(__DIR__ . '/src'),
     cache: __DIR__ . '/.php-styler.cache',
     format: new PlainFormat(
-        lineLen: 88,
+        lineLen: 84,
         classBracePosition: 'same_line',
         styles: [
             Token\TNot::class => ['spaceAfter' => false],
@@ -145,7 +145,7 @@ For full details on customization, see `README-CUSTOM.md`.
 
 | Old (0.16.0) | New |
 |---|---|
-| `new Styler(lineLen: 88)` | `new PlainFormat(lineLen: 88)` |
+| `new Styler(lineLen: 84)` | `new PlainFormat(lineLen: 84)` |
 | Override `classBrace()` | `classBracePosition: 'same_line'` or `'next_line'` |
 | Override `controlBrace()` | `controlBracePosition: 'same_line'` or `'next_line'` |
 | Override `modOperators()` | `styles: [Token\TXxx::class => [...]]` |
