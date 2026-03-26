@@ -70,11 +70,11 @@ class TForeachTest extends TTestCase
                     TForeachAs::class,
                     TVariable::class,
                     TForeachClosingParen::class,
-                    TOpeningBraceless::class,
+                    TForeachOpeningBrace::class,
                     TVariable::class,
                     TPostIncrement::class,
                     TSemicolon::class,
-                    TForeachClosingBraceless::class,
+                    TForeachClosingBrace::class,
                 ],
             ],
         ];

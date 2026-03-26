@@ -10,6 +10,6 @@ namespace PhpStyler\Token;
  *
  * Reference: https://www.php.net/manual/en/language.operators.assignment.php bitwise assignment operators
  */
-class TShiftLeftEqual extends T
+class TShiftLeftEqual extends AToken
 {
 }

@@ -13,7 +13,7 @@ use PhpToken;
  *
  * Reference: see T_PAAMAYIM_NEKUDOTAYIM below
  */
-class TDoubleColon extends T
+class TDoubleColon extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

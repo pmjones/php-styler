@@ -10,6 +10,6 @@ namespace PhpStyler\Token;
  *
  * Reference: https://www.php.net/manual/en/language.operators.comparison.php comparison operators
  */
-class TSpaceship extends T
+class TSpaceship extends AToken
 {
 }

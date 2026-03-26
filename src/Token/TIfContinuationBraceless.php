@@ -6,12 +6,11 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TIfContinuationBraceless extends T implements TClosingStructure
+class TIfContinuationBraceless extends AToken implements TClosingStructure
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
-        $parser->popNesting(TIf::class);
-        $parser->indentDecr();
-        $parser->add($source, self::class);
+        $synthetic = new \PhpToken($source->id, '}', $source->line, $source->pos);
+        $parser->parse($synthetic, TIfContinuationBrace::class);
     }
 }

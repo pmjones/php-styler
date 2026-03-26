@@ -13,19 +13,29 @@ use PhpToken;
  *
  * Reference: https://www.php.net/manual/en/language.namespaces.php namespaces (available as of PHP 8.0.0)
  */
-class TFullyQualifiedName extends T
+class TFullyQualifiedName extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
+        if (
+            $parser->atNesting(TUse::class)
+            || $parser->atNesting(TUseFunction::class)
+            || $parser->atNesting(TUseConst::class)
+        ) {
+            $source->text = ltrim($source->text, '\\');
+            $parser->add($source, TQualifiedName::class);
+            return;
+        }
+
         if (
             $parser->getNextSource()?->is('(')
             && ! $parser
                 ->getPrevParsed()
                 ?->is([
+                    T_NEW,
                     T_OBJECT_OPERATOR,
                     T_NULLSAFE_OBJECT_OPERATOR,
                     T_DOUBLE_COLON,
-                    T_NEW,
                 ])
             && ! $parser->atNesting(TAttribution::class)
         ) {

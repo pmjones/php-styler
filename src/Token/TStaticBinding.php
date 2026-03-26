@@ -3,6 +3,6 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-class TStaticBinding extends T
+class TStaticBinding extends AToken
 {
 }

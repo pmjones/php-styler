@@ -13,7 +13,7 @@ use PhpToken;
  *
  * Reference: https://www.php.net/manual/en/language.basic-syntax.phpmode.php text outside PHP
  */
-class TInlineHtml extends T
+class TInlineHtml extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

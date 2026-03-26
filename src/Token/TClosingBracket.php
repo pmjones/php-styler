@@ -6,14 +6,14 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TClosingBracket extends T
+class TClosingBracket extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->popTernaryNesting();
 
         if (! $parser->atNesting(TAttribution::class)) {
-            /** @var class-string<T> $closingBracketClass */
+            /** @var class-string<AToken> $closingBracketClass */
             $closingBracketClass = str_replace(
                 'Opening',
                 'Closing',

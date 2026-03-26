@@ -10,6 +10,6 @@ namespace PhpStyler\Token;
  *
  * Reference: https://www.php.net/manual/en/language.operators.comparison.php comparison operators
  */
-class TIsSmallerOrEqual extends T
+class TIsSmallerOrEqual extends AToken
 {
 }

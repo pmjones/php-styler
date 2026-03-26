@@ -1,5 +1,6 @@
 <?php
 const FOO = 'BAR';
-const BAZ = 'DIB', ZIM = 'GIR';
+const BAZ = 'DIB';
+const ZIM = 'GIR';
 
 $nonConstant = 'foo';

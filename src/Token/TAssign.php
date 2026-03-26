@@ -9,7 +9,7 @@ use PhpToken;
 /**
  * Syntax: =
  */
-class TAssign extends T
+class TAssign extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

@@ -6,7 +6,7 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TDoubleQuoteClosing extends T
+class TDoubleQuoteClosing extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

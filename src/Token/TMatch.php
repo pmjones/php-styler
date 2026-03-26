@@ -13,7 +13,7 @@ use PhpToken;
  *
  * Reference: https://www.php.net/manual/en/control-structures.match.php match (available as of PHP 8.0.0)
  */
-class TMatch extends T
+class TMatch extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

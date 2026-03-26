@@ -10,6 +10,6 @@ namespace PhpStyler\Token;
  *
  * Reference: https://www.php.net/manual/en/function.list.php list()
  */
-class TList extends T
+class TList extends AToken
 {
 }

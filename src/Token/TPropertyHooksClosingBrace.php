@@ -6,13 +6,17 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TPropertyHooksClosingBrace extends T implements TClosingStructure
+class TPropertyHooksClosingBrace extends AToken implements TClosingStructure
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->removeTrailingBlankLine();
         $parser->indentDecr();
 
-        $parser->closeNesting($source, self::class, TPropertyHooksOpeningBrace::class);
+        $parser->closeNesting(
+            $source,
+            self::class,
+            TPropertyHooksOpeningBrace::class,
+        );
     }
 }

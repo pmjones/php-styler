@@ -10,6 +10,6 @@ namespace PhpStyler\Token;
  *
  * Reference: https://www.php.net/manual/en/function.empty.php empty()
  */
-class TEmpty extends T
+class TEmpty extends AToken
 {
 }

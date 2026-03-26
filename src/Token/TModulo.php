@@ -3,6 +3,6 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-class TModulo extends T
+class TModulo extends AToken
 {
 }

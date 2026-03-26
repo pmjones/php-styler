@@ -6,7 +6,7 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TSpreadEllipsis extends T
+class TSpreadEllipsis extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

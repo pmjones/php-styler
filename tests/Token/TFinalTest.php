@@ -44,6 +44,7 @@ class TFinalTest extends TTestCase
                     TClassName::class,
                     TClassOpeningBrace::class,
                     TFinal::class,
+                    TPublic::class,
                     TFunction::class,
                     TFunctionName::class,
                     TParamsOpeningParen::class,

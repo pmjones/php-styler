@@ -4,15 +4,36 @@ declare(strict_types=1);
 namespace PhpStyler\Token;
 
 use PhpStyler\Parser;
-class TMemberDoubleColon extends T implements TSplittableFluent
+
+class TMemberDoubleColon extends AToken implements TSplittableFluent
 {
     public function splitBefore(Parser $parser) : ?TSplit
     {
         $next = $parser->getNextSource();
 
-        return $next?->is(T_VARIABLE)
-            || $next?->is('{')
-            ? new TSplitStaticMember(T::SYNTHETIC, '')
-            : new TSplitStaticMethodCall(T::SYNTHETIC, '');
+        if ($next?->is(T_VARIABLE) || $next?->is('{')) {
+            return new TSplitStaticMember(AToken::SYNTHETIC, '');
+        }
+
+        // Only split for static method calls (member name followed by '('),
+        // not for constants, enum cases, or ::class
+        $memberOffset = $parser->findNextNonWhitespaceOffset();
+
+        if ($memberOffset === null) {
+            return null;
+        }
+
+        $afterMemberOffset = $parser->findNextNonWhitespaceOffset(
+            $memberOffset + 1,
+        );
+
+        if (
+            $afterMemberOffset !== null
+            && $parser->getSourceAt($afterMemberOffset)->is('(')
+        ) {
+            return new TSplitStaticMethodCall(AToken::SYNTHETIC, '');
+        }
+
+        return null;
     }
 }

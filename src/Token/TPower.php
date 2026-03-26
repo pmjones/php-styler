@@ -10,6 +10,6 @@ namespace PhpStyler\Token;
  *
  * Reference: https://www.php.net/manual/en/language.operators.arithmetic.php arithmetic operators
  */
-class TPower extends T
+class TPower extends AToken
 {
 }

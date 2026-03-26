@@ -3,27 +3,23 @@ declare(strict_types=1);
 
 namespace PhpStyler\Rule;
 
-use PHPUnit\Framework\TestCase;
+use PhpStyler\Format\DeclarationFormat;
 use PhpStyler\Styler;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\TestCase;
 
 class RemoveTrailingBlankLinesTest extends TestCase
 {
-    private function assertStyled(
-        string $code,
-        string $expect,
-    ) : void
+    private function assertStyled(string $code, string $expect) : void
     {
         $styler = new Styler(
-            eol: "\n",
-            rules: [new RemoveTrailingBlankLines()],
+            new DeclarationFormat(rules: [RemoveTrailingBlankLines::class]),
         );
         $actual = $styler($code);
         $this->assertSame($expect, $actual);
     }
 
-    /**
-     * @dataProvider provide
-     */
+    #[DataProvider('provide')]
     public function test(string $code, string $expect) : void
     {
         $this->assertStyled($code, $expect);

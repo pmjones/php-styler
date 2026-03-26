@@ -3,6 +3,6 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-class TMethodCallName extends T
+class TMethodCallName extends AToken
 {
 }

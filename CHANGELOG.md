@@ -1,5 +1,161 @@
 # Change Log
 
+## 0.17.0
+
+### Overview
+
+PHP-Styler has been rewritten from the ground up; a custom token-based parser
+replaces the nikic/php-parser entirely. This eliminates the only non-trivial
+external dependency, fixes longstanding comment-handling bugs, introduces a
+declarative customization model, and adds parallel worker capability for
+increased performance. The rewrite also allows a change from the BSD-3-Clause
+license to the MIT license.
+
+### Breaking Changes
+
+- **PHP 8.4 required.** The minimum PHP version is now 8.4 (was 8.1).
+
+- **`nikic/php-parser` removed.** PHP-Styler now uses PHP's built-in `PhpToken`
+  lexer. The only runtime dependency is `pmjones/auto-shell` for the CLI.
+
+- **Configuration API changed.** `Config` no longer accepts a `Styler` instance.
+  It accepts a `Format` instance instead:
+
+  ```php
+  // old
+  new Config(styler: new Styler(lineLen: 84), files: ..., cache: ...);
+
+  // new
+  new Config(files: ..., cache: ..., format: new PlainFormat(lineLen: 84));
+  ```
+
+- **Customization model replaced.** Extending `Styler` and overriding `s*()`
+  methods is gone. All customization is now declarative through `Format` objects
+  using `styles`, `rules`, and `parseAs` arrays. See `UPGRADE.md` for migration
+  details.
+
+- **Default line length changed.** `DeclarationFormat` defaults to 84 characters
+  (was 88). `PlainFormat` retains the 88-character default.
+
+### New Features
+
+#### Format System
+
+A new `Format` interface replaces the monolithic `Styler`. Two built-in
+implementations:
+
+- **`PlainFormat`** — minimal formatting, no structural rules. Constructor
+  parameters for brace placement, keyword case, concatenation spacing, return
+  type colon spacing, and blank-line-after-block behavior.
+
+- **`DeclarationFormat`** — opinionated defaults for class files: next-line
+  braces, import sorting, type ordering, trailing-comma normalization, and more.
+
+#### Vendor Formats
+
+Pre-built formats approximating well-known coding standards:
+
+- **`Percs30Format`** — PER Coding Style 3.0 (120-char lines, collapsed empty
+  bodies, nowdoc conversion)
+- **`SymfonyFormat`** — Symfony (120-char lines, yoda conditions, no
+  concatenation spacing, single-quoted strings)
+- **`DoctrineFormat`** — Doctrine (120-char lines, non-yoda conditions, null-last
+  type ordering, blank lines before return/throw/yield)
+
+#### Rule System
+
+Eleven composable rules for structural transformations:
+
+- `RemoveBom` — remove UTF-8 byte-order mark
+- `NormalizeImports` — remove unused and sort `use` statements
+- `OrderTypes` — sort union/intersection types (configurable priority)
+- `MergeParenBracket` — merge `])` onto the same line
+- `RejoinOrphans` — rejoin orphaned tokens to the previous line
+- `NormalizeTrailingCommas` — add trailing commas on split lists, remove on single-line
+- `RemoveTrailingBlankLines` — remove trailing blank lines from blocks
+- `CollapseEmptyBody` — collapse empty class/function bodies to `{}`
+- `ConvertToYodaConditions` — `$x === null` to `null === $x`
+- `ConvertFromYodaConditions` — `null === $x` to `$x === null`
+- `NormalizeMemberSpacing` — normalize blank lines between class members
+
+#### Parse-As Substitutions
+
+Token-class replacements applied during parsing — convert `array()` to `[]`,
+`else if` to `elseif`, double-quoted strings to single-quoted, heredocs to
+nowdocs, `and`/`or` to `&&`/`||`, remove closing PHP tags, and more.
+
+### `diff` Command
+
+New command to show a unified diff of source files vs. their styled versions:
+
+```
+./vendor/bin/php-styler diff
+```
+
+#### Parallel Execution
+
+The `apply`, `check`, and `diff` commands now accept `--workers=N` (or `auto`)
+to process files in parallel using multiple child processes via `proc_open`.
+This requires no additional PHP extensions and works on both Linux and Windows.
+With `--workers=auto` on a 12-core machine, `check` runs ~4x faster on ~1000
+files.
+
+#### Docblock Parsing
+
+Basic docblock structure is now parsed, enabling future rules that operate on
+docblock content.
+
+### Improvements
+
+#### Comment Preservation
+
+The old AST-based approach could lose or misplace comments in several contexts:
+inside argument lists, at the end of switch cases, on concatenation lines, and
+as the sole content of blocks. The new token-based parser preserves all comments
+faithfully.
+
+#### Interpolated Strings
+
+The old parser reconstructed double-quoted strings from AST nodes, converting
+literal newlines to `\n` escape sequences. The new parser preserves the original
+string content, so heredocs and interpolated strings render as written.
+
+#### End-of-Line Comments
+
+End-of-line comments now stay on their original lines rather than being shifted
+to the next line.
+
+#### Vertical Spacing
+
+PHP-Styler now preserves up to one blank line between statements from the
+original source. The old version always compressed all vertical spacing.
+
+#### Line Splitting
+
+The split priority system has been refined. Priorities are now:
+
+1. Attributes
+2. Arrow functions (`fn() =>`)
+3. Commas
+4. Loose operators (`||`, `or`, `??`, ternary)
+5. Tight operators (`&&`, `and`, `.`)
+6. Fluent calls (`->`, `?->`, `::`)
+7. `for` semicolons
+
+#### Always-On Normalizations
+
+Several normalizations are now always applied regardless of format:
+
+- Control structures always receive braces
+- `exit`/`die` and non-anonymous `new` always receive parentheses
+- Empty parentheses removed from anonymous classes and attributes
+- Leading backslashes removed from imports
+- `!=` always used instead of `<>`
+- Long types converted to short (`boolean` → `bool`, `integer` → `int`, etc.)
+- Native function names lowercased
+- `use` imports, class constants, class properties, trait uses, and attributes
+  always expanded to one-per-line
+
 ## 0.16.0
 
 Previously, PHP-Styler converted `else if` to `elseif` as part of

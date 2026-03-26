@@ -3,6 +3,6 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-class TStaticMemberName extends T
+class TStaticMemberName extends AToken
 {
 }

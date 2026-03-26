@@ -14,7 +14,7 @@ use PhpToken;
  * Reference: https://www.php.net/manual/en/control-structures.foreach.php foreach,
  * https://www.php.net/manual/en/control-structures.alternative-syntax.php alternative syntax
  */
-class TEndforeach extends T implements TClosingStructure
+class TEndforeach extends AToken implements TClosingStructure
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

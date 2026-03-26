@@ -11,6 +11,6 @@ namespace PhpStyler\Token;
  *
  * Reference: https://www.php.net/manual/en/language.types.string.php#language.types.string.parsing.complex complex variable parsed syntax
  */
-class TStringVarname extends T
+class TStringVarname extends AToken
 {
 }

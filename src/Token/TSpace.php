@@ -3,6 +3,6 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-class TSpace extends T
+class TSpace extends AToken
 {
 }

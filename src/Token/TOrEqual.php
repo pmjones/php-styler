@@ -10,6 +10,6 @@ namespace PhpStyler\Token;
  *
  * Reference: https://www.php.net/manual/en/language.operators.assignment.php bitwise assignment operators
  */
-class TOrEqual extends T
+class TOrEqual extends AToken
 {
 }

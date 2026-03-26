@@ -6,7 +6,7 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TDoOpeningBrace extends T implements TOpeningStructure
+class TDoOpeningBrace extends AToken implements TOpeningStructure
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

@@ -6,12 +6,11 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TForeachClosingBraceless extends T implements TClosingStructure
+class TForeachClosingBraceless extends AToken implements TClosingStructure
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
-        $parser->popNesting(TForeach::class);
-        $parser->indentDecr();
-        $parser->add($source, self::class);
+        $synthetic = new \PhpToken($source->id, '}', $source->line, $source->pos);
+        $parser->parse($synthetic, TForeachClosingBrace::class);
     }
 }

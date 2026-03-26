@@ -27,6 +27,7 @@ class TStaticTest extends TTestCase
                     TClass::class,
                     TClassName::class,
                     TClassOpeningBrace::class,
+                    TPublic::class,
                     TStatic::class,
                     TFunction::class,
                     TFunctionName::class,

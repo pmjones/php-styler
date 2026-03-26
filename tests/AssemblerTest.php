@@ -31,6 +31,7 @@ use PhpStyler\Token\TDo;
 use PhpStyler\Token\TDocComment;
 use PhpStyler\Token\TDoContinuationBrace;
 use PhpStyler\Token\TDoOpeningBrace;
+use PhpStyler\Token\TDoWhileEndSemicolon;
 use PhpStyler\Token\TEcho;
 use PhpStyler\Token\TEchoEndSemicolon;
 use PhpStyler\Token\TEndif;
@@ -111,16 +112,17 @@ use PhpStyler\Token\TWhileClosingBrace;
 use PhpStyler\Token\TWhileClosingParen;
 use PhpStyler\Token\TWhileOpeningBrace;
 use PhpStyler\Token\TWhileOpeningParen;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class AssemblerTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @param array<int, array<int, class-string>> $expect
-     * @dataProvider provide
      */
+    #[DataProvider('provide')]
     public function test(string $code, array $expect) : void
     {
-        $styler = new Styler();
+        $styler = new Styler(new Format\DeclarationFormat());
         $tokens = $styler->parse($code);
         $lines = $styler->assemble($tokens);
         $lines = $styler->split($lines);
@@ -1007,7 +1009,10 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                     ],
                     [
                         TWhileClosingParen::class,
-                        TSemicolon::class,
+                        TDoWhileEndSemicolon::class,
+                    ],
+                    [
+                        TBlankLine::class,
                     ],
                 ],
             ],

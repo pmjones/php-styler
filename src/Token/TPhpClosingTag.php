@@ -13,7 +13,7 @@ use PhpToken;
  *
  * Reference: https://www.php.net/manual/en/language.basic-syntax.phpmode.php escaping from HTML
  */
-class TPhpClosingTag extends T
+class TPhpClosingTag extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

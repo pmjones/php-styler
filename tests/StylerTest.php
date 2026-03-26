@@ -4,7 +4,10 @@ declare(strict_types=1);
 namespace PhpStyler;
 
 use PhpStyler\Rule\NormalizeTrailingCommas;
+use PhpStyler\Rule\RejoinOrphans;
 use PhpStyler\Rule\RemoveTrailingBlankLines;
+use PhpStyler\TestFormat;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class StylerTest extends TestCase
@@ -14,14 +17,15 @@ class StylerTest extends TestCase
     protected function setUp() : void
     {
         $this->styler = new Styler(
-            eol: "\n",
-            rules: [new NormalizeTrailingCommas(), new RemoveTrailingBlankLines()],
+            new TestFormat(rules: [
+                RejoinOrphans::class,
+                NormalizeTrailingCommas::class,
+                RemoveTrailingBlankLines::class,
+            ]),
         );
     }
 
-    /**
-     * @dataProvider provide
-     */
+    #[DataProvider('provide')]
     public function test(string $code, string $expect) : void
     {
         $actual = ($this->styler)($code);
@@ -901,7 +905,7 @@ class StylerTest extends TestCase
                 <<<'EXPECT'
                 <?php class Foo
                 {
-                    const BAR = 1;
+                    public const BAR = 1;
                 }
 
                 EXPECT,
@@ -1000,7 +1004,9 @@ class StylerTest extends TestCase
                 <<<'EXPECT'
                 <?php class Foo
                 {
-                    use Bar, Baz;
+                    use Bar;
+
+                    use Baz;
                 }
 
                 EXPECT,
@@ -1054,7 +1060,8 @@ class StylerTest extends TestCase
                 <?php use Foo\{Bar, Baz};
                 CODE,
                 <<<'EXPECT'
-                <?php use Foo\{Bar, Baz};
+                <?php use Foo\Bar;
+                use Foo\Baz;
 
                 EXPECT,
             ],
@@ -1589,7 +1596,7 @@ class StylerTest extends TestCase
                 <<<'EXPECT'
                 <?php function f() : never
                 {
-                    exit;
+                    exit();
                 }
 
                 EXPECT,
@@ -1723,9 +1730,9 @@ class StylerTest extends TestCase
                 <<<'EXPECT'
                 <?php class Foo
                 {
-                    const A = 1;
+                    public const A = 1;
 
-                    const B = 2;
+                    public const B = 2;
                 }
 
                 EXPECT,
@@ -1815,7 +1822,7 @@ class StylerTest extends TestCase
                 <<<'EXPECT'
                 <?php interface Foo
                 {
-                    const BAR = 1;
+                    public const BAR = 1;
                 }
 
                 EXPECT,
@@ -1930,7 +1937,7 @@ class StylerTest extends TestCase
                 <?php exit;
                 CODE,
                 <<<'EXPECT'
-                <?php exit;
+                <?php exit();
 
                 EXPECT,
             ],
@@ -2052,7 +2059,7 @@ class StylerTest extends TestCase
                 <<<'EXPECT'
                 <?php class Foo
                 {
-                    var $prop;
+                    public $prop;
                 }
 
                 EXPECT,
@@ -2724,9 +2731,9 @@ class StylerTest extends TestCase
                 /** * Loggable contract. */
                 interface Loggable extends \Stringable
                 {
-                    const LOG_LEVEL_INFO = "info";
+                    public const LOG_LEVEL_INFO = "info";
 
-                    const LOG_LEVEL_ERROR = "error";
+                    public const LOG_LEVEL_ERROR = "error";
 
                     public function getLog() : string;
 
@@ -2802,7 +2809,7 @@ class StylerTest extends TestCase
 
                     case InternalError = 500;
 
-                    const DEFAULT = self::Ok;
+                    public const DEFAULT = self::Ok;
 
                     public function label() : string
                     {
@@ -2850,7 +2857,7 @@ class StylerTest extends TestCase
 
                     case Spades;
 
-                    const RED = [self::Hearts, self::Diamonds];
+                    public const RED = [self::Hearts, self::Diamonds];
 
                     public function color() : string
                     {

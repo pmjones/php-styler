@@ -48,10 +48,12 @@ class FilesTest extends TestCase
             'Check.php',
             'CheckOptions.php',
             'Command.php',
-            'Debug.php',
-            'DebugOptions.php',
+            'Diff.php',
+            'DiffOptions.php',
             'Preview.php',
             'PreviewOptions.php',
+            'Worker.php',
+            'WorkerOptions.php',
         ];
 
         foreach ($expect as $key => $val) {

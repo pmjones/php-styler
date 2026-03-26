@@ -4,8 +4,11 @@ declare(strict_types=1);
 namespace PhpStyler;
 
 use PhpStyler\Rule\NormalizeTrailingCommas;
+use PhpStyler\Rule\RejoinOrphans;
 use PhpStyler\Rule\RemoveTrailingBlankLines;
 use PhpStyler\Styler;
+use PhpStyler\TestFormat;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class SplitterTest extends TestCase
@@ -13,17 +16,20 @@ class SplitterTest extends TestCase
     private function assertSplit(string $code, string $expect, int $lineLen) : void
     {
         $styler = new Styler(
-            lineLen: $lineLen,
-            eol: "\n",
-            rules: [new NormalizeTrailingCommas(), new RemoveTrailingBlankLines()],
+            new TestFormat(
+                lineLen: $lineLen,
+                rules: [
+                    RejoinOrphans::class,
+                    NormalizeTrailingCommas::class,
+                    RemoveTrailingBlankLines::class,
+                ],
+            ),
         );
         $actual = $styler($code);
         $this->assertSame($expect, $actual);
     }
 
-    /**
-     * @dataProvider provide44
-     */
+    #[DataProvider('provide44')]
     public function test44(string $code, string $expect) : void
     {
         $this->assertSplit($code, $expect, 44);
@@ -138,18 +144,18 @@ class SplitterTest extends TestCase
                 EXPECT,
             ],
 
-            'comma-array-paren' => [
+            'comma-array-bracket' => [
                 <<<'CODE'
                 <?php
-                $x = array($longValueAlpha, $longValueBravo, $longValueCharlie);
+                $x = [$longValueAlpha, $longValueBravo, $longValueCharlie];
                 CODE,
                 <<<'EXPECT'
                 <?php
-                $x = array(
+                $x = [
                     $longValueAlpha,
                     $longValueBravo,
                     $longValueCharlie,
-                );
+                ];
 
                 EXPECT,
             ],
@@ -549,9 +555,7 @@ class SplitterTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider provide88
-     */
+    #[DataProvider('provide88')]
     public function test88(string $code, string $expect) : void
     {
         $this->assertSplit($code, $expect, 88);

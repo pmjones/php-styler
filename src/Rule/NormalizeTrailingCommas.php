@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace PhpStyler\Rule;
 
 use PhpStyler\Line;
-use PhpStyler\Token\T;
+use PhpStyler\Token\AToken;
 use PhpStyler\Token\TCommaSeparated;
 use PhpStyler\Token\TCommentary;
 use PhpStyler\Token\TSpace;
@@ -33,7 +33,9 @@ class NormalizeTrailingCommas implements LineRule
 
                 $commaClass = $token->commaClass();
 
-                $closerLineIndex = $tokenLineMap[spl_object_id($token->closingToken)]
+                $closerLineIndex = $tokenLineMap[
+                    spl_object_id($token->closingToken)
+                ]
                     ?? null;
 
                 if ($closerLineIndex === null) {
@@ -41,7 +43,11 @@ class NormalizeTrailingCommas implements LineRule
                 }
 
                 if ($closerLineIndex !== $lineIndex) {
-                    $this->ensureTrailingComma($lines, $closerLineIndex, $commaClass);
+                    $this->ensureTrailingComma(
+                        $lines,
+                        $closerLineIndex,
+                        $commaClass,
+                    );
                 } else {
                     $this->removeTrailingComma($lines, $lineIndex, $token);
                 }
@@ -70,7 +76,7 @@ class NormalizeTrailingCommas implements LineRule
 
     /**
      * @param Line[] $lines
-     * @param class-string<TSplittableComma&T> $commaClass
+     * @param class-string<TSplittableComma&AToken> $commaClass
      */
     private function ensureTrailingComma(
         array &$lines,
@@ -167,7 +173,7 @@ class NormalizeTrailingCommas implements LineRule
     private function removeTrailingComma(
         array &$lines,
         int $lineIndex,
-        T $opener,
+        AToken $opener,
     ) : void
     {
         if ($opener->closingToken === null) {

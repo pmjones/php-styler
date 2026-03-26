@@ -12,10 +12,10 @@ use PhpStyler\Parser;
  *
  * Reference: https://www.php.net/manual/en/language.operators.logical.php logical operators
  */
-class TBooleanOr extends T implements TSplittableOperator
+class TBooleanOr extends AToken implements TSplittableOperator
 {
     public function splitBefore(Parser $parser) : ?TSplit
     {
-        return new TSplitLooseOperator(T::SYNTHETIC, '');
+        return new TSplitLooseOperator(AToken::SYNTHETIC, '');
     }
 }

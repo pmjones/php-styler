@@ -20,32 +20,17 @@ You can try an online demonstration of PHP-Styler at <http://php-styler.com/>.
 
 ## Introduction
 
-PHP-Styler is a companion to [PHP-Parser](https://github.com/nikic/PHP-Parser) for reconstructing PHP code after it has been deconstructed into an abstract syntax tree.
+PHP-Styler is a PHP code formatter. It parses PHP source files into tokens,
+applies configurable formatting rules and styles, and reconstructs the code
+with consistent horizontal spacing, vertical spacing, and automatic line
+splitting.
 
-Whereas the PHP-Parser pretty printer does not have output customization as a main design goal, PHP-Styler does. (Please review [README-CUSTOM.md](./README-CUSTOM.md) for more information.)
-
-PHP-Styler is targeted toward declaration/definition files (class, interface, enum, trait) and script files.
-
-PHP-Styler is **not appropriate** for PHP-based templates, as it does not use the alternative control structures. Perhaps a future release will include a custom _AlternativeStyler_ for PHP-based templates using alternative control structures.
-
-### How It Works
-
-PHP-Styler uses a multiple-pass system to reformat and style PHP code:
-
-1. The _Parser_ converts the code to an abstract syntax tree of _Node_ elements, applying transformations from a _Visitor_ along the way.
-2. The _Printer_ flattens the _Node_ tree into a list of _Printable_ elements.
-3. The _Styler_ converts each _Printable_ back into text using a series of _Line_ objects; it applies horizontal spacing, vertical spacing, and line-splitting rules as it goes.
-
-> Note:
->
-> The _Parser_ additionally converts all uses of `else if` (with a space between
-> the keywords)  to `elseif` (without the space) as a pre-processing step; this
-> is both a practical and a stylistic matter. Cf. <https://github.com/pmjones/php-styler/issues/4>
-> and <https://github.com/nikic/PHP-Parser/issues/948>.
+PHP-Styler has no dependencies beyond PHP 8.4 itself (plus
+[AutoShell](https://github.com/pmjones/AutoShell) for the CLI).
 
 ### Design Goals
 
-- **Logic Preservation.** Restructured PHP code will continue to operate as before.
+- **Logic Preservation.** Reformatted PHP code will continue to operate as before.
 
 - **Horizontal and Vertical Spacing.** Automatic indenting and blank-line placement.
 
@@ -53,25 +38,40 @@ PHP-Styler uses a multiple-pass system to reformat and style PHP code:
 
 - **Diff-Friendly.** Default output should aid noise-reduction in diffs.
 
-- **Customization.** Change the output style of printable elements by extending the _Styler_ and overriding the method for each _Printable_ you want to change.
+- **Customizable Formats.** Change the output format using *Styles* (token-level spacing, line breaks, and casing), *Rules* (structural transformations), and *Parses* (token replacements).
 
-- **Comment Preservation.** As much as the PHP-Parser will allow.
+- **Comment Preservation.** End-of-line comments stay on their original lines; block comments are preserved in place.
+
+### How It Works
+
+PHP-Styler uses a multi-stage pipeline to reformat PHP code:
+
+1. The *Parser* tokenizes PHP source code using PHP's built-in `PhpToken`
+   lexer, then maps each token to a context-specific `AToken` subclass and
+   applies *Styles* (spacing, line breaks, casing) from the *Format*.
+
+2. *Token Rules* transform the token stream — reordering modifiers, expanding
+   imports, adding braces to control structures, normalizing trailing commas,
+   etc.
+
+3. The *Assembler* converts the styled token stream into a list of *Line*
+   objects, tracking indentation depth.
+
+4. The *Splitter* checks each line against the configured maximum line length,
+   splitting lines that are too long by applying split points in priority
+   order.
+
+The oldest PHP code fixer I know of is [PHP_Beautifier](https://pear.php.net/package/PHP_Beautifier).  Other newer fixers include [PHP_CodeSniffer](https://github.com/PHPCSStandards/PHP_CodeSniffer)/[PHPCBF](https://phpqa.io/projects/phpcbf.html) and [ECS](https://github.com/easy-coding-standard/easy-coding-standard).
+5. *Line Rules* make final adjustments (e.g., removing trailing blank lines).
+
+6. The lines are rendered back to text with the configured end-of-line string
+   and indentation.
 
 ### Styling Examples
 
-See the [Examples](./tests/Examples) directory for a nearly-exhaustive series of styling examples, or try the safe `preview` command on one of your own source files.
-
-### Comparable Offerings
-
-[PHP CS Fixer](https://cs.symfony.com/) is the category leader for PHP here. It offers a huge range of customization options to fix (or not fix) specific elements of PHP code. However, it is extremely complex, and can be difficult to modify.
-
-The oldest PHP code fixer I know of is [PHP_Beautifier](https://pear.php.net/package/PHP_Beautifier).  Other newer fixers include [PHP_CodeSniffer](https://github.com/PHPCSStandards/PHP_CodeSniffer)/[PHPCBF](https://phpqa.io/projects/phpcbf.html) and [ECS](https://github.com/easy-coding-standard/easy-coding-standard).
-
-The [Black](https://black.readthedocs.io/en/stable/) formatter for Python appears to have similar design goals and operation as PHP-Styler.
-
-Likewise, [dart_style](https://pub.dev/packages/dart_style) is a formatter for Dart. (Read more about how it works [here](https://journal.stuffwithstuff.com/2015/09/08/the-hardest-program-ive-ever-written/).)
-
-Finally, there is a [PHP plugin for Prettier](https://github.com/prettier/plugin-php) that uses JavaScript to replace all PHP code formatting using its own rules.
+See the [Examples](./tests/Examples) directory for a nearly-exhaustive series
+of styling examples, or try the safe `preview` command on one of your own
+source files.
 
 ## Usage
 
@@ -89,182 +89,239 @@ Copy the default `php-styler.php` config file to your package root:
 cp ./vendor/pmjones/php-styler/resources/php-styler.php .
 ```
 
-### Preview Formatting
+### Commands
 
-Safely preview how PHP-Styler will restructure a source PHP file:
+#### `preview`
+
+Safely preview how PHP-Styler will reformat a source file (does not modify
+anything):
 
 ```
 ./vendor/bin/php-styler preview ./src/My/Source/File.php
 ```
 
-Pass `-c` or `--config` to specify an alternative config file:
+#### `apply`
 
-```
-./vendor/bin/php-styler preview \
-    -c /path/to/other/php-styler.php \
-    ./src/My/Source/File.php
-```
-
-Pass `--debug-parser` to dump the PHP-Parser AST _Node_ objects into the preview, and/or `--debug-printer` to dump the PHP-Styler array of _Printable_ objects into the preview.
-
-### Apply Formatting
-
-Apply PHP-Styler to all files identified in the config file, overwriting them with new formatting:
+Apply formatting to all files identified in the config file, overwriting them
+in place:
 
 ```
 ./vendor/bin/php-styler apply
 ```
 
-Pass `-c` or `--config` to specify an alternative config file:
-
-```
-./vendor/bin/php-styler apply -c /path/to/other/php-styler.php
-```
-
-PHP-Styler will only apply formatting to files with a modification time *later* than the cache file. To force formatting on all files regardless of modification time, pass the `--force` option:
+PHP-Styler will only apply formatting to files with a modification time *later*
+than the cache file. Use `--force` to format all files regardless:
 
 ```
 ./vendor/bin/php-styler apply --force
 ```
 
-Changing the config file after `apply` will invalidate the cache, implying `--force` and thereby causing PHP-Styler to apply formatting to all files.
-
-To explictly apply styling to paths other than those specified in the config file, pass a space-separated list of files and directories as arguments:
+To apply styling to specific paths instead of those in the config file, pass
+them as arguments:
 
 ```
 ./vendor/bin/php-styler apply ./src/File.php ./resources/
 ```
 
-When explicitly specifying paths, the cache time is not honored, just as if the `--force` option had been passed.
+When paths are given explicitly, the cache time is not honored.
 
-### Check Formatting
+#### `check`
 
-Check all files identified in the config file to see if they need formatting, without changing any of the files:
+Check all configured files to see if they need formatting, without changing
+anything:
 
 ```
 ./vendor/bin/php-styler check
 ```
 
-Pass `-c` or `--config` to specify an alternative config file:
+Returns exit code `0` if all files are OK, `1` if any need styling.
+
+#### `diff`
+
+Show a unified diff of source files vs. their styled versions:
 
 ```
-./vendor/bin/php-styler apply -c /path/to/other/php-styler.php
+./vendor/bin/php-styler diff
 ```
 
-If all files look OK, the return code is `0`. If one or more files look like they need to be styled, the return code is `1`.
+#### Options
+
+##### Config
+
+All commands accept `-c` or `--config` to specify an alternative config file:
+
+```
+./vendor/bin/php-styler preview -c /path/to/other/php-styler.php ./src/File.php
+```
+
+##### Parallel Execution
+
+The `apply`, `check`, and `diff` commands accept `-w` or `--workers` to process
+files in parallel using multiple child processes:
+
+```
+./vendor/bin/php-styler apply --workers=4
+./vendor/bin/php-styler check --workers=auto
+```
+
+- `--workers=1` (the default) processes each file in sequence, one by one.
+
+- `--workers=N` splits the file list into `N` chunks and processes them in parallel
+  across `N` workers.
+
+- `--workers=auto` detects the number of CPU cores and uses that as the worker
+  count.
+
+Parallel execution requires no additional PHP extensions — it uses `proc_open`
+and works on both Linux and Windows. For small file counts (fewer than 8), the
+sequential path is used regardless of the `--workers` setting.
 
 ### Configuration
 
-The default `php-styler.php` config file looks like this:
+The `php-styler.php` config file returns a `Config` object:
 
 ```php
 <?php
 use PhpStyler\Config;
 use PhpStyler\Files;
-use PhpStyler\Styler;
+use PhpStyler\Format\DeclarationFormat;
 
 return new Config(
     files: new Files(__DIR__ . '/src'),
-    styler: new Styler(),
     cache: __DIR__ . '/.php-styler.cache',
-);
-```
-
-- `iterable $files` is any `iterable` of file names to which PHP-Styler should be applied. (If the PHP-Styler _Files_ object is not sufficient for your purposes, try [Symfony Finder](https://symfony.com/doc/current/components/finder.html) instead.)
-
-- `Styler $styler` is any instance of _Styler_, whether the default one or any custom extended class.
-
-- `?string $cache` is the name of the cache file; the last-modified time of this file indicates the last time PHP-Styler was applied. If `$cache` is null then no caching will be used.
-
-The _Styler_ instance can be configured with these constructor parameters:
-
-- `string $eol = "\n"`: The end-of-line string to use.
-
-- `int $lineLen = 88`: The maximum line length before PHP-Styler tries to split lines automatically.
-
-- `int $indentLen = 4`: The indent length in spaces.
-
-- `bool $indentTab = false`: When `true`, use a tab (`"\t"`) for indenting instead of spaces; `$indentLen` is used as the tab width when calculating line length.
-
-Here is a _Styler_ configured for Windows line endings on 120-character lines with tab indentation at 8 spaces wide:
-
-```php
-<?php
-use PhpStyler\Config;
-use PhpStyler\Files;
-use PhpStyler\Styler;
-
-return new Config(
-    files: new Files(__DIR__ . '\\src'),
-    styler: new Styler(
-        eol: "\r\n",
-        lineLen: 120,
-        indentLen: 8,
-        indentTab: true,
+    format: new DeclarationFormat(
+        lineLen: 84,
+        indentLen: 4,
+        indentTab: false,
+        eol: "\n",
     ),
 );
 ```
 
-### Avoiding Blame
+- `iterable $files` — any iterable of file paths. The `Files` class accepts
+  directories and individual file paths, recursively finding `.php` files. (If
+  `Files` is insufficient, try
+  [Symfony Finder](https://symfony.com/doc/current/components/finder.html).)
 
-Applying PHP-Styler to your source files for the first time may introduce a volume of changes that will make it difficult to track authorship via `git blame`.
+- `?string $cache` — path to the cache file; `null` disables caching.
 
-You can tell Git to overlook this initial reformatting pass by adding a `.git-blame-ignore-revs` file to your repository, and adding the full hash of the initial reformatting commit to it.
+- `Format $format` — a `Format` instance controlling all styling behavior
+  (defaults to `PlainFormat` when not present).
 
-1. Issue `php-styler apply` to your codebase and commit the changes.
-2. Issue `git log` and copy the full 40-character hash string from that commit.
-3. Create and commit a file named `.git-blame-ignore-revs` with that hash pasted into it, perhaps with a comment.
-4. Configure Git to look at that file: `git config blame.ignoreRevsFile .git-blame-ignore-revs`
+Changing the config file will invalidate the cache, causing all files to be
+reformatted.
 
-Voila: `git blame` will now ignore that file when looking at authorship history, as will the GitHub `blame` user interface.
+### Formats
 
-(See also <https://git-scm.com/docs/git-blame#Documentation/git-blame.txt---ignore-revs-fileltfilegt>.)
+A *Format* defines three categories of configuration:
+
+- **Styles** — per-token spacing (`spaceBefore`, `spaceAfter`), line breaks
+  (`lineBreakBefore`, `lineBreakAfter`), blank lines (`blankLineBefore`,
+  `blankLineAfter`), and text casing (`case`).
+
+- **Rules** — structural transformations applied to the token stream (e.g.,
+  `NormalizeImports`, `NormalizeTrailingCommas`).
+
+- **Parses** — token-class replacements (e.g., converting `else if` to
+  `elseif`, double-quoted strings to single-quoted, `array()` to `[]`).
+
+Plus the basic layout settings:
+
+| Setting | Default (PlainFormat) | Description |
+|---|---|---|
+| `eol` | `"\n"` | End-of-line string |
+| `lineLen` | 84 | Maximum line length before splitting |
+| `indentLen` | 4 | Indent width in spaces |
+| `indentTab` | false | Use tabs instead of spaces |
+
+#### PlainFormat
+
+The base format. Defines styles for all token types with sensible defaults:
+same-line braces, 88-character lines, no structural rules. Use this for
+minimal formatting with no code transformations.
+
+```php
+use PhpStyler\Format\PlainFormat;
+
+return new Config(
+    files: new Files(__DIR__ . '/src'),
+    cache: __DIR__ . '/.php-styler.cache',
+    format: new PlainFormat(lineLen: 120),
+);
+```
+
+`PlainFormat` accepts these additional constructor parameters for common
+adjustments:
+
+| Parameter | Default | Values |
+|---|---|---|
+| `classBracePosition` | `'same_line'` | `'same_line'`, `'next_line'` |
+| `functionBracePosition` | `'same_line'` | `'same_line'`, `'next_line'` |
+| `controlBracePosition` | `'same_line'` | `'same_line'`, `'next_line'` |
+| `keywordCase` | `'lower'` | `'lower'`, `'upper'` |
+| `concatenationSpacing` | `true` | `true` (spaces around `.`), `false` (no spaces) |
+| `returnTypeColonSpacing` | `true` | `true` (` : Type`), `false` (`: Type`) |
+| `blankLineAfterBlock` | `false` | `true` (blank line after closing braces/semicolons), `false` |
+
+You can also pass `styles`, `rules`, and `parseAs` arrays to override or extend
+the defaults.
+
+#### DeclarationFormat
+
+Extends `PlainFormat` with opinionated defaults for declaration files (classes,
+interfaces, enums, traits):
+
+- Class and function braces on the next line
+- Control braces on the same line
+- Blank line after blocks
+- Rules for import ordering, modifier ordering, type ordering, brace addition,
+  trailing comma normalization, and more
+
+#### Vendor Formats
+
+Pre-built formats that approximate well-known coding standards:
+
+- **`Percs30Format`** — PER Coding Style 3.0
+- **`DoctrineFormat`** — Doctrine coding standard
+- **`SymfonyFormat`** — Symfony coding standard
+
+```php
+use PhpStyler\Format\Vendor\Percs30Format;
+
+return new Config(
+    files: new Files(__DIR__ . '/src'),
+    format: new Percs30Format(),
+    cache: __DIR__ . '/.php-styler.cache',
+);
+```
+
+All vendor formats accept `styles` and `rules` arrays to override their
+defaults.
 
 ### Line Splitting
 
 #### Automatic
 
-At first, PHP-Styler builds each statement/instruction as a single line. If that line is "too long" (88 characters by default) the _Styler_ reconstructs the code by trying to split it across multiple lines. It does so by applying one or more rules in order:
+PHP-Styler builds each statement as a single line first. If that line exceeds
+the maximum length, the *Splitter* reconstructs it by applying split points in
+priority order:
 
-- `implements` are split at commas.
-- Arrow functions are split at `=>`.
-- String concatenations are split at dots.
-- Conditions are split at parentheses.
-- Precedence-indicating parentheses are split.
-- Ternaries are split at `?`, `:`, and `?:`.
-- Boolean `||` and logical `or` operators are split.
-- Boolean `&&` and logical `and` operators are split.
-- Array elements are split at commas.
-- Argument lists are split at commas.
-- Coalesce `??` operators are split.
-- Member operators are split at `::`, `::$`, `->` and `?->`.
-- Parameter lists are split at commas.
+1. Attributes
+2. Arrow functions (`fn() =>`)
+3. Commas (arguments, parameters, arrays, `implements`, `match` arms)
+4. Loose operators (`||`, `or`, `??`, ternary `?`/`:`)
+5. Tight operators (`&&`, `and`, `.`)
+6. Fluent calls (`->`, `?->`, `::`, `::$`)
+7. `for` semicolons
 
-If the first rule does not make the line short enough, the second rule is applied in addition, then the third, and so on.
+If the first applicable rule does not make the line short enough, the next rule
+is applied in addition, and so on.
 
-Finally, PHP-Styler will add one blank line of margin around each line that has been automatically split.
-
-The line splitting logic attempts to be idiomatic; that is, PHP-Styler tries to take common line-splitting idioms into account, rather than making weighted calculations of elements. Reference projects were:
-
-- cakephp/database
-- laminas/laminas-mvc
-- nette/application
-- qiq/qiq
-- sapien/sapien
-- slim/slim
-- symfony/http-foundation
+Split lines receive one blank line of margin above and below.
 
 #### Annotated
 
-Sometimes you may want to force lines to split expansively across lines. For example, a deeply-nested array with many elements per nesting level may look better when every element is on its own line, regardless of how short that element may be.
-
-To force expansiveness of line splitting, add the annotation `@php-styler-expansive` above the line in question. For example, this array ...
-
-```php
-$foo = ['bar', 'baz', 'dib'];
-```
-
-... would normally be presented on a single line. However, when adding the `@php-styler-expansive` annotation ...
+Force a statement to split expansively by adding `@php-styler-expansive`:
 
 ```php
 /** @php-styler-expansive */
@@ -275,187 +332,65 @@ $foo = [
 ];
 ```
 
-... the elements are made to split expansively across lines.
+Recognized forms: `/** @php-styler-expansive */`, `// @php-styler-expansive`,
+and multi-line docblocks.
 
-PHP-Styler recognizes the one-liner annotations `/** @php-styler-expansive */` and `// @php-styler-expansive`, as well as typical docblock annotations:
+### Avoiding Blame
 
-```php
-/**
- * @php-styler-expansive
- */
-```
+After the initial reformatting, add the commit hash to a `.git-blame-ignore-revs`
+file:
 
-### Fixing Mangled Output
+1. Run `php-styler apply` and commit the changes.
+2. Copy the full commit hash from `git log`.
+3. Create `.git-blame-ignore-revs` with that hash.
+4. Configure Git: `git config blame.ignoreRevsFile .git-blame-ignore-revs`
 
-If PHP-Styler generates "ugly" or "weird" or "mangled" results, it might be a problem with how PHP-Styler works; please submit an issue.
-
-Alternatively, it may be an indication that the source line(s) should be refactored. Here are some suggestions:
-
-- Increase the maximum line length. The default length is 88 characters (10% more than the commonly-suggested 80-character length to allow some wiggle room). However, some codebases tend to prefer much longer lines, so increasing the line length may result in more-agreeable line splits.
-
-- Remove comments from within parameter and argument lists.
-
-- Move inline comments from the beginning or end of the line to *above* the line.
-
-- Break up a single long line into multiple shorter lines.
-
-- Assign closures embedded in arguments to separate variables.
-
-- Assign function calls embedded in concatenations to separate variables.
-
-- Assign multiple ternaries embedded in a single statement to separate variables.
-
-Unfortunately, because of how PHP-Parser handles double-quoted strings with interpolated variables ("encapsed" strings), newlines and some other whitespace characters (`\f`, `\r`, `\t`, `\v`) render as a literal `\n` (etc.) within the string. For example, this code ...
-
-```php
-$sql = "
-    SELECT *
-    FROM {$table}
-";
-```
-
-... will be rendered as ...
-
-```php
-$sql = "\n    SELECT TABLE_NAME\n    FROM {$table}\n";
-```
-
-... which is not what I would expect to see.
-
-Until there is a change to how PHP-Parser works, the only solution I can think of is to use heredoc syntax instead. Then this code ...
-
-```php
-$sql = <<<SQL
-    SELECT *
-    FROM {$table}
-SQL;
-```
-
-... should be rendered as provided.
-
+GitHub's blame UI will also respect this file.
 
 ## Caveats
 
 ### Line Length
 
-Even after all line splitting rules are applied, a line may still end up "too long." For example, if a line has a very long quoted string, PHP-Styler cannot split it for you.
+Even after all splitting rules are applied, a line may still be too long — for
+example, if it contains a very long string literal.
 
-### Reordering Code
+### Things PHP-Styler Does Not Do
 
-PHP-Styler does not:
-
-- Regroup `use` imports
-- Split comment lines
+- Split or reformat comment lines
 - Split quoted strings, heredocs, or nowdocs
 
 ### Horizontal Alignment
 
-PHP-Styler will de-align lines like this ...
+PHP-Styler will de-align horizontally-aligned code:
 
-```
-$foo = 'longish'    . $bar
+```php
+// before
+$foo = 'longish'    . $bar;
 $foo = 'short'      . $bar;
 $foo = 'muchlonger' . $bar;
-```
 
-... into this:
-
-```
-$foo = 'longish' . $bar
+// after
+$foo = 'longish' . $bar;
 $foo = 'short' . $bar;
 $foo = 'muchlonger' . $bar;
 ```
 
 ### Vertical Spacing
 
-PHP-Styler will compress lines like this ...
+PHP-Styler preserves up to one blank line between statements. Multiple
+consecutive blank lines are compressed to one.
 
-```
-$foo = 'longish' . $bar
+### Comparable Offerings
 
-$foo = 'short' . $bar;
+[PHP CS Fixer](https://cs.symfony.com/) is the category leader. It offers
+extensive rule-based customization but is extremely complex internally.
 
-$foo = 'muchlonger' . $bar;
-```
+Other tools include
+[PHP_CodeSniffer](https://github.com/PHPCSStandards/PHP_CodeSniffer)/PHPCBF,
+[ECS](https://github.com/easy-coding-standard/easy-coding-standard), and
+[PHP_Beautifier](https://pear.php.net/package/PHP_Beautifier).
 
-... into this:
-
-```
-$foo = 'longish' . $bar
-$foo = 'short' . $bar;
-$foo = 'muchlonger' . $bar;
-```
-
-If you want extra vertical spacing, add a comment; comment lines get one blank line above them.
-
-```
-// baseline foo
-$foo = 'longish' . $bar
-
-// reassign foo
-$foo = 'short' . $bar;
-
-// reassign foo again
-$foo = 'muchlonger' . $bar;
-```
-
-### Comment Lines
-
-Comment lines are always "attached" to their following line, not their previous line. For example, the `// no break` comment that looks attached to its previous line ...
-
-```php
-    case 'foo':
-        $foo = 'bar';
-        // no break
-
-    case 'baz':
-        $baz = 'dib'
-        break;
-```
-
-... will be presented as if attached to its *following* line, like so:
-
-```php
-    case 'foo':
-        $foo = 'bar';
-
-    // no break
-    case 'baz':
-        $baz = 'dib'
-        break;
-```
-
-This is a limitation of PHP-Parser; becasue it does not currently report the column number on which nodes start and end, PHP-Styler cannot divine how the comment should be attached.
-
-Further, some comments may disappear entirely when they are the only element within certain structures:
-
-```php
-switch ($foo) {
-    /* this comment disappears */
-}
-
-function bar(/* this comment disappears */)
-{
-}
-
-$fb = 'veryVeryLongStringToConcatenate' // this comment disappears
-    . 'veryVeryLongStringToConcatenate' // this comment disappears
-    . 'veryVeryLongStringToConcatenate' // this comment disappears
-    . 'veryVeryLongStringToConcatenate' // this comment disappears
-    . 'veryVeryLongStringToConcatenate';
-```
-
-This appears to be an issue with PHP-Parser itself; cf. <https://github.com/nikic/PHP-Parser/issues/950>.
-
-Likewise, a final inline comment on a final array element may disappear:
-
-```php
-$map = [
-    34 => 'quot', // quotation mark
-    38 => 'amp', // ampersand
-    60 => 'lt', // less-than sign
-    62 => 'gt', // greater-than sign -- this comment disappears
-];
-```
-
-This too appears to be an issue with PHP-Parser iself.
+Formatters in other languages with similar goals:
+[Black](https://black.readthedocs.io/en/stable/) (Python),
+[dart_style](https://pub.dev/packages/dart_style) (Dart), and the
+[Prettier PHP plugin](https://github.com/prettier/plugin-php).

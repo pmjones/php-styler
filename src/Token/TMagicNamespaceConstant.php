@@ -10,6 +10,6 @@ namespace PhpStyler\Token;
  *
  * Reference: https://www.php.net/manual/en/language.namespaces.php namespaces
  */
-class TMagicNamespaceConstant extends T
+class TMagicNamespaceConstant extends AToken
 {
 }

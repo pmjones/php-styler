@@ -14,7 +14,7 @@ use PhpToken;
  * Reference: https://www.php.net/manual/en/control-structures.switch.php switch,
  * https://www.php.net/manual/en/control-structures.alternative-syntax.php alternative syntax
  */
-class TEndswitch extends T implements TClosingStructure
+class TEndswitch extends AToken implements TClosingStructure
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
@@ -34,6 +34,9 @@ class TEndswitch extends T implements TClosingStructure
         $parser->popNesting(TSwitchColon::class);
         $parser->popNesting(TSwitch::class);
         $parser->indentDecr();
-        $parser->add($source, $closesCase ? TEndswitchAfterCase::class : self::class);
+        $parser->add(
+            $source,
+            $closesCase ? TEndswitchAfterCase::class : self::class,
+        );
     }
 }

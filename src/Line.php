@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
-use PhpStyler\Token\T;
+use PhpStyler\Token\AToken;
 use PhpStyler\Token\TBlankLine;
 use PhpStyler\Token\TCommentary;
 use PhpStyler\Token\TConditionOpener;
@@ -18,7 +18,7 @@ class Line
     public bool $forceExpand = false;
 
     /**
-     * @param T[] $tokens
+     * @param AToken[] $tokens
      */
     public function __construct(
         private array $tokens = [],
@@ -37,7 +37,7 @@ class Line
         $this->tokens = array_values($tokens);
     }
 
-    public function addToken(T $token) : void
+    public function addToken(AToken $token) : void
     {
         $this->tokens[] = $token;
     }
@@ -48,16 +48,11 @@ class Line
     }
 
     /**
-     * @return T[]
+     * @return AToken[]
      */
     public function getTokens() : array
     {
         return $this->tokens;
-    }
-
-    public function rejoinOrphanBefore() : bool
-    {
-        return $this->firstContentToken()?->rejoinOrphanBefore() ?? false;
     }
 
     public function continuationIndent() : int
@@ -66,7 +61,7 @@ class Line
     }
 
     /**
-     * @return array<int, T>
+     * @return array<int, AToken>
      */
     public function getTopLevelTokens() : array
     {
@@ -92,7 +87,7 @@ class Line
         return $result;
     }
 
-    public function findTokenIndex(T $target) : ?int
+    public function findTokenIndex(AToken $target) : ?int
     {
         foreach ($this->tokens as $i => $token) {
             if ($token === $target) {
@@ -108,7 +103,7 @@ class Line
         return $this->firstContentToken() instanceof TBlankLine;
     }
 
-    public function firstContentToken() : ?T
+    public function firstContentToken() : ?AToken
     {
         foreach ($this->tokens as $token) {
             if (! $token instanceof TSplit && ! $token instanceof TSpace) {
@@ -119,12 +114,14 @@ class Line
         return null;
     }
 
-    public function lastContentToken() : ?T
+    public function lastContentToken() : ?AToken
     {
         $i = $this->lastContentIndex();
         $token = $this->tokens[$i] ?? null;
 
-        return ($token instanceof TSplit || $token instanceof TSpace) ? null : $token;
+        return ($token instanceof TSplit || $token instanceof TSpace)
+            ? null
+            : $token;
     }
 
     public function lastContentIndex() : int
@@ -237,7 +234,8 @@ class Line
                 // For actual commas (not semicolons), skip if the only remaining
                 // content after the comma is an inline comment
                 if (
-                    $token->text === ',' && $topLevel[$lastIndex] instanceof TCommentary
+                    $token->text === ','
+                    && $topLevel[$lastIndex] instanceof TCommentary
                 ) {
                     continue;
                 }
@@ -255,7 +253,10 @@ class Line
     public function findConditionPair() : ?array
     {
         foreach ($this->tokens as $i => $token) {
-            if (! $token instanceof TConditionOpener || $token->closingToken === null) {
+            if (
+                ! $token instanceof TConditionOpener
+                || $token->closingToken === null
+            ) {
                 continue;
             }
 
@@ -291,7 +292,10 @@ class Line
 
             $closerPos = $this->findTokenIndex($token->closingToken);
 
-            if ($closerPos === null || (! $this->forceExpand && $closerPos - $i <= 1)) {
+            if (
+                $closerPos === null
+                || (! $this->forceExpand && $closerPos - $i <= 1)
+            ) {
                 continue;
             }
 

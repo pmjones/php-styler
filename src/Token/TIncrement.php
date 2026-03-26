@@ -13,7 +13,7 @@ use PhpToken;
  *
  * Reference: https://www.php.net/manual/en/language.operators.increment.php incrementing/decrementing operators
  */
-class TIncrement extends T
+class TIncrement extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

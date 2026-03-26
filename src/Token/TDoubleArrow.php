@@ -13,7 +13,7 @@ use PhpToken;
  *
  * Reference: https://www.php.net/manual/en/language.types.array.php#language.types.array.syntax array syntax
  */
-class TDoubleArrow extends T
+class TDoubleArrow extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

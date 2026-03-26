@@ -3,6 +3,6 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-class TIterable extends T
+class TIterable extends AToken
 {
 }

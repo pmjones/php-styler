@@ -13,7 +13,7 @@ use PhpToken;
  *
  * Reference: https://www.php.net/manual/en/language.functions.php functions
  */
-class TFunction extends T
+class TFunction extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
@@ -26,6 +26,14 @@ class TFunction extends T
         if ($parser->getNextSource()?->is('(')) {
             $parser->parse($source, TAnonymousFunction::class);
             return;
+        }
+
+        if ($parser->atClassBody() && ! $parser->hasPrevVisibility()) {
+            $parser->add(
+                new PhpToken(T_PUBLIC, 'public', $source->line, $source->pos),
+                TPublic::class,
+            );
+            $parser->space();
         }
 
         $parser->addNesting($source, self::class);

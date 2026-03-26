@@ -12,10 +12,10 @@ use PhpStyler\Parser;
  *
  * Reference: https://www.php.net/manual/en/language.operators.comparison.php#language.operators.comparison.coalesce comparison operators
  */
-class TCoalesce extends T implements TSplittableOperator
+class TCoalesce extends AToken implements TSplittableOperator
 {
     public function splitBefore(Parser $parser) : ?TSplit
     {
-        return new TSplitLooseOperator(T::SYNTHETIC, '');
+        return new TSplitLooseOperator(AToken::SYNTHETIC, '');
     }
 }

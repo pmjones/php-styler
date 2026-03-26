@@ -10,6 +10,6 @@ namespace PhpStyler\Token;
  *
  * Reference: https://www.php.net/manual/en/function.unset.php unset()
  */
-class TUnset extends T
+class TUnset extends AToken
 {
 }

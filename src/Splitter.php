@@ -3,14 +3,16 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
-use PhpStyler\Token\T;
+use PhpStyler\Token\AToken;
 use PhpStyler\Token\TCommentary;
 use PhpStyler\Token\TSpace;
 use PhpStyler\Token\TSplit;
+
 class Splitter
 {
-    public function __construct(private LineFactory $lineFactory = new LineFactory())
-    {
+    public function __construct(
+        private LineFactory $lineFactory = new LineFactory(),
+    ) {
     }
 
     /**
@@ -32,7 +34,7 @@ class Splitter
         $result = $this->expandOpenerCloser($result);
         $result = $this->normalizeIndents($result);
         $result = $this->expandCommas($result);
-        return $this->rejoinOrphans($result);
+        return $result;
     }
 
     /**
@@ -109,7 +111,7 @@ class Splitter
     }
 
     /**
-     * @param T[] $tokens
+     * @param AToken[] $tokens
      */
     private function positionPastTrailingComment(array $tokens, int $pos) : int
     {
@@ -117,7 +119,9 @@ class Splitter
 
         while (
             isset($tokens[$peek])
-            && ($tokens[$peek] instanceof TSplit || $tokens[$peek] instanceof TSpace)
+            && (
+                $tokens[$peek] instanceof TSplit || $tokens[$peek] instanceof TSpace
+            )
         ) {
             $peek ++;
         }
@@ -259,7 +263,9 @@ class Splitter
                 continue;
             }
 
-            $closerLineIndex = $tokenLineMap[spl_object_id($lastToken->closingToken)]
+            $closerLineIndex = $tokenLineMap[
+                spl_object_id($lastToken->closingToken)
+            ]
                 ?? null;
 
             if ($closerLineIndex === null || $closerLineIndex <= $lineIndex + 1) {
@@ -288,32 +294,6 @@ class Splitter
         }
 
         return $lines;
-    }
-
-    /**
-     * @param Line[] $lines
-     * @return Line[]
-     */
-    private function rejoinOrphans(array $lines) : array
-    {
-        for ($i = 0; $i < count($lines) - 1; $i ++) {
-            $line = $lines[$i];
-            $tokens = $line->getTokens();
-            $nextLine = $lines[$i + 1];
-
-            if ($line->contentTokenCount() === 1 && $nextLine->rejoinOrphanBefore()) {
-                $merged = array_merge(
-                    $tokens,
-                    [new TSpace(T_WHITESPACE, ' ')],
-                    $nextLine->getTokens(),
-                );
-                $lines[$i] = $this->lineFactory->new($merged, $line->indent);
-                array_splice($lines, $i + 1, 1);
-                continue;
-            }
-        }
-
-        return array_values($lines);
     }
 
     /**
@@ -358,7 +338,10 @@ class Splitter
      * @param array<int, int> $tokenLineMap
      * @return ?array{type: string, args: array{int, int, int}}
      */
-    private function findOpenerCloserSplit(array $lines, array $tokenLineMap) : ?array
+    private function findOpenerCloserSplit(
+        array $lines,
+        array $tokenLineMap,
+    ) : ?array
     {
         foreach ($lines as $lineIndex => $line) {
             $tokens = $line->getTokens();
@@ -368,7 +351,9 @@ class Splitter
                     continue;
                 }
 
-                $closerLineIndex = $tokenLineMap[spl_object_id($token->closingToken)]
+                $closerLineIndex = $tokenLineMap[
+                    spl_object_id($token->closingToken)
+                ]
                     ?? null;
 
                 if ($closerLineIndex === null || $closerLineIndex === $lineIndex) {
@@ -391,7 +376,11 @@ class Splitter
                 if ($closerTokenIndex !== null && $closerTokenIndex > 0) {
                     return [
                         'type' => 'closer',
-                        'args' => [$closerLineIndex, $closerTokenIndex, $line->indent],
+                        'args' => [
+                            $closerLineIndex,
+                            $closerTokenIndex,
+                            $line->indent,
+                        ],
                     ];
                 }
             }
@@ -459,13 +448,23 @@ class Splitter
         $before = array_slice($tokens, 0, $closerTokenIndex);
         $after = array_slice($tokens, $closerTokenIndex);
 
-        $lines[$closerLineIndex] = $this->lineFactory->new($before, $line->indent);
-        array_splice(
-            $lines,
-            $closerLineIndex + 1,
-            0,
-            [$this->lineFactory->new($after, $openerIndent)],
-        );
+        $beforeLine = $this->lineFactory->new($before, $line->indent);
+
+        if ($beforeLine->contentTokenCount() === 0 && $closerLineIndex > 0) {
+            $prev = $lines[$closerLineIndex - 1];
+            $lines[$closerLineIndex - 1] = $this->lineFactory
+                ->new(array_merge($prev->getTokens(), $before), $prev->indent);
+            $lines[$closerLineIndex] = $this->lineFactory
+                ->new($after, $openerIndent);
+        } else {
+            $lines[$closerLineIndex] = $beforeLine;
+            array_splice(
+                $lines,
+                $closerLineIndex + 1,
+                0,
+                [$this->lineFactory->new($after, $openerIndent)],
+            );
+        }
 
         return array_values($lines);
     }
@@ -501,7 +500,9 @@ class Splitter
                     continue;
                 }
 
-                $closerLineIndex = $tokenLineMap[spl_object_id($token->closingToken)]
+                $closerLineIndex = $tokenLineMap[
+                    spl_object_id($token->closingToken)
+                ]
                     ?? null;
 
                 if ($closerLineIndex === null || $closerLineIndex <= $lineIndex) {

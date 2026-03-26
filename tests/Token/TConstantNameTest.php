@@ -38,6 +38,7 @@ class TConstantNameTest extends TTestCase
                     TClass::class,
                     TClassName::class,
                     TClassOpeningBrace::class,
+                    TPublic::class,
                     TConst::class,
                     TConstantName::class,
                     TAssignConst::class,

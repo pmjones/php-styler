@@ -6,7 +6,7 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TComma extends T
+class TComma extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
@@ -21,10 +21,15 @@ class TComma extends T
             TUseVariablesOpeningParen::class => TUseVariablesComma::class,
             TDeclareDirectivesOpeningParen::class => TDeclareDirectivesComma::class,
             TUse::class, TUseFunction::class, TUseConst::class => TUseComma::class,
+            TConst::class => TConstComma::class,
             TUseTrait::class => TUseTraitComma::class,
             TUseTraitOpeningBrace::class => TInsteadofComma::class,
             TGlobal::class => TGlobalComma::class,
             TStaticVar::class => TStaticComma::class,
+            TClassOpeningBrace::class,
+            TEnumOpeningBrace::class,
+            TInterfaceOpeningBrace::class,
+            TTraitOpeningBrace::class => TPropertyComma::class,
             TClass::class, TEnum::class => TImplementsComma::class,
             TInterface::class => TExtendsComma::class,
             TAttribute::class, TInlineAttribute::class => TAttributeComma::class,

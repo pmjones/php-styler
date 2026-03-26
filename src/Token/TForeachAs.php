@@ -3,6 +3,6 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-class TForeachAs extends T
+class TForeachAs extends AToken
 {
 }

@@ -3,6 +3,6 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-class TFirstClassCallableEllipsis extends T
+class TFirstClassCallableEllipsis extends AToken
 {
 }

@@ -13,7 +13,7 @@ use PhpToken;
  *
  * Reference: https://www.php.net/manual/en/language.namespaces.php namespaces
  */
-class TNamespaceSeparator extends T
+class TNamespaceSeparator extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

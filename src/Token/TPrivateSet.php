@@ -3,6 +3,13 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-class TPrivateSet extends T
+use PhpStyler\Parser;
+use PhpToken;
+
+class TPrivateSet extends AToken
 {
+    public static function parse(Parser $parser, PhpToken $source) : void
+    {
+        $parser->handleModifier();
+    }
 }

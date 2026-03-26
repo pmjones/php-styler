@@ -7,7 +7,7 @@ use PhpStyler\Exception;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TContinuationBraceless extends T
+class TContinuationBraceless extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

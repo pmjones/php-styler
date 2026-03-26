@@ -6,7 +6,7 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TIfOpeningParen extends T implements TConditionOpener
+class TIfOpeningParen extends AToken implements TConditionOpener
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

@@ -29,6 +29,20 @@ class TBoolTest extends TTestCase
                     TFunctionClosingBrace::class,
                 ],
             ],
+            'boolean-param' => [
+                '<?php function foo(boolean $x) {}',
+                [
+                    TPhpOpeningTagInline::class,
+                    TFunction::class,
+                    TFunctionName::class,
+                    TParamsOpeningParen::class,
+                    TBool::class,
+                    TVariable::class,
+                    TParamsClosingParen::class,
+                    TFunctionOpeningBrace::class,
+                    TFunctionClosingBrace::class,
+                ],
+            ],
         ];
     }
 }

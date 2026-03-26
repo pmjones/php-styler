@@ -10,6 +10,6 @@ namespace PhpStyler\Token;
  *
  * Reference: https://www.php.net/manual/en/language.types.type-juggling.php#language.types.typecasting type-casting
  */
-class TUnsetCast extends T
+class TUnsetCast extends AToken
 {
 }

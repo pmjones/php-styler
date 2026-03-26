@@ -14,7 +14,7 @@ use PhpToken;
  * Reference: https://www.php.net/manual/en/language.basic-syntax.comments.php comments
  *
  */
-class TComment extends T
+class TComment extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

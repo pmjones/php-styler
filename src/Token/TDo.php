@@ -13,7 +13,7 @@ use PhpToken;
  *
  * Reference: https://www.php.net/manual/en/control-structures.do.while.php do..while
  */
-class TDo extends T
+class TDo extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

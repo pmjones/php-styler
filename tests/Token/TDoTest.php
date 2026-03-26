@@ -27,7 +27,7 @@ class TDoTest extends TTestCase
                     TWhileOpeningParen::class,
                     TVariable::class,
                     TWhileClosingParen::class,
-                    TSemicolon::class,
+                    TDoWhileEndSemicolon::class,
                 ],
             ],
         ];

@@ -29,6 +29,41 @@ class TIntTest extends TTestCase
                     TFunctionClosingBrace::class,
                 ],
             ],
+            'integer-param' => [
+                <<<'CODE'
+                <?php
+                function foo(integer $bar) {}
+                CODE,
+                [
+                    TPhpOpeningTag::class,
+                    TFunction::class,
+                    TFunctionName::class,
+                    TParamsOpeningParen::class,
+                    TInt::class,
+                    TVariable::class,
+                    TParamsClosingParen::class,
+                    TFunctionOpeningBrace::class,
+                    TFunctionClosingBrace::class,
+                ],
+            ],
+            'integer-return' => [
+                <<<'CODE'
+                <?php
+                function foo() : integer {
+                }
+                CODE,
+                [
+                    TPhpOpeningTag::class,
+                    TFunction::class,
+                    TFunctionName::class,
+                    TParamsOpeningParen::class,
+                    TParamsClosingParen::class,
+                    TReturnColon::class,
+                    TInt::class,
+                    TFunctionOpeningBrace::class,
+                    TFunctionClosingBrace::class,
+                ],
+            ],
         ];
     }
 }

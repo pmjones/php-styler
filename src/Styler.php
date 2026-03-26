@@ -3,9 +3,11 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
+use PhpStyler\Format\Format;
+use PhpStyler\Format\PlainFormat;
 use PhpStyler\Rule\LineRule;
 use PhpStyler\Rule\TokenRule;
-use PhpStyler\Style\StyleLocator;
+use PhpStyler\Token\AToken;
 
 class Styler
 {
@@ -27,32 +29,23 @@ class Styler
 
     public static function fromConfig(Config $config) : self
     {
-        return new self(
-            eol: $config->eol,
-            lineLen: $config->lineLen,
-            indentLen: $config->indentLen,
-            indentTab: $config->indentTab,
-            rules: $config->rules,
-        );
+        return new self($config->format);
     }
 
-    /**
-     * @param array<TokenRule|LineRule> $rules
-     */
-    public function __construct(
-        private string $eol = "\n",
-        int $lineLen = 88,
-        int $indentLen = 4,
-        bool $indentTab = false,
-        ?StyleLocator $styles = null,
-        array $rules = [],
-    ) {
-        $lineFactory = new LineFactory($lineLen, $indentLen, $indentTab);
-        $this->parser = new Parser($styles);
+    public function __construct(private Format $format = new PlainFormat())
+    {
+        $lineFactory = new LineFactory(
+            $format->lineLen,
+            $format->indentLen,
+            $format->indentTab,
+        );
+        $this->parser = new Parser($format);
         $this->assembler = new Assembler($lineFactory);
         $this->splitter = new Splitter($lineFactory);
 
-        foreach ($rules as $rule) {
+        foreach ($format->rules as $class => $args) {
+            $rule = new $class(...$args);
+
             if ($rule instanceof TokenRule) {
                 $this->tokenRules[] = $rule;
             }
@@ -84,11 +77,11 @@ class Styler
             $rendered[] = $line->render();
         }
 
-        return implode($this->eol, $rendered) . $this->eol;
+        return implode($this->format->eol, $rendered) . $this->format->eol;
     }
 
     /**
-     * @return Token\T[]
+     * @return AToken[]
      */
     public function parse(string $code) : array
     {
@@ -96,8 +89,8 @@ class Styler
     }
 
     /**
-     * @param Token\T[] $tokens
-     * @return Token\T[]
+     * @param AToken[] $tokens
+     * @return AToken[]
      */
     private function applyTokenRules(array $tokens) : array
     {
@@ -109,7 +102,7 @@ class Styler
     }
 
     /**
-     * @param Token\T[] $tokens
+     * @param AToken[] $tokens
      * @return Line[]
      */
     public function assemble(array $tokens) : array

@@ -6,7 +6,7 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TEncapsedArrayElementClosingBracket extends T
+class TEncapsedArrayElementClosingBracket extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

@@ -13,7 +13,7 @@ use PhpToken;
  *
  * Reference: https://www.php.net/manual/en/language.variables.php variables
  */
-class TVariable extends T
+class TVariable extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

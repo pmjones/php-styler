@@ -10,6 +10,6 @@ namespace PhpStyler\Token;
  *
  * Reference: https://www.php.net/manual/en/function.isset.php isset()
  */
-class TIsset extends T
+class TIsset extends AToken
 {
 }

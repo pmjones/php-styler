@@ -13,7 +13,7 @@ use PhpToken;
  *
  * Reference: https://www.php.net/manual/en/control-structures.if.php if
  */
-class TIf extends T
+class TIf extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

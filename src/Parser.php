@@ -3,23 +3,17 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
-use PhpStyler\Style\Style;
-use PhpStyler\Style\StyleLocator;
+use PhpStyler\Format\Format;
+use PhpStyler\Format\PlainFormat;
 use PhpStyler\Token;
-use PhpStyler\Token\T;
-use PhpStyler\Token\TIndentDecrement;
-use PhpStyler\Token\TIndentIncrement;
-use PhpStyler\Token\TLineBreak;
-use PhpStyler\Token\TSpace;
-use PhpStyler\Token\TSplit;
-use PhpStyler\Token\TSplittableComma;
+use PhpStyler\Token\AToken;
 use PhpToken;
 
 class Parser
 {
-    private StyleLocator $styles;
+    private Format $format;
 
-    public const PARSE_CLASS = [
+    public const TOKEN_CLASS = [
         '$' => Token\TDollar::class,
         '"' => Token\TDoubleQuote::class,
         '(' => Token\TOpeningParen::class,
@@ -91,7 +85,7 @@ class Parser
     protected array $nesting = [];
 
     /**
-     * @var array<int, T>
+     * @var array<int, AToken>
      */
     protected array $parsed = [];
 
@@ -110,23 +104,33 @@ class Parser
 
     protected int $parenDepth = 0;
 
-    public ?TSplit $lastSplit = null;
+    public ?Token\TSplit $lastSplit = null;
 
-    public function __construct(?StyleLocator $styles = null)
+    /** @var array<class-string<AToken>, Style> */
+    private array $styles = [];
+
+    public function __construct(?Format $format = null)
     {
-        $this->styles = $styles ?? new StyleLocator();
+        $this->format = $format ?? new PlainFormat();
     }
 
     /**
-     * @param class-string<T> $class
+     * @param class-string<AToken> $class
      */
     public function getStyle(string $class) : Style
     {
-        return $this->styles->get($class);
+        if (isset($this->styles[$class])) {
+            return $this->styles[$class];
+        }
+
+        $args = $this->format->styles[$class] ?? [];
+        $style = new Style(...$args);
+        $this->styles[$class] = $style;
+        return $style;
     }
 
     /**
-     * @return array<int, T>
+     * @return array<int, AToken>
      */
     public function __invoke(string $code) : array
     {
@@ -150,9 +154,9 @@ class Parser
         ) {
             $source = $this->source[$this->sourceOffset];
 
-            /** @var class-string<T> $parseClass */
-            $parseClass = $this->getParseClass($source);
-            $this->parse($source, $parseClass);
+            /** @var class-string<AToken> $tokenClass */
+            $tokenClass = $this->getTokenClass($source);
+            $this->parse($source, $tokenClass);
         }
 
         $this->removePrevWhitespace();
@@ -160,38 +164,40 @@ class Parser
         return $this->parsed;
     }
 
-    protected function getParseClass(PhpToken $source) : string
+    protected function getTokenClass(PhpToken $source) : string
     {
-        if ($source instanceof T) {
+        if ($source instanceof AToken) {
             return get_class($source);
         }
 
         $name = (string) $source->getTokenName();
 
         if (str_starts_with($name, 'T_')) {
-            return self::PARSE_CLASS[$name]
-                ?? "\\PhpStyler\\Token\\"
+            return self::TOKEN_CLASS[$name]
+                ?? 'PhpStyler\\Token\\'
                     . str_replace('_', '', ucwords(strtolower($name), '_'));
         }
 
-        return self::PARSE_CLASS[$source->text];
+        return self::TOKEN_CLASS[$source->text];
     }
 
     /**
-     * @param class-string<T> $parseClass
+     * @param class-string<AToken> $tokenClass
      */
-    public function parse(PhpToken $source, string $parseClass) : void
+    public function parse(PhpToken $source, string $tokenClass) : void
     {
-        $parseClass::parse($this, $source);
+        /** @var AToken $tokenClass */
+        $tokenClass = $this->format->parseAs[$tokenClass] ?? $tokenClass;
+        $tokenClass::parse($this, $source);
     }
 
     /**
-     * @param class-string<T> $parseClass
+     * @param class-string<AToken> $tokenClass
      */
-    public function add(PhpToken $source, string $parseClass) : T
+    public function add(PhpToken $source, string $tokenClass) : AToken
     {
         $this->removePrevWhitespace();
-        $style = $this->getStyle($parseClass);
+        $style = $this->getStyle($tokenClass);
 
         if ($style->spaceBefore === true) {
             $this->space();
@@ -205,8 +211,8 @@ class Parser
             $this->lineBreak();
         }
 
-        /** @var T $token */
-        $token = new $parseClass(
+        /** @var AToken $token */
+        $token = new $tokenClass(
             $source->id,
             $source->text,
             $source->line,
@@ -227,7 +233,7 @@ class Parser
             $this->parenDepth ++;
         }
 
-        if ($token instanceof TSplittableComma && $this->nesting !== []) {
+        if ($token instanceof Token\TSplittableComma && $this->nesting !== []) {
             $this->nesting[array_key_last($this->nesting)]->argCount ++;
         }
 
@@ -259,13 +265,13 @@ class Parser
         return $token;
     }
 
-    public function addSplit(TSplit $split) : void
+    public function addSplit(Token\TSplit $split) : void
     {
         $this->emit($split);
         $this->lastSplit = $split;
     }
 
-    public function replaceLastSplit(TSplit $replacement) : void
+    public function replaceLastSplit(Token\TSplit $replacement) : void
     {
         for ($i = $this->parsedCount - 1; $i >= 0; $i --) {
             if ($this->parsed[$i] === $this->lastSplit) {
@@ -278,20 +284,22 @@ class Parser
 
     public function indentIncr() : void
     {
-        $this->emit(new TIndentIncrement(T::SYNTHETIC, ''));
+        $this->emit(new Token\TIndentIncrement(AToken::SYNTHETIC, ''));
     }
 
     public function indentDecr() : void
     {
         if (
             $this->parsedCount > 0
-            && $this->parsed[$this->parsedCount - 1] instanceof TIndentIncrement
+            && $this->parsed[
+                $this->parsedCount - 1
+            ] instanceof Token\TIndentIncrement
         ) {
             $this->removeParsedAt($this->parsedCount - 1);
             return;
         }
 
-        $this->emit(new TIndentDecrement(T::SYNTHETIC, ''));
+        $this->emit(new Token\TIndentDecrement(AToken::SYNTHETIC, ''));
     }
 
     public function blankLine() : void
@@ -306,7 +314,12 @@ class Parser
 
         $this->removeTrailingSpaces();
 
-        if (! $this->hasPrevLineBreakToken()) {
+        if (
+            ! (
+                $this->parsedCount > 0
+                && $this->parsed[$this->parsedCount - 1] instanceof Token\TLineBreak
+            )
+        ) {
             $commentIndex = $this->findUpcomingInlineComment();
 
             if ($commentIndex !== null) {
@@ -328,7 +341,7 @@ class Parser
                 return;
             }
 
-            if (! $this->parsed[$i]->is([T::SYNTHETIC, T_WHITESPACE])) {
+            if (! $this->parsed[$i]->is([AToken::SYNTHETIC, T_WHITESPACE])) {
                 return;
             }
         }
@@ -338,7 +351,10 @@ class Parser
     {
         $this->removeTrailingSpaces();
 
-        if ($this->hasPrevLineBreakToken()) {
+        if (
+            $this->parsedCount > 0
+            && $this->parsed[$this->parsedCount - 1] instanceof Token\TLineBreak
+        ) {
             return;
         }
 
@@ -349,7 +365,7 @@ class Parser
             return;
         }
 
-        $this->emit(new TLineBreak(T_WHITESPACE, "\n"));
+        $this->emit(new Token\TLineBreak(T_WHITESPACE, "\n"));
     }
 
     private function removeTrailingSpaces() : void
@@ -357,18 +373,12 @@ class Parser
         for ($i = $this->parsedCount - 1; $i >= 0; $i --) {
             $prev = $this->parsed[$i];
 
-            if ($prev instanceof TSpace) {
+            if ($prev instanceof Token\TSpace) {
                 $this->removeParsedAt($i);
-            } elseif (! $prev->is([T::SYNTHETIC, T_WHITESPACE])) {
+            } elseif (! $prev->is([AToken::SYNTHETIC, T_WHITESPACE])) {
                 break;
             }
         }
-    }
-
-    private function hasPrevLineBreakToken() : bool
-    {
-        return $this->parsedCount > 0
-            && $this->parsed[$this->parsedCount - 1] instanceof TLineBreak;
     }
 
     public function space() : void
@@ -380,23 +390,23 @@ class Parser
         for ($i = $this->parsedCount - 1; $i >= 0; $i --) {
             $prev = $this->parsed[$i];
 
-            if ($prev instanceof TSpace) {
+            if ($prev instanceof Token\TSpace) {
                 return;
             }
 
-            if ($prev instanceof TLineBreak) {
+            if ($prev instanceof Token\TLineBreak) {
                 return;
             }
 
-            if (! $prev->is([T::SYNTHETIC, T_WHITESPACE])) {
+            if (! $prev->is([AToken::SYNTHETIC, T_WHITESPACE])) {
                 break;
             }
         }
 
-        $this->emit(new TSpace(T_WHITESPACE, ' '));
+        $this->emit(new Token\TSpace(T_WHITESPACE, ' '));
     }
 
-    private function emit(T $token) : void
+    private function emit(AToken $token) : void
     {
         $this->parsed[] = $token;
         $this->parsedCount ++;
@@ -408,21 +418,21 @@ class Parser
         $this->parsedCount --;
     }
 
-    public function noSpace() : void
+    private function noSpace() : void
     {
         for ($i = $this->parsedCount - 1; $i >= 0; $i --) {
             $prev = $this->parsed[$i];
 
-            if ($prev instanceof TSpace) {
+            if ($prev instanceof Token\TSpace) {
                 $this->removeParsedAt($i);
                 return;
             }
 
-            if ($prev instanceof TLineBreak) {
+            if ($prev instanceof Token\TLineBreak) {
                 return;
             }
 
-            if (! $prev->is([T::SYNTHETIC, T_WHITESPACE])) {
+            if (! $prev->is([AToken::SYNTHETIC, T_WHITESPACE])) {
                 return;
             }
         }
@@ -441,21 +451,21 @@ class Parser
                 continue;
             }
 
-            if (! $prev->is([T::SYNTHETIC, T_WHITESPACE])) {
+            if (! $prev->is([AToken::SYNTHETIC, T_WHITESPACE])) {
                 return;
             }
         }
     }
 
     /**
-     * @param class-string<T> $parseClass
+     * @param class-string<AToken> $tokenClass
      */
-    public function replaceLastParsed(PhpToken $source, string $parseClass) : T
+    public function replaceLastParsed(PhpToken $source, string $tokenClass) : AToken
     {
         $this->removePrevWhitespace();
 
-        /** @var T $token */
-        $token = new $parseClass(
+        /** @var AToken $token */
+        $token = new $tokenClass(
             $source->id,
             $source->text,
             $source->line,
@@ -467,13 +477,28 @@ class Parser
     }
 
     /**
-     * @param class-string<T> $parseClass
+     * @param class-string<AToken> $tokenClass
      */
-    public function addNesting(PhpToken $source, string $parseClass) : T
+    public function addNesting(PhpToken $source, string $tokenClass) : AToken
     {
-        $token = $this->add($source, $parseClass);
+        $token = $this->add($source, $tokenClass);
         $this->nesting[] = new Nesting($token);
         return $token;
+    }
+
+    /**
+     * @param class-string<AToken> $tokenClass
+     */
+    public function pushNesting(PhpToken $source, string $tokenClass) : void
+    {
+        /** @var AToken */
+        $token = new $tokenClass(
+            $source->id,
+            $source->text,
+            $source->line,
+            $source->pos,
+        );
+        $this->nesting[] = new Nesting($token);
     }
 
     /**
@@ -524,6 +549,39 @@ class Parser
             || $this->atNesting(Token\TBacktickOpening::class);
     }
 
+    public function endBracelessBody(PhpToken $source) : void
+    {
+        $isContinuation = $this->getNextSource()?->is([T_ELSE, T_ELSEIF]);
+        $this->popNesting(Token\TOpeningBraceless::class);
+        $nesting = $this->getNesting();
+
+        $braceless = match (true) {
+            $isContinuation
+                && $nesting === Token\TIf::class => Token\TIfContinuationBraceless::class,
+            $isContinuation
+                && $nesting === Token\TElseif::class => Token\TElseifContinuationBraceless::class,
+            ! $isContinuation
+                && $nesting === Token\TIf::class => Token\TIfClosingBraceless::class,
+            ! $isContinuation
+                && $nesting === Token\TElse::class => Token\TElseClosingBraceless::class,
+            ! $isContinuation
+                && $nesting === Token\TElseif::class => Token\TElseifClosingBraceless::class,
+            ! $isContinuation
+                && $nesting === Token\TWhile::class => Token\TWhileClosingBraceless::class,
+            ! $isContinuation
+                && $nesting === Token\TFor::class => Token\TForClosingBraceless::class,
+            ! $isContinuation
+                && $nesting === Token\TForeach::class => Token\TForeachClosingBraceless::class,
+            default => throw new Exception(
+                ($isContinuation ? "Unknown continuation" : "Unknown closing")
+                    . " braceless in nesting "
+                    . var_export($this->listNesting(), true),
+            ),
+        };
+
+        $this->parse($source, $braceless);
+    }
+
     public function popTernaryNesting() : void
     {
         while (true) {
@@ -552,39 +610,27 @@ class Parser
     }
 
     /**
-     * @param class-string<T> $closerClass
+     * @param class-string<AToken> $closerClass
      */
     public function closeNesting(
         PhpToken $source,
         string $closerClass,
         string $openerClass,
         string ...$openerClasses,
-    ) : T
+    ) : AToken
     {
         $current = end($this->nesting);
         $argCount = $current !== false ? $current->argCount : 0;
-        $containsBracket = $current !== false ? $current->containsBracket : false;
         $opener = $this->popNesting($openerClass, ...$openerClasses);
         $opener->argCount = $argCount;
         $closer = $this->add($source, $closerClass);
         $opener->closingToken = $closer;
         $closer->openingToken = $opener;
 
-        if ($opener->text === '[' && $this->nesting !== []) {
-            $this->nesting[array_key_last($this->nesting)]->containsBracket = true;
-        } elseif (
-            $argCount === 0
-            && $opener->text === '('
-            && $containsBracket
-            && ! $this->containsSplittableOperator($opener)
-        ) {
-            $opener->transparentOpener = true;
-        }
-
         return $closer;
     }
 
-    public function popNesting(string $expect, string ...$expects) : T
+    public function popNesting(string $expect, string ...$expects) : AToken
     {
         $expects = [$expect, ...$expects];
         $nesting = array_pop($this->nesting);
@@ -599,38 +645,22 @@ class Parser
             );
         }
 
-        /** @var T $actual */
+        /** @var AToken $actual */
         return $actual;
     }
 
-    public function getPrevParsed(int $skip = 0) : ?T
+    public function getPrevParsed(int $skip = 0) : ?AToken
     {
-        $before = null;
+        $found = 0;
 
-        for ($i = 0; $i <= $skip; $i ++) {
-            $before = $this->getPrevTokenOffset($before);
+        for ($i = $this->parsedCount - 1; $i >= 0; $i --) {
+            if (! $this->parsed[$i]->isIgnorable()) {
+                if ($found >= $skip) {
+                    return $this->parsed[$i];
+                }
 
-            if ($before === null) {
-                return null;
+                $found ++;
             }
-        }
-
-        /** @var int $before */
-        return $this->parsed[$before];
-    }
-
-    protected function getPrevTokenOffset(?int $before = null) : ?int
-    {
-        $parsedOffset = ($before ?? $this->parsedCount) - 1;
-
-        while ($parsedOffset >= 0) {
-            $parsed = $this->parsed[$parsedOffset];
-
-            if (! $parsed->isIgnorable()) {
-                return $parsedOffset;
-            }
-
-            $parsedOffset --;
         }
 
         return null;
@@ -651,6 +681,39 @@ class Parser
         }
 
         return null;
+    }
+
+    public function findNextNonWhitespaceOffset(?int $from = null) : ?int
+    {
+        $i = $from ?? $this->sourceOffset + 1;
+
+        while ($i < $this->sourceCount && $this->source[$i]->is(T_WHITESPACE)) {
+            $i ++;
+        }
+
+        return $i < $this->sourceCount ? $i : null;
+    }
+
+    public function findMatchingCloseParenOffset(int $openOffset) : ?int
+    {
+        $depth = 1;
+        $i = $openOffset + 1;
+
+        while ($i < $this->sourceCount && $depth > 0) {
+            $text = $this->source[$i]->text;
+
+            if ($text === '(') {
+                $depth ++;
+            } elseif ($text === ')') {
+                $depth --;
+            }
+
+            if ($depth > 0) {
+                $i ++;
+            }
+        }
+
+        return $depth === 0 ? $i : null;
     }
 
     public function hasPrevLineBreak() : bool
@@ -674,7 +737,7 @@ class Parser
         return $this->hasPrev(Token\TBlankLine::class);
     }
 
-    public function hasPrevOpeningStructure() : bool
+    private function hasPrevOpeningStructure() : bool
     {
         return $this->hasPrev(Token\TOpeningStructure::class);
     }
@@ -686,7 +749,7 @@ class Parser
 
             if ($parsed instanceof $class) {
                 return true;
-            } elseif (! $parsed->is([T::SYNTHETIC, T_WHITESPACE])) {
+            } elseif (! $parsed->is([AToken::SYNTHETIC, T_WHITESPACE])) {
                 return false;
             }
         }
@@ -699,43 +762,22 @@ class Parser
         $source = $this->source[$this->sourceOffset + 1] ?? null;
 
         if ($source?->is(T_WHITESPACE)) {
-            return strpos($source->text, "\r") !== false
-                || strpos($source->text, "\n") !== false;
+            return self::hasEol($source->text);
         }
 
         return false;
     }
 
-    private function containsSplittableOperator(T $opener) : bool
+    private static function hasEol(string $text) : bool
     {
-        $depth = 0;
-
-        for ($i = $this->lastAddedIndex - 1; $i >= 0; $i --) {
-            $token = $this->parsed[$i];
-
-            if ($token === $opener) {
-                return false;
-            }
-
-            if ($token->text === ')' || $token->text === ']') {
-                $depth ++;
-            } elseif ($token->text === '(' || $token->text === '[') {
-                $depth --;
-            } elseif ($depth === 0 && $token instanceof Token\TSplittableOperator) {
-                return true;
-            }
-        }
-
-        return false;
+        return strpos($text, "\r") !== false || strpos($text, "\n") !== false;
     }
 
     protected function findUpcomingInlineComment() : ?int
     {
         $currentText = $this->source[$this->sourceOffset]->text;
 
-        if (
-            strpos($currentText, "\r") !== false || strpos($currentText, "\n") !== false
-        ) {
+        if (self::hasEol($currentText)) {
             return null;
         }
 
@@ -743,10 +785,7 @@ class Parser
             $source = $this->source[$i];
 
             if ($source->is(T_WHITESPACE)) {
-                if (
-                    strpos($source->text, "\r") !== false
-                    || strpos($source->text, "\n") !== false
-                ) {
+                if (self::hasEol($source->text)) {
                     return null; // newline before comment
                 }
 
@@ -754,7 +793,7 @@ class Parser
             }
 
             // Skip already-replaced tokens
-            if ($source instanceof T) {
+            if ($source instanceof AToken) {
                 return null;
             }
 
@@ -777,13 +816,7 @@ class Parser
                 return $i; // end of file
             }
 
-            if (
-                $next->is(T_WHITESPACE)
-                && (
-                    strpos($next->text, "\r") !== false
-                    || strpos($next->text, "\n") !== false
-                )
-            ) {
+            if ($next->is(T_WHITESPACE) && self::hasEol($next->text)) {
                 return $i;
             }
 
@@ -791,6 +824,44 @@ class Parser
         }
 
         return null;
+    }
+
+    public function getSourceOffset() : int
+    {
+        return $this->sourceOffset;
+    }
+
+    public function getSourceAt(int $index) : PhpToken
+    {
+        return $this->source[$index];
+    }
+
+    public function setSourceAt(int $index, PhpToken $token) : void
+    {
+        $this->source[$index] = $token;
+    }
+
+    public function getSourceCount() : int
+    {
+        return $this->sourceCount;
+    }
+
+    public function setSourceOffset(int $offset) : void
+    {
+        $this->sourceOffset = $offset;
+    }
+
+    /**
+     * @param PhpToken[] $tokens
+     */
+    public function spliceSource(
+        int $offset,
+        int $deleteCount,
+        array $tokens,
+    ) : void
+    {
+        array_splice($this->source, $offset, $deleteCount, $tokens);
+        $this->sourceCount = count($this->source);
     }
 
     protected function replaceSourceComment(int $index, bool $blankLine) : void
@@ -818,5 +889,146 @@ class Parser
             $source->line,
             $source->pos,
         );
+    }
+
+    /**
+     * @var array<int, int>
+     */
+    private const MODIFIER_PRIORITY = [
+        T_ABSTRACT => 1,
+        T_FINAL => 1,
+        T_PUBLIC => 2,
+        T_PROTECTED => 2,
+        T_PRIVATE => 2,
+        T_VAR => 2,
+        T_PUBLIC_SET => 3,
+        T_PROTECTED_SET => 3,
+        T_PRIVATE_SET => 3,
+        T_STATIC => 4,
+        T_READONLY => 5,
+    ];
+
+    public function atClassBody() : bool
+    {
+        return $this->atNesting(Token\TClasslikeOpeningBrace::class)
+            || $this->atNesting(
+                Token\TAnonymousOpeningBrace::class,
+                Token\TAnonymousClass::class,
+            );
+    }
+
+    public function hasPrevVisibility() : bool
+    {
+        for ($i = $this->parsedCount - 1; $i >= 0; $i --) {
+            $prev = $this->parsed[$i];
+
+            if (
+                $prev instanceof Token\TSpace
+                || $prev instanceof Token\TStatic
+                || $prev instanceof Token\TReadonly
+                || $prev instanceof Token\TAbstract
+                || $prev instanceof Token\TFinal
+            ) {
+                continue;
+            }
+
+            return $prev instanceof Token\TPublic
+                || $prev instanceof Token\TProtected
+                || $prev instanceof Token\TPrivate;
+        }
+
+        return false;
+    }
+
+    public function handleModifier() : void
+    {
+        $modifiers = [];
+        $i = $this->sourceOffset;
+
+        while ($i < $this->sourceCount) {
+            $source = $this->source[$i];
+
+            if ($source->is(T_WHITESPACE)) {
+                $i ++;
+                continue;
+            }
+
+            if (! isset(self::MODIFIER_PRIORITY[$source->id])) {
+                break;
+            }
+
+            $modifiers[] = $source;
+            $i ++;
+        }
+
+        foreach ($modifiers as $idx => $mod) {
+            if ($mod->id === T_VAR) {
+                $modifiers[$idx] = new PhpToken(
+                    T_PUBLIC,
+                    'public',
+                    $mod->line,
+                    $mod->pos,
+                );
+            }
+        }
+
+        $hasVisibility = false;
+
+        foreach ($modifiers as $mod) {
+            if ($mod->is([T_PUBLIC, T_PROTECTED, T_PRIVATE])) {
+                $hasVisibility = true;
+                break;
+            }
+        }
+
+        $peekOffset = $i;
+
+        while (
+            $peekOffset < $this->sourceCount
+            && $this->source[$peekOffset]->is(T_WHITESPACE)
+        ) {
+            $peekOffset ++;
+        }
+
+        $nextSource = $peekOffset < $this->sourceCount
+            ? $this->source[$peekOffset]
+            : null;
+
+        if (
+            $this->atClassBody()
+            && ! $hasVisibility
+            && $nextSource !== null
+            && ($nextSource->is(T_FUNCTION) || $nextSource->is(T_CONST))
+        ) {
+            $modifiers[] = new PhpToken(
+                T_PUBLIC,
+                'public',
+                $nextSource->line,
+                $nextSource->pos,
+            );
+        }
+
+        if (count($modifiers) > 1) {
+            usort(
+                $modifiers,
+                fn (PhpToken $a, PhpToken $b)
+                    => self::MODIFIER_PRIORITY[
+                        $a->id
+                    ] <=> self::MODIFIER_PRIORITY[$b->id],
+            );
+        }
+
+        foreach ($modifiers as $idx => $mod) {
+            if ($idx > 0) {
+                $this->space();
+            }
+
+            /** @var class-string<AToken> $tokenClass */
+            $tokenClass = $this->getTokenClass($mod);
+            $this->add($mod, $tokenClass);
+        }
+
+        $this->space();
+        $this->sourceOffset = $i - 1;
     }
 }

@@ -24,10 +24,10 @@ class TWhileClosingBracelessTest extends TTestCase
                     TWhileOpeningParen::class,
                     TTrue::class,
                     TWhileClosingParen::class,
-                    TOpeningBraceless::class,
+                    TWhileOpeningBrace::class,
                     TBreak::class,
                     TSemicolon::class,
-                    TWhileClosingBraceless::class,
+                    TWhileClosingBrace::class,
                 ],
             ],
         ];

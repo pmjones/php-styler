@@ -33,6 +33,8 @@ class TExitTest extends TTestCase
                 [
                     TPhpOpeningTag::class,
                     TExit::class,
+                    TArgsOpeningParen::class,
+                    TArgsClosingParen::class,
                     TSemicolon::class,
                 ],
             ],
@@ -57,6 +59,8 @@ class TExitTest extends TTestCase
                 [
                     TPhpOpeningTag::class,
                     TExit::class,
+                    TArgsOpeningParen::class,
+                    TArgsClosingParen::class,
                     TSemicolon::class,
                 ],
             ],

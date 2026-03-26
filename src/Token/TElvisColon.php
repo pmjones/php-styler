@@ -6,7 +6,7 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TElvisColon extends T
+class TElvisColon extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

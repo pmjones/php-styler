@@ -3,6 +3,6 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-class TFunctionCallRelative extends T
+class TFunctionCallRelative extends AToken
 {
 }

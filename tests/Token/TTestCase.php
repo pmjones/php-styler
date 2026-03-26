@@ -3,7 +3,10 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
+use PhpStyler\Format\PlainFormat;
 use PhpStyler\Parser;
+use PHPUnit\Framework\Attributes\DataProvider;
+
 abstract class TTestCase extends \PHPUnit\Framework\TestCase
 {
     protected const IGNORE_WHITESPACE = 'IGNORE_WHITESPACE';
@@ -17,8 +20,8 @@ abstract class TTestCase extends \PHPUnit\Framework\TestCase
     /**
      * @param array<int, class-string> $expect
      * @param array<int, class-string> $finalNesting
-     * @dataProvider provide
      */
+    #[DataProvider('provide')]
     public function test(
         string $code,
         array $expect,
@@ -26,7 +29,13 @@ abstract class TTestCase extends \PHPUnit\Framework\TestCase
         string $reporting = self::IGNORE_WHITESPACE,
     ) : void
     {
-        $parser = new Parser();
+        $parser = new Parser(
+            new PlainFormat(
+                classBracePosition: 'next_line',
+                functionBracePosition: 'next_line',
+                blankLineAfterBlock: true,
+            ),
+        );
         $tokens = $parser($code);
 
         $actual = [];
@@ -76,7 +85,10 @@ abstract class TTestCase extends \PHPUnit\Framework\TestCase
 
             foreach ($actual as $class) {
                 $parts = explode('\\', $class);
-                $message .= '                    ' . end($parts) . '::class,' . PHP_EOL;
+                $message .= '                    '
+                    . end($parts)
+                    . '::class,'
+                    . PHP_EOL;
             }
 
             $this->markTestIncomplete($message);

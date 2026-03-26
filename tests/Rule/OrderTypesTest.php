@@ -3,17 +3,23 @@ declare(strict_types=1);
 
 namespace PhpStyler\Rule;
 
-use PHPUnit\Framework\TestCase;
 use PhpStyler\Styler;
+use PhpStyler\TestFormat;
+use PhpStyler\Token\TNull;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\TestCase;
 
 class OrderTypesTest extends TestCase
 {
-    /**
-     * @dataProvider provide
-     */
+    #[DataProvider('provide')]
     public function test(string $code, string $expect) : void
     {
-        $styler = new Styler(eol: "\n", rules: [new OrderTypes(), new RemoveTrailingBlankLines()]);
+        $styler = new Styler(
+            new TestFormat(rules: [
+                OrderTypes::class,
+                RemoveTrailingBlankLines::class,
+            ]),
+        );
         $actual = $styler($code);
         $this->assertSame($expect, $actual);
     }
@@ -150,7 +156,7 @@ class OrderTypesTest extends TestCase
                 <?php
                 class Baz
                 {
-                    function foo() : ?self
+                    public function foo() : ?self
                     {
                     }
                 }
@@ -178,6 +184,117 @@ class OrderTypesTest extends TestCase
                 <<<'EXPECT'
                 <?php
                 function foo() : ?\Foo\Bar
+                {
+                }
+
+                EXPECT,
+            ],
+        ];
+    }
+
+    #[DataProvider('provideNullLast')]
+    public function testNullLast(string $code, string $expect) : void
+    {
+        $styler = new Styler(
+            new TestFormat(rules: [
+                OrderTypes::class => ['order' => ['*', TNull::class]],
+                RemoveTrailingBlankLines::class,
+            ]),
+        );
+        $actual = $styler($code);
+        $this->assertSame($expect, $actual);
+    }
+
+    /** @return array<string, array{0: string, 1: string}> */
+    public static function provideNullLast() : array
+    {
+        return [
+            'null-string-to-string-null' => [
+                <<<'CODE'
+                <?php
+                function foo(): null|string {}
+                CODE,
+                <<<'EXPECT'
+                <?php
+                function foo() : string|null
+                {
+                }
+
+                EXPECT,
+            ],
+            'string-null-stays' => [
+                <<<'CODE'
+                <?php
+                function foo(): string|null {}
+                CODE,
+                <<<'EXPECT'
+                <?php
+                function foo() : string|null
+                {
+                }
+
+                EXPECT,
+            ],
+            'three-types-null-last' => [
+                <<<'CODE'
+                <?php
+                function foo(): null|int|string {}
+                CODE,
+                <<<'EXPECT'
+                <?php
+                function foo() : int|string|null
+                {
+                }
+
+                EXPECT,
+            ],
+            'four-types-null-last' => [
+                <<<'CODE'
+                <?php
+                function foo() : int|null|string|float {}
+                CODE,
+                <<<'EXPECT'
+                <?php
+                function foo() : int|string|float|null
+                {
+                }
+
+                EXPECT,
+            ],
+            'null-int-to-int-null' => [
+                <<<'CODE'
+                <?php
+                function foo(): null|int {}
+                CODE,
+                <<<'EXPECT'
+                <?php
+                function foo() : int|null
+                {
+                }
+
+                EXPECT,
+            ],
+            'foo-null-stays' => [
+                <<<'CODE'
+                <?php
+                function foo(): Foo|null {}
+                CODE,
+                <<<'EXPECT'
+                <?php
+                function foo() : Foo|null
+                {
+                }
+
+                EXPECT,
+            ],
+            'no-null-unchanged' => [
+                <<<'CODE'
+                <?php
+                function foo() : int|string {}
+                CODE,
+                <<<'EXPECT'
+                <?php
+                function foo() : int|string
                 {
                 }
 

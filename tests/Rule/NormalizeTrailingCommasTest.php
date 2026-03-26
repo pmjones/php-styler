@@ -3,8 +3,10 @@ declare(strict_types=1);
 
 namespace PhpStyler\Rule;
 
-use PHPUnit\Framework\TestCase;
+use PhpStyler\Format\DeclarationFormat;
 use PhpStyler\Styler;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\TestCase;
 
 class NormalizeTrailingCommasTest extends TestCase
 {
@@ -15,17 +17,19 @@ class NormalizeTrailingCommasTest extends TestCase
     ) : void
     {
         $styler = new Styler(
-            lineLen: $lineLen,
-            eol: "\n",
-            rules: [new NormalizeTrailingCommas(), new RemoveTrailingBlankLines()],
+            new DeclarationFormat(
+                lineLen: $lineLen,
+                rules: [
+                    NormalizeTrailingCommas::class,
+                    RemoveTrailingBlankLines::class,
+                ],
+            ),
         );
         $actual = $styler($code);
         $this->assertSame($expect, $actual);
     }
 
-    /**
-     * @dataProvider provide
-     */
+    #[DataProvider('provide')]
     public function test(string $code, string $expect, int $lineLen = 44) : void
     {
         $this->assertStyled($code, $expect, $lineLen);

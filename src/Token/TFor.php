@@ -13,7 +13,7 @@ use PhpToken;
  *
  * Reference: https://www.php.net/manual/en/control-structures.for.php for
  */
-class TFor extends T
+class TFor extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

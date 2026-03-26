@@ -11,6 +11,6 @@ namespace PhpStyler\Token;
  * Reference: https://www.php.net/manual/en/language.oop5.basic.php#language.oop5.basic.extends extends,
  * https://www.php.net/manual/en/language.oop5.php classes and objects
  */
-class TExtends extends T
+class TExtends extends AToken
 {
 }

@@ -15,14 +15,17 @@ use PhpToken;
  *
  * Reference: https://www.php.net/manual/en/language.basic-syntax.comments.php PHPDoc style comments
  */
-class TDocComment extends T implements TDocblock
+class TDocComment extends AToken implements TDocblock
 {
     protected ?Docblock $docblock = null;
 
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         if (
-            (! str_contains($source->text, "\n") && $parser->hasPrevSplittableComma())
+            (
+                ! str_contains($source->text, "\n")
+                && $parser->hasPrevSplittableComma()
+            )
             || ! $parser->hasPrevLineBreak()
             || ! $parser->hasNextEol()
         ) {

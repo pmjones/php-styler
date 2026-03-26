@@ -16,12 +16,10 @@ class TTest extends \PHPUnit\Framework\TestCase
             'text' => 'fake',
             'line' => 79,
             'pos' => 88,
-            'rejoinOrphanBefore' => false,
             'parenDepth' => 0,
             'argCount' => 0,
             'openingToken' => null,
             'closingToken' => null,
-            'transparentOpener' => false,
         ];
 
         $actual = $fake->__debugInfo();

@@ -14,7 +14,7 @@ use PhpToken;
  * Reference: identifiers, e.g. keywords like `parent` and `self`, function names,
  * class names and more are matched. See also T_CONSTANT_ENCAPSED_STRING.
  */
-class TString extends T
+class TString extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
@@ -31,13 +31,9 @@ class TString extends T
             'null' => TNull::class,
             'parent' => TParent::class,
             'self' => TSelf::class,
-            'int' => TInt::class,
-            'integer' => TInteger::class,
-            'float' => TFloat::class,
-            'double' => TDouble::class,
-            'real' => TReal::class,
-            'bool' => TBool::class,
-            'boolean' => TBoolean::class,
+            'int', 'integer' => TInt::class,
+            'float', 'double', 'real' => TFloat::class,
+            'bool', 'boolean' => TBool::class,
             'void' => TVoid::class,
             'never' => TNever::class,
             'mixed' => TMixed::class,
@@ -129,6 +125,7 @@ class TString extends T
 
         $prevAddClass = match (true) {
             $prev instanceof TConst => TConstantName::class,
+            $prev instanceof TConstComma => TConstantName::class,
             $prev instanceof TEnumCase => TEnumCaseName::class,
             $prev instanceof TUseAs => TUseAlias::class,
             $prev instanceof TUseTraitAs => TTraitAlias::class,
@@ -166,7 +163,9 @@ class TString extends T
         if ($parser->getNextSource()?->is('(')) {
             if ($prev?->is([T_OBJECT_OPERATOR, T_NULLSAFE_OBJECT_OPERATOR])) {
                 if ($parser->lastSplit !== null) {
-                    $parser->replaceLastSplit(new TSplitMethodCall(T::SYNTHETIC, ''));
+                    $parser->replaceLastSplit(
+                        new TSplitMethodCall(AToken::SYNTHETIC, ''),
+                    );
                 }
 
                 $parser->add($source, TMethodCallName::class);

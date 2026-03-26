@@ -5,10 +5,10 @@ namespace PhpStyler\Token;
 
 use PhpStyler\Parser;
 
-class TDot extends T implements TSplittableOperator
+class TDot extends AToken implements TSplittableOperator
 {
     public function splitBefore(Parser $parser) : ?TSplit
     {
-        return new TSplitTightOperator(T::SYNTHETIC, '');
+        return new TSplitTightOperator(AToken::SYNTHETIC, '');
     }
 }

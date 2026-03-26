@@ -10,6 +10,6 @@ namespace PhpStyler\Token;
  *
  * Reference: https://www.php.net/manual/en/language.generators.syntax.php#control-structures.yield.from generators
  */
-class TYieldFrom extends T
+class TYieldFrom extends AToken
 {
 }

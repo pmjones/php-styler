@@ -13,7 +13,7 @@ use PhpToken;
  *
  * Reference: https://www.php.net/manual/en/functions.arguments.php#functions.variable-arg-list function arguments
  */
-class TEllipsis extends T
+class TEllipsis extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

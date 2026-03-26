@@ -3,6 +3,12 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-class TBool extends T
+use PhpStyler\Line;
+
+class TBool extends AToken
 {
+    public function render(Line $line) : string
+    {
+        return 'bool';
+    }
 }

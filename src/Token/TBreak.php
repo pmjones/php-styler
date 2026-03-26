@@ -10,6 +10,6 @@ namespace PhpStyler\Token;
  *
  * Reference: https://www.php.net/manual/en/control-structures.break.php break
  */
-class TBreak extends T
+class TBreak extends AToken
 {
 }

@@ -32,9 +32,7 @@ class TEchoTest extends TTestCase
                 [
                     TPhpOpeningTag::class,
                     TEcho::class,
-                    TExpressionOpeningParen::class,
                     TVariable::class,
-                    TExpressionClosingParen::class,
                     TEchoEndSemicolon::class,
                 ],
             ],

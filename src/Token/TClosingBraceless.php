@@ -7,7 +7,7 @@ use PhpStyler\Exception;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TClosingBraceless extends T
+class TClosingBraceless extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
