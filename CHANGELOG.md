@@ -22,10 +22,10 @@ increased performance.
 
   ```php
   // old
-  new Config(styler: new Styler(lineLen: 88), files: ..., cache: ...);
+  new Config(styler: new Styler(lineLen: 84), files: ..., cache: ...);
 
   // new
-  new Config(files: ..., cache: ..., format: new PlainFormat(lineLen: 88));
+  new Config(files: ..., cache: ..., format: new PlainFormat(lineLen: 84));
   ```
 
 - **Customization model replaced.** Extending `Styler` and overriding `s*()`

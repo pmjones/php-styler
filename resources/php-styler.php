@@ -1,7 +1,7 @@
 <?php
 use PhpStyler\Config;
-use PhpStyler\Format\DeclarationFormat;
 use PhpStyler\Files;
+use PhpStyler\Format\DeclarationFormat;
 
 return new Config(
     files: new Files(__DIR__ . '/src'),

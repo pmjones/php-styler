@@ -90,7 +90,7 @@ cp ./vendor/pmjones/php-styler/resources/php-styler.php .
 
 ### Commands
 
-#### preview
+#### `preview`
 
 Safely preview how PHP-Styler will reformat a source file (does not modify
 anything):
@@ -99,7 +99,7 @@ anything):
 ./vendor/bin/php-styler preview ./src/My/Source/File.php
 ```
 
-#### apply
+#### `apply`
 
 Apply formatting to all files identified in the config file, overwriting them
 in place:
@@ -124,7 +124,7 @@ them as arguments:
 
 When paths are given explicitly, the cache time is not honored.
 
-#### check
+#### `check`
 
 Check all configured files to see if they need formatting, without changing
 anything:
@@ -135,7 +135,7 @@ anything:
 
 Returns exit code `0` if all files are OK, `1` if any need styling.
 
-#### diff
+#### `diff`
 
 Show a unified diff of source files vs. their styled versions:
 
@@ -143,13 +143,17 @@ Show a unified diff of source files vs. their styled versions:
 ./vendor/bin/php-styler diff
 ```
 
+#### Options
+
+##### Config
+
 All commands accept `-c` or `--config` to specify an alternative config file:
 
 ```
 ./vendor/bin/php-styler preview -c /path/to/other/php-styler.php ./src/File.php
 ```
 
-#### Parallel Execution
+##### Parallel Execution
 
 The `apply`, `check`, and `diff` commands accept `-w` or `--workers` to process
 files in parallel using multiple child processes:
@@ -159,8 +163,11 @@ files in parallel using multiple child processes:
 ./vendor/bin/php-styler check --workers=auto
 ```
 
-- `--workers=1` (the default) runs sequentially, identical to previous behavior.
-- `--workers=N` splits the file list into N chunks and processes them in parallel.
+- `--workers=1` (the default) processes each file in sequence, one by one.
+
+- `--workers=N` splits the file list into `N` chunks and processes them in parallel
+  across `N` workers.
+
 - `--workers=auto` detects the number of CPU cores and uses that as the worker
   count.
 
@@ -176,10 +183,17 @@ The `php-styler.php` config file returns a `Config` object:
 <?php
 use PhpStyler\Config;
 use PhpStyler\Files;
+use PhpStyler\Format\DeclarationFormat;
 
 return new Config(
     files: new Files(__DIR__ . '/src'),
     cache: __DIR__ . '/.php-styler.cache',
+    format: new DeclarationFormat(
+        lineLen: 84,
+        indentLen: 4,
+        indentTab: false,
+        eol: "\n",
+    ),
 );
 ```
 
@@ -191,10 +205,10 @@ return new Config(
 - `?string $cache` — path to the cache file; `null` disables caching.
 
 - `Format $format` — a `Format` instance controlling all styling behavior
-  (defaults to `PlainFormat`).
+  (defaults to `PlainFormat` when not present).
 
-Changing the config file after `apply` will invalidate the cache, causing all
-files to be reformatted.
+Changing the config file will invalidate the cache, causing all files to be
+reformatted.
 
 ### Formats
 
@@ -215,7 +229,7 @@ Plus the basic layout settings:
 | Setting | Default (PlainFormat) | Description |
 |---|---|---|
 | `eol` | `"\n"` | End-of-line string |
-| `lineLen` | 88 | Maximum line length before splitting |
+| `lineLen` | 84 | Maximum line length before splitting |
 | `indentLen` | 4 | Indent width in spaces |
 | `indentTab` | false | Use tabs instead of spaces |
 
@@ -230,8 +244,8 @@ use PhpStyler\Format\PlainFormat;
 
 return new Config(
     files: new Files(__DIR__ . '/src'),
-    format: new PlainFormat(lineLen: 120),
     cache: __DIR__ . '/.php-styler.cache',
+    format: new PlainFormat(lineLen: 120),
 );
 ```
 
