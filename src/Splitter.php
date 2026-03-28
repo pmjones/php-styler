@@ -473,6 +473,7 @@ class Splitter
      * @param Line[] $lines
      * @return Line[]
      */
+
     /**
      * @param Line[] $lines
      * @return Line[]
@@ -545,7 +546,9 @@ class Splitter
         foreach ($commaPositions as $commaPos) {
             $splitAt = $commaPos + 1;
 
-            while (isset($tokens[$splitAt]) && $tokens[$splitAt] instanceof TSplit) {
+            while (
+                isset($tokens[$splitAt]) && $tokens[$splitAt] instanceof TSplit
+            ) {
                 $splitAt ++;
             }
 

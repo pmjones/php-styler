@@ -184,9 +184,8 @@ class Parser
 
         if (str_starts_with($name, 'T_')) {
             return self::TOKEN_CLASS[$name]
-                ?? $this->tokenClass[$name]
-                    ??= 'PhpStyler\\Token\\'
-                        . str_replace('_', '', ucwords(strtolower($name), '_'));
+                ?? $this->tokenClass[$name] ??= 'PhpStyler\\Token\\'
+                    . str_replace('_', '', ucwords(strtolower($name), '_'));
         }
 
         return self::TOKEN_CLASS[$source->text];
