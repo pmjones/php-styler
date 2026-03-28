@@ -106,6 +106,7 @@ class Parser
 
     public ?Token\TSplit $lastSplit = null;
 
+    /** @var array<string, string> */
     private array $tokenClass = [];
 
     /** @var array<class-string<AToken>, Style> */

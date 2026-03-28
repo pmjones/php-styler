@@ -108,7 +108,7 @@ class Line
             $this->tokenIndex = [];
 
             foreach ($this->tokens as $i => $token) {
-                $this->tokenIndex[spl_object_id($token)] = $i;
+                $this->tokenIndex[spl_object_id($token)] = (int) $i;
             }
         }
 
