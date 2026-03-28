@@ -473,27 +473,17 @@ class Splitter
      * @param Line[] $lines
      * @return Line[]
      */
-    private function expandCommas(array $lines) : array
-    {
-        while (true) {
-            $tokenLineMap = $this->buildTokenLineMap($lines);
-            $split = $this->findCommaSplit($lines, $tokenLineMap);
-
-            if ($split === null) {
-                return $lines;
-            }
-
-            $lines = $this->splitAfterComma($lines, ...$split);
-        }
-    }
-
     /**
      * @param Line[] $lines
-     * @param array<int, int> $tokenLineMap
-     * @return ?array{int, int}
+     * @return Line[]
      */
-    private function findCommaSplit(array $lines, array $tokenLineMap) : ?array
+    private function expandCommas(array $lines) : array
     {
+        $tokenLineMap = $this->buildTokenLineMap($lines);
+
+        // Collect all line indices that need comma splitting
+        $lineIndices = [];
+
         foreach ($lines as $lineIndex => $line) {
             foreach ($line->getTokens() as $token) {
                 if (! $token->isOpener()) {
@@ -510,75 +500,108 @@ class Splitter
                 }
 
                 for ($i = $lineIndex + 1; $i < $closerLineIndex; $i ++) {
-                    $splitPos = $lines[$i]->findTopLevelComma();
-
-                    if ($splitPos !== null) {
-                        return [$i, $splitPos];
+                    if (
+                        ! isset($lineIndices[$i])
+                        && $lines[$i]->findTopLevelComma() !== null
+                    ) {
+                        $lineIndices[$i] = true;
                     }
                 }
             }
         }
 
-        return null;
+        if ($lineIndices === []) {
+            return $lines;
+        }
+
+        // Process from bottom to top so insertions don't affect earlier indices
+        krsort($lineIndices);
+
+        foreach ($lineIndices as $lineIndex => $_) {
+            $lines = $this->splitLineAtAllCommas($lines, $lineIndex);
+        }
+
+        return array_values($lines);
     }
 
     /**
      * @param Line[] $lines
      * @return Line[]
      */
-    private function splitAfterComma(
-        array $lines,
-        int $lineIndex,
-        int $commaIndex,
-    ) : array
+    private function splitLineAtAllCommas(array $lines, int $lineIndex) : array
     {
         $line = $lines[$lineIndex];
         $tokens = $line->getTokens();
         $indent = $line->indent;
+        $commaPositions = $line->findTopLevelCommas();
 
-        // Include trailing TSplit with the comma (before the split)
-        $splitAt = $commaIndex + 1;
-
-        while (isset($tokens[$splitAt]) && $tokens[$splitAt] instanceof TSplit) {
-            $splitAt ++;
+        if ($commaPositions === []) {
+            return $lines;
         }
 
-        $advanced = $this->positionPastTrailingComment($tokens, $splitAt);
+        // Convert comma token positions to split points (after comma + trailing splits/comments)
+        $splitPoints = [];
 
-        // Only advance past the comment if there's real content after it;
-        // otherwise the split would produce an empty remainder and loop.
-        if ($advanced > $splitAt) {
-            $check = $advanced;
+        foreach ($commaPositions as $commaPos) {
+            $splitAt = $commaPos + 1;
 
-            while (
-                isset($tokens[$check])
-                && (
-                    $tokens[$check] instanceof TSplit
-                    || $tokens[$check] instanceof TSpace
-                )
-            ) {
-                $check ++;
+            while (isset($tokens[$splitAt]) && $tokens[$splitAt] instanceof TSplit) {
+                $splitAt ++;
             }
 
-            if (isset($tokens[$check])) {
-                $splitAt = $advanced;
+            $advanced = $this->positionPastTrailingComment($tokens, $splitAt);
+
+            if ($advanced > $splitAt) {
+                $check = $advanced;
+
+                while (
+                    isset($tokens[$check])
+                    && (
+                        $tokens[$check] instanceof TSplit
+                        || $tokens[$check] instanceof TSpace
+                    )
+                ) {
+                    $check ++;
+                }
+
+                if (isset($tokens[$check])) {
+                    $splitAt = $advanced;
+                }
             }
+
+            $splitPoints[] = $splitAt;
         }
 
-        $before = array_slice($tokens, 0, $splitAt);
-        $after = array_slice($tokens, $splitAt);
+        // Split at all points
+        $newLines = [];
+        $start = 0;
 
-        $lines[$lineIndex] = $this->lineFactory->new($before, $indent);
+        foreach ($splitPoints as $splitAt) {
+            if ($splitAt <= $start) {
+                continue;
+            }
 
-        if ($after !== []) {
-            array_splice(
-                $lines,
-                $lineIndex + 1,
-                0,
-                [$this->lineFactory->new($after, $indent)],
-            );
+            $segment = array_slice($tokens, $start, $splitAt - $start);
+
+            if ($segment !== []) {
+                $newLines[] = $this->lineFactory->new($segment, $indent);
+            }
+
+            $start = $splitAt;
         }
 
-        return array_values($lines);
+        $remaining = array_slice($tokens, $start);
+
+        if ($remaining !== []) {
+            $newLines[] = $this->lineFactory->new($remaining, $indent);
+        }
+
+        if (count($newLines) <= 1) {
+            return $lines;
+        }
+
+        array_splice($lines, $lineIndex, 1, $newLines);
+
+        return $lines;
     }
 }

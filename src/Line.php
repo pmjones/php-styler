@@ -17,6 +17,11 @@ class Line
 
     public bool $forceExpand = false;
 
+    private ?int $length = null;
+
+    /** @var ?array<int, AToken> */
+    private ?array $topLevelTokens = null;
+
     /**
      * @param AToken[] $tokens
      */
@@ -40,6 +45,9 @@ class Line
     public function addToken(AToken $token) : void
     {
         $this->tokens[] = $token;
+        $this->length = null;
+        $this->topLevelTokens = null;
+        $this->tokenIndex = null;
     }
 
     public function hasTokens() : bool
@@ -65,6 +73,10 @@ class Line
      */
     public function getTopLevelTokens() : array
     {
+        if ($this->topLevelTokens !== null) {
+            return $this->topLevelTokens;
+        }
+
         $tokens = $this->tokens;
         $count = count($tokens);
         $result = [];
@@ -84,18 +96,23 @@ class Line
             $result[$i] = $token;
         }
 
-        return $result;
+        return $this->topLevelTokens = $result;
     }
+
+    /** @var ?array<int, int> spl_object_id => token index */
+    private ?array $tokenIndex = null;
 
     public function findTokenIndex(AToken $target) : ?int
     {
-        foreach ($this->tokens as $i => $token) {
-            if ($token === $target) {
-                return $i;
+        if ($this->tokenIndex === null) {
+            $this->tokenIndex = [];
+
+            foreach ($this->tokens as $i => $token) {
+                $this->tokenIndex[spl_object_id($token)] = $i;
             }
         }
 
-        return null;
+        return $this->tokenIndex[spl_object_id($target)] ?? null;
     }
 
     public function isBlank() : bool
@@ -205,8 +222,12 @@ class Line
 
     public function length() : int
     {
+        if ($this->length !== null) {
+            return $this->length;
+        }
+
         if ($this->isBlank()) {
-            return 0;
+            return $this->length = 0;
         }
 
         $contentLen = 0;
@@ -221,13 +242,23 @@ class Line
             $contentLen += strlen($token->text);
         }
 
-        return $this->indent * $this->indentLen + $contentLen;
+        return $this->length = $this->indent * $this->indentLen + $contentLen;
     }
 
     public function findTopLevelComma() : ?int
     {
+        $commas = $this->findTopLevelCommas();
+        return $commas !== [] ? $commas[0] : null;
+    }
+
+    /**
+     * @return int[]
+     */
+    public function findTopLevelCommas() : array
+    {
         $topLevel = $this->getTopLevelTokens();
         $lastIndex = $this->lastTopLevelContentIndex();
+        $result = [];
 
         foreach ($topLevel as $i => $token) {
             if ($token instanceof TSplittableComma && $i !== $lastIndex) {
@@ -240,11 +271,11 @@ class Line
                     continue;
                 }
 
-                return $i;
+                $result[] = $i;
             }
         }
 
-        return null;
+        return $result;
     }
 
     /**

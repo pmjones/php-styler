@@ -11,8 +11,6 @@ use PhpToken;
 
 class Parser
 {
-    private Format $format;
-
     public const TOKEN_CLASS = [
         '$' => Token\TDollar::class,
         '"' => Token\TDoubleQuote::class,
@@ -79,6 +77,8 @@ class Parser
         'T_NS_SEPARATOR' => Token\TNamespaceSeparator::class,
     ];
 
+    private Format $format;
+
     /**
      * @var array<int, Nesting>
      */
@@ -105,6 +105,8 @@ class Parser
     protected int $parenDepth = 0;
 
     public ?Token\TSplit $lastSplit = null;
+
+    private array $tokenClass = [];
 
     /** @var array<class-string<AToken>, Style> */
     private array $styles = [];
@@ -154,6 +156,14 @@ class Parser
         ) {
             $source = $this->source[$this->sourceOffset];
 
+            // Skip non-EOL whitespace — it produces no parsed output
+            if (
+                $source->id === T_WHITESPACE
+                && strpbrk($source->text, "\r\n") === false
+            ) {
+                continue;
+            }
+
             /** @var class-string<AToken> $tokenClass */
             $tokenClass = $this->getTokenClass($source);
             $this->parse($source, $tokenClass);
@@ -174,8 +184,9 @@ class Parser
 
         if (str_starts_with($name, 'T_')) {
             return self::TOKEN_CLASS[$name]
-                ?? 'PhpStyler\\Token\\'
-                    . str_replace('_', '', ucwords(strtolower($name), '_'));
+                ?? $this->tokenClass[$name]
+                    ??= 'PhpStyler\\Token\\'
+                        . str_replace('_', '', ucwords(strtolower($name), '_'));
         }
 
         return self::TOKEN_CLASS[$source->text];
