@@ -49,9 +49,9 @@ function static_fluency()
                 ->setException($e);
 
             $baz = FooBar::fromBaz(
-                $response,
-                $overrideStatus ?? DomainStatus::UNAUTHORIZED,
-            )
+                    $response,
+                    $overrideStatus ?? DomainStatus::UNAUTHORIZED,
+                )
                 ->setException($e);
 
             $payload = FooBar::fromResponse($e->getResponse())

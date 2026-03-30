@@ -134,6 +134,28 @@ class Splitter
     }
 
     /**
+     * @param AToken[] $tokens
+     */
+    private function hasTopLevelOpener(array $tokens) : bool
+    {
+        $depth = 0;
+
+        foreach ($tokens as $token) {
+            if ($token->isOpener()) {
+                if ($depth === 0) {
+                    return true;
+                }
+
+                $depth ++;
+            } elseif ($token->openingToken !== null) {
+                $depth --;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Split a line before each of the given positions.
      * With continuation=true, first segment keeps original indent, rest get continuation indent.
      * With continuation=false, all segments keep original indent.
@@ -162,8 +184,21 @@ class Splitter
             $segment = array_slice($tokens, $start, $end - $start);
 
             if ($segment !== []) {
-                $lines[] = $this->lineFactory
+                $segLine = $this->lineFactory
                     ->new($segment, $start === 0 ? $indent : $contIndent);
+
+                if (
+                    $start === 0
+                    && $continuation
+                    && ! $line->isExpanded
+                    && $this->lineFactory->lineLen > 0
+                    && $segLine->length() > $this->lineFactory->lineLen
+                    && $this->hasTopLevelOpener($segment)
+                ) {
+                    $segLine->extraParenIndent = 1;
+                }
+
+                $lines[] = $segLine;
             }
 
             $start = $end;
@@ -202,23 +237,25 @@ class Splitter
         [$openerPos, $closerPos, $argCount] = $pair;
         $tokens = $line->getTokens();
         $indent = $line->indent;
+        $extra = $line->extraParenIndent;
         $before = array_slice($tokens, 0, $openerPos + 1);
         $inside = array_slice($tokens, $openerPos + 1, $closerPos - $openerPos - 1);
         $after = array_slice($tokens, $closerPos);
+
         if ($inside === []) {
             return [
                 $this->lineFactory->new($before, $indent),
-                $this->lineFactory->new($after, $indent),
+                $this->lineFactory->new($after, $indent + $extra),
             ];
         }
 
-        $contentLine = $this->lineFactory->new($inside, $indent + 1);
+        $contentLine = $this->lineFactory->new($inside, $indent + 1 + $extra);
         $contentLine->isExpanded = $argCount === 0;
 
         return [
             $this->lineFactory->new($before, $indent),
             $contentLine,
-            $this->lineFactory->new($after, $indent),
+            $this->lineFactory->new($after, $indent + $extra),
         ];
     }
 
@@ -264,8 +301,8 @@ class Splitter
             }
 
             $closerLineIndex = $tokenLineMap[
-                spl_object_id($lastToken->closingToken)
-            ]
+                    spl_object_id($lastToken->closingToken)
+                ]
                 ?? null;
 
             if ($closerLineIndex === null || $closerLineIndex <= $lineIndex + 1) {
@@ -277,8 +314,9 @@ class Splitter
             $closerLine = $lines[$closerLineIndex];
             $closerFirst = $closerLine->firstContentToken();
             $bumpEnd = (
-                $closerFirst !== null && $closerFirst !== $lastToken->closingToken
-            )
+                    $closerFirst !== null
+                    && $closerFirst !== $lastToken->closingToken
+                )
                 ? $closerLineIndex + 1
                 : $closerLineIndex;
 
@@ -352,8 +390,8 @@ class Splitter
                 }
 
                 $closerLineIndex = $tokenLineMap[
-                    spl_object_id($token->closingToken)
-                ]
+                        spl_object_id($token->closingToken)
+                    ]
                     ?? null;
 
                 if ($closerLineIndex === null || $closerLineIndex === $lineIndex) {
@@ -492,8 +530,8 @@ class Splitter
                 }
 
                 $closerLineIndex = $tokenLineMap[
-                    spl_object_id($token->closingToken)
-                ]
+                        spl_object_id($token->closingToken)
+                    ]
                     ?? null;
 
                 if ($closerLineIndex === null || $closerLineIndex <= $lineIndex) {

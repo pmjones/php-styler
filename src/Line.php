@@ -17,6 +17,8 @@ class Line
 
     public bool $forceExpand = false;
 
+    public int $extraParenIndent = 0;
+
     private ?int $length = null;
 
     /** @var ?array<int, AToken> */

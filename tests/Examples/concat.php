@@ -28,11 +28,11 @@ function concat_after_function()
 {
     // concat after function call looks off
     $message = sprintf(
-        '%s %s %s',
-        $this->getMethod(),
-        $this->getRequestUri(),
-        $this->server->get('SERVER_PROTOCOL'),
-    )
+            '%s %s %s',
+            $this->getMethod(),
+            $this->getRequestUri(),
+            $this->server->get('SERVER_PROTOCOL'),
+        )
         . "\r\n"
         . $this->headers
         . $cookieHeader
