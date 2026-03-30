@@ -1,5 +1,33 @@
 # Change Log
 
+## NEXT
+
+- **Binary operator splitting.** Long lines now split at binary arithmetic
+  operators (`+`, `-`, `*`, `/`, `%`) in addition to the previously supported
+  boolean, coalesce, concatenation, and ternary operators.
+
+- **Refined split priorities.** The two coarse operator split priorities
+  (`LOOSE_OPERATOR` and `TIGHT_OPERATOR`) have been replaced with six
+  fine-grained priorities that follow PHP operator precedence. Lower-precedence
+  operators split first, producing more natural line breaks:
+
+  | Priority | Constant | Splits at |
+  |---|---|---|
+  | 40 | `TERNARY` | `?`, `:`, `?:` |
+  | 50 | `COALESCE` | `??` |
+  | 60 | `BOOLEAN_OR` | `\|\|` |
+  | 70 | `BOOLEAN_AND` | `&&` |
+  | 80 | `ADDITION` | `+`, `-`, `.` |
+  | 90 | `MULTIPLICATION` | `*`, `/`, `%` |
+
+  Each priority level has its own `TSplit` subclass (`TSplitTernary`,
+  `TSplitCoalesce`, `TSplitBooleanOr`, `TSplitBooleanAnd`, `TSplitAddition`,
+  `TSplitMultiplication`), replacing the former `TSplitLooseOperator` and
+  `TSplitTightOperator`.
+
+- **Performance improvements.** Comma splitting and the overall `Splitter` have
+  been optimized, with improvements to `Line` and `Parser` as well.
+
 ## 0.17.0
 
 ### Overview

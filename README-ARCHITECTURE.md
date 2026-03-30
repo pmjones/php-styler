@@ -202,23 +202,29 @@ Each PHP token and synthetic construct has a dedicated `AToken` subclass.
   `THeredocEnd`, etc.
 - **Synthetic:** `TSpace`, `TLineBreak`, `TBlankLine`, `TIndentIncrement`,
   `TIndentDecrement` — injected by the Parser, not from source.
-- **Split markers:** `TSplitComma`, `TSplitOperator`, `TSplitFluent`,
-  `TSplitCondition`, `TSplitAttribute`, `TSplitForSemicolon`, etc.
+- **Split markers:** `TSplitComma`, `TSplitTernary`, `TSplitCoalesce`,
+  `TSplitBooleanOr`, `TSplitBooleanAnd`, `TSplitAddition`,
+  `TSplitMultiplication`, `TSplitFluent`, `TSplitAttribute`,
+  `TSplitForSemicolon`, etc.
 - **Parse-as variants:** `TArrayAsShort`, `TElseAsElseIf`,
   `TStringLiteralAsSingleQuote`, `THeredocStartAsNowdoc`,
   `TLogicalAndAsBooleanAnd`, etc.
 
-**Split priority constants** (on `TSplit`):
+**Split priority constants** (on `TSplittable`):
 
 | Priority | Constant | Splits at |
 |---|---|---|
-| 5 | `ATTRIBUTE` | Attributes |
-| 10 | `FN_DOUBLE_ARROW` | `fn() =>` |
-| 20 | `COMMA` | Commas |
-| 30 | `LOOSE_OPERATOR` | `\|\|`, `or`, `??`, ternary |
-| 40 | `TIGHT_OPERATOR` | `&&`, `and`, `.` |
-| 50 | `FLUENT` | `->`, `?->`, `::` |
-| 60 | `FOR_SEMICOLON` | `for` semicolons |
+| 10 | `ATTRIBUTE` | Attributes |
+| 20 | `FN_DOUBLE_ARROW` | `fn() =>` |
+| 30 | `COMMA` | Commas |
+| 40 | `TERNARY` | `?`, `:`, `?:` |
+| 50 | `COALESCE` | `??` |
+| 60 | `BOOLEAN_OR` | `\|\|` |
+| 70 | `BOOLEAN_AND` | `&&` |
+| 80 | `ADDITION` | `+`, `-`, `.` |
+| 90 | `MULTIPLICATION` | `*`, `/`, `%` |
+| 100 | `FLUENT` | `->`, `?->`, `::` |
+| 110 | `FOR_SEMICOLON` | `for` semicolons |
 
 ### Parser Detail
 
