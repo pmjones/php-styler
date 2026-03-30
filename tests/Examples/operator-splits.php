@@ -22,3 +22,23 @@ $foo = $this->veryLongMethodName()
 $foo = $veryveryLongVariableName1
     ? $veryveryLongVariableName2
     : $veryveryLongVariableName3;
+
+$args = $this->getUriScheme()
+    + $this->getUriHostAndPort()
+    + $this->getUriPathAndQuery();
+
+$args = $this->getUriScheme()
+    - $this->getUriHostAndPort()
+    - $this->getUriPathAndQuery();
+
+$args = $this->getUriScheme()
+    * $this->getUriHostAndPort()
+    * $this->getUriPathAndQuery();
+
+$args = $this->getUriScheme()
+    / $this->getUriHostAndPort()
+    / $this->getUriPathAndQuery();
+
+$args = $this->getUriScheme()
+    % $this->getUriHostAndPort()
+    % $this->getUriPathAndQuery();

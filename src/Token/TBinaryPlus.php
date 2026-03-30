@@ -3,6 +3,12 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-class TBinaryPlus extends AToken
+use PhpStyler\Parser;
+
+class TBinaryPlus extends AToken implements TSplittableOperator
 {
+    public function splitBefore(Parser $parser) : ?TSplit
+    {
+        return new TSplitLooseOperator(AToken::SYNTHETIC, '');
+    }
 }

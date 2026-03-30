@@ -3,6 +3,12 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-class TDivide extends AToken
+use PhpStyler\Parser;
+
+class TDivide extends AToken implements TSplittableOperator
 {
+    public function splitBefore(Parser $parser) : ?TSplit
+    {
+        return new TSplitTightOperator(AToken::SYNTHETIC, '');
+    }
 }

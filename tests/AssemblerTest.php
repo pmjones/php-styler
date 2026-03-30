@@ -1220,9 +1220,13 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                         TVariable::class,
                         TAssign::class,
                         TIntegerLiteral::class,
+                    ],
+                    [
                         TBinaryPlus::class,
                         TIntegerLiteral::class,
                         TCommentSlashedMidStatement::class,
+                    ],
+                    [
                         TBinaryPlus::class,
                         TCommentStarredMidStatement::class,
                         TIntegerLiteral::class,
