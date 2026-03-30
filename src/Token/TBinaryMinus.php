@@ -9,6 +9,6 @@ class TBinaryMinus extends AToken implements TSplittableOperator
 {
     public function splitBefore(Parser $parser) : ?TSplit
     {
-        return new TSplitLooseOperator(AToken::SYNTHETIC, '');
+        return new TSplitAddition(AToken::SYNTHETIC, '');
     }
 }

@@ -16,6 +16,6 @@ class TBooleanOr extends AToken implements TSplittableOperator
 {
     public function splitBefore(Parser $parser) : ?TSplit
     {
-        return new TSplitLooseOperator(AToken::SYNTHETIC, '');
+        return new TSplitBooleanOr(AToken::SYNTHETIC, '');
     }
 }

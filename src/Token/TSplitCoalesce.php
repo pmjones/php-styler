@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-class TSplitTightOperator extends TSplitOperator
+class TSplitCoalesce extends TSplitOperator
 {
     public function splitPriority() : int
     {
-        return TSplittable::TIGHT_OPERATOR;
+        return TSplittable::COALESCE;
     }
 }

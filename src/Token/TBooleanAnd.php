@@ -16,6 +16,6 @@ class TBooleanAnd extends AToken implements TSplittableOperator
 {
     public function splitBefore(Parser $parser) : ?TSplit
     {
-        return new TSplitTightOperator(AToken::SYNTHETIC, '');
+        return new TSplitBooleanAnd(AToken::SYNTHETIC, '');
     }
 }

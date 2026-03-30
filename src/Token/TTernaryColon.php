@@ -10,7 +10,7 @@ class TTernaryColon extends AToken implements TSplittableOperator
 {
     public function splitBefore(Parser $parser) : ?TSplit
     {
-        return new TSplitLooseOperator(AToken::SYNTHETIC, '');
+        return new TSplitTernary(AToken::SYNTHETIC, '');
     }
 
     public static function parse(Parser $parser, PhpToken $source) : void
