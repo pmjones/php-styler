@@ -77,6 +77,23 @@ class Parser
         'T_NS_SEPARATOR' => Token\TNamespaceSeparator::class,
     ];
 
+    /**
+     * @var array<int, int>
+     */
+    private const MODIFIER_PRIORITY = [
+        T_ABSTRACT => 1,
+        T_FINAL => 1,
+        T_PUBLIC => 2,
+        T_PROTECTED => 2,
+        T_PRIVATE => 2,
+        T_VAR => 2,
+        T_PUBLIC_SET => 3,
+        T_PROTECTED_SET => 3,
+        T_PRIVATE_SET => 3,
+        T_STATIC => 4,
+        T_READONLY => 5,
+    ];
+
     private Format $format;
 
     /**
@@ -901,23 +918,6 @@ class Parser
             $source->pos,
         );
     }
-
-    /**
-     * @var array<int, int>
-     */
-    private const MODIFIER_PRIORITY = [
-        T_ABSTRACT => 1,
-        T_FINAL => 1,
-        T_PUBLIC => 2,
-        T_PROTECTED => 2,
-        T_PRIVATE => 2,
-        T_VAR => 2,
-        T_PUBLIC_SET => 3,
-        T_PROTECTED_SET => 3,
-        T_PRIVATE_SET => 3,
-        T_STATIC => 4,
-        T_READONLY => 5,
-    ];
 
     public function atClassBody() : bool
     {

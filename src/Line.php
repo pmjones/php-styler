@@ -22,6 +22,9 @@ class Line
     /** @var ?array<int, AToken> */
     private ?array $topLevelTokens = null;
 
+    /** @var ?array<int, int> spl_object_id => token index */
+    private ?array $tokenIndex = null;
+
     /**
      * @param AToken[] $tokens
      */
@@ -98,9 +101,6 @@ class Line
 
         return $this->topLevelTokens = $result;
     }
-
-    /** @var ?array<int, int> spl_object_id => token index */
-    private ?array $tokenIndex = null;
 
     public function findTokenIndex(AToken $target) : ?int
     {
