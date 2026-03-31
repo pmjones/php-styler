@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
-class Style
+readonly class Style
 {
     /**
      * @param ?callable(string):string $case

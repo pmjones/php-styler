@@ -247,6 +247,8 @@ class Parser
             $source->pos,
         );
 
+        $token->style = $style;
+
         if ($style->case !== null) {
             $token->text = ($style->case)($token->text);
         }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace PhpStyler;
 
 use PhpStyler\Token\AToken;
+use PhpStyler\Token\TBlankLine;
 use PhpStyler\Token\TCommentary;
 use PhpStyler\Token\TSpace;
 use PhpStyler\Token\TSplit;
@@ -26,7 +27,15 @@ class Splitter
         $result = [];
 
         foreach ($lines as $line) {
-            foreach ($this->splitLine($line) as $splitLine) {
+            $splitLines = $this->splitLine($line);
+
+            if (count($splitLines) > 1) {
+                foreach ($splitLines as $sl) {
+                    $sl->wasSplit = true;
+                }
+            }
+
+            foreach ($splitLines as $splitLine) {
                 $result[] = $splitLine;
             }
         }
@@ -34,6 +43,7 @@ class Splitter
         $result = $this->expandOpenerCloser($result);
         $result = $this->normalizeIndents($result);
         $result = $this->expandCommas($result);
+        $result = $this->insertBlankLinesAroundSplits($result);
         return $result;
     }
 
@@ -446,12 +456,19 @@ class Splitter
         $before = array_slice($tokens, 0, $openerTokenIndex + 1);
         $after = array_slice($tokens, $openerTokenIndex + 1);
 
-        $lines[$openerLineIndex] = $this->lineFactory->new($before, $indent);
+        $wasSplit = $line->wasSplit;
+
+        $beforeLine = $this->lineFactory->new($before, $indent);
+        $beforeLine->wasSplit = $wasSplit;
+        $lines[$openerLineIndex] = $beforeLine;
+
+        $afterLine = $this->lineFactory->new($after, $indent + 1);
+        $afterLine->wasSplit = $wasSplit;
         array_splice(
             $lines,
             $openerLineIndex + 1,
             0,
-            [$this->lineFactory->new($after, $indent + 1)],
+            [$afterLine],
         );
 
         // Bump indent of all content lines between opener and closer
@@ -481,26 +498,33 @@ class Splitter
     ) : array
     {
         $line = $lines[$closerLineIndex];
+        $wasSplit = $line->wasSplit;
         $tokens = $line->getTokens();
 
         $before = array_slice($tokens, 0, $closerTokenIndex);
         $after = array_slice($tokens, $closerTokenIndex);
 
         $beforeLine = $this->lineFactory->new($before, $line->indent);
+        $beforeLine->wasSplit = $wasSplit;
 
         if ($beforeLine->contentTokenCount() === 0 && $closerLineIndex > 0) {
             $prev = $lines[$closerLineIndex - 1];
-            $lines[$closerLineIndex - 1] = $this->lineFactory
+            $mergedLine = $this->lineFactory
                 ->new(array_merge($prev->getTokens(), $before), $prev->indent);
-            $lines[$closerLineIndex] = $this->lineFactory
-                ->new($after, $openerIndent);
+            $mergedLine->wasSplit = $prev->wasSplit;
+            $lines[$closerLineIndex - 1] = $mergedLine;
+            $closerLine = $this->lineFactory->new($after, $openerIndent);
+            $closerLine->wasSplit = $wasSplit;
+            $lines[$closerLineIndex] = $closerLine;
         } else {
             $lines[$closerLineIndex] = $beforeLine;
+            $afterLine = $this->lineFactory->new($after, $openerIndent);
+            $afterLine->wasSplit = $wasSplit;
             array_splice(
                 $lines,
                 $closerLineIndex + 1,
                 0,
-                [$this->lineFactory->new($after, $openerIndent)],
+                [$afterLine],
             );
         }
 
@@ -538,12 +562,18 @@ class Splitter
                     continue;
                 }
 
+                $contentIndent = $line->indent + 1;
+
                 for ($i = $lineIndex + 1; $i < $closerLineIndex; $i ++) {
-                    if (
-                        ! isset($lineIndices[$i])
-                        && $lines[$i]->findTopLevelComma() !== null
-                    ) {
-                        $lineIndices[$i] = true;
+                    if (! $lines[$i]->isBlank()) {
+                        $contentIndent = $lines[$i]->indent;
+                        break;
+                    }
+                }
+
+                for ($i = $lineIndex + 1; $i < $closerLineIndex; $i ++) {
+                    if ($lines[$i]->findTopLevelComma() !== null) {
+                        $lineIndices[$i] = $contentIndent;
                     }
                 }
             }
@@ -556,8 +586,12 @@ class Splitter
         // Process from bottom to top so insertions don't affect earlier indices
         krsort($lineIndices);
 
-        foreach ($lineIndices as $lineIndex => $_) {
-            $lines = $this->splitLineAtAllCommas($lines, $lineIndex);
+        foreach ($lineIndices as $lineIndex => $openerIndent) {
+            $lines = $this->splitLineAtAllCommas(
+                $lines,
+                $lineIndex,
+                $openerIndent,
+            );
         }
 
         return array_values($lines);
@@ -567,9 +601,14 @@ class Splitter
      * @param Line[] $lines
      * @return Line[]
      */
-    private function splitLineAtAllCommas(array $lines, int $lineIndex) : array
+    private function splitLineAtAllCommas(
+        array $lines,
+        int $lineIndex,
+        int $contentIndent,
+    ) : array
     {
         $line = $lines[$lineIndex];
+        $wasSplit = $line->wasSplit;
         $tokens = $line->getTokens();
         $indent = $line->indent;
         $commaPositions = $line->findTopLevelCommas();
@@ -625,7 +664,10 @@ class Splitter
             $segment = array_slice($tokens, $start, $splitAt - $start);
 
             if ($segment !== []) {
-                $newLines[] = $this->lineFactory->new($segment, $indent);
+                $segIndent = $start === 0 ? $indent : $contentIndent;
+                $segLine = $this->lineFactory->new($segment, $segIndent);
+                $segLine->wasSplit = $wasSplit;
+                $newLines[] = $segLine;
             }
 
             $start = $splitAt;
@@ -634,7 +676,12 @@ class Splitter
         $remaining = array_slice($tokens, $start);
 
         if ($remaining !== []) {
-            $newLines[] = $this->lineFactory->new($remaining, $indent);
+            $remLine = $this->lineFactory->new(
+                $remaining,
+                $contentIndent,
+            );
+            $remLine->wasSplit = $wasSplit;
+            $newLines[] = $remLine;
         }
 
         if (count($newLines) <= 1) {
@@ -644,5 +691,43 @@ class Splitter
         array_splice($lines, $lineIndex, 1, $newLines);
 
         return $lines;
+    }
+
+    /**
+     * @param Line[] $lines
+     * @return Line[]
+     */
+    private function insertBlankLinesAroundSplits(array $lines) : array
+    {
+        for ($i = count($lines) - 1; $i > 0; $i --) {
+            $above = $lines[$i - 1];
+            $below = $lines[$i];
+
+            if ($above->wasSplit === $below->wasSplit) {
+                continue;
+            }
+
+            if ($above->isBlank() || $below->isBlank()) {
+                continue;
+            }
+
+            if ($above->lastContentToken()?->style?->blankLineAfter === false) {
+                continue;
+            }
+
+            if ($below->firstContentToken()?->style?->blankLineBefore === false) {
+                continue;
+            }
+
+            array_splice($lines, $i, 0, [
+                new Line([new TBlankLine(AToken::SYNTHETIC, "\n\n")]),
+            ]);
+        }
+
+        foreach ($lines as $line) {
+            $line->wasSplit = false;
+        }
+
+        return array_values($lines);
     }
 }

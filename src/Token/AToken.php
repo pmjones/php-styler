@@ -5,6 +5,7 @@ namespace PhpStyler\Token;
 
 use PhpStyler\Line;
 use PhpStyler\Parser;
+use PhpStyler\Style;
 use PhpToken;
 
 abstract class AToken extends PhpToken
@@ -18,6 +19,8 @@ abstract class AToken extends PhpToken
     public ?AToken $openingToken = null;
 
     public ?AToken $closingToken = null;
+
+    public ?Style $style = null;
 
     public function isIgnorable() : bool
     {

@@ -20,6 +20,7 @@ class TTest extends \PHPUnit\Framework\TestCase
             'argCount' => 0,
             'openingToken' => null,
             'closingToken' => null,
+            'style' => null,
         ];
 
         $actual = $fake->__debugInfo();

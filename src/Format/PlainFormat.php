@@ -37,12 +37,14 @@ class PlainFormat implements Format
         Token\TAnonymousClosingBrace::class => [
             'spaceBefore' => false,
             'spaceAfter' => true,
+            'blankLineBefore' => false,
         ],
         Token\TAnonymousFunction::class => [
             'spaceAfter' => true,
         ],
         Token\TAnonymousOpeningBrace::class => [
             'lineBreakAfter' => true,
+            'blankLineAfter' => false,
         ],
         Token\TArgsClosingParen::class => [
             'spaceBefore' => false,
@@ -112,6 +114,7 @@ class PlainFormat implements Format
         Token\TAttributeClosingBracket::class => [
             'spaceBefore' => false,
             'lineBreakAfter' => true,
+            'blankLineAfter' => false,
         ],
         Token\TBacktickClosing::class => [
             'spaceBefore' => false,
@@ -142,6 +145,7 @@ class PlainFormat implements Format
             'spaceBefore' => false,
             'spaceAfter' => true,
             'lineBreakAfter' => true,
+            'blankLineAfter' => false,
         ],
         Token\TCaseFallthroughColon::class => [
             'spaceBefore' => false,
@@ -154,14 +158,17 @@ class PlainFormat implements Format
         Token\TCatchClosingBrace::class => [
             'spaceBefore' => false,
             'spaceAfter' => true,
+            'blankLineBefore' => false,
             'blankLineAfter' => true,
         ],
         Token\TCatchContinuationBrace::class => [
             'spaceBefore' => true,
             'spaceAfter' => true,
+            'blankLineBefore' => false,
         ],
         Token\TCatchOpeningBrace::class => [
             'lineBreakAfter' => true,
+            'blankLineAfter' => false,
         ],
         Token\TClass::class => [
             'spaceAfter' => true,
@@ -169,6 +176,7 @@ class PlainFormat implements Format
         Token\TClassClosingBrace::class => [
             'spaceBefore' => false,
             'spaceAfter' => true,
+            'blankLineBefore' => false,
             'blankLineAfter' => true,
         ],
         Token\TClassName::class => [
@@ -177,15 +185,18 @@ class PlainFormat implements Format
         Token\TClassOpeningBrace::class => [
             'lineBreakBefore' => true,
             'lineBreakAfter' => true,
+            'blankLineAfter' => false,
         ],
         Token\TClasslikeClosingBrace::class => [
             'spaceBefore' => false,
             'spaceAfter' => true,
+            'blankLineBefore' => false,
             'blankLineAfter' => true,
         ],
         Token\TClasslikeOpeningBrace::class => [
             'lineBreakBefore' => true,
             'lineBreakAfter' => true,
+            'blankLineAfter' => false,
         ],
         Token\TClosingBrace::class => [
             'spaceBefore' => false,
@@ -202,6 +213,7 @@ class PlainFormat implements Format
         Token\TCommentHashed::class => [
             'lineBreakBefore' => true,
             'lineBreakAfter' => true,
+            'blankLineAfter' => false,
         ],
         Token\TCommentHashedBlankLine::class => [
             'spaceBefore' => true,
@@ -217,6 +229,7 @@ class PlainFormat implements Format
         Token\TCommentSlashed::class => [
             'lineBreakBefore' => true,
             'lineBreakAfter' => true,
+            'blankLineAfter' => false,
         ],
         Token\TCommentSlashedBlankLine::class => [
             'spaceBefore' => true,
@@ -232,6 +245,7 @@ class PlainFormat implements Format
         Token\TCommentStarred::class => [
             'lineBreakBefore' => true,
             'lineBreakAfter' => true,
+            'blankLineAfter' => false,
         ],
         Token\TCommentStarredBlankLine::class => [
             'spaceBefore' => true,
@@ -264,6 +278,7 @@ class PlainFormat implements Format
         ],
         Token\TContinuationBraceless::class => [
             'spaceAfter' => true,
+            'blankLineBefore' => false,
         ],
         Token\TCurlyClose::class => [
             'spaceBefore' => false,
@@ -279,12 +294,14 @@ class PlainFormat implements Format
         Token\TDeclareClosingBrace::class => [
             'spaceBefore' => false,
             'spaceAfter' => true,
+            'blankLineBefore' => false,
             'lineBreakAfter' => true,
         ],
         Token\TDeclareColon::class => [
             'spaceBefore' => false,
             'spaceAfter' => true,
             'lineBreakAfter' => true,
+            'blankLineAfter' => false,
         ],
         Token\TDeclareDirective::class => [
             'spaceAfter' => false,
@@ -307,6 +324,7 @@ class PlainFormat implements Format
         ],
         Token\TDeclareOpeningBrace::class => [
             'lineBreakAfter' => true,
+            'blankLineAfter' => false,
         ],
         Token\TDefault::class => [
             'spaceAfter' => true,
@@ -323,13 +341,16 @@ class PlainFormat implements Format
         Token\TDoContinuationBrace::class => [
             'spaceBefore' => true,
             'spaceAfter' => true,
+            'blankLineBefore' => false,
         ],
         Token\TDoOpeningBrace::class => [
             'lineBreakAfter' => true,
+            'blankLineAfter' => false,
         ],
         Token\TDocComment::class => [
             'lineBreakAfter' => true,
             'blankLineBefore' => true,
+            'blankLineAfter' => false,
         ],
         Token\TDocCommentBlankLine::class => [
             'spaceBefore' => true,
@@ -388,20 +409,24 @@ class PlainFormat implements Format
         Token\TElseClosingBrace::class => [
             'spaceBefore' => false,
             'spaceAfter' => true,
+            'blankLineBefore' => false,
             'blankLineAfter' => true,
         ],
         Token\TElseClosingBraceless::class => [
             'spaceBefore' => false,
             'spaceAfter' => true,
+            'blankLineBefore' => false,
             'lineBreakAfter' => true,
         ],
         Token\TElseColon::class => [
             'spaceBefore' => false,
             'spaceAfter' => true,
             'lineBreakAfter' => true,
+            'blankLineAfter' => false,
         ],
         Token\TElseOpeningBrace::class => [
             'lineBreakAfter' => true,
+            'blankLineAfter' => false,
         ],
         Token\TElseif::class => [
             'spaceAfter' => true,
@@ -409,11 +434,13 @@ class PlainFormat implements Format
         Token\TElseifClosingBrace::class => [
             'spaceBefore' => false,
             'spaceAfter' => true,
+            'blankLineBefore' => false,
             'blankLineAfter' => true,
         ],
         Token\TElseifClosingBraceless::class => [
             'spaceBefore' => false,
             'spaceAfter' => true,
+            'blankLineBefore' => false,
             'lineBreakAfter' => true,
         ],
         Token\TElseifClosingParen::class => [
@@ -424,16 +451,20 @@ class PlainFormat implements Format
             'spaceBefore' => false,
             'spaceAfter' => true,
             'lineBreakAfter' => true,
+            'blankLineAfter' => false,
         ],
         Token\TElseifContinuationBrace::class => [
             'spaceBefore' => true,
             'spaceAfter' => true,
+            'blankLineBefore' => false,
         ],
         Token\TElseifContinuationBraceless::class => [
             'spaceAfter' => true,
+            'blankLineBefore' => false,
         ],
         Token\TElseifOpeningBrace::class => [
             'lineBreakAfter' => true,
+            'blankLineAfter' => false,
         ],
         Token\TElvisColon::class => [
             'spaceBefore' => false,
@@ -470,21 +501,27 @@ class PlainFormat implements Format
         ],
         Token\TEnddeclare::class => [
             'spaceAfter' => true,
+            'blankLineBefore' => false,
         ],
         Token\TEndfor::class => [
             'spaceAfter' => true,
+            'blankLineBefore' => false,
         ],
         Token\TEndforeach::class => [
             'spaceAfter' => true,
+            'blankLineBefore' => false,
         ],
         Token\TEndif::class => [
             'spaceAfter' => true,
+            'blankLineBefore' => false,
         ],
         Token\TEndswitch::class => [
             'spaceAfter' => true,
+            'blankLineBefore' => false,
         ],
         Token\TEndwhile::class => [
             'spaceAfter' => true,
+            'blankLineBefore' => false,
         ],
         Token\TEnum::class => [
             'spaceAfter' => true,
@@ -503,6 +540,7 @@ class PlainFormat implements Format
         Token\TEnumClosingBrace::class => [
             'spaceBefore' => false,
             'spaceAfter' => true,
+            'blankLineBefore' => false,
             'blankLineAfter' => true,
         ],
         Token\TEnumName::class => [
@@ -511,6 +549,7 @@ class PlainFormat implements Format
         Token\TEnumOpeningBrace::class => [
             'lineBreakBefore' => true,
             'lineBreakAfter' => true,
+            'blankLineAfter' => false,
         ],
         Token\TExpressionClosingParen::class => [
             'spaceBefore' => false,
@@ -529,10 +568,12 @@ class PlainFormat implements Format
         Token\TFinallyClosingBrace::class => [
             'spaceBefore' => false,
             'spaceAfter' => true,
+            'blankLineBefore' => false,
             'blankLineAfter' => true,
         ],
         Token\TFinallyOpeningBrace::class => [
             'lineBreakAfter' => true,
+            'blankLineAfter' => false,
         ],
         Token\TFirstClassCallableEllipsis::class => [
             'spaceAfter' => true,
@@ -555,11 +596,13 @@ class PlainFormat implements Format
         Token\TForClosingBrace::class => [
             'spaceBefore' => false,
             'spaceAfter' => true,
+            'blankLineBefore' => false,
             'blankLineAfter' => true,
         ],
         Token\TForClosingBraceless::class => [
             'spaceBefore' => false,
             'spaceAfter' => true,
+            'blankLineBefore' => false,
             'lineBreakAfter' => true,
         ],
         Token\TForClosingParen::class => [
@@ -570,6 +613,7 @@ class PlainFormat implements Format
             'spaceBefore' => false,
             'spaceAfter' => true,
             'lineBreakAfter' => true,
+            'blankLineAfter' => false,
         ],
         Token\TForComma::class => [
             'spaceBefore' => false,
@@ -577,6 +621,7 @@ class PlainFormat implements Format
         ],
         Token\TForOpeningBrace::class => [
             'lineBreakAfter' => true,
+            'blankLineAfter' => false,
         ],
         Token\TForSemicolon::class => [
             'spaceBefore' => false,
@@ -592,11 +637,13 @@ class PlainFormat implements Format
         Token\TForeachClosingBrace::class => [
             'spaceBefore' => false,
             'spaceAfter' => true,
+            'blankLineBefore' => false,
             'blankLineAfter' => true,
         ],
         Token\TForeachClosingBraceless::class => [
             'spaceBefore' => false,
             'spaceAfter' => true,
+            'blankLineBefore' => false,
             'lineBreakAfter' => true,
         ],
         Token\TForeachClosingParen::class => [
@@ -607,9 +654,11 @@ class PlainFormat implements Format
             'spaceBefore' => false,
             'spaceAfter' => true,
             'lineBreakAfter' => true,
+            'blankLineAfter' => false,
         ],
         Token\TForeachOpeningBrace::class => [
             'lineBreakAfter' => true,
+            'blankLineAfter' => false,
         ],
         Token\TFullyQualifiedName::class => [
             'spaceAfter' => true,
@@ -632,11 +681,13 @@ class PlainFormat implements Format
         Token\TFunctionClosingBrace::class => [
             'spaceBefore' => false,
             'spaceAfter' => true,
+            'blankLineBefore' => false,
             'blankLineAfter' => true,
         ],
         Token\TFunctionOpeningBrace::class => [
             'lineBreakBefore' => true,
             'lineBreakAfter' => true,
+            'blankLineAfter' => false,
         ],
         Token\TGlobal::class => [
             'spaceAfter' => true,
@@ -679,11 +730,13 @@ class PlainFormat implements Format
         Token\TIfClosingBrace::class => [
             'spaceBefore' => false,
             'spaceAfter' => true,
+            'blankLineBefore' => false,
             'blankLineAfter' => true,
         ],
         Token\TIfClosingBraceless::class => [
             'spaceBefore' => false,
             'spaceAfter' => true,
+            'blankLineBefore' => false,
             'lineBreakAfter' => true,
         ],
         Token\TIfClosingParen::class => [
@@ -694,16 +747,20 @@ class PlainFormat implements Format
             'spaceBefore' => false,
             'spaceAfter' => true,
             'lineBreakAfter' => true,
+            'blankLineAfter' => false,
         ],
         Token\TIfContinuationBrace::class => [
             'spaceBefore' => true,
             'spaceAfter' => true,
+            'blankLineBefore' => false,
         ],
         Token\TIfContinuationBraceless::class => [
             'spaceAfter' => true,
+            'blankLineBefore' => false,
         ],
         Token\TIfOpeningBrace::class => [
             'lineBreakAfter' => true,
+            'blankLineAfter' => false,
         ],
         Token\TImplements::class => [
             'spaceAfter' => true,
@@ -715,6 +772,7 @@ class PlainFormat implements Format
         Token\TInlineAttributeClosingBracket::class => [
             'spaceBefore' => false,
             'spaceAfter' => true,
+            'blankLineAfter' => false,
         ],
         Token\TInlineHtml::class => [
             'spaceBefore' => false,
@@ -730,6 +788,7 @@ class PlainFormat implements Format
         Token\TInterfaceClosingBrace::class => [
             'spaceBefore' => false,
             'spaceAfter' => true,
+            'blankLineBefore' => false,
             'blankLineAfter' => true,
         ],
         Token\TInterfaceName::class => [
@@ -738,6 +797,7 @@ class PlainFormat implements Format
         Token\TInterfaceOpeningBrace::class => [
             'lineBreakBefore' => true,
             'lineBreakAfter' => true,
+            'blankLineAfter' => false,
         ],
         Token\TIntersection::class => [
             'spaceBefore' => false,
@@ -760,6 +820,7 @@ class PlainFormat implements Format
         Token\TMatchClosingBrace::class => [
             'spaceBefore' => false,
             'spaceAfter' => true,
+            'blankLineBefore' => false,
         ],
         Token\TMatchClosingParen::class => [
             'spaceBefore' => false,
@@ -771,6 +832,7 @@ class PlainFormat implements Format
         ],
         Token\TMatchOpeningBrace::class => [
             'lineBreakAfter' => true,
+            'blankLineAfter' => false,
         ],
         Token\TMatchReturnComma::class => [
             'spaceBefore' => false,
@@ -797,6 +859,7 @@ class PlainFormat implements Format
         Token\TNamespaceClosingBrace::class => [
             'spaceBefore' => false,
             'spaceAfter' => true,
+            'blankLineBefore' => false,
             'lineBreakAfter' => true,
         ],
         Token\TNamespaceConstEndSemicolon::class => [
@@ -812,6 +875,7 @@ class PlainFormat implements Format
         Token\TNamespaceOpeningBrace::class => [
             'lineBreakBefore' => true,
             'lineBreakAfter' => true,
+            'blankLineAfter' => false,
         ],
         Token\TNull::class => [
             'case' => 'strtolower',
@@ -826,6 +890,7 @@ class PlainFormat implements Format
         ],
         Token\TOpeningBraceless::class => [
             'lineBreakAfter' => true,
+            'blankLineAfter' => false,
         ],
         Token\TParamsClosingParen::class => [
             'spaceBefore' => false,
@@ -838,6 +903,7 @@ class PlainFormat implements Format
         Token\TPhpOpeningTag::class => [
             'spaceAfter' => true,
             'lineBreakAfter' => true,
+            'blankLineAfter' => false,
         ],
         Token\TPhpOpeningTagInline::class => [
             'spaceBefore' => false,
@@ -880,6 +946,7 @@ class PlainFormat implements Format
         Token\TPropertyHookGetClosingBrace::class => [
             'spaceBefore' => false,
             'spaceAfter' => true,
+            'blankLineBefore' => false,
             'lineBreakAfter' => true,
         ],
         Token\TPropertyHookGetDoubleArrow::class => [
@@ -888,6 +955,7 @@ class PlainFormat implements Format
         ],
         Token\TPropertyHookGetOpeningBrace::class => [
             'lineBreakAfter' => true,
+            'blankLineAfter' => false,
         ],
         Token\TPropertyHookGetSemicolon::class => [
             'spaceBefore' => false,
@@ -900,6 +968,7 @@ class PlainFormat implements Format
         Token\TPropertyHookSetClosingBrace::class => [
             'spaceBefore' => false,
             'spaceAfter' => true,
+            'blankLineBefore' => false,
             'lineBreakAfter' => true,
         ],
         Token\TPropertyHookSetClosingParen::class => [
@@ -912,6 +981,7 @@ class PlainFormat implements Format
         ],
         Token\TPropertyHookSetOpeningBrace::class => [
             'lineBreakAfter' => true,
+            'blankLineAfter' => false,
         ],
         Token\TPropertyHookSetOpeningParen::class => [
             'spaceBefore' => false,
@@ -924,10 +994,12 @@ class PlainFormat implements Format
         Token\TPropertyHooksClosingBrace::class => [
             'spaceBefore' => false,
             'spaceAfter' => true,
+            'blankLineBefore' => false,
             'blankLineAfter' => true,
         ],
         Token\TPropertyHooksOpeningBrace::class => [
             'lineBreakAfter' => true,
+            'blankLineAfter' => false,
         ],
         Token\TQualifiedName::class => [
             'spaceAfter' => true,
@@ -1001,11 +1073,13 @@ class PlainFormat implements Format
         Token\TSwitchAfterCaseClosingBrace::class => [
             'spaceBefore' => false,
             'spaceAfter' => true,
+            'blankLineBefore' => false,
             'blankLineAfter' => true,
         ],
         Token\TSwitchClosingBrace::class => [
             'spaceBefore' => false,
             'spaceAfter' => true,
+            'blankLineBefore' => false,
             'blankLineAfter' => true,
         ],
         Token\TSwitchClosingParen::class => [
@@ -1016,9 +1090,11 @@ class PlainFormat implements Format
             'spaceBefore' => false,
             'spaceAfter' => true,
             'lineBreakAfter' => true,
+            'blankLineAfter' => false,
         ],
         Token\TSwitchOpeningBrace::class => [
             'lineBreakAfter' => true,
+            'blankLineAfter' => false,
         ],
         Token\TTernaryColon::class => [
             'spaceBefore' => true,
@@ -1042,6 +1118,7 @@ class PlainFormat implements Format
         Token\TTraitClosingBrace::class => [
             'spaceBefore' => false,
             'spaceAfter' => true,
+            'blankLineBefore' => false,
             'blankLineAfter' => true,
         ],
         Token\TTraitName::class => [
@@ -1050,6 +1127,7 @@ class PlainFormat implements Format
         Token\TTraitOpeningBrace::class => [
             'lineBreakBefore' => true,
             'lineBreakAfter' => true,
+            'blankLineAfter' => false,
         ],
         Token\TTrue::class => [
             'case' => 'strtolower',
@@ -1060,9 +1138,11 @@ class PlainFormat implements Format
         Token\TTryContinuationBrace::class => [
             'spaceBefore' => true,
             'spaceAfter' => true,
+            'blankLineBefore' => false,
         ],
         Token\TTryOpeningBrace::class => [
             'lineBreakAfter' => true,
+            'blankLineAfter' => false,
         ],
         Token\TUnion::class => [
             'spaceBefore' => false,
@@ -1109,6 +1189,7 @@ class PlainFormat implements Format
         Token\TUseTraitClosingBrace::class => [
             'spaceBefore' => false,
             'spaceAfter' => true,
+            'blankLineBefore' => false,
             'blankLineAfter' => true,
         ],
         Token\TUseTraitComma::class => [
@@ -1126,6 +1207,7 @@ class PlainFormat implements Format
         ],
         Token\TUseTraitOpeningBrace::class => [
             'lineBreakAfter' => true,
+            'blankLineAfter' => false,
         ],
         Token\TUseVariablesClosingParen::class => [
             'spaceBefore' => false,
@@ -1147,11 +1229,13 @@ class PlainFormat implements Format
         Token\TWhileClosingBrace::class => [
             'spaceBefore' => false,
             'spaceAfter' => true,
+            'blankLineBefore' => false,
             'blankLineAfter' => true,
         ],
         Token\TWhileClosingBraceless::class => [
             'spaceBefore' => false,
             'spaceAfter' => true,
+            'blankLineBefore' => false,
             'lineBreakAfter' => true,
         ],
         Token\TWhileClosingParen::class => [
@@ -1162,9 +1246,11 @@ class PlainFormat implements Format
             'spaceBefore' => false,
             'spaceAfter' => true,
             'lineBreakAfter' => true,
+            'blankLineAfter' => false,
         ],
         Token\TWhileOpeningBrace::class => [
             'lineBreakAfter' => true,
+            'blankLineAfter' => false,
         ],
         Token\TYield::class => [
             'spaceBefore' => true,
@@ -1261,8 +1347,8 @@ class PlainFormat implements Format
         }
 
         $args = match ($spec) {
-            'same_line' => ['lineBreakBefore' => null, 'spaceBefore' => true],
-            'next_line' => ['lineBreakBefore' => true, 'spaceBefore' => null],
+            'same_line' => ['blankLineBefore' => false, 'lineBreakBefore' => null, 'spaceBefore' => true],
+            'next_line' => ['blankLineBefore' => false, 'lineBreakBefore' => true, 'spaceBefore' => null],
         };
 
         foreach ([
@@ -1303,8 +1389,8 @@ class PlainFormat implements Format
         }
 
         $args = match ($spec) {
-            'next_line' => ['lineBreakBefore' => true],
-            'same_line' => ['lineBreakBefore' => null],
+            'next_line' => ['blankLineBefore' => false, 'lineBreakBefore' => true],
+            'same_line' => ['blankLineBefore' => false, 'lineBreakBefore' => null],
         };
 
         foreach ([
@@ -1351,8 +1437,8 @@ class PlainFormat implements Format
         }
 
         $args = match ($spec) {
-            'same_line' => ['lineBreakBefore' => null, 'spaceBefore' => true],
-            'next_line' => ['lineBreakBefore' => true, 'spaceBefore' => null],
+            'same_line' => ['blankLineBefore' => false, 'lineBreakBefore' => null, 'spaceBefore' => true],
+            'next_line' => ['blankLineBefore' => false, 'lineBreakBefore' => true, 'spaceBefore' => null],
         };
 
         $class = Token\TFunctionOpeningBrace::class;
@@ -1445,4 +1531,5 @@ class PlainFormat implements Format
             $this->styles[$class] = array_merge($this->styles[$class], $args);
         }
     }
+
 }

@@ -20,7 +20,8 @@ class RejoinOrphans implements LineRule
             $nextLine = $lines[$i + 1];
 
             if (
-                $line->contentTokenCount() === 1
+                ! $line->isBlank()
+                && $line->contentTokenCount() === 1
                 && $nextLine->firstContentToken() instanceof TFunctionOpeningBrace
             ) {
                 $merged = array_merge(
