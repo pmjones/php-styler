@@ -144,6 +144,7 @@ Splitter (src/Splitter.php)
     │  checks each line against max length
     │  splits at TSplit points in priority order
     │  expands opener/closer pairs across lines
+    │  inserts blank lines around split groups (with style-based denial)
     ▼
 Split lines
     │
@@ -163,14 +164,14 @@ Rendered output
 | Class | Responsibility |
 |---|---|
 | `Parser` | Maps PhpTokens to AToken subclasses; applies styles; injects synthetic tokens |
-| `AToken` | Abstract base for all 507 token classes; extends `PhpToken` |
-| `Style` | Per-token spacing, line breaks, blank lines, casing |
+| `AToken` | Abstract base for all 507 token classes; extends `PhpToken`; carries its `Style` instance |
+| `Style` | Per-token spacing, line breaks, blank lines, casing (`readonly`) |
 | `Format` (interface) | Declares `eol`, `lineLen`, `indentLen`, `indentTab`, `parseAs`, `styles`, `rules` |
 | `PlainFormat` | Base format with styles for all token types |
 | `DeclarationFormat` | Extends PlainFormat with opinionated rules and parseAs |
 | `Styler` | Pipeline orchestrator: parse → tokenRules → assemble → split → lineRules → render |
 | `Assembler` | Converts token stream to Line objects |
-| `Splitter` | Splits long lines at priority-ordered split points |
+| `Splitter` | Splits long lines at priority-ordered split points; inserts blank lines around split groups |
 | `Line` | A single output line; holds AToken array and indent level |
 | `LineFactory` | Creates Line instances with configured dimensions |
 | `Nesting` | Tracks nesting context for tokens |
@@ -215,8 +216,8 @@ Each PHP token and synthetic construct has a dedicated `AToken` subclass.
 | Priority | Constant | Splits at |
 |---|---|---|
 | 10 | `ATTRIBUTE` | Attributes |
-| 20 | `FN_DOUBLE_ARROW` | `fn() =>` |
-| 30 | `COMMA` | Commas |
+| 20 | `COMMA` | Commas |
+| 30 | `FN_DOUBLE_ARROW` | `fn() =>` |
 | 40 | `TERNARY` | `?`, `:`, `?:` |
 | 50 | `COALESCE` | `??` |
 | 60 | `BOOLEAN_OR` | `\|\|` |
@@ -248,9 +249,11 @@ The Parser (`src/Parser.php`) is the most complex class. Key mechanics:
      (e.g., adding braces to braceless control structures)
 
 4. **Style application.** When `add()` is called, the Parser looks up the token
-   class in `Format::$styles` and applies `spaceBefore`, `spaceAfter`,
+   class in `Format::$styles`, creates a `Style` instance, attaches it to the
+   token (`$token->style`), and applies `spaceBefore`, `spaceAfter`,
    `lineBreakBefore`, `lineBreakAfter`, `blankLineBefore`, `blankLineAfter`,
-   and `case` transformation.
+   and `case` transformation. The attached style is later used by the Splitter
+   for blank-line denial checks.
 
 ### Format System
 
@@ -298,11 +301,11 @@ The `Format::$rules` array specifies which rules to instantiate and their
 constructor arguments. The `Styler` instantiates them at construction time and
 applies them in declared order.
 
-**Token rules:** RemoveBom, NormalizeImports, OrderTypes,
-NormalizeTrailingCommas, CollapseEmptyBody, ConvertToYodaConditions,
-ConvertFromYodaConditions, NormalizeMemberSpacing.
+**Token rules:** RemoveBom, NormalizeImports, OrderTypes, CollapseEmptyBody,
+ConvertToYodaConditions, ConvertFromYodaConditions, NormalizeMemberSpacing.
 
-**Line rules:** MergeParenBracket, RejoinOrphans, RemoveTrailingBlankLines.
+**Line rules:** MergeParenBracket, RejoinOrphans, NormalizeTrailingCommas,
+RemoveTrailingBlankLines.
 
 ### Assembler
 
@@ -315,7 +318,7 @@ The `Assembler` converts the styled token stream into `Line` objects:
 
 ### Splitter
 
-The `Splitter` handles line-length enforcement:
+The `Splitter` handles line-length enforcement and blank line insertion:
 
 1. For each line, check if it exceeds `lineLen`.
 2. If so, find `TSplit` tokens and group them by priority.
@@ -324,6 +327,14 @@ The `Splitter` handles line-length enforcement:
 5. Expand opener/closer pairs (brackets, braces, parentheses) across lines.
 6. Mark expanded lines with `$isExpanded` flag.
 7. Detect `@php-styler-expansive` annotations and force expansion.
+8. Insert blank lines around split groups. Lines produced from splitting a
+   single original line form a "split group." Blank lines are inserted at
+   transitions between split and non-split lines, unless the adjacent token's
+   style has `blankLineBefore => false` or `blankLineAfter => false` (denial).
+   Denials are set on opening structure tokens (interior: no blank at start of
+   block body), closing structure tokens (interior: no blank at end of block
+   body), comments and docblocks (stay attached to next line), attribute
+   brackets, and opening braces (via brace position configuration).
 
 * * *
 

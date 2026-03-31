@@ -13,6 +13,7 @@
 
   | Priority | Constant | Splits at |
   |---|---|---|
+  | 30 | `FN_DOUBLE_ARROW` | `fn() =>` |
   | 40 | `TERNARY` | `?`, `:`, `?:` |
   | 50 | `COALESCE` | `??` |
   | 60 | `BOOLEAN_OR` | `\|\|` |
@@ -20,10 +21,31 @@
   | 80 | `ADDITION` | `+`, `-`, `.` |
   | 90 | `MULTIPLICATION` | `*`, `/`, `%` |
 
-  Each priority level has its own `TSplit` subclass (`TSplitTernary`,
-  `TSplitCoalesce`, `TSplitBooleanOr`, `TSplitBooleanAnd`, `TSplitAddition`,
-  `TSplitMultiplication`), replacing the former `TSplitLooseOperator` and
-  `TSplitTightOperator`.
+  Each priority level has its own `TSplit` subclass (`TSplitFnDoubleArrow`,
+  `TSplitTernary`, `TSplitCoalesce`, `TSplitBooleanOr`, `TSplitBooleanAnd`,
+  `TSplitAddition`, `TSplitMultiplication`), replacing the former
+  `TSplitLooseOperator` and `TSplitTightOperator`.
+
+- **Blank lines around split lines.** When a line is split into multiple lines,
+  blank lines are automatically inserted above and below the split group to
+  visually separate it from surrounding code. Blank lines are suppressed at block
+  boundaries (after opening braces, before closing braces), after comments and
+  docblocks (which stay attached to the next line), after attribute brackets, and
+  before opening braces in brace-position configurations. Suppression is
+  controlled by `blankLineBefore`/`blankLineAfter` style values (set to `false`
+  to deny), which can be overridden per-token via the `styles` constructor
+  parameter.
+
+- **Style attached to tokens.** Each `AToken` now carries its `Style` instance,
+  set during parsing. The `Style` class is now `readonly`.
+
+- **`fn() =>` split priority.** A new `FN_DOUBLE_ARROW` split priority (30) has
+  been added between `COMMA` (20) and `TERNARY` (40), so commas split before
+  `fn() =>` arrow functions.
+
+- **Extra paren/bracket indent.** Content inside parentheses or brackets gets one
+  extra indent level when followed by a continuation line, improving readability
+  of nested split expressions.
 
 - **Performance improvements.** Comma splitting and the overall `Splitter` have
   been optimized, with improvements to `Line` and `Parser` as well.

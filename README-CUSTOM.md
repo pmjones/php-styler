@@ -111,6 +111,23 @@ Styles passed via the constructor are merged with the Format's defaults — your
 values override on a per-argument basis without discarding the rest of the
 token's style.
 
+#### Blank line denial around split lines
+
+When the Splitter breaks a long line into multiple lines, it inserts blank lines
+above and below the split group. The `blankLineBefore` and `blankLineAfter`
+style arguments can suppress this insertion when set to `false`:
+
+- `blankLineAfter => false` on a token prevents a blank line after a line ending
+  with that token at a split boundary.
+- `blankLineBefore => false` on a token prevents a blank line before a line
+  starting with that token at a split boundary.
+
+These denial values are only checked by the Splitter's blank-line logic — they
+do not affect blank lines emitted by the Parser (which uses `true` to *add*
+blank lines). The defaults deny blank lines at block boundaries (after opening
+braces, before closing braces), after comments and docblocks, after attribute
+brackets, and before opening braces configured via brace position settings.
+
 ### Rules
 
 The `rules` array controls structural transformations. Each entry maps a rule
