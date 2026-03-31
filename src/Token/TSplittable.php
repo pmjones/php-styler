@@ -7,9 +7,9 @@ interface TSplittable
 {
     public const int ATTRIBUTE = 10;
 
-    public const int FN_DOUBLE_ARROW = 20;
+    public const int COMMA = 20;
 
-    public const int COMMA = 30;
+    public const int FN_DOUBLE_ARROW = 30;
 
     public const int TERNARY = 40;
 
