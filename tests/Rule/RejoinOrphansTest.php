@@ -40,6 +40,7 @@ class RejoinOrphansTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 function foo(
                     $longParamAlpha,
                     $longParamBravo,
@@ -57,6 +58,7 @@ class RejoinOrphansTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 function foo(
                     string $longAlpha,
                     int $longBravo,

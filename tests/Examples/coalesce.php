@@ -1,4 +1,5 @@
 <?php
+
 $foo = $this->veryLongMethod()
     ?? $this->veryLongMethod()
     ?? $this->veryLongMethod()

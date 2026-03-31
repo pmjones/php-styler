@@ -1,4 +1,5 @@
 <?php
+
 $result = $this->veryLongPropertyName
     ->veryLongMethodName($foo, $bar)
     ->veryLongMethodName(

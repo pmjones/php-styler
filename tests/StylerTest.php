@@ -2884,6 +2884,7 @@ class StylerTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 someLongFunctionName(
                     $veryLongArgumentNameOne,
                     $veryLongArgumentNameTwo,
@@ -2901,6 +2902,7 @@ class StylerTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 $result = $object
                     ->firstLongMethod()
                     ->secondLongMethod()
@@ -2918,6 +2920,7 @@ class StylerTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 $result = $veryLongConditionAlphaName
                     && $veryLongConditionBetaName
                     && $veryLongConditionGammaName;

@@ -847,6 +847,9 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                         TPhpOpeningTag::class,
                     ],
                     [
+                        TBlankLine::class,
+                    ],
+                    [
                         TForeach::class,
                         TForeachOpeningParen::class,
                     ],
@@ -1215,6 +1218,9 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                 [
                     [
                         TPhpOpeningTag::class,
+                    ],
+                    [
+                        TBlankLine::class,
                     ],
                     [
                         TVariable::class,

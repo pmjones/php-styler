@@ -59,6 +59,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 someFunction(
                     $veryLongArgumentOne,
                     $veryLongArgumentTwo,
@@ -75,6 +76,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 $arr = [
                     $veryLongValueOne,
                     $veryLongValueTwo,
@@ -91,6 +93,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 $result = $object
                     ->methodOne()
                     ->methodTwo()
@@ -106,6 +109,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 $result = $conditionOne
                     && $conditionTwo
                     && $conditionThree;
@@ -120,6 +124,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 $result = $longStringOne
                     . $longStringTwo
                     . $longStringThree;
@@ -134,6 +139,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 function foo(
                     $longParamAlpha,
                     $longParamBravo,
@@ -151,6 +157,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 $x = [
                     $longValueAlpha,
                     $longValueBravo,
@@ -167,6 +174,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 someFunc(
                     $longArgAlpha,
                     $longArgBravo,
@@ -183,6 +191,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 someFunc(
                     $veryLongArgumentAlpha,
                     $veryLongArgumentBravo,
@@ -198,6 +207,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 $fn = function () use (
                     $longVarAlpha,
                     $longVarBravo,
@@ -216,6 +226,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 #[SomeAttribute(
                     $longArgAlpha,
                     $longArgBravo,
@@ -235,6 +246,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 $x = [
                     $a,
                     [
@@ -255,6 +267,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 $x = $obj
                     ?->alphaMethod()
                     ?->bravoMethod()
@@ -270,6 +283,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 $x = $object
                     ->alphaMethod()
                     ?->bravoMethod()
@@ -285,6 +299,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 $x = $longCondAlpha
                     || $longCondBravo
                     || $longCondCharlie;
@@ -299,6 +314,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 $x = $someCondition
                     ? $longValueAlpha
                     : $longValueBravo;
@@ -313,6 +329,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 $x = $longValueAlpha
                     ?? $longValueBravo
                     ?? $longValueCharlie;
@@ -327,6 +344,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 $x = new SomeClassName(
                     $longArgAlpha,
                     $longArgBravo,
@@ -343,6 +361,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 SomeClass::staticMethod(
                     $longArgAlpha,
                     $longArgBravo,
@@ -359,6 +378,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 foo(
                     bar($longArgAlpha),
                     baz($longArgBravo),
@@ -375,6 +395,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 $x = [
                     "alpha" => $longValAlpha,
                     "bravo" => $longValBravo,
@@ -391,6 +412,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 foo(
                     $veryLongVariableNameThatIsTheSoleArgument,
                 );
@@ -405,6 +427,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 $obj->someMethod(
                     $longArgAlpha,
                     $longArgBravo,
@@ -423,6 +446,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 function foo(
                     $longParamAlpha,
                     $longParamBravo,
@@ -441,6 +465,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 function foo(
                     string $longAlpha,
                     int $longBravo,
@@ -459,6 +484,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 $x = $object->longPropertyAlpha
                     ->longPropertyBravo
                     ->longPropertyCharlie;
@@ -473,6 +499,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 $x = $obj
                     ->alpha($a, $b)
                     ->bravo($c, $d)
@@ -488,6 +515,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 $x = $condAlpha && $condBravo
                     || $condCharlie && $condDelta;
 
@@ -501,6 +529,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 $x = "prefix_"
                     . $longMiddlePart
                     . "_suffix_extra_long";
@@ -515,6 +544,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 $x = $veryLongArrayName[
                     $veryLongIndexVariableName
                 ];
@@ -530,6 +560,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 if (
                     $obj->checkAlpha()
                     && $obj->checkBravo()
@@ -573,6 +604,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 someLongFunctionName(
                     $firstObject->someLongMethodName(),
                     $secondObject->anotherLongMethodName(),
@@ -588,6 +620,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 foo(
                     $conditionAlpha && $conditionBravo && $conditionCharlie,
                     $conditionDelta && $conditionEcho && $conditionFoxtrot,
@@ -603,6 +636,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 function processUserData(
                     string $firstName,
                     string $lastName,
@@ -664,6 +698,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 $config = [
                     "database_host" => $hostAddress,
                     "database_port" => $portNumber,
@@ -680,6 +715,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 processData(
                     $alphaCondition && $bravoCondition && $charlieCondition,
                     $deltaCondition || $echoCondition || $foxtrotCondition,
@@ -696,6 +732,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 $response = $httpClient
                     ->withHeaders($headers)
                     ->withTimeout(30)
@@ -712,6 +749,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 $result = $container
                     ->getService("auth")
                     ?->getUser()
@@ -729,6 +767,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 $isValid = $hasPermission
                     && $isAuthenticated
                     && $isNotExpired
@@ -745,6 +784,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 $message = "Hello "
                     . $firstName
                     . " "
@@ -763,6 +803,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 $result = $valueAlpha
                     ?? $valueBravo
                     ?? $valueCharlie
@@ -781,6 +822,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 $result = $repository
                     ->findByStatus("active")
                     ->filterBy($conditionAlpha, $conditionBravo, $conditionCharlie)
@@ -798,6 +840,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 $result = $service
                     ->authenticate($credentials)
                     ->authorize($resource)
@@ -814,6 +857,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 $query = $database
                     ->table("users")
                     ->select($columnAlpha, $columnBravo, $columnCharlie, $columnDelta)
@@ -832,6 +876,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 $result = outerFunction(
                     innerFunctionAlpha($alphaArgOne, $alphaArgTwo, $alphaArgThree),
                     innerFunctionBravo($bravoArgOne, $bravoArgTwo, $bravoArgThree),
@@ -848,6 +893,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 $conditions = [
                     $alphaValue && $bravoValue && $charlieValue,
                     $deltaValue || $echoValue || $foxtrotValue,
@@ -865,6 +911,7 @@ class SplitterTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 $records = UserModel::query()
                     ->where("department", $departmentName)
                     ->whereIn("status", [$statusAlpha, $statusBravo, $statusCharlie])

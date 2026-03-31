@@ -129,6 +129,7 @@ class Percs30FormatTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 function foo(
                     int $aLongParameterName,
                     int $anotherLongParameterName,

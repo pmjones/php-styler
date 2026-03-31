@@ -59,6 +59,7 @@ class NormalizeTrailingCommasTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 someFunction(
                     $veryLongArgumentOne,
                     $veryLongArgumentTwo,
@@ -75,6 +76,7 @@ class NormalizeTrailingCommasTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 someFunc(
                     $longArgAlpha,
                     $longArgBravo,
@@ -93,6 +95,7 @@ class NormalizeTrailingCommasTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 function foo(
                     $longParamAlpha,
                     $longParamBravo,
@@ -111,6 +114,7 @@ class NormalizeTrailingCommasTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 $arr = [
                     $veryLongValueOne,
                     $veryLongValueTwo,
@@ -127,6 +131,7 @@ class NormalizeTrailingCommasTest extends TestCase
                 CODE,
                 <<<'EXPECT'
                 <?php
+
                 function foo(
                     $longParamAlpha,
                     $longParamBravo,

@@ -903,7 +903,6 @@ class PlainFormat implements Format
         Token\TPhpOpeningTag::class => [
             'spaceAfter' => true,
             'lineBreakAfter' => true,
-            'blankLineAfter' => false,
         ],
         Token\TPhpOpeningTagInline::class => [
             'spaceBefore' => false,

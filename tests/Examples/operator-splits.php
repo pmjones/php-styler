@@ -1,4 +1,5 @@
 <?php
+
 $input = $veryLongVariableName1
     ?? $veryLongVariableName2
     ?? $veryLongVariableName3
