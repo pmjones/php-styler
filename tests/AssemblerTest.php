@@ -1126,13 +1126,20 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                     ],
                     [
                         TIntegerLiteral::class,
+                    ],
+                    [
                         TMatchDoubleArrow::class,
                         TCommentSlashedMidStatement::class,
                         TStringLiteral::class,
                         TMatchReturnComma::class,
                     ],
                     [
+                        TBlankLine::class,
+                    ],
+                    [
                         TDefaultMatch::class,
+                    ],
+                    [
                         TMatchDoubleArrow::class,
                         TCommentSlashedMidStatement::class,
                         TStringLiteral::class,

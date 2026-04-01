@@ -310,7 +310,11 @@ class Line
     /**
      * @return ?array{int, int, int}
      */
-    public function findBestPair() : ?array
+
+    /**
+     * @param ?callable(AToken): bool $filter
+     */
+    public function findBestPair(?callable $filter = null) : ?array
     {
         $tokens = $this->tokens;
         $count = count($tokens);
@@ -322,6 +326,11 @@ class Line
             $token = $tokens[$i];
 
             if (! $token->isOpener()) {
+                continue;
+            }
+
+            if ($filter !== null && ! $filter($token)) {
+                $i = $this->findTokenIndex($token->closingToken) ?? $i;
                 continue;
             }
 
@@ -359,13 +368,13 @@ class Line
     }
 
     /**
-     * @return list<array{positions: int[], continuation: bool}>
+     * @return list<array{priority: int, positions: int[], continuation: bool}>
      */
     public function collectSplitGroups() : array
     {
         $tokens = $this->tokens;
 
-        /** @var array<int, array{positions: int[], continuation: bool}> $groups */
+        /** @var array<int, array{priority: int, positions: int[], continuation: bool}> $groups */
         $groups = [];
 
         foreach ($this->getTopLevelTokens() as $i => $token) {
@@ -376,6 +385,7 @@ class Line
             $order = $token->splitPriority();
 
             $groups[$order] ??= [
+                'priority' => $order,
                 'positions' => [],
                 'continuation' => $token->continuation(),
             ];

@@ -4,10 +4,12 @@ declare(strict_types=1);
 namespace PhpStyler;
 
 use PhpStyler\Token\AToken;
+use PhpStyler\Token\TArrayOpeningBracket;
 use PhpStyler\Token\TBlankLine;
 use PhpStyler\Token\TCommentary;
 use PhpStyler\Token\TSpace;
 use PhpStyler\Token\TSplit;
+use PhpStyler\Token\TSplittable;
 
 class Splitter
 {
@@ -109,32 +111,71 @@ class Splitter
      */
     private function trySplit(Line $line) : ?array
     {
-        // For condition parens, split at the paren before trying operator splits
+        $strategies = [];
+
+        // Condition parens
         $conditionPair = $line->findConditionPair();
 
         if ($conditionPair !== null) {
-            $split = $this->splitAtParens($line, $conditionPair);
+            $strategies[] = [
+                'priority' => TSplittable::CONDITION_PAREN,
+                'execute' => fn () => $this->splitAtParens($line, $conditionPair),
+            ];
+        }
 
-            if ($split !== null) {
-                return $split;
+        // Token-based split groups
+        foreach ($line->collectSplitGroups() as $group) {
+            $strategies[] = [
+                'priority' => $group['priority'],
+                'execute' => fn ()
+                    => $this->splitAtPositions(
+                        $line,
+                        $group['positions'],
+                        $group['continuation'],
+                    ),
+            ];
+        }
+
+        // Bracket expansion (array literals), only when no fluent splits
+        $hasFluent = false;
+
+        foreach ($strategies as $s) {
+            if ($s['priority'] === TSplittable::FLUENT) {
+                $hasFluent = true;
+                break;
             }
         }
 
-        $groups = $line->collectSplitGroups();
-
-        foreach ($groups as $group) {
-            $split = $this->splitAtPositions(
-                $line,
-                $group['positions'],
-                $group['continuation'],
+        if (! $hasFluent) {
+            $bracketPair = $line->findBestPair(
+                fn (AToken $t) => $t instanceof TArrayOpeningBracket,
             );
 
+            if ($bracketPair !== null) {
+                $strategies[] = [
+                    'priority' => TSplittable::BRACKET_EXPANSION,
+                    'execute' => fn () => $this->splitAtParens($line, $bracketPair),
+                ];
+            }
+        }
+
+        // General paren/bracket expansion (catch-all)
+        $strategies[] = [
+            'priority' => TSplittable::PAREN_EXPANSION,
+            'execute' => fn () => $this->splitAtParens($line),
+        ];
+
+        usort($strategies, fn ($a, $b) => $a['priority'] <=> $b['priority']);
+
+        foreach ($strategies as $strategy) {
+            $split = ($strategy['execute'])();
+
             if ($split !== null) {
                 return $split;
             }
         }
 
-        return $this->splitAtParens($line);
+        return null;
     }
 
     /**

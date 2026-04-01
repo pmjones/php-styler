@@ -15,7 +15,10 @@ class TClosingBrace extends AToken
         $curly = match ($parser->getNesting()) {
             TCurlyOpen::class => TCurlyClose::class,
             TDollarOpenCurlyBraces::class => TDollarCloseCurlyBraces::class,
-            TDynamicVariableOpeningBrace::class => TDynamicVariableClosingBrace::class,
+
+            TDynamicVariableOpeningBrace::class
+                => TDynamicVariableClosingBrace::class,
+
             TDynamicMemberOpeningBrace::class => TDynamicMemberClosingBrace::class,
             default => null,
         };

@@ -5,29 +5,37 @@ namespace PhpStyler\Token;
 
 interface TSplittable
 {
-    public const int ATTRIBUTE = 10;
+    public const int CONDITION_PAREN = 10;
 
-    public const int FOR_SEMICOLON = 20;
+    public const int ATTRIBUTE = 20;
 
-    public const int COMMA = 30;
+    public const int FOR_SEMICOLON = 30;
 
-    public const int FOR_COMMA = 40;
+    public const int COMMA = 40;
 
-    public const int FN_DOUBLE_ARROW = 50;
+    public const int FOR_COMMA = 50;
 
-    public const int TERNARY = 60;
+    public const int FN_DOUBLE_ARROW = 60;
 
-    public const int COALESCE = 70;
+    public const int TERNARY = 70;
 
-    public const int BOOLEAN_OR = 80;
+    public const int COALESCE = 80;
 
-    public const int BOOLEAN_AND = 90;
+    public const int BRACKET_EXPANSION = 90;
 
-    public const int COMPARISON = 100;
+    public const int MATCH_DOUBLE_ARROW = 100;
 
-    public const int ADDITION = 110;
+    public const int BOOLEAN_OR = 110;
 
-    public const int MULTIPLICATION = 120;
+    public const int BOOLEAN_AND = 120;
 
-    public const int FLUENT = 130;
+    public const int COMPARISON = 130;
+
+    public const int ADDITION = 140;
+
+    public const int MULTIPLICATION = 150;
+
+    public const int FLUENT = 160;
+
+    public const int PAREN_EXPANSION = 170;
 }
