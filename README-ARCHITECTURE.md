@@ -185,7 +185,8 @@ Each PHP token and synthetic construct has a dedicated `AToken` subclass.
 
 - `AToken` (abstract) — extends `PhpToken`; adds `parenDepth`, `argCount`,
   `openingToken`, `closingToken`, `parse()`, `render()`, `splitBefore()`,
-  `splitAfter()`, `isOpener()`
+  `splitAfter()`, `isOpener()`, `isContent()`, `expandPriority()`,
+  `splObjectId()`
 - `ALanguageConstruct` — abstract base for keyword tokens
 - `TSplit` (abstract) — base for split-point markers
 
@@ -204,30 +205,36 @@ Each PHP token and synthetic construct has a dedicated `AToken` subclass.
 - **Synthetic:** `TSpace`, `TLineBreak`, `TBlankLine`, `TIndentIncrement`,
   `TIndentDecrement` — injected by the Parser, not from source.
 - **Split markers:** `TSplitComma`, `TSplitTernary`, `TSplitCoalesce`,
-  `TSplitBooleanOr`, `TSplitBooleanAnd`, `TSplitAddition`,
-  `TSplitMultiplication`, `TSplitFluent`, `TSplitAttribute`,
+  `TSplitBooleanOr`, `TSplitBooleanAnd`, `TSplitComparison`,
+  `TSplitAddition`, `TSplitMultiplication`, `TSplitFluent`,
+  `TSplitFnDoubleArrow`, `TSplitMatchDoubleArrow`, `TSplitAttribute`,
   `TSplitForSemicolon`, etc.
 - **Parse-as variants:** `TArrayAsShort`, `TElseAsElseIf`,
   `TStringLiteralAsSingleQuote`, `THeredocStartAsNowdoc`,
   `TLogicalAndAsBooleanAnd`, etc.
 
-**Split priority constants** (on `TSplittable`):
+**Split and expansion priority constants** (on `TSplittable`):
 
 | Priority | Constant | Splits at |
 |---|---|---|
-| 10 | `ATTRIBUTE` | Attributes |
-| 20 | `FOR_SEMICOLON` | `for` semicolons |
-| 30 | `COMMA` | Commas |
-| 40 | `FOR_COMMA` | `for` commas |
-| 50 | `FN_DOUBLE_ARROW` | `fn() =>` |
-| 60 | `TERNARY` | `?`, `:`, `?:` |
-| 70 | `COALESCE` | `??` |
-| 80 | `BOOLEAN_OR` | `\|\|` |
-| 90 | `BOOLEAN_AND` | `&&` |
-| 100 | `COMPARISON` | `<`, `>`, `<=`, `>=`, `==`, `!=`, `===`, `!==`, `<=>` |
-| 110 | `ADDITION` | `+`, `-`, `.` |
-| 120 | `MULTIPLICATION` | `*`, `/`, `%` |
-| 130 | `FLUENT` | `->`, `?->`, `::` |
+| 10 | `CONDITION_PAREN` | `if`/`while`/`for`/`foreach`/`switch`/`match` paren expansion |
+| 20 | `ATTRIBUTE` | Attributes |
+| 30 | `FOR_SEMICOLON` | `for` semicolons |
+| 40 | `COMMA` | Commas |
+| 50 | `FOR_COMMA` | `for` commas |
+| 60 | `FN_ARROW` | `fn() =>` |
+| 70 | `TERNARY` | `?`, `:`, `?:` |
+| 80 | `COALESCE` | `??` |
+| 90 | `BRACKET` | Array literal `[...]` expansion |
+| 100 | `MATCH_ARROW` | `match` arm `=>` |
+| 110 | `BOOLEAN_OR` | `\|\|` |
+| 120 | `BOOLEAN_AND` | `&&` |
+| 130 | `COMPARISON` | `<`, `>`, `<=`, `>=`, `==`, `!=`, `===`, `!==`, `<=>` |
+| 140 | `ADDITION` | `+`, `-`, `.` |
+| 150 | `MULTIPLICATION` | `*`, `/`, `%` |
+| 160 | `FLUENT` | `->`, `?->`, `::` |
+| 170 | `OTHER_PAREN` | Args, params, expression paren expansion |
+| 180 | `ELEMENT_BRACKET` | Array element access `$arr[...]` expansion |
 
 ### Parser Detail
 
@@ -320,23 +327,27 @@ The `Assembler` converts the styled token stream into `Line` objects:
 
 ### Splitter
 
-The `Splitter` handles line-length enforcement and blank line insertion:
+The `Splitter` handles line-length enforcement and blank line insertion using a
+unified priority-ordered strategy system:
 
-1. For each line, check if it exceeds `lineLen`.
-2. If so, find `TSplit` tokens and group them by priority.
-3. Try splitting at the highest-priority group first.
-4. If still too long, try the next priority group in addition.
-5. Expand opener/closer pairs (brackets, braces, parentheses) across lines.
-6. Mark expanded lines with `$isExpanded` flag.
-7. Detect `@php-styler-expansive` annotations and force expansion.
-8. Insert blank lines around split groups. Lines produced from splitting a
+1. For each line, check if it exceeds `lineLen` (or has an interior comment
+   forcing expansion).
+2. Collect all split strategies into a flat map keyed by priority:
+   - **Operator splits** from `TSplit` tokens (via `Line::collectSplitGroups()`).
+   - **Expansion splits** from opener tokens that declare `expandPriority()`
+     (via `Line::collectExpansionPairs()`). Opener tokens like
+     `TIfOpeningParen`, `TArrayOpeningBracket`, and `TArgsOpeningParen`
+     declare their own expansion priority polymorphically.
+3. Sort strategies by priority (`ksort`) and try each in order. The first
+   strategy that produces a valid split wins.
+4. Recursively split any resulting lines that are still too long.
+5. Post-split passes: expand opener/closer pairs across lines, normalize
+   indents, expand commas in multi-line constructs.
+6. Insert blank lines around split groups. Lines produced from splitting a
    single original line form a "split group." Blank lines are inserted at
    transitions between split and non-split lines, unless the adjacent token's
    style has `blankLineBefore => false` or `blankLineAfter => false` (denial).
-   Denials are set on opening structure tokens (interior: no blank at start of
-   block body), closing structure tokens (interior: no blank at end of block
-   body), comments and docblocks (stay attached to next line), attribute
-   brackets, and opening braces (via brace position configuration).
+7. Detect `@php-styler-expansive` annotations and force expansion.
 
 * * *
 

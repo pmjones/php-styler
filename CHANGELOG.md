@@ -7,30 +7,48 @@
   `>`, `<=`, `>=`, `==`, `!=`, `===`, `!==`, `<=>`) in addition to the
   previously supported boolean, coalesce, concatenation, and ternary operators.
 
+- **Unified split strategy system.** All split strategies — operator splits,
+  paren/bracket expansion, and condition paren expansion — are now unified into
+  a single priority-ordered loop using `ksort()`. The former three-phase
+  approach (condition parens, operator splits, paren fallback) is replaced by
+  a flat strategy map where each strategy competes by priority.
+
 - **Refined split priorities.** The two coarse operator split priorities
-  (`LOOSE_OPERATOR` and `TIGHT_OPERATOR`) have been replaced with six
-  fine-grained priorities that follow PHP operator precedence. Lower-precedence
-  operators split first, producing more natural line breaks:
+  (`LOOSE_OPERATOR` and `TIGHT_OPERATOR`) have been replaced with fine-grained
+  priorities that follow PHP operator precedence. Paren/bracket expansion is
+  now integrated into the same priority system. Lower numbers split first:
 
   | Priority | Constant | Splits at |
   |---|---|---|
-  | 20 | `FOR_SEMICOLON` | `for` semicolons |
-  | 30 | `COMMA` | Commas |
-  | 40 | `FOR_COMMA` | `for` commas |
-  | 50 | `FN_DOUBLE_ARROW` | `fn() =>` |
-  | 60 | `TERNARY` | `?`, `:`, `?:` |
-  | 70 | `COALESCE` | `??` |
-  | 80 | `BOOLEAN_OR` | `\|\|` |
-  | 90 | `BOOLEAN_AND` | `&&` |
-  | 100 | `COMPARISON` | `<`, `>`, `<=`, `>=`, `==`, `!=`, `===`, `!==`, `<=>` |
-  | 110 | `ADDITION` | `+`, `-`, `.` |
-  | 120 | `MULTIPLICATION` | `*`, `/`, `%` |
+  | 10 | `CONDITION_PAREN` | `if`/`while`/`for`/`foreach`/`switch`/`match` parens |
+  | 20 | `ATTRIBUTE` | Attributes |
+  | 30 | `FOR_SEMICOLON` | `for` semicolons |
+  | 40 | `COMMA` | Commas |
+  | 50 | `FOR_COMMA` | `for` commas |
+  | 60 | `FN_ARROW` | `fn() =>` |
+  | 70 | `TERNARY` | `?`, `:`, `?:` |
+  | 80 | `COALESCE` | `??` |
+  | 90 | `BRACKET` | Array literal `[...]` expansion |
+  | 100 | `MATCH_ARROW` | `match` arm `=>` |
+  | 110 | `BOOLEAN_OR` | `\|\|` |
+  | 120 | `BOOLEAN_AND` | `&&` |
+  | 130 | `COMPARISON` | `<`, `>`, `<=`, `>=`, `==`, `!=`, `===`, `!==`, `<=>` |
+  | 140 | `ADDITION` | `+`, `-`, `.` |
+  | 150 | `MULTIPLICATION` | `*`, `/`, `%` |
+  | 160 | `FLUENT` | `->`, `?->`, `::` |
+  | 170 | `OTHER_PAREN` | Args, params, expression parens |
+  | 180 | `ELEMENT_BRACKET` | Array element access `$arr[...]` |
 
-  Each priority level has its own `TSplit` subclass (`TSplitFnDoubleArrow`,
-  `TSplitTernary`, `TSplitCoalesce`, `TSplitBooleanOr`, `TSplitBooleanAnd`,
-  `TSplitComparison`, `TSplitAddition`, `TSplitMultiplication`), replacing the
-  former
-  `TSplitLooseOperator` and `TSplitTightOperator`.
+- **Polymorphic expansion priorities.** Opener tokens (`TIfOpeningParen`,
+  `TArrayOpeningBracket`, `TArgsOpeningParen`, etc.) now declare their own
+  expansion priority via `expandPriority()`. The Splitter discovers expansions
+  by calling `Line::collectExpansionPairs()` instead of filtering with
+  `instanceof` checks.
+
+- **Match `=>` splitting.** `TMatchDoubleArrow` now implements
+  `TSplittableOperator`, splitting at `MATCH_ARROW` priority (100). This
+  ensures match arms split at `=>` before boolean or comparison operators
+  within the arm condition.
 
 - **Blank lines around split lines.** When a line is split into multiple lines,
   blank lines are automatically inserted above and below the split group to
@@ -45,9 +63,25 @@
 - **Style attached to tokens.** Each `AToken` now carries its `Style` instance,
   set during parsing. The `Style` class is now `readonly`.
 
-- **`fn() =>` split priority.** A new `FN_DOUBLE_ARROW` split priority (30) has
-  been added between `COMMA` (20) and `TERNARY` (40), so commas split before
-  `fn() =>` arrow functions.
+- **Fluent chain improvement.** The base object now stays with its first method
+  call when a fluent chain is split. All fluent split types
+  (`TSplitMethodCall`, `TSplitPropertyAccess`, `TSplitStaticMember`,
+  `TSplitStaticMethodCall`) now consistently skip the first split position via
+  `shouldSkipFirst()`. The unused `$totalPositions` parameter has been removed
+  from the `shouldSkipFirst()` signature.
+
+- **`AToken` enhancements.** New polymorphic methods on the base token class:
+  - `isContent()` — returns `true` by default, `false` for `TSplit` and
+    `TSpace`. Replaces ~9 scattered `instanceof` checks.
+  - `expandPriority()` — returns `null` by default; opener tokens override to
+    declare their expansion priority.
+  - `splObjectId()` — wraps `spl_object_id($this)` for shorter call sites.
+
+- **Splitter simplifications.** Extracted `shouldInsertBlankLine()` predicate,
+  `createLine()` helper with `wasSplit` propagation, and
+  `advancePastComma()` method. Combined the double-loop in `expandCommas()`
+  into a single pass. Replaced string-based dispatch in opener/closer
+  expansion with direct method calls.
 
 - **Extra paren/bracket indent.** Content inside parentheses or brackets gets one
   extra indent level when followed by a continuation line, improving readability
