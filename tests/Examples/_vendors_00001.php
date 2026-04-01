@@ -28,8 +28,7 @@ function isFunctionCall(int $i) : bool
 {
     return $this->phpTokens[$i]->is(T_STRING)
         && $this->nextSignificantToken($i)?->is('(')
-        && ! $this
-            ->prevSignificantToken($i)
+        && ! $this->prevSignificantToken($i)
             ?->is([
                 T_OBJECT_OPERATOR,
                 T_NULLSAFE_OBJECT_OPERATOR,
@@ -84,8 +83,7 @@ if (true) {
             $options,
         );
 
-        $this
-            ->getCollection()
+        $this->getCollection()
             ->updateOne(
                 [$this->options['id_field'] => $sessionId],
                 ['$set' => $fields],

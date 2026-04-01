@@ -395,7 +395,7 @@ class Line
             /** @var TSplit $firstSplit */
             $firstSplit = $tokens[$group['positions'][0]];
 
-            if ($firstSplit->shouldSkipFirst(count($group['positions']))) {
+            if ($firstSplit->shouldSkipFirst()) {
                 array_shift($group['positions']);
             }
 

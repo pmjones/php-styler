@@ -5,7 +5,7 @@ namespace PhpStyler\Token;
 
 class TSplitStaticMethodCall extends TSplitFluent
 {
-    public function shouldSkipFirst(int $totalPositions) : bool
+    public function shouldSkipFirst() : bool
     {
         return true;
     }

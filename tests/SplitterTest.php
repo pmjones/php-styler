@@ -95,8 +95,7 @@ class SplitterTest extends TestCase
                 <<<'EXPECT'
                 <?php
 
-                $result = $object
-                    ->methodOne()
+                $result = $object->methodOne()
                     ->methodTwo()
                     ->methodThree();
 
@@ -269,8 +268,7 @@ class SplitterTest extends TestCase
                 <<<'EXPECT'
                 <?php
 
-                $x = $obj
-                    ?->alphaMethod()
+                $x = $obj?->alphaMethod()
                     ?->bravoMethod()
                     ?->charlieMethod();
 
@@ -285,8 +283,7 @@ class SplitterTest extends TestCase
                 <<<'EXPECT'
                 <?php
 
-                $x = $object
-                    ->alphaMethod()
+                $x = $object->alphaMethod()
                     ?->bravoMethod()
                     ->charlieMethod();
 
@@ -501,8 +498,7 @@ class SplitterTest extends TestCase
                 <<<'EXPECT'
                 <?php
 
-                $x = $obj
-                    ->alpha($a, $b)
+                $x = $obj->alpha($a, $b)
                     ->bravo($c, $d)
                     ->charlie($e, $f);
 
@@ -734,8 +730,7 @@ class SplitterTest extends TestCase
                 <<<'EXPECT'
                 <?php
 
-                $response = $httpClient
-                    ->withHeaders($headers)
+                $response = $httpClient->withHeaders($headers)
                     ->withTimeout(30)
                     ->sendRequest($request)
                     ->getBody();
@@ -751,8 +746,7 @@ class SplitterTest extends TestCase
                 <<<'EXPECT'
                 <?php
 
-                $result = $container
-                    ->getService("auth")
+                $result = $container->getService("auth")
                     ?->getUser()
                     ?->getProfile()
                     ->getDisplayName()
@@ -824,8 +818,7 @@ class SplitterTest extends TestCase
                 <<<'EXPECT'
                 <?php
 
-                $result = $repository
-                    ->findByStatus("active")
+                $result = $repository->findByStatus("active")
                     ->filterBy($conditionAlpha, $conditionBravo, $conditionCharlie)
                     ->sortBy("name")
                     ->paginate(25);
@@ -842,8 +835,7 @@ class SplitterTest extends TestCase
                 <<<'EXPECT'
                 <?php
 
-                $result = $service
-                    ->authenticate($credentials)
+                $result = $service->authenticate($credentials)
                     ->authorize($resource)
                     ->execute($paramAlpha, $paramBravo, $paramCharlie, $paramDelta);
 
@@ -859,8 +851,7 @@ class SplitterTest extends TestCase
                 <<<'EXPECT'
                 <?php
 
-                $query = $database
-                    ->table("users")
+                $query = $database->table("users")
                     ->select($columnAlpha, $columnBravo, $columnCharlie, $columnDelta)
                     ->where("active", true)
                     ->orderBy("name")

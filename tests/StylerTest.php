@@ -2904,8 +2904,7 @@ class StylerTest extends TestCase
                 <<<'EXPECT'
                 <?php
 
-                $result = $object
-                    ->firstLongMethod()
+                $result = $object->firstLongMethod()
                     ->secondLongMethod()
                     ->thirdLongMethod()
                     ->fourthLongMethod();

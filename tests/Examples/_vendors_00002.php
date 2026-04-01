@@ -127,8 +127,7 @@ if (true) {
 
 if (1) {
     if (1) {
-        $query
-            ->select([
+        $query->select([
                 '_very_long_element_' => new UnaryExpression(
                     'ROW_NUMBER() OVER',
                     $order,

@@ -17,7 +17,7 @@ abstract class TSplit extends AToken
         return true;
     }
 
-    public function shouldSkipFirst(int $totalPositions) : bool
+    public function shouldSkipFirst() : bool
     {
         return false;
     }

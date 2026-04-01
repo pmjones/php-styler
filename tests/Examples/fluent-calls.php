@@ -64,8 +64,7 @@ function static_fluency()
 }
 
 // dynamic instance method calls
-$result = $this
-    ->{$veryLongMethodName}()
+$result = $this->{$veryLongMethodName}()
     ->{$veryLongMethodName}()
     ->{$veryLongMethodName}();
 

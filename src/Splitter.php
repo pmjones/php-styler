@@ -416,24 +416,28 @@ class Splitter
     {
         while (true) {
             $tokenLineMap = $this->buildTokenLineMap($lines);
-            $split = $this->findOpenerCloserSplit($lines, $tokenLineMap);
+            $result = $this->findAndApplyOpenerCloserSplit(
+                $lines,
+                $tokenLineMap,
+            );
 
-            if ($split === null) {
+            if ($result === null) {
                 return $lines;
             }
 
-            $lines = $split($lines);
+            $lines = $result;
         }
     }
 
     /**
      * @param Line[] $lines
      * @param array<int, int> $tokenLineMap
+     * @return ?Line[]
      */
-    private function findOpenerCloserSplit(
+    private function findAndApplyOpenerCloserSplit(
         array $lines,
         array $tokenLineMap,
-    ) : ?\Closure
+    ) : ?array
     {
         foreach ($lines as $lineIndex => $line) {
             $tokens = $line->getTokens();
@@ -454,13 +458,12 @@ class Splitter
 
                 // Split after opener if it's not the last token on its line
                 if ($tokenIndex < $line->lastContentIndex()) {
-                    return fn (array $lines)
-                        => $this->splitAfterOpener(
-                            $lines,
-                            $lineIndex,
-                            $tokenIndex,
-                            $closerLineIndex + 1,
-                        );
+                    return $this->splitAfterOpener(
+                        $lines,
+                        $lineIndex,
+                        $tokenIndex,
+                        $closerLineIndex + 1,
+                    );
                 }
 
                 // Split before closer if it's not the first token on its line
@@ -469,13 +472,12 @@ class Splitter
                 );
 
                 if ($closerTokenIndex !== null && $closerTokenIndex > 0) {
-                    return fn (array $lines)
-                        => $this->splitBeforeCloser(
-                            $lines,
-                            $closerLineIndex,
-                            $closerTokenIndex,
-                            $line->indent,
-                        );
+                    return $this->splitBeforeCloser(
+                        $lines,
+                        $closerLineIndex,
+                        $closerTokenIndex,
+                        $line->indent,
+                    );
                 }
             }
         }
