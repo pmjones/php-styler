@@ -52,6 +52,16 @@ abstract class AToken extends PhpToken
         return $info;
     }
 
+    public function isContent() : bool
+    {
+        return true;
+    }
+
+    public function expandPriority() : ?int
+    {
+        return null;
+    }
+
     /**
      * @phpstan-assert-if-true AToken $this->closingToken
      */

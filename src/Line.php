@@ -6,9 +6,9 @@ namespace PhpStyler;
 use PhpStyler\Token\AToken;
 use PhpStyler\Token\TBlankLine;
 use PhpStyler\Token\TCommentary;
-use PhpStyler\Token\TConditionOpener;
 use PhpStyler\Token\TSpace;
 use PhpStyler\Token\TSplit;
+use PhpStyler\Token\TSplittable;
 use PhpStyler\Token\TSplittableComma;
 
 class Line
@@ -127,7 +127,7 @@ class Line
     public function firstContentToken() : ?AToken
     {
         foreach ($this->tokens as $token) {
-            if (! $token instanceof TSplit && ! $token instanceof TSpace) {
+            if ($token->isContent()) {
                 return $token;
             }
         }
@@ -140,18 +140,13 @@ class Line
         $i = $this->lastContentIndex();
         $token = $this->tokens[$i] ?? null;
 
-        return ($token instanceof TSplit || $token instanceof TSpace)
-            ? null
-            : $token;
+        return $token !== null && $token->isContent() ? $token : null;
     }
 
     public function lastContentIndex() : int
     {
         for ($i = count($this->tokens) - 1; $i >= 0; $i --) {
-            if (
-                ! $this->tokens[$i] instanceof TSplit
-                && ! $this->tokens[$i] instanceof TSpace
-            ) {
+            if ($this->tokens[$i]->isContent()) {
                 return $i;
             }
         }
@@ -177,7 +172,7 @@ class Line
         $count = 0;
 
         foreach ($this->tokens as $token) {
-            if (! $token instanceof TSplit && ! $token instanceof TSpace) {
+            if ($token->isContent()) {
                 $count ++;
             }
         }
@@ -191,10 +186,7 @@ class Line
         $keys = array_keys($topLevel);
 
         for ($i = count($keys) - 1; $i >= 0; $i --) {
-            if (
-                ! $topLevel[$keys[$i]] instanceof TSplit
-                && ! $topLevel[$keys[$i]] instanceof TSpace
-            ) {
+            if ($topLevel[$keys[$i]]->isContent()) {
                 return $keys[$i];
             }
         }
@@ -283,36 +275,8 @@ class Line
     }
 
     /**
-     * @return ?array{int, int, int}
-     */
-    public function findConditionPair() : ?array
-    {
-        foreach ($this->tokens as $i => $token) {
-            if (
-                ! $token instanceof TConditionOpener
-                || $token->closingToken === null
-            ) {
-                continue;
-            }
-
-            $closerPos = $this->findTokenIndex($token->closingToken);
-
-            if ($closerPos === null || $closerPos - $i <= 1) {
-                continue;
-            }
-
-            return [$i, $closerPos, $token->argCount];
-        }
-
-        return null;
-    }
-
-    /**
-     * @return ?array{int, int, int}
-     */
-
-    /**
      * @param ?callable(AToken): bool $filter
+     * @return ?array{int, int, int}
      */
     public function findBestPair(?callable $filter = null) : ?array
     {
@@ -365,6 +329,40 @@ class Line
         }
 
         return $pairs[0];
+    }
+
+    /**
+     * @return array<int, array{int, int, int}>
+     */
+    public function collectExpansionPairs() : array
+    {
+        $tokens = $this->tokens;
+        $count = count($tokens);
+        $result = [];
+
+        for ($i = 0; $i < $count; $i ++) {
+            $token = $tokens[$i];
+
+            if (! $token->isOpener()) {
+                continue;
+            }
+
+            $priority = $token->expandPriority() ?? TSplittable::OTHER_PAREN;
+
+            $closerPos = $this->findTokenIndex($token->closingToken);
+
+            if (
+                $closerPos === null
+                || (! $this->forceExpand && $closerPos - $i <= 1)
+            ) {
+                continue;
+            }
+
+            $result[$priority] ??= [$i, $closerPos, $token->argCount];
+            $i = $closerPos;
+        }
+
+        return $result;
     }
 
     /**

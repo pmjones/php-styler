@@ -4,10 +4,8 @@ declare(strict_types=1);
 namespace PhpStyler;
 
 use PhpStyler\Token\AToken;
-use PhpStyler\Token\TArrayOpeningBracket;
 use PhpStyler\Token\TBlankLine;
 use PhpStyler\Token\TCommentary;
-use PhpStyler\Token\TSpace;
 use PhpStyler\Token\TSplit;
 use PhpStyler\Token\TSplittable;
 
@@ -38,11 +36,7 @@ class Splitter
 
                 if (
                     $prev !== null
-                    && $prev->wasSplit
-                    && ! $prev->isBlank()
-                    && $prev->lastContentToken()?->style?->blankLineAfter !== false
-                    && $splitLines[0]->firstContentToken()?->style?->blankLineBefore
-                        !== false
+                    && $this->shouldInsertBlankLine($prev, $splitLines[0])
                 ) {
                     $result[] = new Line(
                         [new TBlankLine(AToken::SYNTHETIC, "\n\n")],
@@ -113,62 +107,32 @@ class Splitter
     {
         $strategies = [];
 
-        // Condition parens
-        $conditionPair = $line->findConditionPair();
-
-        if ($conditionPair !== null) {
-            $strategies[] = [
-                'priority' => TSplittable::CONDITION_PAREN,
-                'execute' => fn () => $this->splitAtParens($line, $conditionPair),
-            ];
-        }
-
-        // Token-based split groups
+        // Token-based split groups (operators, commas, etc.)
         foreach ($line->collectSplitGroups() as $group) {
-            $strategies[] = [
-                'priority' => $group['priority'],
-                'execute' => fn ()
-                    => $this->splitAtPositions(
-                        $line,
-                        $group['positions'],
-                        $group['continuation'],
-                    ),
-            ];
+            $strategies[$group['priority']] = fn ()
+                => $this->splitAtPositions(
+                    $line,
+                    $group['positions'],
+                    $group['continuation'],
+                );
         }
 
-        // Bracket expansion (array literals), only when no fluent splits
-        $hasFluent = false;
+        // Expansion strategies from opener tokens
+        $hasFluent = isset($strategies[TSplittable::FLUENT]);
 
-        foreach ($strategies as $s) {
-            if ($s['priority'] === TSplittable::FLUENT) {
-                $hasFluent = true;
-                break;
+        foreach ($line->collectExpansionPairs() as $priority => $pair) {
+            // Skip bracket expansion when fluent splits exist
+            if ($hasFluent && $priority === TSplittable::BRACKET) {
+                continue;
             }
+
+            $strategies[$priority] ??= fn () => $this->splitAtParens($line, $pair);
         }
 
-        if (! $hasFluent) {
-            $bracketPair = $line->findBestPair(
-                fn (AToken $t) => $t instanceof TArrayOpeningBracket,
-            );
-
-            if ($bracketPair !== null) {
-                $strategies[] = [
-                    'priority' => TSplittable::BRACKET_EXPANSION,
-                    'execute' => fn () => $this->splitAtParens($line, $bracketPair),
-                ];
-            }
-        }
-
-        // General paren/bracket expansion (catch-all)
-        $strategies[] = [
-            'priority' => TSplittable::PAREN_EXPANSION,
-            'execute' => fn () => $this->splitAtParens($line),
-        ];
-
-        usort($strategies, fn ($a, $b) => $a['priority'] <=> $b['priority']);
+        ksort($strategies);
 
         foreach ($strategies as $strategy) {
-            $split = ($strategy['execute'])();
+            $split = $strategy();
 
             if ($split !== null) {
                 return $split;
@@ -185,17 +149,40 @@ class Splitter
     {
         $peek = $pos;
 
-        while (
-            isset($tokens[$peek])
-            && (
-                $tokens[$peek] instanceof TSplit || $tokens[$peek] instanceof TSpace
-            )
-        ) {
+        while (isset($tokens[$peek]) && ! $tokens[$peek]->isContent()) {
             $peek ++;
         }
 
         if (isset($tokens[$peek]) && $tokens[$peek] instanceof TCommentary) {
             return $peek + 1;
+        }
+
+        return $pos;
+    }
+
+    /**
+     * @param AToken[] $tokens
+     */
+    private function advancePastComma(array $tokens, int $commaPos) : int
+    {
+        $pos = $commaPos + 1;
+
+        while (isset($tokens[$pos]) && $tokens[$pos] instanceof TSplit) {
+            $pos ++;
+        }
+
+        $advanced = $this->positionPastTrailingComment($tokens, $pos);
+
+        if ($advanced > $pos) {
+            $check = $advanced;
+
+            while (isset($tokens[$check]) && ! $tokens[$check]->isContent()) {
+                $check ++;
+            }
+
+            if (isset($tokens[$check])) {
+                return $advanced;
+            }
         }
 
         return $pos;
@@ -435,21 +422,18 @@ class Splitter
                 return $lines;
             }
 
-            $lines = ($split['type'] === 'opener')
-                ? $this->splitAfterOpener($lines, ...$split['args'])
-                : $this->splitBeforeCloser($lines, ...$split['args']);
+            $lines = $split($lines);
         }
     }
 
     /**
      * @param Line[] $lines
      * @param array<int, int> $tokenLineMap
-     * @return ?array{type: string, args: array{int, int, int}}
      */
     private function findOpenerCloserSplit(
         array $lines,
         array $tokenLineMap,
-    ) : ?array
+    ) : ?\Closure
     {
         foreach ($lines as $lineIndex => $line) {
             $tokens = $line->getTokens();
@@ -470,10 +454,13 @@ class Splitter
 
                 // Split after opener if it's not the last token on its line
                 if ($tokenIndex < $line->lastContentIndex()) {
-                    return [
-                        'type' => 'opener',
-                        'args' => [$lineIndex, $tokenIndex, $closerLineIndex + 1],
-                    ];
+                    return fn (array $lines)
+                        => $this->splitAfterOpener(
+                            $lines,
+                            $lineIndex,
+                            $tokenIndex,
+                            $closerLineIndex + 1,
+                        );
                 }
 
                 // Split before closer if it's not the first token on its line
@@ -482,14 +469,13 @@ class Splitter
                 ]->findTokenIndex($token->closingToken);
 
                 if ($closerTokenIndex !== null && $closerTokenIndex > 0) {
-                    return [
-                        'type' => 'closer',
-                        'args' => [
+                    return fn (array $lines)
+                        => $this->splitBeforeCloser(
+                            $lines,
                             $closerLineIndex,
                             $closerTokenIndex,
                             $line->indent,
-                        ],
-                    ];
+                        );
                 }
             }
         }
@@ -516,14 +502,9 @@ class Splitter
         $before = array_slice($tokens, 0, $openerTokenIndex + 1);
         $after = array_slice($tokens, $openerTokenIndex + 1);
 
-        $wasSplit = $line->wasSplit;
+        $lines[$openerLineIndex] = $this->createLine($before, $indent, $line);
 
-        $beforeLine = $this->lineFactory->new($before, $indent);
-        $beforeLine->wasSplit = $wasSplit;
-        $lines[$openerLineIndex] = $beforeLine;
-
-        $afterLine = $this->lineFactory->new($after, $indent + 1);
-        $afterLine->wasSplit = $wasSplit;
+        $afterLine = $this->createLine($after, $indent + 1, $line);
         array_splice($lines, $openerLineIndex + 1, 0, [$afterLine]);
 
         // Bump indent of all content lines between opener and closer
@@ -553,31 +534,36 @@ class Splitter
     ) : array
     {
         $line = $lines[$closerLineIndex];
-        $wasSplit = $line->wasSplit;
         $tokens = $line->getTokens();
 
         $before = array_slice($tokens, 0, $closerTokenIndex);
         $after = array_slice($tokens, $closerTokenIndex);
 
-        $beforeLine = $this->lineFactory->new($before, $line->indent);
-        $beforeLine->wasSplit = $wasSplit;
+        $beforeLine = $this->createLine($before, $line->indent, $line);
 
         if ($beforeLine->contentTokenCount() === 0 && $closerLineIndex > 0) {
             $prev = $lines[$closerLineIndex - 1];
 
-            $mergedLine = $this->lineFactory
-                ->new(array_merge($prev->getTokens(), $before), $prev->indent);
+            $lines[
+                $closerLineIndex - 1
+            ] = $this->createLine(
+                array_merge($prev->getTokens(), $before),
+                $prev->indent,
+                $prev,
+            );
 
-            $mergedLine->wasSplit = $prev->wasSplit;
-            $lines[$closerLineIndex - 1] = $mergedLine;
-            $closerLine = $this->lineFactory->new($after, $openerIndent);
-            $closerLine->wasSplit = $wasSplit;
-            $lines[$closerLineIndex] = $closerLine;
+            $lines[
+                $closerLineIndex
+            ] = $this->createLine($after, $openerIndent, $line);
         } else {
             $lines[$closerLineIndex] = $beforeLine;
-            $afterLine = $this->lineFactory->new($after, $openerIndent);
-            $afterLine->wasSplit = $wasSplit;
-            array_splice($lines, $closerLineIndex + 1, 0, [$afterLine]);
+
+            array_splice(
+                $lines,
+                $closerLineIndex + 1,
+                0,
+                [$this->createLine($after, $openerIndent, $line)],
+            );
         }
 
         return array_values($lines);
@@ -615,15 +601,18 @@ class Splitter
                 }
 
                 $contentIndent = $line->indent + 1;
+                $foundIndent = false;
 
                 for ($i = $lineIndex + 1; $i < $closerLineIndex; $i ++) {
-                    if (! $lines[$i]->isBlank()) {
-                        $contentIndent = $lines[$i]->indent;
-                        break;
+                    if ($lines[$i]->isBlank()) {
+                        continue;
                     }
-                }
 
-                for ($i = $lineIndex + 1; $i < $closerLineIndex; $i ++) {
+                    if (! $foundIndent) {
+                        $contentIndent = $lines[$i]->indent;
+                        $foundIndent = true;
+                    }
+
                     if ($lines[$i]->findTopLevelComma() !== null) {
                         $lineIndices[$i] = $contentIndent;
                     }
@@ -660,7 +649,6 @@ class Splitter
     ) : array
     {
         $line = $lines[$lineIndex];
-        $wasSplit = $line->wasSplit;
         $tokens = $line->getTokens();
         $indent = $line->indent;
         $commaPositions = $line->findTopLevelCommas();
@@ -673,35 +661,7 @@ class Splitter
         $splitPoints = [];
 
         foreach ($commaPositions as $commaPos) {
-            $splitAt = $commaPos + 1;
-
-            while (
-                isset($tokens[$splitAt]) && $tokens[$splitAt] instanceof TSplit
-            ) {
-                $splitAt ++;
-            }
-
-            $advanced = $this->positionPastTrailingComment($tokens, $splitAt);
-
-            if ($advanced > $splitAt) {
-                $check = $advanced;
-
-                while (
-                    isset($tokens[$check])
-                    && (
-                        $tokens[$check] instanceof TSplit
-                        || $tokens[$check] instanceof TSpace
-                    )
-                ) {
-                    $check ++;
-                }
-
-                if (isset($tokens[$check])) {
-                    $splitAt = $advanced;
-                }
-            }
-
-            $splitPoints[] = $splitAt;
+            $splitPoints[] = $this->advancePastComma($tokens, $commaPos);
         }
 
         // Split at all points
@@ -717,9 +677,7 @@ class Splitter
 
             if ($segment !== []) {
                 $segIndent = $start === 0 ? $indent : $contentIndent;
-                $segLine = $this->lineFactory->new($segment, $segIndent);
-                $segLine->wasSplit = $wasSplit;
-                $newLines[] = $segLine;
+                $newLines[] = $this->createLine($segment, $segIndent, $line);
             }
 
             $start = $splitAt;
@@ -728,9 +686,7 @@ class Splitter
         $remaining = array_slice($tokens, $start);
 
         if ($remaining !== []) {
-            $remLine = $this->lineFactory->new($remaining, $contentIndent);
-            $remLine->wasSplit = $wasSplit;
-            $newLines[] = $remLine;
+            $newLines[] = $this->createLine($remaining, $contentIndent, $line);
         }
 
         if (count($newLines) <= 1) {
@@ -743,6 +699,33 @@ class Splitter
     }
 
     /**
+     * @param AToken[] $tokens
+     */
+    private function createLine(
+        array $tokens,
+        int $indent,
+        ?Line $inheritFrom = null,
+    ) : Line
+    {
+        $line = $this->lineFactory->new($tokens, $indent);
+
+        if ($inheritFrom !== null) {
+            $line->wasSplit = $inheritFrom->wasSplit;
+        }
+
+        return $line;
+    }
+
+    private function shouldInsertBlankLine(Line $above, Line $below) : bool
+    {
+        return $above->wasSplit !== $below->wasSplit
+            && ! $above->isBlank()
+            && ! $below->isBlank()
+            && $above->lastContentToken()?->style?->blankLineAfter !== false
+            && $below->firstContentToken()?->style?->blankLineBefore !== false;
+    }
+
+    /**
      * @param Line[] $lines
      * @return Line[]
      */
@@ -752,19 +735,7 @@ class Splitter
             $above = $lines[$i - 1];
             $below = $lines[$i];
 
-            if ($above->wasSplit === $below->wasSplit) {
-                continue;
-            }
-
-            if ($above->isBlank() || $below->isBlank()) {
-                continue;
-            }
-
-            if ($above->lastContentToken()?->style?->blankLineAfter === false) {
-                continue;
-            }
-
-            if ($below->firstContentToken()?->style?->blankLineBefore === false) {
+            if (! $this->shouldInsertBlankLine($above, $below)) {
                 continue;
             }
 

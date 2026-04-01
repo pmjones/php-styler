@@ -5,4 +5,8 @@ namespace PhpStyler\Token;
 
 class TSpace extends AToken
 {
+    public function isContent() : bool
+    {
+        return false;
+    }
 }

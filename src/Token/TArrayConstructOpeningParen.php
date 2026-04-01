@@ -13,6 +13,11 @@ class TArrayConstructOpeningParen extends AToken implements TCommaSeparated
         return TArrayComma::class;
     }
 
+    public function expandPriority() : ?int
+    {
+        return TSplittable::BRACKET;
+    }
+
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->addNesting($source, self::class);

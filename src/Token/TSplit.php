@@ -5,6 +5,11 @@ namespace PhpStyler\Token;
 
 abstract class TSplit extends AToken
 {
+    public function isContent() : bool
+    {
+        return false;
+    }
+
     abstract public function splitPriority() : int;
 
     public function continuation() : bool

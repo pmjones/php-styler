@@ -30,7 +30,9 @@ class RejoinOrphans implements LineRule
                     $nextLine->getTokens(),
                 );
 
-                $lines[$i] = new Line(
+                $lines[
+                    $i
+                ] = new Line(
                     $merged,
                     $line->indent,
                     $line->indentStr,

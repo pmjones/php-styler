@@ -923,12 +923,9 @@ class Parser
                 : Token\TCommentStarredLineBreak::class,
         };
 
-        $this->source[$index] = new $class(
-            $source->id,
-            $source->text,
-            $source->line,
-            $source->pos,
-        );
+        $this->source[
+            $index
+        ] = new $class($source->id, $source->text, $source->line, $source->pos);
     }
 
     public function atClassBody() : bool
@@ -986,12 +983,9 @@ class Parser
 
         foreach ($modifiers as $idx => $mod) {
             if ($mod->id === T_VAR) {
-                $modifiers[$idx] = new PhpToken(
-                    T_PUBLIC,
-                    'public',
-                    $mod->line,
-                    $mod->pos,
-                );
+                $modifiers[
+                    $idx
+                ] = new PhpToken(T_PUBLIC, 'public', $mod->line, $mod->pos);
             }
         }
 

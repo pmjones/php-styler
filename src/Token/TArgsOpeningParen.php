@@ -13,6 +13,11 @@ class TArgsOpeningParen extends AToken implements TCommaSeparated
         return TArgsComma::class;
     }
 
+    public function expandPriority() : ?int
+    {
+        return TSplittable::OTHER_PAREN;
+    }
+
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->addNesting($source, self::class);

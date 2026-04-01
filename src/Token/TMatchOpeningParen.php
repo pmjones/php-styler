@@ -12,4 +12,9 @@ class TMatchOpeningParen extends AToken implements TConditionOpener
     {
         $parser->addNesting($source, self::class);
     }
+
+    public function expandPriority() : ?int
+    {
+        return TSplittable::CONDITION_PAREN;
+    }
 }

@@ -15,15 +15,15 @@ interface TSplittable
 
     public const int FOR_COMMA = 50;
 
-    public const int FN_DOUBLE_ARROW = 60;
+    public const int FN_ARROW = 60;
 
     public const int TERNARY = 70;
 
     public const int COALESCE = 80;
 
-    public const int BRACKET_EXPANSION = 90;
+    public const int BRACKET = 90;
 
-    public const int MATCH_DOUBLE_ARROW = 100;
+    public const int MATCH_ARROW = 100;
 
     public const int BOOLEAN_OR = 110;
 
@@ -37,5 +37,5 @@ interface TSplittable
 
     public const int FLUENT = 160;
 
-    public const int PAREN_EXPANSION = 170;
+    public const int OTHER_PAREN = 170;
 }

@@ -160,12 +160,9 @@ class NormalizeTrailingCommas implements LineRule
 
         $line = $lines[$lastItemLineIndex];
 
-        $lines[$lastItemLineIndex] = new Line(
-            $tokens,
-            $line->indent,
-            $line->indentStr,
-            $line->indentLen,
-        );
+        $lines[
+            $lastItemLineIndex
+        ] = new Line($tokens, $line->indent, $line->indentStr, $line->indentLen);
     }
 
     /**
@@ -207,11 +204,8 @@ class NormalizeTrailingCommas implements LineRule
         // Remove the comma (and any TSpace/TSplit between comma and closer)
         array_splice($tokens, $pos, $closerPos - $pos);
 
-        $lines[$lineIndex] = new Line(
-            $tokens,
-            $line->indent,
-            $line->indentStr,
-            $line->indentLen,
-        );
+        $lines[
+            $lineIndex
+        ] = new Line($tokens, $line->indent, $line->indentStr, $line->indentLen);
     }
 }
