@@ -39,7 +39,8 @@ class Splitter
                     && $prev->wasSplit
                     && ! $prev->isBlank()
                     && $prev->lastContentToken()?->style?->blankLineAfter !== false
-                    && $splitLines[0]->firstContentToken()?->style?->blankLineBefore !== false
+                    && $splitLines[0]->firstContentToken()?->style?->blankLineBefore
+                        !== false
                 ) {
                     $result[] = new Line(
                         [new TBlankLine(AToken::SYNTHETIC, "\n\n")],

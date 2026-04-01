@@ -1351,6 +1351,7 @@ class PlainFormat implements Format
                 'lineBreakBefore' => null,
                 'spaceBefore' => true,
             ],
+
             'next_line' => [
                 'blankLineBefore' => false,
                 'lineBreakBefore' => true,
@@ -1449,6 +1450,7 @@ class PlainFormat implements Format
                 'lineBreakBefore' => null,
                 'spaceBefore' => true,
             ],
+
             'next_line' => [
                 'blankLineBefore' => false,
                 'lineBreakBefore' => true,

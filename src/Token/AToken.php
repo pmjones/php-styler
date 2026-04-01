@@ -44,6 +44,7 @@ abstract class AToken extends PhpToken
         $info['openingToken'] = $this->openingToken !== null
             ? get_class($this->openingToken)
             : null;
+
         $info['closingToken'] = $this->closingToken !== null
             ? get_class($this->closingToken)
             : null;

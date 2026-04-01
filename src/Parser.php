@@ -587,27 +587,35 @@ class Parser
             $isContinuation
                 && $nesting
                     === Token\TIf::class => Token\TIfContinuationBraceless::class,
+
             $isContinuation
                 && $nesting
                     === Token\TElseif::class => Token\TElseifContinuationBraceless::class,
+
             ! $isContinuation
                 && $nesting
                     === Token\TIf::class => Token\TIfClosingBraceless::class,
+
             ! $isContinuation
                 && $nesting
                     === Token\TElse::class => Token\TElseClosingBraceless::class,
+
             ! $isContinuation
                 && $nesting
                     === Token\TElseif::class => Token\TElseifClosingBraceless::class,
+
             ! $isContinuation
                 && $nesting
                     === Token\TWhile::class => Token\TWhileClosingBraceless::class,
+
             ! $isContinuation
                 && $nesting
                     === Token\TFor::class => Token\TForClosingBraceless::class,
+
             ! $isContinuation
                 && $nesting
                     === Token\TForeach::class => Token\TForeachClosingBraceless::class,
+
             default => throw new Exception(
                 ($isContinuation ? "Unknown continuation" : "Unknown closing")
                     . " braceless in nesting "
@@ -908,12 +916,15 @@ class Parser
             $source->is(T_DOC_COMMENT) => $blankLine
                 ? Token\TDocCommentBlankLine::class
                 : Token\TDocCommentLineBreak::class,
+
             str_starts_with($source->text, '//') => $blankLine
                 ? Token\TCommentSlashedBlankLine::class
                 : Token\TCommentSlashedLineBreak::class,
+
             str_starts_with($source->text, '#') => $blankLine
                 ? Token\TCommentHashedBlankLine::class
                 : Token\TCommentHashedLineBreak::class,
+
             default => $blankLine
                 ? Token\TCommentStarredBlankLine::class
                 : Token\TCommentStarredLineBreak::class,

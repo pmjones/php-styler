@@ -88,6 +88,7 @@ class NormalizeMemberSpacing implements TokenRule
 
             $token instanceof TUseTraitEndSemicolon,
             $token instanceof TUseTraitClosingBrace => 'traituse',
+
             $token instanceof TFunctionClosingBrace,
             $token instanceof TAbstractMethodEndSemicolon => 'method',
 

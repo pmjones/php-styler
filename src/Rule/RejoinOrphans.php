@@ -29,6 +29,7 @@ class RejoinOrphans implements LineRule
                     [new TSpace(T_WHITESPACE, ' ')],
                     $nextLine->getTokens(),
                 );
+
                 $lines[$i] = new Line(
                     $merged,
                     $line->indent,

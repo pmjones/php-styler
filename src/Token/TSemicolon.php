@@ -22,14 +22,17 @@ class TSemicolon extends AToken
 
             TPropertyHookGet::class,
             TPropertyHookGetDoubleArrow::class => TPropertyHookGetSemicolon::class,
+
             TPropertyHookSet::class,
             TPropertyHookSetDoubleArrow::class => TPropertyHookSetSemicolon::class,
+
             TConst::class => $parser->atNesting(
                     TConst::class,
                     TClasslikeOpeningBrace::class,
                 )
                 ? TConstEndSemicolon::class
                 : TNamespaceConstEndSemicolon::class,
+
             TUse::class,
             TUseFunction::class,
             TUseConst::class => TUseEndSemicolon::class,

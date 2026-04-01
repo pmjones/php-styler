@@ -48,11 +48,13 @@ abstract class TTestCase extends \PHPUnit\Framework\TestCase
                 TIndentDecrement::class,
                 TLineBreak::class,
             ],
+
             self::REPORT_SYNTHETIC => [
                 TWhitespace::class,
                 TBlankLine::class,
                 TSpace::class,
             ],
+
             self::REPORT_LINEBREAKS => [
                 TWhitespace::class,
                 TSpace::class,
@@ -60,6 +62,7 @@ abstract class TTestCase extends \PHPUnit\Framework\TestCase
                 TIndentDecrement::class,
                 TLineBreak::class,
             ],
+
             self::IGNORE_WHITESPACE => [
                 TWhitespace::class,
                 TBlankLine::class,
