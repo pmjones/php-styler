@@ -10,10 +10,12 @@ $veryLongVariableName = match ($veryLongVariableName) {
     'veryLongElement',
     'veryLongElement',
     'veryLongElement' => 'veryLongElement',
+
     'veryLongElement',
     'veryLongElement',
     'veryLongElement',
     'veryLongElement' => 'veryLongElement',
+
     'veryLongElement',
     'veryLongElement',
     'veryLongElement',

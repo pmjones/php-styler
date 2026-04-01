@@ -28,8 +28,24 @@ class Splitter
 
         foreach ($lines as $line) {
             $splitLines = $this->splitLine($line);
+            $isSplit = count($splitLines) > 1;
 
-            if (count($splitLines) > 1) {
+            if ($isSplit) {
+                // blank line between adjacent split groups
+                $prev = $result !== [] ? end($result) : null;
+
+                if (
+                    $prev !== null
+                    && $prev->wasSplit
+                    && ! $prev->isBlank()
+                    && $prev->lastContentToken()?->style?->blankLineAfter !== false
+                    && $splitLines[0]->firstContentToken()?->style?->blankLineBefore !== false
+                ) {
+                    $result[] = new Line(
+                        [new TBlankLine(AToken::SYNTHETIC, "\n\n")],
+                    );
+                }
+
                 foreach ($splitLines as $sl) {
                     $sl->wasSplit = true;
                 }
