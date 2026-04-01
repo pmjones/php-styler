@@ -62,6 +62,11 @@ abstract class AToken extends PhpToken
         return null;
     }
 
+    public function splObjectId() : int
+    {
+        return spl_object_id($this);
+    }
+
     /**
      * @phpstan-assert-if-true AToken $this->closingToken
      */

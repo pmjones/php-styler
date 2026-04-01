@@ -356,10 +356,8 @@ class Splitter
                 continue;
             }
 
-            $closerLineIndex = $tokenLineMap[
-                    spl_object_id($lastToken->closingToken)
-                ]
-                ?? null;
+            $closerId = $lastToken->closingToken->splObjectId();
+            $closerLineIndex = $tokenLineMap[$closerId] ?? null;
 
             if ($closerLineIndex === null || $closerLineIndex <= $lineIndex + 1) {
                 continue;
@@ -401,7 +399,7 @@ class Splitter
 
         foreach ($lines as $lineIndex => $line) {
             foreach ($line->getTokens() as $token) {
-                $map[spl_object_id($token)] = $lineIndex;
+                $map[$token->splObjectId()] = $lineIndex;
             }
         }
 
@@ -444,10 +442,8 @@ class Splitter
                     continue;
                 }
 
-                $closerLineIndex = $tokenLineMap[
-                        spl_object_id($token->closingToken)
-                    ]
-                    ?? null;
+                $closerId = $token->closingToken->splObjectId();
+                $closerLineIndex = $tokenLineMap[$closerId] ?? null;
 
                 if ($closerLineIndex === null || $closerLineIndex === $lineIndex) {
                     continue;
@@ -572,11 +568,6 @@ class Splitter
      * @param Line[] $lines
      * @return Line[]
      */
-
-    /**
-     * @param Line[] $lines
-     * @return Line[]
-     */
     private function expandCommas(array $lines) : array
     {
         $tokenLineMap = $this->buildTokenLineMap($lines);
@@ -590,10 +581,8 @@ class Splitter
                     continue;
                 }
 
-                $closerLineIndex = $tokenLineMap[
-                        spl_object_id($token->closingToken)
-                    ]
-                    ?? null;
+                $closerId = $token->closingToken->splObjectId();
+                $closerLineIndex = $tokenLineMap[$closerId] ?? null;
 
                 if ($closerLineIndex === null || $closerLineIndex <= $lineIndex) {
                     continue;

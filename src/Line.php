@@ -112,11 +112,11 @@ class Line
             $this->tokenIndex = [];
 
             foreach ($this->tokens as $i => $token) {
-                $this->tokenIndex[spl_object_id($token)] = (int) $i;
+                $this->tokenIndex[$token->splObjectId()] = (int) $i;
             }
         }
 
-        return $this->tokenIndex[spl_object_id($target)] ?? null;
+        return $this->tokenIndex[$target->splObjectId()] ?? null;
     }
 
     public function isBlank() : bool
