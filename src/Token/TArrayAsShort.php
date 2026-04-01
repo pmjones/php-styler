@@ -33,12 +33,14 @@ class TArrayAsShort extends AToken
 
         // Replace '(' with '[' and ')' with ']'
         $open = $parser->getSourceAt($openOffset);
+
         $parser->setSourceAt(
             $openOffset,
             new PhpToken(ord('['), '[', $open->line, $open->pos),
         );
 
         $close = $parser->getSourceAt($closeOffset);
+
         $parser->setSourceAt(
             $closeOffset,
             new PhpToken(ord(']'), ']', $close->line, $close->pos),

@@ -40,6 +40,7 @@ class Apply extends Command
         // apply styling
         try {
             $workerCount = $this->resolveWorkerCount($options->workers);
+
             $count = $this->applyStyle(
                 $config,
                 $configFile,

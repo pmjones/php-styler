@@ -80,13 +80,17 @@ class NormalizeMemberSpacing implements TokenRule
     {
         return match (true) {
             $token instanceof TConstEndSemicolon => 'const',
+
             $token instanceof TPropertyEndSemicolon,
             $token instanceof TPropertyHooksClosingBrace => 'property',
+
             $token instanceof TEnumCaseEndSemicolon => 'enumcase',
+
             $token instanceof TUseTraitEndSemicolon,
             $token instanceof TUseTraitClosingBrace => 'traituse',
             $token instanceof TFunctionClosingBrace,
             $token instanceof TAbstractMethodEndSemicolon => 'method',
+
             default => null,
         };
     }

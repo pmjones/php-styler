@@ -24,12 +24,14 @@ class TCase extends AToken
 
         if ($parser->atNesting(TCaseColon::class)) {
             $parser->popNesting(TCaseColon::class);
+
             $parser->popNesting(
                 TCase::class,
                 TDefaultCase::class,
                 TCaseAfterCase::class,
                 TDefaultAfterCase::class,
             );
+
             $parser->parse($source, TCaseAfterCase::class);
             return;
         }

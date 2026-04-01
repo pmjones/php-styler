@@ -1346,8 +1346,16 @@ class PlainFormat implements Format
         }
 
         $args = match ($spec) {
-            'same_line' => ['blankLineBefore' => false, 'lineBreakBefore' => null, 'spaceBefore' => true],
-            'next_line' => ['blankLineBefore' => false, 'lineBreakBefore' => true, 'spaceBefore' => null],
+            'same_line' => [
+                'blankLineBefore' => false,
+                'lineBreakBefore' => null,
+                'spaceBefore' => true,
+            ],
+            'next_line' => [
+                'blankLineBefore' => false,
+                'lineBreakBefore' => true,
+                'spaceBefore' => null,
+            ],
         };
 
         foreach ([
@@ -1436,8 +1444,16 @@ class PlainFormat implements Format
         }
 
         $args = match ($spec) {
-            'same_line' => ['blankLineBefore' => false, 'lineBreakBefore' => null, 'spaceBefore' => true],
-            'next_line' => ['blankLineBefore' => false, 'lineBreakBefore' => true, 'spaceBefore' => null],
+            'same_line' => [
+                'blankLineBefore' => false,
+                'lineBreakBefore' => null,
+                'spaceBefore' => true,
+            ],
+            'next_line' => [
+                'blankLineBefore' => false,
+                'lineBreakBefore' => true,
+                'spaceBefore' => null,
+            ],
         };
 
         $class = Token\TFunctionOpeningBrace::class;
@@ -1530,5 +1546,4 @@ class PlainFormat implements Format
             $this->styles[$class] = array_merge($this->styles[$class], $args);
         }
     }
-
 }

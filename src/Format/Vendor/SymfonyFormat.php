@@ -66,6 +66,7 @@ class SymfonyFormat extends DeclarationFormat
             styles: $symfonyStyles,
             rules: $rules,
         );
+
         $this->setConcatenationSpacing(false);
         $this->setReturnTypeColonSpacing(false);
     }

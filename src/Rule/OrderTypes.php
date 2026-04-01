@@ -151,9 +151,8 @@ class OrderTypes implements TokenRule
 
             // nullable shorthand: exactly 2 types with null first after sort
             if (
-                (
-                    $this->priorityMap[TNull::class] ?? PHP_INT_MAX
-                ) < $this->wildcardPriority
+                ($this->priorityMap[TNull::class] ?? PHP_INT_MAX)
+                    < $this->wildcardPriority
                 && count($sorted) === 2
                 && $sorted[0] instanceof TNull
             ) {

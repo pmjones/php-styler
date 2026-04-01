@@ -19,6 +19,7 @@ class TClosingBracket extends AToken
                 'Closing',
                 $parser->getNesting(),
             );
+
             $parser->parse($source, $closingBracketClass);
             return;
         }

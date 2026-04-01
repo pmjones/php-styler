@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
+use PhpStyler\Parser;
+
 /**
  * Token: T_IS_IDENTICAL
  *
@@ -10,6 +12,10 @@ namespace PhpStyler\Token;
  *
  * Reference: https://www.php.net/manual/en/language.operators.comparison.php comparison operators
  */
-class TIsIdentical extends AToken
+class TIsIdentical extends AToken implements TSplittableOperator
 {
+    public function splitBefore(Parser $parser) : ?TSplit
+    {
+        return new TSplitComparison(AToken::SYNTHETIC, '');
+    }
 }

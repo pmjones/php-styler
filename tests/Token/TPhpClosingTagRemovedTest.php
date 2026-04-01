@@ -20,6 +20,7 @@ class TPhpClosingTagRemovedTest extends TestCase
                 rules: [RemoveTrailingBlankLines::class],
             ),
         );
+
         $actual = $styler($code);
         $this->assertSame($expect, $actual);
     }

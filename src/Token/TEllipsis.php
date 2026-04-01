@@ -30,9 +30,11 @@ class TEllipsis extends AToken
 
         $parseClass = match ($nesting) {
             TParamsOpeningParen::class => TVariadicEllipsis::class,
+
             TArgsOpeningParen::class,
             TArrayOpeningBracket::class,
             TArrayConstructOpeningParen::class => TSpreadEllipsis::class,
+
             default => self::class,
         };
 

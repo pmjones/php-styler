@@ -23,6 +23,7 @@ class TEndif extends AToken implements TClosingStructure
             TElseColon::class,
             TElseifColon::class,
         );
+
         $parser->popNesting(TIf::class, TElse::class, TElseif::class);
         $parser->indentDecr();
         $parser->add($source, self::class);

@@ -216,16 +216,18 @@ Each PHP token and synthetic construct has a dedicated `AToken` subclass.
 | Priority | Constant | Splits at |
 |---|---|---|
 | 10 | `ATTRIBUTE` | Attributes |
-| 20 | `COMMA` | Commas |
-| 30 | `FN_DOUBLE_ARROW` | `fn() =>` |
-| 40 | `TERNARY` | `?`, `:`, `?:` |
-| 50 | `COALESCE` | `??` |
-| 60 | `BOOLEAN_OR` | `\|\|` |
-| 70 | `BOOLEAN_AND` | `&&` |
-| 80 | `ADDITION` | `+`, `-`, `.` |
-| 90 | `MULTIPLICATION` | `*`, `/`, `%` |
-| 100 | `FLUENT` | `->`, `?->`, `::` |
-| 110 | `FOR_SEMICOLON` | `for` semicolons |
+| 20 | `FOR_SEMICOLON` | `for` semicolons |
+| 30 | `COMMA` | Commas |
+| 40 | `FOR_COMMA` | `for` commas |
+| 50 | `FN_DOUBLE_ARROW` | `fn() =>` |
+| 60 | `TERNARY` | `?`, `:`, `?:` |
+| 70 | `COALESCE` | `??` |
+| 80 | `BOOLEAN_OR` | `\|\|` |
+| 90 | `BOOLEAN_AND` | `&&` |
+| 100 | `COMPARISON` | `<`, `>`, `<=`, `>=`, `==`, `!=`, `===`, `!==`, `<=>` |
+| 110 | `ADDITION` | `+`, `-`, `.` |
+| 120 | `MULTIPLICATION` | `*`, `/`, `%` |
+| 130 | `FLUENT` | `->`, `?->`, `::` |
 
 ### Parser Detail
 

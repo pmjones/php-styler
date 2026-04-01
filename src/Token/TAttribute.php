@@ -50,6 +50,7 @@ class TAttribute extends AToken implements TAttribution
                     $offset = $parser->findNextNonWhitespaceOffset(
                         $matchingClose + 1,
                     );
+
                     continue;
                 }
 

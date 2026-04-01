@@ -126,11 +126,13 @@ class Diff extends Command
 
         try {
             file_put_contents($tempFile, $styled);
+
             $command = sprintf(
                 'diff -u %s %s',
                 escapeshellarg($file),
                 escapeshellarg($tempFile),
             );
+
             passthru($command);
         } finally {
             unlink($tempFile);

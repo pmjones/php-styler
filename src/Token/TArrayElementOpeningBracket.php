@@ -13,6 +13,7 @@ class TArrayElementOpeningBracket extends AToken
         $class = $parser->inEncapsedString()
             ? TEncapsedArrayElementOpeningBracket::class
             : self::class;
+
         $parser->addNesting($source, $class);
     }
 }

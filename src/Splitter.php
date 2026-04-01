@@ -224,6 +224,7 @@ class Splitter
                 $lines[] = $segLine;
             } else {
                 $prev = array_pop($lines);
+
                 $lines[] = $this->lineFactory
                     ->new(array_merge($prev->getTokens(), $segment), $prev->indent);
             }
@@ -323,6 +324,7 @@ class Splitter
             $bump = null;
             $closerLine = $lines[$closerLineIndex];
             $closerFirst = $closerLine->firstContentToken();
+
             $bumpEnd = (
                     $closerFirst !== null
                     && $closerFirst !== $lastToken->closingToken
@@ -464,12 +466,7 @@ class Splitter
 
         $afterLine = $this->lineFactory->new($after, $indent + 1);
         $afterLine->wasSplit = $wasSplit;
-        array_splice(
-            $lines,
-            $openerLineIndex + 1,
-            0,
-            [$afterLine],
-        );
+        array_splice($lines, $openerLineIndex + 1, 0, [$afterLine]);
 
         // Bump indent of all content lines between opener and closer
         for ($i = $openerLineIndex + 2; $i < $closerLineIndex; $i ++) {
@@ -509,8 +506,10 @@ class Splitter
 
         if ($beforeLine->contentTokenCount() === 0 && $closerLineIndex > 0) {
             $prev = $lines[$closerLineIndex - 1];
+
             $mergedLine = $this->lineFactory
                 ->new(array_merge($prev->getTokens(), $before), $prev->indent);
+
             $mergedLine->wasSplit = $prev->wasSplit;
             $lines[$closerLineIndex - 1] = $mergedLine;
             $closerLine = $this->lineFactory->new($after, $openerIndent);
@@ -520,12 +519,7 @@ class Splitter
             $lines[$closerLineIndex] = $beforeLine;
             $afterLine = $this->lineFactory->new($after, $openerIndent);
             $afterLine->wasSplit = $wasSplit;
-            array_splice(
-                $lines,
-                $closerLineIndex + 1,
-                0,
-                [$afterLine],
-            );
+            array_splice($lines, $closerLineIndex + 1, 0, [$afterLine]);
         }
 
         return array_values($lines);
@@ -676,10 +670,7 @@ class Splitter
         $remaining = array_slice($tokens, $start);
 
         if ($remaining !== []) {
-            $remLine = $this->lineFactory->new(
-                $remaining,
-                $contentIndent,
-            );
+            $remLine = $this->lineFactory->new($remaining, $contentIndent);
             $remLine->wasSplit = $wasSplit;
             $newLines[] = $remLine;
         }
@@ -719,9 +710,12 @@ class Splitter
                 continue;
             }
 
-            array_splice($lines, $i, 0, [
-                new Line([new TBlankLine(AToken::SYNTHETIC, "\n\n")]),
-            ]);
+            array_splice(
+                $lines,
+                $i,
+                0,
+                [new Line([new TBlankLine(AToken::SYNTHETIC, "\n\n")])],
+            );
         }
 
         foreach ($lines as $line) {

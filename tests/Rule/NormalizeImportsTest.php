@@ -19,6 +19,7 @@ class NormalizeImportsTest extends TestCase
                 RemoveTrailingBlankLines::class,
             ]),
         );
+
         $actual = $styler($code);
         $this->assertSame($expect, $actual);
     }
@@ -186,6 +187,7 @@ class NormalizeImportsTest extends TestCase
 
                 EXPECT,
             ],
+
             // --- remove-unused tests (from RemoveUnusedImportsTest) ---
             'classlike-used-in-code' => [
                 <<<'CODE'
@@ -419,6 +421,7 @@ class NormalizeImportsTest extends TestCase
 
                 EXPECT,
             ],
+
             // --- combined test ---
             'remove-unused-then-order' => [
                 <<<'CODE'

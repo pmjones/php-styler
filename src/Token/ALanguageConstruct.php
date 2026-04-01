@@ -40,12 +40,14 @@ abstract class ALanguageConstruct extends AToken
 
         // Remove parens: replace ( with space and ) with empty whitespace
         $open = $parser->getSourceAt($openOffset);
+
         $parser->setSourceAt(
             $openOffset,
             new PhpToken(T_WHITESPACE, ' ', $open->line, $open->pos),
         );
 
         $close = $parser->getSourceAt($closeOffset);
+
         $parser->setSourceAt(
             $closeOffset,
             new PhpToken(T_WHITESPACE, '', $close->line, $close->pos),

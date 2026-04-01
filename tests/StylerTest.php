@@ -2620,6 +2620,7 @@ class StylerTest extends TestCase
 
                 EXPECT,
             ],
+
             // Full class example
             'full-class' => [
                 <<<'CODE'

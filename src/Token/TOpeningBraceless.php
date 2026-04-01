@@ -29,6 +29,7 @@ class TOpeningBraceless extends AToken implements TOpeningStructure
                 $source->line,
                 $source->pos,
             );
+
             $parser->add($synthetic, $braceClass);
             $parser->pushNesting($source, self::class);
             $parser->indentIncr();

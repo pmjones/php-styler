@@ -38,6 +38,7 @@ class THeredocStartAsNowdoc extends AToken
         // convert <<<LABEL\n to <<<'LABEL'\n
         if (preg_match('/^(<<<\s*)(\w+)(\s*)$/', $source->text, $matches)) {
             $newText = $matches[1] . "'" . $matches[2] . "'" . $matches[3];
+
             $source = new PhpToken(
                 T_START_HEREDOC,
                 $newText,

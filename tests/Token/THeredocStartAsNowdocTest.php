@@ -18,6 +18,7 @@ class THeredocStartAsNowdocTest extends TestCase
                 THeredocStart::class => THeredocStartAsNowdoc::class,
             ]),
         );
+
         $actual = $styler($code);
         $this->assertSame($expect, $actual);
     }

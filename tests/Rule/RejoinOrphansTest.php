@@ -18,6 +18,7 @@ class RejoinOrphansTest extends TestCase
                 rules: [RejoinOrphans::class, RemoveTrailingBlankLines::class],
             ),
         );
+
         $actual = $styler($code);
         $this->assertSame($expect, $actual);
     }

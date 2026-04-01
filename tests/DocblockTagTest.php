@@ -69,10 +69,12 @@ class DocblockTagTest extends TestCase
 
         $this->assertCount(2, $tags);
         $this->assertSame('param', $tags[0]->name);
+
         $this->assertSame(
             'array<string, mixed> $options This is a continuation line describing the parameter.',
             $tags[0]->body,
         );
+
         $this->assertSame('return', $tags[1]->name);
         $this->assertSame('void', $tags[1]->body);
     }

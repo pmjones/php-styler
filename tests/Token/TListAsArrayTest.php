@@ -52,6 +52,7 @@ class TListAsArrayTest extends TTestCase
                 TIndentDecrement::class,
                 TLineBreak::class,
             ],
+
             default => [],
         };
 
@@ -70,6 +71,7 @@ class TListAsArrayTest extends TTestCase
 
             foreach ($actual as $class) {
                 $parts = explode('\\', $class);
+
                 $message .= '                    '
                     . end($parts)
                     . '::class,'

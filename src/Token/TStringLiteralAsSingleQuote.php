@@ -16,6 +16,7 @@ class TStringLiteralAsSingleQuote extends AToken
             if (! str_contains($inner, "'") && ! self::hasUnsafeEscape($inner)) {
                 $converted = str_replace('\\"', '"', $inner);
                 $newText = "'" . $converted . "'";
+
                 $source = new PhpToken(
                     $source->id,
                     $newText,

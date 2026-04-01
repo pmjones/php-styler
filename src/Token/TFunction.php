@@ -33,6 +33,7 @@ class TFunction extends AToken
                 new PhpToken(T_PUBLIC, 'public', $source->line, $source->pos),
                 TPublic::class,
             );
+
             $parser->space();
         }
 

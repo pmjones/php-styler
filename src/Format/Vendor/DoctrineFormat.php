@@ -98,6 +98,7 @@ class DoctrineFormat extends DeclarationFormat
             styles: $doctrineStyles,
             rules: $rules,
         );
+
         $this->setReturnTypeColonSpacing(false);
     }
 }

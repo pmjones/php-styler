@@ -39,6 +39,7 @@ class Styler
             $format->indentLen,
             $format->indentTab,
         );
+
         $this->parser = new Parser($format);
         $this->assembler = new Assembler($lineFactory);
         $this->splitter = new Splitter($lineFactory);

@@ -17,10 +17,12 @@ class TAssign extends AToken
             TDeclareDirectivesOpeningParen::class => TAssignDirective::class,
             TParamsOpeningParen::class => TAssignDefault::class,
             TConst::class => TAssignConst::class,
+
             TClassOpeningBrace::class,
             TEnumOpeningBrace::class,
             TInterfaceOpeningBrace::class,
             TTraitOpeningBrace::class => TAssignProperty::class,
+
             default => self::class,
         };
 

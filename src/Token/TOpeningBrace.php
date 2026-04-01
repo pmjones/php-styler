@@ -40,8 +40,10 @@ class TOpeningBrace extends AToken
             TEnum::class => TEnumOpeningBrace::class,
             TInterface::class => TInterfaceOpeningBrace::class,
             TTrait::class => TTraitOpeningBrace::class,
+
             TAnonymousClass::class,
             TAnonymousFunction::class => TAnonymousOpeningBrace::class,
+
             TCatch::class => TCatchOpeningBrace::class,
             TDo::class => TDoOpeningBrace::class,
             TElse::class => TElseOpeningBrace::class,

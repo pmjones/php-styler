@@ -25,6 +25,7 @@ class SplitterTest extends TestCase
                 ],
             ),
         );
+
         $actual = $styler($code);
         $this->assertSame($expect, $actual);
     }

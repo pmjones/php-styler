@@ -115,11 +115,13 @@ class Worker extends Command
 
         try {
             file_put_contents($tempFile, $styled);
+
             $command = sprintf(
                 'diff -u %s %s',
                 escapeshellarg($file),
                 escapeshellarg($tempFile),
             );
+
             $output = (string) shell_exec($command);
             return $output;
         } finally {

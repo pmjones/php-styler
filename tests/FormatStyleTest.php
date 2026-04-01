@@ -34,6 +34,7 @@ class FormatStyleTest extends TestCase
                 'spaceBefore' => true,
             ],
         ]);
+
         $parser = new Parser($format);
         $style = $parser->getStyle(TClassOpeningBrace::class);
         $this->assertNull($style->lineBreakBefore);

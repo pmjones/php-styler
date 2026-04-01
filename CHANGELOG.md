@@ -2,9 +2,10 @@
 
 ## NEXT
 
-- **Binary operator splitting.** Long lines now split at binary arithmetic
-  operators (`+`, `-`, `*`, `/`, `%`) in addition to the previously supported
-  boolean, coalesce, concatenation, and ternary operators.
+- **Binary and comparison operator splitting.** Long lines now split at binary
+  arithmetic operators (`+`, `-`, `*`, `/`, `%`) and comparison operators (`<`,
+  `>`, `<=`, `>=`, `==`, `!=`, `===`, `!==`, `<=>`) in addition to the
+  previously supported boolean, coalesce, concatenation, and ternary operators.
 
 - **Refined split priorities.** The two coarse operator split priorities
   (`LOOSE_OPERATOR` and `TIGHT_OPERATOR`) have been replaced with six
@@ -13,17 +14,22 @@
 
   | Priority | Constant | Splits at |
   |---|---|---|
-  | 30 | `FN_DOUBLE_ARROW` | `fn() =>` |
-  | 40 | `TERNARY` | `?`, `:`, `?:` |
-  | 50 | `COALESCE` | `??` |
-  | 60 | `BOOLEAN_OR` | `\|\|` |
-  | 70 | `BOOLEAN_AND` | `&&` |
-  | 80 | `ADDITION` | `+`, `-`, `.` |
-  | 90 | `MULTIPLICATION` | `*`, `/`, `%` |
+  | 20 | `FOR_SEMICOLON` | `for` semicolons |
+  | 30 | `COMMA` | Commas |
+  | 40 | `FOR_COMMA` | `for` commas |
+  | 50 | `FN_DOUBLE_ARROW` | `fn() =>` |
+  | 60 | `TERNARY` | `?`, `:`, `?:` |
+  | 70 | `COALESCE` | `??` |
+  | 80 | `BOOLEAN_OR` | `\|\|` |
+  | 90 | `BOOLEAN_AND` | `&&` |
+  | 100 | `COMPARISON` | `<`, `>`, `<=`, `>=`, `==`, `!=`, `===`, `!==`, `<=>` |
+  | 110 | `ADDITION` | `+`, `-`, `.` |
+  | 120 | `MULTIPLICATION` | `*`, `/`, `%` |
 
   Each priority level has its own `TSplit` subclass (`TSplitFnDoubleArrow`,
   `TSplitTernary`, `TSplitCoalesce`, `TSplitBooleanOr`, `TSplitBooleanAnd`,
-  `TSplitAddition`, `TSplitMultiplication`), replacing the former
+  `TSplitComparison`, `TSplitAddition`, `TSplitMultiplication`), replacing the
+  former
   `TSplitLooseOperator` and `TSplitTightOperator`.
 
 - **Blank lines around split lines.** When a line is split into multiple lines,

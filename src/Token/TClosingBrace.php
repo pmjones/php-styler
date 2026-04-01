@@ -33,12 +33,14 @@ class TClosingBrace extends AToken
 
         if ($parser->atNesting(TCaseColon::class)) {
             $parser->popNesting(TCaseColon::class);
+
             $parser->popNesting(
                 TCase::class,
                 TDefaultCase::class,
                 TCaseAfterCase::class,
                 TDefaultAfterCase::class,
             );
+
             $closesCase = true;
         }
 
@@ -100,9 +102,11 @@ class TClosingBrace extends AToken
             TForeach::class => TForeachClosingBrace::class,
             TIf::class => TIfClosingBrace::class,
             TMatch::class => TMatchClosingBrace::class,
+
             TSwitch::class => $closesCase
                 ? TSwitchAfterCaseClosingBrace::class
                 : TSwitchClosingBrace::class,
+
             TWhile::class => TWhileClosingBrace::class,
 
             // other

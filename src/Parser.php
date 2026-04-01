@@ -166,11 +166,8 @@ class Parser
 
         for (
             $this->sourceOffset = 0;
-            $this
-                ->sourceOffset < $this
-                ->sourceCount;
-                $this
-                ->sourceOffset ++
+            $this->sourceOffset < $this->sourceCount;
+            $this->sourceOffset ++
         ) {
             $source = $this->source[$this->sourceOffset];
 
@@ -528,6 +525,7 @@ class Parser
             $source->line,
             $source->pos,
         );
+
         $this->nesting[] = new Nesting($token);
     }
 
@@ -587,21 +585,29 @@ class Parser
 
         $braceless = match (true) {
             $isContinuation
-                && $nesting === Token\TIf::class => Token\TIfContinuationBraceless::class,
+                && $nesting
+                    === Token\TIf::class => Token\TIfContinuationBraceless::class,
             $isContinuation
-                && $nesting === Token\TElseif::class => Token\TElseifContinuationBraceless::class,
+                && $nesting
+                    === Token\TElseif::class => Token\TElseifContinuationBraceless::class,
             ! $isContinuation
-                && $nesting === Token\TIf::class => Token\TIfClosingBraceless::class,
+                && $nesting
+                    === Token\TIf::class => Token\TIfClosingBraceless::class,
             ! $isContinuation
-                && $nesting === Token\TElse::class => Token\TElseClosingBraceless::class,
+                && $nesting
+                    === Token\TElse::class => Token\TElseClosingBraceless::class,
             ! $isContinuation
-                && $nesting === Token\TElseif::class => Token\TElseifClosingBraceless::class,
+                && $nesting
+                    === Token\TElseif::class => Token\TElseifClosingBraceless::class,
             ! $isContinuation
-                && $nesting === Token\TWhile::class => Token\TWhileClosingBraceless::class,
+                && $nesting
+                    === Token\TWhile::class => Token\TWhileClosingBraceless::class,
             ! $isContinuation
-                && $nesting === Token\TFor::class => Token\TForClosingBraceless::class,
+                && $nesting
+                    === Token\TFor::class => Token\TForClosingBraceless::class,
             ! $isContinuation
-                && $nesting === Token\TForeach::class => Token\TForeachClosingBraceless::class,
+                && $nesting
+                    === Token\TForeach::class => Token\TForeachClosingBraceless::class,
             default => throw new Exception(
                 ($isContinuation ? "Unknown continuation" : "Unknown closing")
                     . " braceless in nesting "
@@ -1025,9 +1031,8 @@ class Parser
             usort(
                 $modifiers,
                 fn (PhpToken $a, PhpToken $b)
-                    => self::MODIFIER_PRIORITY[
-                        $a->id
-                    ] <=> self::MODIFIER_PRIORITY[$b->id],
+                    => self::MODIFIER_PRIORITY[$a->id]
+                        <=> self::MODIFIER_PRIORITY[$b->id],
             );
         }
 

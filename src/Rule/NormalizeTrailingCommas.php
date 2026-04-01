@@ -34,8 +34,8 @@ class NormalizeTrailingCommas implements LineRule
                 $commaClass = $token->commaClass();
 
                 $closerLineIndex = $tokenLineMap[
-                    spl_object_id($token->closingToken)
-                ]
+                        spl_object_id($token->closingToken)
+                    ]
                     ?? null;
 
                 if ($closerLineIndex === null) {
@@ -159,6 +159,7 @@ class NormalizeTrailingCommas implements LineRule
         array_splice($tokens, $insertAfterPos + 1, 0, [$comma]);
 
         $line = $lines[$lastItemLineIndex];
+
         $lines[$lastItemLineIndex] = new Line(
             $tokens,
             $line->indent,

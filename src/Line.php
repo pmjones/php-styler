@@ -374,10 +374,12 @@ class Line
             }
 
             $order = $token->splitPriority();
+
             $groups[$order] ??= [
                 'positions' => [],
                 'continuation' => $token->continuation(),
             ];
+
             $groups[$order]['positions'][] = $i;
         }
 

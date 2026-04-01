@@ -8,6 +8,11 @@ use PhpToken;
 
 class TForComma extends AToken
 {
+    public function splitAfter(Parser $parser) : ?TSplit
+    {
+        return new TSplitForComma(AToken::SYNTHETIC, '');
+    }
+
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->add($source, static::class);

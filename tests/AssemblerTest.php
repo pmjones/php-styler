@@ -140,6 +140,7 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                             && ! is_a($class, TSplit::class, true),
                 ),
             );
+
             $actual[] = $classes;
         }
 
@@ -772,6 +773,9 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                         TPhpOpeningTag::class,
                     ],
                     [
+                        TBlankLine::class,
+                    ],
+                    [
                         TFor::class,
                         TForOpeningParen::class,
                     ],
@@ -781,6 +785,8 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                         TIntegerLiteral::class,
                         TForComma::class,
                         TCommentSlashedMidStatement::class,
+                    ],
+                    [
                         TVariable::class,
                         TAssign::class,
                         TIntegerLiteral::class,
@@ -809,6 +815,8 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                         TPostIncrement::class,
                         TForComma::class,
                         TCommentSlashedMidStatement::class,
+                    ],
+                    [
                         TVariable::class,
                         TPostDecrement::class,
                         TCommentSlashedMidStatement::class,
@@ -955,6 +963,8 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                     [
                         TBooleanOr::class,
                         TVariable::class,
+                    ],
+                    [
                         TIsEqual::class,
                         TIntegerLiteral::class,
                         TCommentSlashedMidStatement::class,
@@ -1006,6 +1016,8 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                     ],
                     [
                         TVariable::class,
+                    ],
+                    [
                         TSmallerThan::class,
                         TIntegerLiteral::class,
                         TCommentSlashedMidStatement::class,

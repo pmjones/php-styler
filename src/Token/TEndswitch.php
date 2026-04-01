@@ -22,18 +22,21 @@ class TEndswitch extends AToken implements TClosingStructure
 
         if ($parser->atNesting(TCaseColon::class)) {
             $parser->popNesting(TCaseColon::class);
+
             $parser->popNesting(
                 TCase::class,
                 TDefaultCase::class,
                 TCaseAfterCase::class,
                 TDefaultAfterCase::class,
             );
+
             $closesCase = true;
         }
 
         $parser->popNesting(TSwitchColon::class);
         $parser->popNesting(TSwitch::class);
         $parser->indentDecr();
+
         $parser->add(
             $source,
             $closesCase ? TEndswitchAfterCase::class : self::class,

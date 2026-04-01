@@ -25,6 +25,7 @@ class TNullsafeObjectOperator extends AToken implements TSplittableFluent
         $class = $parser->inEncapsedString()
             ? TEncapsedNullsafeObjectOperator::class
             : static::class;
+
         $parser->add($source, $class);
     }
 }

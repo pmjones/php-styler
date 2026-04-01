@@ -19,6 +19,7 @@ class CollapseEmptyBodyTest extends TestCase
                 RemoveTrailingBlankLines::class,
             ]),
         );
+
         $actual = $styler($code);
         $this->assertSame($expect, $actual);
     }

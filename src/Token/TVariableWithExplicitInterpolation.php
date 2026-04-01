@@ -60,6 +60,7 @@ class TVariableWithExplicitInterpolation extends AToken
         // Splice } first (at higher offset) so it doesn't shift { position.
         $openToken = new PhpToken(T_CURLY_OPEN, '{', $source->line, $source->pos);
         $endSource = $parser->getSourceAt($endOffset);
+
         $closeToken = new PhpToken(
             ord('}'),
             '}',

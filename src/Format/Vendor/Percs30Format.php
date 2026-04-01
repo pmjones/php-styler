@@ -67,6 +67,7 @@ class Percs30Format extends DeclarationFormat
             styles: $percsStyles,
             rules: $rules,
         );
+
         $this->setReturnTypeColonSpacing(false);
     }
 }

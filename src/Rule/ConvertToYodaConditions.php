@@ -14,6 +14,7 @@ use PhpStyler\Token\TIsNotIdentical;
 use PhpStyler\Token\TNot;
 use PhpStyler\Token\TNull;
 use PhpStyler\Token\TSpace;
+use PhpStyler\Token\TSplit;
 use PhpStyler\Token\TStringLiteral;
 use PhpStyler\Token\TTilde;
 use PhpStyler\Token\TTrue;
@@ -60,7 +61,7 @@ class ConvertToYodaConditions implements TokenRule
                 continue;
             }
 
-            // look backward in $result for TVariable (with optional trailing TSpace)
+            // look backward in $result for TVariable (skipping TSplit and TSpace)
             $resultCount = count($result);
 
             if ($resultCount < 1) {
@@ -69,10 +70,12 @@ class ConvertToYodaConditions implements TokenRule
             }
 
             $backIdx = $resultCount - 1;
-            $trailingSpace = null;
 
-            if ($result[$backIdx] instanceof TSpace) {
-                $trailingSpace = $result[$backIdx];
+            while ($backIdx >= 0 && $result[$backIdx] instanceof TSplit) {
+                $backIdx --;
+            }
+
+            if ($backIdx >= 0 && $result[$backIdx] instanceof TSpace) {
                 $backIdx --;
             }
 
@@ -95,12 +98,8 @@ class ConvertToYodaConditions implements TokenRule
 
             $variable = $result[$backIdx];
 
-            // pop variable (and trailing space) from $result
-            if ($trailingSpace !== null) {
-                array_pop($result);
-            }
-
-            array_pop($result);
+            // pop everything from variable position to end of $result
+            array_splice($result, $backIdx);
 
             // emit: literal, TSpace, comparison, TSpace, variable
             $result[] = $literal;

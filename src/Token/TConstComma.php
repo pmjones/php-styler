@@ -12,9 +12,9 @@ class TConstComma extends AToken
     {
         // determine semicolon class BEFORE popping nesting
         $semicolonClass = $parser->atNesting(
-            TConst::class,
-            TClasslikeOpeningBrace::class,
-        )
+                TConst::class,
+                TClasslikeOpeningBrace::class,
+            )
             ? TConstEndSemicolon::class
             : TNamespaceConstEndSemicolon::class;
 

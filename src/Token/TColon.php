@@ -42,9 +42,11 @@ class TColon extends AToken
 
         $parseClass = match ($nesting) {
             TEnum::class => TEnumBackedColon::class,
+
             TFn::class,
             TFunction::class,
             TAnonymousFunction::class => TReturnColon::class,
+
             TElvisQuestion::class => TElvisColon::class,
             TTernaryQuestion::class => TTernaryColon::class,
             default => null,

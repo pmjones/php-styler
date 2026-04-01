@@ -14,6 +14,7 @@ use PhpStyler\Token\TIsNotIdentical;
 use PhpStyler\Token\TNot;
 use PhpStyler\Token\TNull;
 use PhpStyler\Token\TSpace;
+use PhpStyler\Token\TSplit;
 use PhpStyler\Token\TStringLiteral;
 use PhpStyler\Token\TTilde;
 use PhpStyler\Token\TTrue;
@@ -58,7 +59,7 @@ class ConvertFromYodaConditions implements TokenRule
                 continue;
             }
 
-            // look backward in $result for a literal (with optional trailing TSpace)
+            // look backward in $result for a literal (skipping TSplit and TSpace)
             $resultCount = count($result);
 
             if ($resultCount < 1) {
@@ -67,10 +68,12 @@ class ConvertFromYodaConditions implements TokenRule
             }
 
             $backIdx = $resultCount - 1;
-            $trailingSpace = null;
 
-            if ($result[$backIdx] instanceof TSpace) {
-                $trailingSpace = $result[$backIdx];
+            while ($backIdx >= 0 && $result[$backIdx] instanceof TSplit) {
+                $backIdx --;
+            }
+
+            if ($backIdx >= 0 && $result[$backIdx] instanceof TSpace) {
                 $backIdx --;
             }
 
@@ -94,19 +97,9 @@ class ConvertFromYodaConditions implements TokenRule
                 $prefix = $result[$prefixIdx];
             }
 
-            // pop literal (and trailing space, and prefix) from $result
-            if ($trailingSpace !== null) {
-                array_pop($result);
-            }
-
-            array_pop($result); // literal
-
-            if ($prefix !== null) {
-                // pop everything from prefix position to end
-                while (count($result) > $prefixIdx) {
-                    array_pop($result);
-                }
-            }
+            // pop everything from the earliest position to end of $result
+            $popFrom = $prefix !== null ? $prefixIdx : $literalIdx;
+            array_splice($result, $popFrom);
 
             // emit: variable, TSpace, comparison, TSpace, [prefix], literal
             $result[] = $variable;

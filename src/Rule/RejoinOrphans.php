@@ -35,6 +35,7 @@ class RejoinOrphans implements LineRule
                     $line->indentStr,
                     $line->indentLen,
                 );
+
                 array_splice($lines, $i + 1, 1);
                 continue;
             }

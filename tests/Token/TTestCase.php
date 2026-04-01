@@ -36,6 +36,7 @@ abstract class TTestCase extends \PHPUnit\Framework\TestCase
                 blankLineAfterBlock: true,
             ),
         );
+
         $tokens = $parser($code);
 
         $actual = [];
@@ -67,6 +68,7 @@ abstract class TTestCase extends \PHPUnit\Framework\TestCase
                 TIndentDecrement::class,
                 TLineBreak::class,
             ],
+
             default => [],
         };
 
@@ -85,6 +87,7 @@ abstract class TTestCase extends \PHPUnit\Framework\TestCase
 
             foreach ($actual as $class) {
                 $parts = explode('\\', $class);
+
                 $message .= '                    '
                     . end($parts)
                     . '::class,'

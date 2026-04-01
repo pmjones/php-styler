@@ -15,8 +15,10 @@ class TComma extends AToken
         $parseClass = match ($parser->getNesting()) {
             TParamsOpeningParen::class => TParamsComma::class,
             TArgsOpeningParen::class => TArgsComma::class,
+
             TArrayConstructOpeningParen::class,
             TArrayOpeningBracket::class => TArrayComma::class,
+
             TForOpeningParen::class => TForComma::class,
             TUseVariablesOpeningParen::class => TUseVariablesComma::class,
             TDeclareDirectivesOpeningParen::class => TDeclareDirectivesComma::class,
@@ -26,10 +28,12 @@ class TComma extends AToken
             TUseTraitOpeningBrace::class => TInsteadofComma::class,
             TGlobal::class => TGlobalComma::class,
             TStaticVar::class => TStaticComma::class,
+
             TClassOpeningBrace::class,
             TEnumOpeningBrace::class,
             TInterfaceOpeningBrace::class,
             TTraitOpeningBrace::class => TPropertyComma::class,
+
             TClass::class, TEnum::class => TImplementsComma::class,
             TInterface::class => TExtendsComma::class,
             TAttribute::class, TInlineAttribute::class => TAttributeComma::class,

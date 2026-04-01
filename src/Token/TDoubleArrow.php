@@ -24,8 +24,10 @@ class TDoubleArrow extends AToken
         $parseClass = match ($parser->getNesting()) {
             TFn::class => TFnDoubleArrow::class,
             TMatchOpeningBrace::class => TMatchDoubleArrow::class,
+
             TArrayOpeningBracket::class,
             TArrayConstructOpeningParen::class => TArrayDoubleArrow::class,
+
             TForeachOpeningParen::class => TForeachDoubleArrow::class,
             TPropertyHookGet::class => TPropertyHookGetDoubleArrow::class,
             TPropertyHookSet::class => TPropertyHookSetDoubleArrow::class,

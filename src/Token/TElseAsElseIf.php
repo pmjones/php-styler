@@ -25,6 +25,7 @@ class TElseAsElseIf extends AToken
 
         // Replace T_IF with T_ELSEIF
         $if = $parser->getSourceAt($ifOffset);
+
         $parser->setSourceAt(
             $ifOffset,
             new PhpToken(T_ELSEIF, 'elseif', $if->line, $if->pos),

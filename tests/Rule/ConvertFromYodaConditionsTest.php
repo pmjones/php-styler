@@ -19,6 +19,7 @@ class ConvertFromYodaConditionsTest extends TestCase
                 RemoveTrailingBlankLines::class,
             ]),
         );
+
         $actual = $styler($code);
         $this->assertSame($expect, $actual);
     }

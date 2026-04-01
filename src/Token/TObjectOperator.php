@@ -25,6 +25,7 @@ class TObjectOperator extends AToken implements TSplittableFluent
         $class = $parser->inEncapsedString()
             ? TEncapsedObjectOperator::class
             : static::class;
+
         $parser->add($source, $class);
     }
 }
