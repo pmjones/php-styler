@@ -19,8 +19,7 @@ class TRelativeName extends AToken
     {
         if (
             $parser->getNextSource()?->is('(')
-            && ! $parser
-                ->getPrevParsed()
+            && ! $parser->getPrevParsed()
                 ?->is([
                     T_OBJECT_OPERATOR,
                     T_NULLSAFE_OBJECT_OPERATOR,

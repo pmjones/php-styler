@@ -29,8 +29,7 @@ class TFullyQualifiedName extends AToken
 
         if (
             $parser->getNextSource()?->is('(')
-            && ! $parser
-                ->getPrevParsed()
+            && ! $parser->getPrevParsed()
                 ?->is([
                     T_NEW,
                     T_OBJECT_OPERATOR,

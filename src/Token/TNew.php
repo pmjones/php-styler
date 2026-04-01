@@ -56,8 +56,7 @@ class TNew extends AToken
         if (
             $nameToken->is(T_VARIABLE)
             && $afterOffset !== null
-            && $parser
-                ->getSourceAt($afterOffset)
+            && $parser->getSourceAt($afterOffset)
                 ->is([
                     T_OBJECT_OPERATOR,
                     T_NULLSAFE_OBJECT_OPERATOR,

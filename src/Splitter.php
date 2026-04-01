@@ -416,10 +416,7 @@ class Splitter
     {
         while (true) {
             $tokenLineMap = $this->buildTokenLineMap($lines);
-            $result = $this->findAndApplyOpenerCloserSplit(
-                $lines,
-                $tokenLineMap,
-            );
+            $result = $this->findAndApplyOpenerCloserSplit($lines, $tokenLineMap);
 
             if ($result === null) {
                 return $lines;

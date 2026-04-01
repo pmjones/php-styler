@@ -46,8 +46,7 @@ class TOpeningParen extends AToken
         }
 
         if (
-            $parser
-            ->getPrevParsed()
+            $parser->getPrevParsed()
             ?->is([
                 T_EMPTY,
                 T_EVAL,
