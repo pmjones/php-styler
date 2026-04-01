@@ -38,4 +38,6 @@ interface TSplittable
     public const int FLUENT = 160;
 
     public const int OTHER_PAREN = 170;
+
+    public const int ELEMENT_BRACKET = 180;
 }

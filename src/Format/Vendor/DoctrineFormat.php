@@ -84,9 +84,10 @@ class DoctrineFormat extends DeclarationFormat
         ];
 
         foreach ($styles as $class => $args) {
-            $doctrineStyles[
-                $class
-            ] = array_merge($doctrineStyles[$class] ?? [], $args);
+            $doctrineStyles[$class] = array_merge(
+                $doctrineStyles[$class] ?? [],
+                $args,
+            );
         }
 
         parent::__construct(

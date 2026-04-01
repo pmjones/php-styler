@@ -464,9 +464,9 @@ class Splitter
                 }
 
                 // Split before closer if it's not the first token on its line
-                $closerTokenIndex = $lines[
-                    $closerLineIndex
-                ]->findTokenIndex($token->closingToken);
+                $closerTokenIndex = $lines[$closerLineIndex]->findTokenIndex(
+                    $token->closingToken,
+                );
 
                 if ($closerTokenIndex !== null && $closerTokenIndex > 0) {
                     return fn (array $lines)
@@ -544,17 +544,17 @@ class Splitter
         if ($beforeLine->contentTokenCount() === 0 && $closerLineIndex > 0) {
             $prev = $lines[$closerLineIndex - 1];
 
-            $lines[
-                $closerLineIndex - 1
-            ] = $this->createLine(
+            $lines[$closerLineIndex - 1] = $this->createLine(
                 array_merge($prev->getTokens(), $before),
                 $prev->indent,
                 $prev,
             );
 
-            $lines[
-                $closerLineIndex
-            ] = $this->createLine($after, $openerIndent, $line);
+            $lines[$closerLineIndex] = $this->createLine(
+                $after,
+                $openerIndent,
+                $line,
+            );
         } else {
             $lines[$closerLineIndex] = $beforeLine;
 
