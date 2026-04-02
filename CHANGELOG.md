@@ -1,6 +1,6 @@
 # Change Log
 
-## NEXT
+## 0.18.0
 
 - **Binary and comparison operator splitting.** Long lines now split at binary
   arithmetic operators (`+`, `-`, `*`, `/`, `%`) and comparison operators (`<`,
