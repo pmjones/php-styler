@@ -53,7 +53,21 @@ class Splitter
             }
         }
 
-        $result = $this->expandOpenerCloser($result);
+        while (true) {
+            $tokenLineMap = Line::buildTokenLineMap($result);
+
+            $expanded = $this->findAndApplyOpenerCloserSplit(
+                $result,
+                $tokenLineMap,
+            );
+
+            if ($expanded === null) {
+                break;
+            }
+
+            $result = $expanded;
+        }
+
         $result = $this->normalizeIndents($result);
         $result = $this->expandCommas($result);
         $result = $this->insertBlankLinesAroundSplits($result);
@@ -347,7 +361,7 @@ class Splitter
      */
     private function normalizeIndents(array $lines) : array
     {
-        $tokenLineMap = $this->buildTokenLineMap($lines);
+        $tokenLineMap = Line::buildTokenLineMap($lines);
 
         foreach ($lines as $lineIndex => $line) {
             $lastToken = $line->lastContentToken();
@@ -387,41 +401,6 @@ class Splitter
         }
 
         return $lines;
-    }
-
-    /**
-     * @param Line[] $lines
-     * @return array<int, int>
-     */
-    private function buildTokenLineMap(array $lines) : array
-    {
-        $map = [];
-
-        foreach ($lines as $lineIndex => $line) {
-            foreach ($line->getTokens() as $token) {
-                $map[$token->splObjectId()] = $lineIndex;
-            }
-        }
-
-        return $map;
-    }
-
-    /**
-     * @param Line[] $lines
-     * @return Line[]
-     */
-    private function expandOpenerCloser(array $lines) : array
-    {
-        while (true) {
-            $tokenLineMap = $this->buildTokenLineMap($lines);
-            $result = $this->findAndApplyOpenerCloserSplit($lines, $tokenLineMap);
-
-            if ($result === null) {
-                return $lines;
-            }
-
-            $lines = $result;
-        }
     }
 
     /**
@@ -570,7 +549,7 @@ class Splitter
      */
     private function expandCommas(array $lines) : array
     {
-        $tokenLineMap = $this->buildTokenLineMap($lines);
+        $tokenLineMap = Line::buildTokenLineMap($lines);
 
         // Collect all line indices that need comma splitting
         $lineIndices = [];

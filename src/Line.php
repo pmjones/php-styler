@@ -49,6 +49,23 @@ class Line
         $this->tokens = array_values($tokens);
     }
 
+    /**
+     * @param Line[] $lines
+     * @return array<int, int>
+     */
+    public static function buildTokenLineMap(array $lines) : array
+    {
+        $map = [];
+
+        foreach ($lines as $lineIndex => $line) {
+            foreach ($line->getTokens() as $token) {
+                $map[$token->splObjectId()] = $lineIndex;
+            }
+        }
+
+        return $map;
+    }
+
     public function addToken(AToken $token) : void
     {
         $this->tokens[] = $token;

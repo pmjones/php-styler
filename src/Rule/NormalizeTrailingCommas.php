@@ -19,7 +19,7 @@ class NormalizeTrailingCommas implements LineRule
      */
     public function apply(array $lines) : array
     {
-        $tokenLineMap = $this->buildTokenLineMap($lines);
+        $tokenLineMap = Line::buildTokenLineMap($lines);
 
         foreach ($lines as $lineIndex => $line) {
             foreach ($line->getTokens() as $token) {
@@ -53,23 +53,6 @@ class NormalizeTrailingCommas implements LineRule
         }
 
         return $lines;
-    }
-
-    /**
-     * @param Line[] $lines
-     * @return array<int, int>
-     */
-    private function buildTokenLineMap(array $lines) : array
-    {
-        $map = [];
-
-        foreach ($lines as $lineIndex => $line) {
-            foreach ($line->getTokens() as $token) {
-                $map[$token->splObjectId()] = $lineIndex;
-            }
-        }
-
-        return $map;
     }
 
     /**
