@@ -189,7 +189,7 @@ class Parser
         return $this->parsed;
     }
 
-    protected function getTokenClass(PhpToken $source) : string
+    private function getTokenClass(PhpToken $source) : string
     {
         if ($source instanceof AToken) {
             return get_class($source);
@@ -332,11 +332,11 @@ class Parser
 
     public function blankLine() : void
     {
-        if ($this->hasPrevBlankLine()) {
+        if ($this->hasPrev(Token\TBlankLine::class)) {
             return;
         }
 
-        if ($this->hasPrevOpeningStructure()) {
+        if ($this->hasPrev(Token\TOpeningStructure::class)) {
             return;
         }
 
@@ -483,25 +483,6 @@ class Parser
                 return;
             }
         }
-    }
-
-    /**
-     * @param class-string<AToken> $tokenClass
-     */
-    public function replaceLastParsed(PhpToken $source, string $tokenClass) : AToken
-    {
-        $this->removePrevWhitespace();
-
-        /** @var AToken $token */
-        $token = new $tokenClass(
-            $source->id,
-            $source->text,
-            $source->line,
-            $source->pos,
-        );
-
-        $this->parsed[$this->lastAddedIndex] = $token;
-        return $token;
     }
 
     /**
@@ -716,7 +697,10 @@ class Parser
 
     public function swapParsedAt(int $a, int $b) : void
     {
-        [$this->parsed[$a], $this->parsed[$b]] = [$this->parsed[$b], $this->parsed[$a]];
+        [
+            $this->parsed[$a],
+            $this->parsed[$b],
+        ] = [$this->parsed[$b], $this->parsed[$a]];
     }
 
     public function getNextSource() : ?PhpToken
@@ -775,27 +759,7 @@ class Parser
             || $this->hasPrev(Token\TWhitespaceEol::class);
     }
 
-    public function hasPrevSplittableComma() : bool
-    {
-        return $this->hasPrev(Token\TSplittableComma::class);
-    }
-
-    public function hasPrevEol() : bool
-    {
-        return $this->hasPrev(Token\TWhitespaceEol::class);
-    }
-
-    public function hasPrevBlankLine() : bool
-    {
-        return $this->hasPrev(Token\TBlankLine::class);
-    }
-
-    private function hasPrevOpeningStructure() : bool
-    {
-        return $this->hasPrev(Token\TOpeningStructure::class);
-    }
-
-    private function hasPrev(string $class) : bool
+    public function hasPrev(string $class) : bool
     {
         for ($i = $this->parsedCount - 1; $i >= 0; $i --) {
             $parsed = $this->parsed[$i];
@@ -826,7 +790,7 @@ class Parser
         return strpos($text, "\r") !== false || strpos($text, "\n") !== false;
     }
 
-    protected function findUpcomingInlineComment() : ?int
+    private function findUpcomingInlineComment() : ?int
     {
         $currentText = $this->source[$this->sourceOffset]->text;
 
@@ -917,7 +881,7 @@ class Parser
         $this->sourceCount = count($this->source);
     }
 
-    protected function replaceSourceComment(int $index, bool $blankLine) : void
+    private function replaceSourceComment(int $index, bool $blankLine) : void
     {
         $source = $this->source[$index];
 

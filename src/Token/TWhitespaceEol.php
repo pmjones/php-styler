@@ -10,7 +10,10 @@ class TWhitespaceEol extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
-        if ($parser->hasPrevEol() || $parser->hasPrevBlankLine()) {
+        if (
+            $parser->hasPrev(TWhitespaceEol::class)
+            || $parser->hasPrev(TBlankLine::class)
+        ) {
             $parser->blankLine();
             return;
         }

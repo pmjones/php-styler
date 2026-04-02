@@ -24,7 +24,7 @@ class TDocComment extends AToken implements TDocblock
         if (
             (
                 ! str_contains($source->text, "\n")
-                && $parser->hasPrevSplittableComma()
+                && $parser->hasPrev(TSplittableComma::class)
             )
             || ! $parser->hasPrevLineBreak()
             || ! $parser->hasNextEol()

@@ -32,34 +32,20 @@ use PhpStyler\Token\AToken;
  */
 interface Format
 {
-    public string $eol {
-        get;
-    }
+    public string $eol { get; }
 
-    public int $lineLen {
-        get;
-    }
+    public int $lineLen { get; }
 
-    public int $indentLen {
-        get;
-    }
+    public int $indentLen { get; }
 
-    public bool $indentTab {
-        get;
-    }
+    public bool $indentTab { get; }
 
     /** @var parse_as_array */
-    public array $parseAs {
-        get;
-    }
+    public array $parseAs { get; }
 
     /** @var styles_array */
-    public array $styles {
-        get;
-    }
+    public array $styles { get; }
 
     /** @var rules_array */
-    public array $rules {
-        get;
-    }
+    public array $rules { get; }
 }
