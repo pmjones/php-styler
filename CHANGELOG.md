@@ -1,5 +1,26 @@
 # Change Log
 
+## NEXT
+
+- **Abstract property hooks on one line.** Interface property hooks and abstract
+  class property hooks (`{ get; }`, `{ set; }`, `{ get; set; }`) now render on a
+  single line instead of expanding to multiple lines. When both `get` and `set`
+  are present, `get` is always placed before `set` regardless of source order.
+
+- **New abstract property hook tokens.** Six new token classes handle abstract
+  property hooks: `TPropertyHooksAbstractOpeningBrace`,
+  `TPropertyHooksAbstractClosingBrace`, `TPropertyHookGetAbstract`,
+  `TPropertyHookSetAbstract`, `TPropertyHookGetAbstractSemicolon`,
+  `TPropertyHookSetAbstractSemicolon`. Detection uses nesting
+  (`TInterfaceOpeningBrace`) and parsed-token inspection (`TAbstract` modifier).
+
+- **Parser simplification.** Removed unused `replaceLastParsed()`. Made
+  `getTokenClass()`, `findUpcomingInlineComment()`, and `replaceSourceComment()`
+  private. Made `hasPrev()` public and removed four thin wrappers
+  (`hasPrevSplittableComma`, `hasPrevEol`, `hasPrevBlankLine`,
+  `hasPrevOpeningStructure`). Added `getParsedCount()`, `getParsedAt()`, and
+  `swapParsedAt()` for index-based parsed token access.
+
 ## 0.18.0
 
 - **Binary and comparison operator splitting.** Long lines now split at binary

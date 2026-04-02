@@ -124,7 +124,7 @@ Parser (src/Parser.php)
     │  applies Styles (spacing, line breaks, casing) from Format
     │  injects synthetic tokens (braces, parens, splits)
     ▼
-Array of AToken objects (~507 classes in src/Token/)
+Array of AToken objects (~520 classes in src/Token/)
     │
     ▼
 Token Rules (src/Rule/TokenRule.php implementations)
