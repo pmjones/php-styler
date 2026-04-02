@@ -110,6 +110,19 @@ class TString extends AToken
             return;
         }
 
+        if ($parser->atNesting(TPropertyHooksAbstractOpeningBrace::class)) {
+            $hookClass = match ($text) {
+                'get' => TPropertyHookGetAbstract::class,
+                'set' => TPropertyHookSetAbstract::class,
+                default => null,
+            };
+
+            if ($hookClass) {
+                $parser->parse($source, $hookClass);
+                return;
+            }
+        }
+
         if ($parser->atNesting(TPropertyHooksOpeningBrace::class)) {
             $hookClass = match ($text) {
                 'get' => TPropertyHookGet::class,

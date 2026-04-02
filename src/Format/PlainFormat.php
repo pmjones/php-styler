@@ -942,6 +942,13 @@ class PlainFormat implements Format
         Token\TPropertyHookGet::class => [
             'spaceAfter' => true,
         ],
+        Token\TPropertyHookGetAbstract::class => [
+            'spaceAfter' => true,
+        ],
+        Token\TPropertyHookGetAbstractSemicolon::class => [
+            'spaceBefore' => false,
+            'spaceAfter' => true,
+        ],
         Token\TPropertyHookGetClosingBrace::class => [
             'spaceBefore' => false,
             'spaceAfter' => true,
@@ -962,6 +969,13 @@ class PlainFormat implements Format
             'lineBreakAfter' => true,
         ],
         Token\TPropertyHookSet::class => [
+            'spaceAfter' => true,
+        ],
+        Token\TPropertyHookSetAbstract::class => [
+            'spaceAfter' => true,
+        ],
+        Token\TPropertyHookSetAbstractSemicolon::class => [
+            'spaceBefore' => false,
             'spaceAfter' => true,
         ],
         Token\TPropertyHookSetClosingBrace::class => [
@@ -998,6 +1012,16 @@ class PlainFormat implements Format
         ],
         Token\TPropertyHooksOpeningBrace::class => [
             'lineBreakAfter' => true,
+            'blankLineAfter' => false,
+        ],
+        Token\TPropertyHooksAbstractClosingBrace::class => [
+            'spaceAfter' => true,
+            'blankLineBefore' => false,
+            'blankLineAfter' => true,
+        ],
+        Token\TPropertyHooksAbstractOpeningBrace::class => [
+            'spaceAfter' => true,
+            'lineBreakAfter' => false,
             'blankLineAfter' => false,
         ],
         Token\TQualifiedName::class => [

@@ -704,6 +704,21 @@ class Parser
         return null;
     }
 
+    public function getParsedCount() : int
+    {
+        return $this->parsedCount;
+    }
+
+    public function getParsedAt(int $index) : AToken
+    {
+        return $this->parsed[$index];
+    }
+
+    public function swapParsedAt(int $a, int $b) : void
+    {
+        [$this->parsed[$a], $this->parsed[$b]] = [$this->parsed[$b], $this->parsed[$a]];
+    }
+
     public function getNextSource() : ?PhpToken
     {
         $sourceOffset = $this->sourceOffset + 1;

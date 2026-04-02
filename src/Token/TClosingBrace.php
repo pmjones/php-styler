@@ -62,6 +62,11 @@ class TClosingBrace extends AToken
             return;
         }
 
+        if ($parser->atNesting(TPropertyHooksAbstractOpeningBrace::class)) {
+            $parser->parse($source, TPropertyHooksAbstractClosingBrace::class);
+            return;
+        }
+
         if ($parser->atNesting(TPropertyHooksOpeningBrace::class)) {
             $parser->parse($source, TPropertyHooksClosingBrace::class);
             return;

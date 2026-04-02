@@ -10,6 +10,7 @@ use PhpStyler\Token\TConstEndSemicolon;
 use PhpStyler\Token\TEnumCaseEndSemicolon;
 use PhpStyler\Token\TFunctionClosingBrace;
 use PhpStyler\Token\TPropertyEndSemicolon;
+use PhpStyler\Token\TPropertyHooksAbstractClosingBrace;
 use PhpStyler\Token\TPropertyHooksClosingBrace;
 use PhpStyler\Token\TUseTraitClosingBrace;
 use PhpStyler\Token\TUseTraitEndSemicolon;
@@ -82,7 +83,8 @@ class NormalizeMemberSpacing implements TokenRule
             $token instanceof TConstEndSemicolon => 'const',
 
             $token instanceof TPropertyEndSemicolon,
-            $token instanceof TPropertyHooksClosingBrace => 'property',
+            $token instanceof TPropertyHooksClosingBrace,
+            $token instanceof TPropertyHooksAbstractClosingBrace => 'property',
 
             $token instanceof TEnumCaseEndSemicolon => 'enumcase',
 

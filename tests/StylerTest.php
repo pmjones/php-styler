@@ -2012,6 +2012,69 @@ class StylerTest extends TestCase
                 EXPECT,
             ],
 
+            // Abstract property hooks
+            'prop-hook-abstract-get' => [
+                <<<'CODE'
+                <?php interface Foo { public string $name { get; } }
+                CODE,
+                <<<'EXPECT'
+                <?php interface Foo
+                {
+                    public string $name { get; }
+                }
+
+                EXPECT,
+            ],
+            'prop-hook-abstract-set' => [
+                <<<'CODE'
+                <?php interface Foo { public string $name { set; } }
+                CODE,
+                <<<'EXPECT'
+                <?php interface Foo
+                {
+                    public string $name { set; }
+                }
+
+                EXPECT,
+            ],
+            'prop-hook-abstract-get-set' => [
+                <<<'CODE'
+                <?php interface Foo { public string $name { get; set; } }
+                CODE,
+                <<<'EXPECT'
+                <?php interface Foo
+                {
+                    public string $name { get; set; }
+                }
+
+                EXPECT,
+            ],
+            'prop-hook-abstract-reorder' => [
+                <<<'CODE'
+                <?php interface Foo { public string $name { set; get; } }
+                CODE,
+                <<<'EXPECT'
+                <?php interface Foo
+                {
+                    public string $name { get; set; }
+                }
+
+                EXPECT,
+            ],
+
+            'prop-hook-abstract-class' => [
+                <<<'CODE'
+                <?php abstract class Foo { abstract public string $name { set; get; } }
+                CODE,
+                <<<'EXPECT'
+                <?php abstract class Foo
+                {
+                    abstract public string $name { get; set; }
+                }
+
+                EXPECT,
+            ],
+
             // Trait aliasing
             'trait-insteadof' => [
                 <<<'CODE'
