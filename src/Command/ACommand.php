@@ -7,7 +7,7 @@ use PhpStyler\Config;
 use PhpStyler\Exception;
 use PhpStyler\Parallel\WorkerPool;
 
-abstract class Command
+abstract class ACommand
 {
     protected function loadConfigFile(string $configFile) : Config
     {

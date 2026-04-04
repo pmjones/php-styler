@@ -10,7 +10,7 @@ use PhpStyler\Token\TPropertyEndSemicolon;
 use PhpStyler\Token\TSpace;
 use PhpStyler\Token\TVariable;
 
-class SplitPropertyDeclarations extends SplitDeclarations
+class ExpandPropertyDeclarations extends ADeclarationExpander
 {
     protected function isComma(AToken $token) : bool
     {

@@ -13,8 +13,8 @@
   - `InjectNewParens` — adds `()` to bare `new Foo`
   - `RemoveLanguageConstructParens` — removes optional parens from `echo()`, `print()`, etc.
   - `ExpandGroupedImports` — expands `use Foo\{Bar, Baz}` into individual statements
-  - `SplitPropertyDeclarations` — splits `public int $a, $b` into separate declarations
-  - `SplitConstDeclarations` — splits `const A = 1, B = 2` into separate declarations
+  - `ExpandPropertyDeclarations` — expands `public int $a, $b` into separate declarations
+  - `ExpandConstDeclarations` — expands `const A = 1, B = 2` into separate declarations
   - `ConvertVarToPublic` — converts `var` to `public`
   - `InsertPublicVisibility` — adds `public` to class functions/consts without visibility
   - `ReorderModifiers` — sorts modifiers by priority (abstract/final, visibility, static, readonly)
@@ -34,7 +34,7 @@
   ```
   ARule (findNextContent, findPrevContent)
   ├── ATokenRule (abstract apply(AToken[]))
-  │   └── SplitDeclarations (abstract base for comma-splitting rules)
+  │   └── ADeclarationExpander (abstract base for comma-expanding rules)
   └── ALineRule (abstract apply(Line[]))
   ```
 

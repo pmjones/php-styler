@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
-use PhpStyler\Format\Format;
+use PhpStyler\Format\AFormat;
 use PhpStyler\Format\PlainFormat;
 
 class ConfigTest extends TestCase
@@ -12,7 +12,7 @@ class ConfigTest extends TestCase
     {
         $actual = new Config(new Files(), null);
         $this->assertInstanceof(Config::class, $actual);
-        $this->assertInstanceof(Format::class, $actual->format);
+        $this->assertInstanceof(AFormat::class, $actual->format);
     }
 
     public function testFormatProperties() : void

@@ -11,7 +11,7 @@ use PhpStyler\Parallel\WorkerPool;
 use PhpStyler\Styler;
 
 #[Help("Shows a unified diff of source files vs their styled versions.")]
-class Diff extends Command
+class Diff extends ACommand
 {
     protected bool $hasDiff = false;
 

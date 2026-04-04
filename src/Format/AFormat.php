@@ -30,7 +30,7 @@ use PhpStyler\Token\AToken;
  *
  * @phpstan-type rules_array array<rule_class_string, rule_args>
  */
-interface Format
+interface AFormat
 {
     public string $eol { get; }
 

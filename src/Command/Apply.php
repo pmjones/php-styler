@@ -11,7 +11,7 @@ use PhpStyler\Parallel\WorkerPool;
 use PhpStyler\Styler;
 
 #[Help("Applies styling to the configured files, rewriting them in place.")]
-class Apply extends Command
+class Apply extends ACommand
 {
     public function __invoke(
         ApplyOptions $options,

@@ -204,7 +204,7 @@ return new Config(
 
 - `?string $cache` — path to the cache file; `null` disables caching.
 
-- `Format $format` — a `Format` instance controlling all styling behavior
+- `AFormat $format` — an `AFormat` instance controlling all styling behavior
   (defaults to `PlainFormat` when not present).
 
 Changing the config file will invalidate the cache, causing all files to be

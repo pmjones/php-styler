@@ -7,7 +7,7 @@ use PhpStyler\Token\AToken;
 use PhpStyler\Token\TSpace;
 use PhpStyler\Token\TSplit;
 
-abstract class SplitDeclarations extends ATokenRule
+abstract class ADeclarationExpander extends ATokenRule
 {
     /**
      * @param AToken[] $tokens

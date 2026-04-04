@@ -10,7 +10,7 @@ use PhpStyler\Parallel\WorkerPool;
 use PhpStyler\Styler;
 
 #[Help("Checks if any of the configured files need styling.")]
-class Check extends Command
+class Check extends ACommand
 {
     /**
      * @var string[]

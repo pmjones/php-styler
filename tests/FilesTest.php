@@ -43,11 +43,11 @@ class FilesTest extends TestCase
     protected function getExpect() : array
     {
         $expect = [
+            'ACommand.php',
             'Apply.php',
             'ApplyOptions.php',
             'Check.php',
             'CheckOptions.php',
-            'Command.php',
             'Diff.php',
             'DiffOptions.php',
             'Preview.php',

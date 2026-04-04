@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
-use PhpStyler\Format\Format;
+use PhpStyler\Format\AFormat;
 use PhpStyler\Format\PlainFormat;
 use PhpStyler\Token;
 use PhpStyler\Token\AToken;
@@ -94,7 +94,7 @@ class Parser
         T_READONLY => 5,
     ];
 
-    private Format $format;
+    private AFormat $format;
 
     /**
      * @var array<int, Nesting>
@@ -129,7 +129,7 @@ class Parser
     /** @var array<class-string<AToken>, Style> */
     private array $styles = [];
 
-    public function __construct(?Format $format = null)
+    public function __construct(?AFormat $format = null)
     {
         $this->format = $format ?? new PlainFormat();
     }

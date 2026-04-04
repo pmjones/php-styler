@@ -7,7 +7,7 @@ use AutoShell\Help;
 use PhpStyler\Styler;
 
 #[Help("Prints a preview of a styled source file.")]
-class Preview extends Command
+class Preview extends ACommand
 {
     public function __invoke(
         PreviewOptions $options,

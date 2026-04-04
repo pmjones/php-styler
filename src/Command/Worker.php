@@ -8,7 +8,7 @@ use PhpStyler\Exception;
 use PhpStyler\Styler;
 
 #[Help("Internal worker process for parallel styling.")]
-class Worker extends Command
+class Worker extends ACommand
 {
     public function __invoke(WorkerOptions $options) : int
     {

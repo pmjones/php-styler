@@ -9,14 +9,14 @@ use PhpStyler\Styler;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-class SplitPropertyDeclarationsTest extends TestCase
+class ExpandPropertyDeclarationsTest extends TestCase
 {
     #[DataProvider('provide')]
     public function test(string $code, string $expect) : void
     {
         $styler = new Styler(
             new DeclarationFormat(rules: [
-                SplitPropertyDeclarations::class,
+                ExpandPropertyDeclarations::class,
                 InsertPublicVisibility::class,
                 RemoveTrailingBlankLines::class,
             ]),

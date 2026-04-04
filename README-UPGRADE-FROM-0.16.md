@@ -18,7 +18,7 @@ composer require --dev pmjones/php-styler 0.x@dev
 ## Configuration
 
 The `Config` constructor no longer accepts a `Styler` instance. It now accepts a
-`Format` instance that controls all formatting behavior.
+`AFormat` instance that controls all formatting behavior.
 
 **Before (0.16.0):**
 
@@ -82,7 +82,7 @@ Three **vendor formats** approximate well-known coding standards:
 ## Customization
 
 The old customization model — extending `Styler` and overriding `s*()` methods —
-is gone entirely. The new model is declarative, using three arrays on a `Format`
+is gone entirely. The new model is declarative, using three arrays on an `AFormat`
 object: **Styles**, **Rules**, and **Parses**.
 
 **Before (0.16.0):**

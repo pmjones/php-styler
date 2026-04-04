@@ -11,7 +11,7 @@ use PhpStyler\Token\TLineBreak;
 use PhpStyler\Token\TNamespaceConstEndSemicolon;
 use PhpStyler\Token\TSpace;
 
-class SplitConstDeclarations extends SplitDeclarations
+class ExpandConstDeclarations extends ADeclarationExpander
 {
     protected function isComma(AToken $token) : bool
     {

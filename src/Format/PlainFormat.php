@@ -10,10 +10,10 @@ use PhpStyler\Rule\TokenRule\ATokenRule;
 use PhpStyler\Token;
 
 /**
- * @phpstan-import-type styles_array from Format
- * @phpstan-import-type parse_as_array from Format
+ * @phpstan-import-type styles_array from AFormat
+ * @phpstan-import-type parse_as_array from AFormat
  */
-class PlainFormat implements Format
+class PlainFormat implements AFormat
 {
     /**
      * @var styles_array

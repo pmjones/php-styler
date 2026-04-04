@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
+use PhpStyler\Format\AFormat;
 use PhpStyler\Format\DeclarationFormat;
-use PhpStyler\Format\Format;
 use PhpStyler\Rule\LineRule\NormalizeTrailingCommas;
 use PhpStyler\Rule\LineRule\RemoveTrailingBlankLines;
 use PhpStyler\Styler;
@@ -23,14 +23,14 @@ use PHPUnit\Framework\TestCase;
 class StyleTest extends TestCase
 {
     #[DataProvider('provide')]
-    public function test(Format $format, string $code, string $expect) : void
+    public function test(AFormat $format, string $code, string $expect) : void
     {
         $styler = new Styler($format);
         $actual = $styler($code);
         $this->assertSame($expect, $actual);
     }
 
-    /** @return array<string, array{0: Format, 1: string, 2: string}> */
+    /** @return array<string, array{0: AFormat, 1: string, 2: string}> */
     public static function provide() : array
     {
         $rules = [NormalizeTrailingCommas::class, RemoveTrailingBlankLines::class];

@@ -300,7 +300,7 @@ Constructor parameters expose common adjustments: `classBracePosition`,
   the rest have been extracted to rules)
 - `$rules`: RemoveBom, RemoveEmptyAnonymousClassParens,
   RemoveEmptyAttributeParens, InjectNewParens, RemoveLanguageConstructParens,
-  ExpandGroupedImports, SplitPropertyDeclarations, SplitConstDeclarations,
+  ExpandGroupedImports, ExpandPropertyDeclarations, ExpandConstDeclarations,
   ConvertVarToPublic, InsertPublicVisibility, ReorderModifiers,
   ConvertToShortArraySyntax, ConvertToShortListSyntax, RemovePhpClosingTag,
   RemoveRepeatedSemicolons, NormalizeImports, OrderTypes, MergeParenBracket,
@@ -318,7 +318,7 @@ Rules extend abstract base classes in separate namespaces:
 ```
 PhpStyler\Rule\ARule                        (findNextContent, findPrevContent)
 ├── PhpStyler\Rule\TokenRule\ATokenRule     (abstract apply(AToken[]))
-│   └── SplitDeclarations                   (abstract base for comma-splitting)
+│   └── ADeclarationExpander                (abstract base for comma-expanding)
 └── PhpStyler\Rule\LineRule\ALineRule       (abstract apply(Line[]))
 ```
 
@@ -332,7 +332,7 @@ applies them in declared order.
 **Token rules** (`PhpStyler\Rule\TokenRule\*`):
 
 - *Source normalization:* RemoveBom, ExpandGroupedImports,
-  SplitPropertyDeclarations, SplitConstDeclarations
+  ExpandPropertyDeclarations, ExpandConstDeclarations
 - *Syntax conversion:* ConvertVarToPublic, InsertPublicVisibility,
   ReorderModifiers, ConvertToShortArraySyntax, ConvertToShortListSyntax,
   RemovePhpClosingTag, RemoveRepeatedSemicolons
