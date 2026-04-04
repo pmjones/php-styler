@@ -1,12 +1,11 @@
 # Change Log
 
-## NEXT (re-rule branch)
+## 0.19.0
 
-- **Opinionated transforms extracted to rules.** All source-manipulating behavior
-  has been removed from token `parse()` methods and `Parser::handleModifier()`.
-  The parser now faithfully represents source code, applying only formatting
-  changes (spacing, line breaks, blank lines). Opinionated transforms are
-  implemented as TokenRules applied after parsing:
+- **Most transforms extracted to rules.** Most source-manipulating behavior has
+  been removed from token `parse()` methods. The parser and tokens now specify
+  only formatting changes (spacing, line breaks, blank lines). Other
+  transformations are implemented as rules applied after parsing:
 
   - `ConvertToShortArraySyntax` — converts `array()` to `[]`
   - `ConvertToShortListSyntax` — converts `list()` to `[]`
@@ -23,27 +22,10 @@
   - `RemoveRepeatedSemicolons` — removes duplicate `;;`
   - `NormalizeModifierOrder` — sorts modifiers by priority (abstract/final, visibility, static, readonly)
 
-- **parseAs reduced.** `DeclarationFormat::$parseAs` reduced from 6 entries to 2.
-  `TElse→TElseAsElseIf` and `TVariable→TVariableWithExplicitInterpolation`
-  remain as parseAs (require downstream token reclassification that is impractical
-  as a post-parse rule).
+- **Rules have organized into separate namespaces:** `PhpStyler\Rule\TokenRule\*`
+  and `PhpStyler\Rule\LineRule\*`.
 
-- **Rule class hierarchy.** Rules now use an abstract class hierarchy instead of
-  interfaces:
-
-  ```
-  ARule (findNextContent, findPrevContent)
-  ├── ATokenRule (abstract apply(AToken[]))
-  │   └── ADeclarationExpander (abstract base for comma-expanding rules)
-  └── ALineRule (abstract apply(Line[]))
-  ```
-
-  Rules are organized into separate namespaces: `PhpStyler\Rule\TokenRule\*` and
-  `PhpStyler\Rule\LineRule\*`.
-
-- **New marker interfaces on token classes.** Token classification moved from
-  rule-level `is*()` predicates to marker interfaces, keeping classification
-  with the tokens:
+- **New marker interfaces on token classes.**
 
   - `AComparisonOperator` — TIsIdentical, TIsNotIdentical, TIsEqual, TIsNotEqual
   - `ALiteral` — TNull, TTrue, TFalse, TIntegerLiteral, TFloatLiteral, TStringLiteral
@@ -53,33 +35,15 @@
   - `AUseGroupOpener` / `AUseGroupCloser` — use-group brace tokens
   - `ACommaListOpener` — opener tokens with `commaClass()` method
 
-- **Interface naming convention.** All token interfaces renamed from `T` prefix
-  to `A`/`An` prefix, reserving `T` for concrete tokens. Reads naturally as
-  "instance of a modifier", "instance of an opening structure", etc.
-
-  Renames: `TAttribution→AnAttribute`, `TOpeningStructure→AnOpeningStructure`,
-  `TClosingStructure→AClosingStructure`, `TCommentary→AComment`,
-  `TCommaSeparated→ACommaListOpener`, `TDocblock→ADocblock`,
-  `TSplittable→ASplittable` (and family), `TConditionOpener→AConditionOpener`.
-
 - **Abstract property hooks on one line.** Interface property hooks and abstract
   class property hooks (`{ get; }`, `{ set; }`, `{ get; set; }`) now render on a
   single line instead of expanding to multiple lines. When both `get` and `set`
   are present, `get` is always placed before `set` regardless of source order.
 
-- **New abstract property hook tokens.** Six new token classes handle abstract
-  property hooks: `TPropertyHooksAbstractOpeningBrace`,
-  `TPropertyHooksAbstractClosingBrace`, `TPropertyHookGetAbstract`,
-  `TPropertyHookSetAbstract`, `TPropertyHookGetAbstractSemicolon`,
-  `TPropertyHookSetAbstractSemicolon`. Detection uses nesting
-  (`TInterfaceOpeningBrace`) and parsed-token inspection (`TAbstract` modifier).
-
-- **Parser simplification.** Removed unused `replaceLastParsed()`. Made
-  `getTokenClass()`, `findUpcomingInlineComment()`, and `replaceSourceComment()`
-  private. Made `hasPrev()` public and removed four thin wrappers
-  (`hasPrevSplittableComma`, `hasPrevEol`, `hasPrevBlankLine`,
-  `hasPrevOpeningStructure`). Added `getParsedCount()`, `getParsedAt()`, and
-  `swapParsedAt()` for index-based parsed token access.
+- **parseAs reduced.** `DeclarationFormat::$parseAs` reduced from 6 entries to 2.
+  `TElse→TElseAsElseIf` and `TVariable→TVariableWithExplicitInterpolation`
+  remain as parseAs (require downstream token reclassification that is impractical
+  as a post-parse rule).
 
 ## 0.18.0
 
