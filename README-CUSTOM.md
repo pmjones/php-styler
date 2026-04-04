@@ -145,7 +145,7 @@ return new Config(
     format: new PlainFormat(
         rules: [
             Rule\NormalizeImports::class => [],
-            Rule\OrderTypes::class => ['order' => ['*', Token\TNull::class]],
+            Rule\NormalizeTypeOrder::class => ['order' => ['*', Token\TNull::class]],
         ],
     ),
 );
@@ -166,8 +166,8 @@ Available rules:
 | `NormalizeMemberSpacing` | Normalize blank lines between class members |
 | `NormalizeImports` | Remove unused and sort `use` statements |
 | `NormalizeTrailingCommas` | Normalize trailing commas in split lists |
-| `OrderTypes` | Sort union/intersection types; accepts `order` parameter |
-| `RejoinOrphans` | Rejoin orphaned tokens to the previous line |
+| `NormalizeTypeOrder` | Sort union/intersection types; accepts `order` parameter |
+| `MergeParenBrace` | Merge closing paren and opening brace onto one line |
 | `RemoveBom` | Remove UTF-8 byte-order mark |
 | `RemoveTrailingBlankLines` | Remove trailing blank lines from blocks |
 
@@ -252,9 +252,9 @@ class MyFormat extends DeclarationFormat
     public protected(set) array $rules = [
         Rule\RemoveBom::class => [],
         Rule\NormalizeImports::class => [],
-        Rule\OrderTypes::class => [],
+        Rule\NormalizeTypeOrder::class => [],
         Rule\MergeParenBracket::class => [],
-        Rule\RejoinOrphans::class => [],
+        Rule\MergeParenBrace::class => [],
         Rule\NormalizeTrailingCommas::class => [],
         Rule\RemoveTrailingBlankLines::class => [],
         Rule\NormalizeMemberSpacing::class => [],

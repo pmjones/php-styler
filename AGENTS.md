@@ -27,16 +27,16 @@ PHP code formatter that parses source into custom token objects, applies transfo
 `Styler::__invoke(string $code): string` runs 6 stages:
 
 1. **Parse** (`Parser`) — tokenizes PHP into `AToken` objects, tracking nesting and paren depth. The Parser also handles modifier ordering and missing-visibility insertion directly during tokenization (via `handleModifier()`, `atClassBody()`, `hasPrevVisibility()`), and always adds control structure braces. Token classes can detect abstract property hooks via nesting (`atNesting()`) and parsed-token inspection (`hasPrev()`, `getParsedAt()`), and reorder hook tokens at the closing brace (`swapParsedAt()`).
-2. **TokenRules** — `TokenRule` implementations transform the token array (e.g., `NormalizeImports`, `OrderTypes`)
+2. **TokenRules** — `TokenRule` implementations transform the token array (e.g., `NormalizeImports`, `NormalizeTypeOrder`)
 3. **Assemble** (`Assembler`) — groups tokens into `Line` objects by indent level
 4. **Split** (`Splitter`) — enforces line-length limits via prioritized split points; runs `normalizeIndents` twice (before and after expansion)
-5. **LineRules** — `LineRule` implementations transform lines (e.g., `RejoinOrphans`, `NormalizeTrailingCommas`)
+5. **LineRules** — `LineRule` implementations transform lines (e.g., `MergeParenBrace`, `NormalizeTrailingCommas`)
 6. **Render** — each `Line` renders its tokens to string with indentation
 
 ### Key Directories
 
 - `src/Token/` — `AToken` subclasses in a flat directory (no subdirs, ~520 files). Includes whitespace tokens, split-point markers (`TSplit` subclasses with priority), and marker interfaces for classification.
-- `src/Rule/` — 11 rule implementations. TokenRules: `RemoveBom`, `NormalizeImports`, `OrderTypes`, `ConvertToYodaConditions`, `ConvertFromYodaConditions`, `MergeParenBracket`, `NormalizeMemberSpacing`, `CollapseEmptyBody`. LineRules: `RejoinOrphans`, `NormalizeTrailingCommas`, `RemoveTrailingBlankLines`. Configured in Format classes as `[RuleClass::class => [args]]`.
+- `src/Rule/` — 11 rule implementations. TokenRules: `RemoveBom`, `NormalizeImports`, `NormalizeTypeOrder`, `ConvertToYodaConditions`, `ConvertFromYodaConditions`, `MergeParenBracket`, `NormalizeMemberSpacing`, `CollapseEmptyBody`. LineRules: `MergeParenBrace`, `NormalizeTrailingCommas`, `RemoveTrailingBlankLines`. Configured in Format classes as `[RuleClass::class => [args]]`.
 - `src/Format/` — `Format` interface → `PlainFormat` (base with styles) → `DeclarationFormat` (opinionated defaults: next-line braces, lower keywords, default rules). Vendor formats in `src/Format/Vendor/` (`DoctrineFormat`, `Percs30Format`, `SymfonyFormat`).
 - `src/Parallel/` — `WorkerPool` (spawns child processes via `proc_open` for parallel file processing) and `WorkerResult` (per-file result value object).
 - `src/Command/` — CLI commands (`Apply`, `Check`, `Diff`, `Preview`) with corresponding `*Options` classes, plus an internal `Worker` command for parallel execution. Dispatched via `AutoShell\Console` from `bin/php-styler`. The `apply`, `check`, and `diff` commands accept `--workers=N` (or `auto`) to process files in parallel.
@@ -59,7 +59,7 @@ PHP code formatter that parses source into custom token objects, applies transfo
 - PHPUnit 11, config in `phpunit.xml`, bootstrap in `phpunit.php`
 - Test namespace: `PhpStyler\` maps to `tests/` via autoload-dev
 - `tests/TestCase.php` — base class with a `$styler` (DeclarationFormat, rules limited to `RemoveTrailingBlankLines`) and `assertPrint()` helper
-- `tests/ExamplesTest.php` — data-driven from `tests/Examples/*.php`; verifies styling is idempotent. Uses `TestFormat` with only 4 rules (`MergeParenBracket`, `RejoinOrphans`, `NormalizeTrailingCommas`, `RemoveTrailingBlankLines`), not `DeclarationFormat`'s full rule set.
+- `tests/ExamplesTest.php` — data-driven from `tests/Examples/*.php`; verifies styling is idempotent. Uses `TestFormat` with only 4 rules (`MergeParenBracket`, `MergeParenBrace`, `NormalizeTrailingCommas`, `RemoveTrailingBlankLines`), not `DeclarationFormat`'s full rule set.
 - `tests/Token/` — data-driven token parsing tests extending `TTestCase`
 - `tests/Rule/` — rule-specific tests with custom format
 - `tests/Format/` — format-level tests, including vendor format tests in `tests/Format/Vendor/`

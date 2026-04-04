@@ -8,14 +8,14 @@ use PhpStyler\Styler;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-class RejoinOrphansTest extends TestCase
+class MergeParenBraceTest extends TestCase
 {
     private function assertStyled(string $code, string $expect) : void
     {
         $styler = new Styler(
             new DeclarationFormat(
                 lineLen: 44,
-                rules: [RejoinOrphans::class, RemoveTrailingBlankLines::class],
+                rules: [MergeParenBrace::class, RemoveTrailingBlankLines::class],
             ),
         );
 

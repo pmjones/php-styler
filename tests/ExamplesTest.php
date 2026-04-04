@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
+use PhpStyler\Rule\LineRule\MergeParenBrace;
 use PhpStyler\Rule\LineRule\NormalizeTrailingCommas;
-use PhpStyler\Rule\LineRule\RejoinOrphans;
 use PhpStyler\Rule\LineRule\RemoveTrailingBlankLines;
 use PhpStyler\Rule\TokenRule\MergeParenBracket;
 use PhpStyler\TestFormat;
@@ -21,7 +21,7 @@ class ExamplesTest extends TestCase
             new TestFormat(
                 rules: [
                     MergeParenBracket::class,
-                    RejoinOrphans::class,
+                    MergeParenBrace::class,
                     NormalizeTrailingCommas::class,
                     RemoveTrailingBlankLines::class,
                 ],

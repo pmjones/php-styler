@@ -16,7 +16,7 @@ use PhpStyler\Token\TQualifiedName;
 use PhpStyler\Token\TUnqualifiedName;
 use PhpStyler\Token\TVariable;
 
-class InjectNewParens extends ATokenRule
+class InsertNewParens extends ATokenRule
 {
     /**
      * @param AToken[] $tokens

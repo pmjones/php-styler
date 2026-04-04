@@ -59,26 +59,24 @@ class NormalizeTrailingCommas extends ALineRule
         string $commaClass,
     ) : void
     {
-        $lastItemLineIndex = $this->findLastItemLine($lines, $closerLineIndex);
+        $lastItemLineIndex = $closerLineIndex - 1;
 
-        if ($lastItemLineIndex === null) {
+        while ($lastItemLineIndex >= 0 && $lines[$lastItemLineIndex]->isBlank()) {
+            $lastItemLineIndex --;
+        }
+
+        if ($lastItemLineIndex < 0) {
             return;
         }
 
         $tokens = $lines[$lastItemLineIndex]->getTokens();
-        $insertPos = $this->findCommaInsertPosition($tokens);
+        $insertPos = $this->findLastNonComment($tokens);
 
-        if ($insertPos === null) {
-            return;
-        }
-
-        // already has trailing comma
-        if ($tokens[$insertPos] instanceof ASplittableComma) {
-            return;
-        }
-
-        // don't add comma after an opener (empty expanded brackets)
-        if ($tokens[$insertPos]->isOpener()) {
+        if (
+            $insertPos === null
+            || $tokens[$insertPos] instanceof ASplittableComma
+            || $tokens[$insertPos]->isOpener()
+        ) {
             return;
         }
 
@@ -116,7 +114,14 @@ class NormalizeTrailingCommas extends ALineRule
         }
 
         $tokens = $line->getTokens();
-        $commaPos = $this->findPrevContent(array_slice($tokens, 0, $closerPos));
+        $commaPos = null;
+
+        for ($i = $closerPos - 1; $i >= 0; $i --) {
+            if (! $tokens[$i]->isIgnorable()) {
+                $commaPos = $i;
+                break;
+            }
+        }
 
         if (
             $commaPos === null || ! $tokens[$commaPos] instanceof ASplittableComma
@@ -135,45 +140,16 @@ class NormalizeTrailingCommas extends ALineRule
     }
 
     /**
-     * Find the line index of the last item before the closer,
-     * skipping blank lines.
-     *
-     * @param Line[] $lines
-     */
-    private function findLastItemLine(array $lines, int $closerLineIndex) : ?int
-    {
-        $idx = $closerLineIndex - 1;
-
-        while ($idx >= 0 && $lines[$idx]->isBlank()) {
-            $idx --;
-        }
-
-        return $idx >= 0 ? $idx : null;
-    }
-
-    /**
-     * Find the position after which to insert a trailing comma,
-     * skipping backward past inline comments.
-     *
      * @param AToken[] $tokens
      */
-    private function findCommaInsertPosition(array $tokens) : ?int
+    private function findLastNonComment(array $tokens) : ?int
     {
-        $pos = $this->findPrevContent($tokens);
-
-        if ($pos === null) {
-            return null;
-        }
-
-        // skip past inline comments (and their preceding content)
-        while ($pos >= 0 && $tokens[$pos] instanceof AComment) {
-            $pos = $this->findPrevContent(array_slice($tokens, 0, $pos));
-
-            if ($pos === null) {
-                return null;
+        for ($i = count($tokens) - 1; $i >= 0; $i --) {
+            if (! $tokens[$i]->isIgnorable() && ! $tokens[$i] instanceof AComment) {
+                return $i;
             }
         }
 
-        return $pos;
+        return null;
     }
 }

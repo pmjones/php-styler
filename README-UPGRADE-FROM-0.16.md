@@ -17,8 +17,8 @@ composer require --dev pmjones/php-styler 0.x@dev
 
 ## Configuration
 
-The `Config` constructor no longer accepts a `Styler` instance. It now accepts a
-`AFormat` instance that controls all formatting behavior.
+The `Config` constructor no longer accepts a `Styler` instance. It now accepts
+an instance of `AFormat` that controls all formatting behavior.
 
 **Before (0.16.0):**
 
@@ -262,8 +262,8 @@ Structural transformations are now explicit, composable rules:
 | `NormalizeMemberSpacing` | Normalize blank lines between class members |
 | `NormalizeImports` | Remove unused and sort `use` statements |
 | `NormalizeTrailingCommas` | Add/remove trailing commas based on context |
-| `OrderTypes` | Sort union/intersection types |
-| `RejoinOrphans` | Rejoin orphaned tokens to the previous line |
+| `NormalizeTypeOrder` | Sort union/intersection types |
+| `MergeParenBrace` | Merge closing paren and opening brace onto one line |
 | `RemoveBom` | Remove UTF-8 byte-order mark |
 | `RemoveTrailingBlankLines` | Remove trailing blank lines from blocks |
 

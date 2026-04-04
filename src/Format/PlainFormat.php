@@ -1296,7 +1296,7 @@ class PlainFormat implements AFormat
      */
     public protected(set) array $rules = [
         TokenRule\RemoveBom::class => [],
-        LineRule\RejoinOrphans::class => [],
+        LineRule\MergeParenBrace::class => [],
         LineRule\RemoveTrailingBlankLines::class => [],
     ];
 

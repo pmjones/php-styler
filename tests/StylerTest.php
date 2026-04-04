@@ -3,15 +3,15 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
+use PhpStyler\Rule\LineRule\MergeParenBrace;
 use PhpStyler\Rule\LineRule\NormalizeTrailingCommas;
-use PhpStyler\Rule\LineRule\RejoinOrphans;
 use PhpStyler\Rule\LineRule\RemoveTrailingBlankLines;
 use PhpStyler\Rule\TokenRule\ConvertToShortArraySyntax;
 use PhpStyler\Rule\TokenRule\ConvertToShortListSyntax;
 use PhpStyler\Rule\TokenRule\ConvertVarToPublic;
 use PhpStyler\Rule\TokenRule\ExpandGroupedImports;
 use PhpStyler\Rule\TokenRule\InsertPublicVisibility;
-use PhpStyler\Rule\TokenRule\ReorderModifiers;
+use PhpStyler\Rule\TokenRule\NormalizeModifierOrder;
 use PhpStyler\TestFormat;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -27,10 +27,10 @@ class StylerTest extends TestCase
                 ExpandGroupedImports::class,
                 ConvertVarToPublic::class,
                 InsertPublicVisibility::class,
-                ReorderModifiers::class,
+                NormalizeModifierOrder::class,
                 ConvertToShortArraySyntax::class,
                 ConvertToShortListSyntax::class,
-                RejoinOrphans::class,
+                MergeParenBrace::class,
                 NormalizeTrailingCommas::class,
                 RemoveTrailingBlankLines::class,
             ]),

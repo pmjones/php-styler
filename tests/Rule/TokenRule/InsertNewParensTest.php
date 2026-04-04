@@ -9,14 +9,14 @@ use PhpStyler\Styler;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-class InjectNewParensTest extends TestCase
+class InsertNewParensTest extends TestCase
 {
     #[DataProvider('provide')]
     public function test(string $code, string $expect) : void
     {
         $styler = new Styler(
             new DeclarationFormat(rules: [
-                InjectNewParens::class,
+                InsertNewParens::class,
                 RemoveTrailingBlankLines::class,
             ]),
         );

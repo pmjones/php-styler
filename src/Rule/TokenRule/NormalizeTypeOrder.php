@@ -17,7 +17,7 @@ use PhpStyler\Token\TString;
 use PhpStyler\Token\TTrue;
 use PhpStyler\Token\TUnion;
 
-class OrderTypes extends ATokenRule
+class NormalizeTypeOrder extends ATokenRule
 {
     /** @var array<class-string<AToken>, int> */
     private array $priorityMap;

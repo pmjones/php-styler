@@ -18,7 +18,7 @@ use PhpStyler\Token\TSpace;
 use PhpStyler\Token\TSplit;
 use PhpStyler\Token\TStatic;
 
-class ReorderModifiers extends ATokenRule
+class NormalizeModifierOrder extends ATokenRule
 {
     private const PRIORITY = [
         TAbstract::class => 1,

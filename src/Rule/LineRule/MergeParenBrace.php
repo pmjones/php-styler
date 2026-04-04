@@ -7,7 +7,7 @@ use PhpStyler\Line;
 use PhpStyler\Token\TFunctionOpeningBrace;
 use PhpStyler\Token\TSpace;
 
-class RejoinOrphans extends ALineRule
+class MergeParenBrace extends ALineRule
 {
     /**
      * @param Line[] $lines

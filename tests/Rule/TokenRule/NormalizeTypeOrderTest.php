@@ -10,7 +10,7 @@ use PhpStyler\Token\TNull;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-class OrderTypesTest extends TestCase
+class NormalizeTypeOrderTest extends TestCase
 {
     #[DataProvider('provide')]
     public function test(string $code, string $expect) : void
@@ -18,7 +18,7 @@ class OrderTypesTest extends TestCase
         $styler = new Styler(
             new TestFormat(rules: [
                 InsertPublicVisibility::class,
-                OrderTypes::class,
+                NormalizeTypeOrder::class,
                 RemoveTrailingBlankLines::class,
             ]),
         );
@@ -200,7 +200,7 @@ class OrderTypesTest extends TestCase
     {
         $styler = new Styler(
             new TestFormat(rules: [
-                OrderTypes::class => ['order' => ['*', TNull::class]],
+                NormalizeTypeOrder::class => ['order' => ['*', TNull::class]],
                 RemoveTrailingBlankLines::class,
             ]),
         );

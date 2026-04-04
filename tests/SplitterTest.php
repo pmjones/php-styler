@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
+use PhpStyler\Rule\LineRule\MergeParenBrace;
 use PhpStyler\Rule\LineRule\NormalizeTrailingCommas;
-use PhpStyler\Rule\LineRule\RejoinOrphans;
 use PhpStyler\Rule\LineRule\RemoveTrailingBlankLines;
 use PhpStyler\Styler;
 use PhpStyler\TestFormat;
@@ -19,7 +19,7 @@ class SplitterTest extends TestCase
             new TestFormat(
                 lineLen: $lineLen,
                 rules: [
-                    RejoinOrphans::class,
+                    MergeParenBrace::class,
                     NormalizeTrailingCommas::class,
                     RemoveTrailingBlankLines::class,
                 ],

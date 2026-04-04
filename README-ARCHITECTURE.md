@@ -129,7 +129,7 @@ Array of AToken objects (~520 classes in src/Token/)
     ▼
 Token Rules (src/Rule/TokenRule/ implementations)
     │  opinionated transforms on the token stream
-    │  e.g., InjectNewParens, ReorderModifiers, NormalizeImports
+    │  e.g., InsertNewParens, NormalizeModifierOrder, NormalizeImports
     ▼
 Transformed token stream
     │
@@ -151,7 +151,7 @@ Split lines
     ▼
 Line Rules (src/Rule/LineRule/ implementations)
     │  final adjustments on assembled lines
-    │  e.g., RemoveTrailingBlankLines, RejoinOrphans
+    │  e.g., RemoveTrailingBlankLines, MergeParenBrace
     ▼
 Final lines
     │
@@ -299,12 +299,12 @@ Constructor parameters expose common adjustments: `classBracePosition`,
 - `$parseAs`: else-if→elseif, explicit variable interpolation (2 entries;
   the rest have been extracted to rules)
 - `$rules`: RemoveBom, RemoveEmptyAnonymousClassParens,
-  RemoveEmptyAttributeParens, InjectNewParens, RemoveLanguageConstructParens,
+  RemoveEmptyAttributeParens, InsertNewParens, RemoveLanguageConstructParens,
   ExpandGroupedImports, ExpandPropertyDeclarations, ExpandConstDeclarations,
-  ConvertVarToPublic, InsertPublicVisibility, ReorderModifiers,
+  ConvertVarToPublic, InsertPublicVisibility, NormalizeModifierOrder,
   ConvertToShortArraySyntax, ConvertToShortListSyntax, RemovePhpClosingTag,
-  RemoveRepeatedSemicolons, NormalizeImports, OrderTypes, MergeParenBracket,
-  RejoinOrphans, NormalizeTrailingCommas, RemoveTrailingBlankLines
+  RemoveRepeatedSemicolons, NormalizeImports, NormalizeTypeOrder, MergeParenBracket,
+  MergeParenBrace, NormalizeTrailingCommas, RemoveTrailingBlankLines
 - Defaults: next-line class/function braces, same-line control braces,
   blank-line-after-block
 
@@ -334,15 +334,15 @@ applies them in declared order.
 - *Source normalization:* RemoveBom, ExpandGroupedImports,
   ExpandPropertyDeclarations, ExpandConstDeclarations
 - *Syntax conversion:* ConvertVarToPublic, InsertPublicVisibility,
-  ReorderModifiers, ConvertToShortArraySyntax, ConvertToShortListSyntax,
+  NormalizeModifierOrder, ConvertToShortArraySyntax, ConvertToShortListSyntax,
   RemovePhpClosingTag, RemoveRepeatedSemicolons
 - *Paren manipulation:* RemoveLanguageConstructParens,
-  RemoveEmptyAnonymousClassParens, RemoveEmptyAttributeParens, InjectNewParens
-- *Existing:* NormalizeImports, OrderTypes, MergeParenBracket,
+  RemoveEmptyAnonymousClassParens, RemoveEmptyAttributeParens, InsertNewParens
+- *Existing:* NormalizeImports, NormalizeTypeOrder, MergeParenBracket,
   CollapseEmptyBody, ConvertToYodaConditions, ConvertFromYodaConditions,
   NormalizeMemberSpacing
 
-**Line rules** (`PhpStyler\Rule\LineRule\*`): RejoinOrphans,
+**Line rules** (`PhpStyler\Rule\LineRule\*`): MergeParenBrace,
 NormalizeTrailingCommas, RemoveTrailingBlankLines.
 
 ### Assembler

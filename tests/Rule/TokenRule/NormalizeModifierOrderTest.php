@@ -9,14 +9,14 @@ use PhpStyler\Styler;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-class ReorderModifiersTest extends TestCase
+class NormalizeModifierOrderTest extends TestCase
 {
     #[DataProvider('provide')]
     public function test(string $code, string $expect) : void
     {
         $styler = new Styler(
             new DeclarationFormat(rules: [
-                ReorderModifiers::class,
+                NormalizeModifierOrder::class,
                 RemoveTrailingBlankLines::class,
             ]),
         );

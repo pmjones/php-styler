@@ -8,20 +8,20 @@
   changes (spacing, line breaks, blank lines). Opinionated transforms are
   implemented as TokenRules applied after parsing:
 
-  - `RemoveEmptyAnonymousClassParens` — removes empty `()` from `new class()`
-  - `RemoveEmptyAttributeParens` — removes empty `()` from `#[Attr()]`
-  - `InjectNewParens` — adds `()` to bare `new Foo`
-  - `RemoveLanguageConstructParens` — removes optional parens from `echo()`, `print()`, etc.
-  - `ExpandGroupedImports` — expands `use Foo\{Bar, Baz}` into individual statements
-  - `ExpandPropertyDeclarations` — expands `public int $a, $b` into separate declarations
-  - `ExpandConstDeclarations` — expands `const A = 1, B = 2` into separate declarations
-  - `ConvertVarToPublic` — converts `var` to `public`
-  - `InsertPublicVisibility` — adds `public` to class functions/consts without visibility
-  - `ReorderModifiers` — sorts modifiers by priority (abstract/final, visibility, static, readonly)
   - `ConvertToShortArraySyntax` — converts `array()` to `[]`
   - `ConvertToShortListSyntax` — converts `list()` to `[]`
+  - `ConvertVarToPublic` — converts `var` to `public`
+  - `ExpandConstDeclarations` — expands `const A = 1, B = 2` into separate declarations
+  - `ExpandGroupedImports` — expands `use Foo\{Bar, Baz}` into individual statements
+  - `ExpandPropertyDeclarations` — expands `public int $a, $b` into separate declarations
+  - `InsertNewParens` — adds `()` to bare `new Foo`
+  - `InsertPublicVisibility` — adds `public` to class functions/consts without visibility
+  - `RemoveEmptyAnonymousClassParens` — removes empty `()` from `new class()`
+  - `RemoveEmptyAttributeParens` — removes empty `()` from `#[Attr()]`
+  - `RemoveLanguageConstructParens` — removes optional parens from `echo()`, `print()`, etc.
   - `RemovePhpClosingTag` — removes trailing `?>`
   - `RemoveRepeatedSemicolons` — removes duplicate `;;`
+  - `NormalizeModifierOrder` — sorts modifiers by priority (abstract/final, visibility, static, readonly)
 
 - **parseAs reduced.** `DeclarationFormat::$parseAs` reduced from 6 entries to 2.
   `TElse→TElseAsElseIf` and `TVariable→TVariableWithExplicitInterpolation`
@@ -141,8 +141,8 @@
   to deny), which can be overridden per-token via the `styles` constructor
   parameter.
 
-- **Style attached to tokens.** Each `AToken` now carries its `Style` instance,
-  set during parsing. The `Style` class is now `readonly`.
+- **Style attached to tokens.** Each instance of `AToken` now carries its own
+  `Style` instance, set during parsing. The `Style` class is now `readonly`.
 
 - **Fluent chain improvement.** The base object now stays with its first method
   call when a fluent chain is split. All fluent split types
@@ -239,9 +239,9 @@ Eleven composable rules for structural transformations:
 
 - `RemoveBom` — remove UTF-8 byte-order mark
 - `NormalizeImports` — remove unused and sort `use` statements
-- `OrderTypes` — sort union/intersection types (configurable priority)
+- `NormalizeTypeOrder` — sort union/intersection types (configurable priority)
 - `MergeParenBracket` — merge `])` onto the same line
-- `RejoinOrphans` — rejoin orphaned tokens to the previous line
+- `MergeParenBrace` — merge closing paren and opening brace onto one line
 - `NormalizeTrailingCommas` — add trailing commas on split lists, remove on single-line
 - `RemoveTrailingBlankLines` — remove trailing blank lines from blocks
 - `CollapseEmptyBody` — collapse empty class/function bodies to `{}`
