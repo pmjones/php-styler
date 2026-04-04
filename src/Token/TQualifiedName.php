@@ -13,7 +13,7 @@ use PhpToken;
  *
  * Reference: https://www.php.net/manual/en/language.namespaces.php namespaces (available as of PHP 8.0.0)
  */
-class TQualifiedName extends AToken
+class TQualifiedName extends AToken implements AType
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
@@ -26,7 +26,7 @@ class TQualifiedName extends AToken
                     T_NULLSAFE_OBJECT_OPERATOR,
                     T_DOUBLE_COLON,
                 ])
-            && ! $parser->atNesting(TAttribution::class)
+            && ! $parser->atNesting(AnAttribute::class)
         ) {
             $parser->add($source, TFunctionCallQualified::class);
             return;

@@ -25,7 +25,7 @@ class TVarTest extends TTestCase
                     TClass::class,
                     TClassName::class,
                     TClassOpeningBrace::class,
-                    TPublic::class,
+                    TVar::class,
                     TVariable::class,
                     TPropertyEndSemicolon::class,
                     TClassClosingBrace::class,

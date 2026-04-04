@@ -4,7 +4,8 @@ declare(strict_types=1);
 namespace PhpStyler\Format\Vendor;
 
 use PhpStyler\Format\DeclarationFormat;
-use PhpStyler\Rule;
+use PhpStyler\Rule\LineRule;
+use PhpStyler\Rule\TokenRule;
 use PhpStyler\Token;
 
 class SymfonyFormat extends DeclarationFormat
@@ -26,16 +27,28 @@ class SymfonyFormat extends DeclarationFormat
      * @inheritdoc
      */
     public protected(set) array $rules = [
-        Rule\RemoveBom::class => [],
+        TokenRule\RemoveBom::class => [],
+        // source de-opinionation
+        TokenRule\RemoveEmptyAnonymousClassParens::class => [],
+        TokenRule\RemoveEmptyAttributeParens::class => [],
+        TokenRule\InjectNewParens::class => [],
+        TokenRule\RemoveLanguageConstructParens::class => [],
+        TokenRule\ExpandGroupedImports::class => [],
+        TokenRule\SplitPropertyDeclarations::class => [],
+        TokenRule\SplitConstDeclarations::class => [],
+        TokenRule\ConvertVarToPublic::class => [],
+        TokenRule\InsertPublicVisibility::class => [],
+        TokenRule\ReorderModifiers::class => [],
+
         // import cleanup
-        Rule\NormalizeImports::class => [],
-        Rule\OrderTypes::class => [],
-        Rule\MergeParenBracket::class => [],
-        Rule\RejoinOrphans::class => [],
-        Rule\NormalizeTrailingCommas::class => [],
-        Rule\RemoveTrailingBlankLines::class => [],
-        Rule\ConvertToYodaConditions::class => [],
-        Rule\NormalizeMemberSpacing::class => [],
+        TokenRule\NormalizeImports::class => [],
+        TokenRule\OrderTypes::class => [],
+        TokenRule\MergeParenBracket::class => [],
+        LineRule\RejoinOrphans::class => [],
+        LineRule\NormalizeTrailingCommas::class => [],
+        LineRule\RemoveTrailingBlankLines::class => [],
+        TokenRule\ConvertToYodaConditions::class => [],
+        TokenRule\NormalizeMemberSpacing::class => [],
     ];
 
     /**

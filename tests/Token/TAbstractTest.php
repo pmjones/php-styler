@@ -27,7 +27,6 @@ class TAbstractTest extends TTestCase
                     TClassName::class,
                     TClassOpeningBrace::class,
                     TAbstract::class,
-                    TPublic::class,
                     TFunction::class,
                     TFunctionName::class,
                     TParamsOpeningParen::class,

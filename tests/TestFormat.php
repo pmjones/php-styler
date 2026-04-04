@@ -9,8 +9,6 @@ use PhpStyler\Token;
 class TestFormat extends DeclarationFormat
 {
     public protected(set) array $parseAs = [
-        Token\TList::class => Token\TListAsArray::class,
-        Token\TArray::class => Token\TArrayAsShort::class,
         Token\TElse::class => Token\TElseAsElseIf::class,
     ];
 

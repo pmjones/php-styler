@@ -3,6 +3,6 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-class TObject extends AToken
+class TObject extends AToken implements AType
 {
 }

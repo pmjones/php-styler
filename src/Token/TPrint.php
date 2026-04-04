@@ -24,7 +24,6 @@ class TPrint extends ALanguageConstruct
             return;
         }
 
-        self::tryRemoveParens($parser);
         parent::parse($parser, $source);
     }
 }

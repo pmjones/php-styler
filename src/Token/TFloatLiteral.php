@@ -10,6 +10,6 @@ namespace PhpStyler\Token;
  *
  * Reference: https://www.php.net/manual/en/language.types.float.php floating point numbers
  */
-class TFloatLiteral extends AToken
+class TFloatLiteral extends AToken implements ALiteral
 {
 }

@@ -3,6 +3,6 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-class TUnqualifiedName extends AToken
+class TUnqualifiedName extends AToken implements AType
 {
 }

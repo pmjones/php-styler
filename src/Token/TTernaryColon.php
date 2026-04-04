@@ -6,7 +6,7 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TTernaryColon extends AToken implements TSplittableOperator
+class TTernaryColon extends AToken implements ASplittableOperator
 {
     public function splitBefore(Parser $parser) : ?TSplit
     {

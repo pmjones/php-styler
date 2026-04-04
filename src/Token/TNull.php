@@ -3,6 +3,6 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-class TNull extends AToken
+class TNull extends AToken implements ALiteral, AType
 {
 }

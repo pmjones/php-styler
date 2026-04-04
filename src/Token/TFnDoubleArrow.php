@@ -6,7 +6,7 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TFnDoubleArrow extends AToken implements TSplittableOperator
+class TFnDoubleArrow extends AToken implements ASplittableOperator
 {
     public function splitBefore(Parser $parser) : ?TSplit
     {

@@ -7,6 +7,6 @@ class TSplitFnDoubleArrow extends TSplitOperator
 {
     public function splitPriority() : int
     {
-        return TSplittable::FN_ARROW;
+        return ASplittable::FN_ARROW;
     }
 }

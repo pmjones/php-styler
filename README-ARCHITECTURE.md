@@ -120,16 +120,16 @@ Array of PhpToken objects
     ▼
 Parser (src/Parser.php)
     │  maps each PhpToken to an AToken subclass
-    │  invokes AToken::parse() for context-specific parsing
+    │  invokes AToken::parse() for context-specific classification
     │  applies Styles (spacing, line breaks, casing) from Format
-    │  injects synthetic tokens (braces, parens, splits)
+    │  faithfully represents source — no opinionated transforms
     ▼
 Array of AToken objects (~520 classes in src/Token/)
     │
     ▼
-Token Rules (src/Rule/TokenRule.php implementations)
-    │  structural transformations on the token stream
-    │  e.g., NormalizeImports, OrderTypes, NormalizeTrailingCommas
+Token Rules (src/Rule/TokenRule/ implementations)
+    │  opinionated transforms on the token stream
+    │  e.g., InjectNewParens, ReorderModifiers, NormalizeImports
     ▼
 Transformed token stream
     │
@@ -149,7 +149,7 @@ Splitter (src/Splitter.php)
 Split lines
     │
     ▼
-Line Rules (src/Rule/LineRule.php implementations)
+Line Rules (src/Rule/LineRule/ implementations)
     │  final adjustments on assembled lines
     │  e.g., RemoveTrailingBlankLines, RejoinOrphans
     ▼
@@ -177,7 +177,7 @@ Rendered output
 | `Nesting` | Tracks nesting context for tokens |
 | `Docblock` / `DocblockTag` | Docblock structure parsing |
 
-### Token System (507 classes)
+### Token System (~520 classes)
 
 Each PHP token and synthetic construct has a dedicated `AToken` subclass.
 
@@ -187,8 +187,25 @@ Each PHP token and synthetic construct has a dedicated `AToken` subclass.
   `openingToken`, `closingToken`, `parse()`, `render()`, `splitBefore()`,
   `splitAfter()`, `isOpener()`, `isContent()`, `expandPriority()`,
   `splObjectId()`
-- `ALanguageConstruct` — abstract base for keyword tokens
+- `ALanguageConstruct` — abstract base for language construct keyword tokens
+  (echo, print, return, include, require, etc.)
 - `TSplit` (abstract) — base for split-point markers
+
+**Marker interfaces** (prefix `A`/`An` for abstract classification, `T` for concrete):
+
+- `AnOpeningStructure` / `AClosingStructure` — paired structural tokens
+- `AnAttribute` — attribute-related tokens (`#[`)
+- `AComment` — comment tokens
+- `ADocblock` — docblock tokens (has `getDocblock()` method)
+- `ACommaListOpener` — opener tokens for comma-delimited lists (has `commaClass()`)
+- `ASplittable` / `ASplittableComma` / `ASplittableFluent` / `ASplittableOperator`
+- `AConditionOpener` — condition-opening tokens
+- `AModifier` — all modifier keywords (abstract, final, visibility, static, readonly)
+- `AType` — all tokens valid in type declarations
+- `ALiteral` — literal value tokens (null, true, false, int, float, string)
+- `AComparisonOperator` — comparison operators (===, !==, ==, !=)
+- `AUnaryPrefixOperator` — unary prefix operators (!, -, +, ~)
+- `AUseGroupOpener` / `AUseGroupCloser` — grouped import brace tokens
 
 **Categories:**
 
@@ -213,7 +230,7 @@ Each PHP token and synthetic construct has a dedicated `AToken` subclass.
   `TStringLiteralAsSingleQuote`, `THeredocStartAsNowdoc`,
   `TLogicalAndAsBooleanAnd`, etc.
 
-**Split and expansion priority constants** (on `TSplittable`):
+**Split and expansion priority constants** (on `ASplittable`):
 
 | Priority | Constant | Splits at |
 |---|---|---|
@@ -279,9 +296,14 @@ Constructor parameters expose common adjustments: `classBracePosition`,
 `concatenationSpacing`, `returnTypeColonSpacing`, `blankLineAfterBlock`.
 
 **`DeclarationFormat`** extends `PlainFormat` with:
-- `$parseAs`: array→short, list→short, else-if→elseif, remove closing tag,
-  skip repeated semicolons, explicit variable interpolation
-- `$rules`: RemoveBom, NormalizeImports, OrderTypes, MergeParenBracket,
+- `$parseAs`: else-if→elseif, explicit variable interpolation (2 entries;
+  the rest have been extracted to rules)
+- `$rules`: RemoveBom, RemoveEmptyAnonymousClassParens,
+  RemoveEmptyAttributeParens, InjectNewParens, RemoveLanguageConstructParens,
+  ExpandGroupedImports, SplitPropertyDeclarations, SplitConstDeclarations,
+  ConvertVarToPublic, InsertPublicVisibility, ReorderModifiers,
+  ConvertToShortArraySyntax, ConvertToShortListSyntax, RemovePhpClosingTag,
+  RemoveRepeatedSemicolons, NormalizeImports, OrderTypes, MergeParenBracket,
   RejoinOrphans, NormalizeTrailingCommas, RemoveTrailingBlankLines
 - Defaults: next-line class/function braces, same-line control braces,
   blank-line-after-block
@@ -291,16 +313,13 @@ Constructor parameters expose common adjustments: `classBracePosition`,
 
 ### Rule System
 
-Rules implement one of two interfaces:
+Rules extend abstract base classes in separate namespaces:
 
-```php
-interface TokenRule {
-    public function apply(array $tokens): array;
-}
-
-interface LineRule {
-    public function apply(array $lines): array;
-}
+```
+PhpStyler\Rule\ARule                        (findNextContent, findPrevContent)
+├── PhpStyler\Rule\TokenRule\ATokenRule     (abstract apply(AToken[]))
+│   └── SplitDeclarations                   (abstract base for comma-splitting)
+└── PhpStyler\Rule\LineRule\ALineRule       (abstract apply(Line[]))
 ```
 
 Token rules operate on the `AToken[]` array after parsing, before assembly.
@@ -310,11 +329,21 @@ The `Format::$rules` array specifies which rules to instantiate and their
 constructor arguments. The `Styler` instantiates them at construction time and
 applies them in declared order.
 
-**Token rules:** RemoveBom, NormalizeImports, OrderTypes, CollapseEmptyBody,
-ConvertToYodaConditions, ConvertFromYodaConditions, NormalizeMemberSpacing.
+**Token rules** (`PhpStyler\Rule\TokenRule\*`):
 
-**Line rules:** MergeParenBracket, RejoinOrphans, NormalizeTrailingCommas,
-RemoveTrailingBlankLines.
+- *Source normalization:* RemoveBom, ExpandGroupedImports,
+  SplitPropertyDeclarations, SplitConstDeclarations
+- *Syntax conversion:* ConvertVarToPublic, InsertPublicVisibility,
+  ReorderModifiers, ConvertToShortArraySyntax, ConvertToShortListSyntax,
+  RemovePhpClosingTag, RemoveRepeatedSemicolons
+- *Paren manipulation:* RemoveLanguageConstructParens,
+  RemoveEmptyAnonymousClassParens, RemoveEmptyAttributeParens, InjectNewParens
+- *Existing:* NormalizeImports, OrderTypes, MergeParenBracket,
+  CollapseEmptyBody, ConvertToYodaConditions, ConvertFromYodaConditions,
+  NormalizeMemberSpacing
+
+**Line rules** (`PhpStyler\Rule\LineRule\*`): RejoinOrphans,
+NormalizeTrailingCommas, RemoveTrailingBlankLines.
 
 ### Assembler
 

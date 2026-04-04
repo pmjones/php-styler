@@ -6,7 +6,7 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TPropertyHooksOpeningBrace extends AToken implements TOpeningStructure
+class TPropertyHooksOpeningBrace extends AToken implements AnOpeningStructure
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
@@ -28,7 +28,7 @@ class TPropertyHooksOpeningBrace extends AToken implements TOpeningStructure
         for ($i = $parser->getParsedCount() - 1; $i >= 0; $i --) {
             $prev = $parser->getParsedAt($i);
 
-            if ($prev instanceof TOpeningStructure) {
+            if ($prev instanceof AnOpeningStructure) {
                 return false;
             }
 

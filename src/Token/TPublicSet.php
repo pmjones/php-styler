@@ -6,7 +6,7 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TPublicSet extends AToken
+class TPublicSet extends AToken implements AModifier
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

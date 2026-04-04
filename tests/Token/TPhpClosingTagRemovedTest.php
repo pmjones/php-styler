@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace PhpStyler\Token;
 
 use PhpStyler\Format\DeclarationFormat;
-use PhpStyler\Rule\RemoveTrailingBlankLines;
+use PhpStyler\Rule\LineRule\RemoveTrailingBlankLines;
 use PhpStyler\Styler;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;

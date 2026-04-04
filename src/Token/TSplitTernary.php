@@ -7,6 +7,6 @@ class TSplitTernary extends TSplitOperator
 {
     public function splitPriority() : int
     {
-        return TSplittable::TERNARY;
+        return ASplittable::TERNARY;
     }
 }

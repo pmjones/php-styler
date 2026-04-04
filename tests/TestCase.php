@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace PhpStyler;
 
 use PhpStyler\Format\DeclarationFormat;
-use PhpStyler\Rule\RemoveTrailingBlankLines;
+use PhpStyler\Rule\LineRule\RemoveTrailingBlankLines;
 
 abstract class TestCase extends \PHPUnit\Framework\TestCase
 {

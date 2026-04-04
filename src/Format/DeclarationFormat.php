@@ -3,7 +3,8 @@ declare(strict_types=1);
 
 namespace PhpStyler\Format;
 
-use PhpStyler\Rule;
+use PhpStyler\Rule\LineRule;
+use PhpStyler\Rule\TokenRule;
 use PhpStyler\Token;
 
 class DeclarationFormat extends PlainFormat
@@ -12,11 +13,7 @@ class DeclarationFormat extends PlainFormat
      * @inheritdoc
      */
     public protected(set) array $parseAs = [
-        Token\TList::class => Token\TListAsArray::class,
-        Token\TArray::class => Token\TArrayAsShort::class,
         Token\TElse::class => Token\TElseAsElseIf::class,
-        Token\TPhpClosingTag::class => Token\TPhpClosingTagRemoved::class,
-        Token\TSemicolon::class => Token\TSemicolonSkipRepeats::class,
         Token\TVariable::class => Token\TVariableWithExplicitInterpolation::class,
     ];
 
@@ -25,16 +22,32 @@ class DeclarationFormat extends PlainFormat
      */
     public protected(set) array $rules = [
         // file-level cleanup
-        Rule\RemoveBom::class => [],
+        TokenRule\RemoveBom::class => [],
+        // source de-opinionation
+        TokenRule\RemoveEmptyAnonymousClassParens::class => [],
+        TokenRule\RemoveEmptyAttributeParens::class => [],
+        TokenRule\InjectNewParens::class => [],
+        TokenRule\RemoveLanguageConstructParens::class => [],
+        TokenRule\ExpandGroupedImports::class => [],
+        TokenRule\SplitPropertyDeclarations::class => [],
+        TokenRule\SplitConstDeclarations::class => [],
+        TokenRule\ConvertVarToPublic::class => [],
+        TokenRule\InsertPublicVisibility::class => [],
+        TokenRule\ReorderModifiers::class => [],
+        TokenRule\ConvertToShortArraySyntax::class => [],
+        TokenRule\ConvertToShortListSyntax::class => [],
+        TokenRule\RemovePhpClosingTag::class => [],
+        TokenRule\RemoveRepeatedSemicolons::class => [],
+
         // import cleanup
-        Rule\NormalizeImports::class => [],
+        TokenRule\NormalizeImports::class => [],
         // types
-        Rule\OrderTypes::class => [],
+        TokenRule\OrderTypes::class => [],
         // structural formatting
-        Rule\MergeParenBracket::class => [],
-        Rule\RejoinOrphans::class => [],
-        Rule\NormalizeTrailingCommas::class => [],
-        Rule\RemoveTrailingBlankLines::class => [],
+        TokenRule\MergeParenBracket::class => [],
+        LineRule\RejoinOrphans::class => [],
+        LineRule\NormalizeTrailingCommas::class => [],
+        LineRule\RemoveTrailingBlankLines::class => [],
     ];
 
     /**

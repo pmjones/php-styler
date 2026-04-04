@@ -10,7 +10,7 @@ class TAnonymousClassArgsOpeningParen extends AToken
 {
     public function expandPriority() : ?int
     {
-        return TSplittable::OTHER_PAREN;
+        return ASplittable::OTHER_PAREN;
     }
 
     public static function parse(Parser $parser, PhpToken $source) : void

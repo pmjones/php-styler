@@ -1,6 +1,66 @@
 # Change Log
 
-## NEXT
+## NEXT (re-rule branch)
+
+- **Opinionated transforms extracted to rules.** All source-manipulating behavior
+  has been removed from token `parse()` methods and `Parser::handleModifier()`.
+  The parser now faithfully represents source code, applying only formatting
+  changes (spacing, line breaks, blank lines). Opinionated transforms are
+  implemented as TokenRules applied after parsing:
+
+  - `RemoveEmptyAnonymousClassParens` — removes empty `()` from `new class()`
+  - `RemoveEmptyAttributeParens` — removes empty `()` from `#[Attr()]`
+  - `InjectNewParens` — adds `()` to bare `new Foo`
+  - `RemoveLanguageConstructParens` — removes optional parens from `echo()`, `print()`, etc.
+  - `ExpandGroupedImports` — expands `use Foo\{Bar, Baz}` into individual statements
+  - `SplitPropertyDeclarations` — splits `public int $a, $b` into separate declarations
+  - `SplitConstDeclarations` — splits `const A = 1, B = 2` into separate declarations
+  - `ConvertVarToPublic` — converts `var` to `public`
+  - `InsertPublicVisibility` — adds `public` to class functions/consts without visibility
+  - `ReorderModifiers` — sorts modifiers by priority (abstract/final, visibility, static, readonly)
+  - `ConvertToShortArraySyntax` — converts `array()` to `[]`
+  - `ConvertToShortListSyntax` — converts `list()` to `[]`
+  - `RemovePhpClosingTag` — removes trailing `?>`
+  - `RemoveRepeatedSemicolons` — removes duplicate `;;`
+
+- **parseAs reduced.** `DeclarationFormat::$parseAs` reduced from 6 entries to 2.
+  `TElse→TElseAsElseIf` and `TVariable→TVariableWithExplicitInterpolation`
+  remain as parseAs (require downstream token reclassification that is impractical
+  as a post-parse rule).
+
+- **Rule class hierarchy.** Rules now use an abstract class hierarchy instead of
+  interfaces:
+
+  ```
+  ARule (findNextContent, findPrevContent)
+  ├── ATokenRule (abstract apply(AToken[]))
+  │   └── SplitDeclarations (abstract base for comma-splitting rules)
+  └── ALineRule (abstract apply(Line[]))
+  ```
+
+  Rules are organized into separate namespaces: `PhpStyler\Rule\TokenRule\*` and
+  `PhpStyler\Rule\LineRule\*`.
+
+- **New marker interfaces on token classes.** Token classification moved from
+  rule-level `is*()` predicates to marker interfaces, keeping classification
+  with the tokens:
+
+  - `AComparisonOperator` — TIsIdentical, TIsNotIdentical, TIsEqual, TIsNotEqual
+  - `ALiteral` — TNull, TTrue, TFalse, TIntegerLiteral, TFloatLiteral, TStringLiteral
+  - `AUnaryPrefixOperator` — TNot, TUnaryMinus, TUnaryPlus, TTilde
+  - `AModifier` — all 10 modifier token types
+  - `AType` — all 21 type-declaration token types
+  - `AUseGroupOpener` / `AUseGroupCloser` — use-group brace tokens
+  - `ACommaListOpener` — opener tokens with `commaClass()` method
+
+- **Interface naming convention.** All token interfaces renamed from `T` prefix
+  to `A`/`An` prefix, reserving `T` for concrete tokens. Reads naturally as
+  "instance of a modifier", "instance of an opening structure", etc.
+
+  Renames: `TAttribution→AnAttribute`, `TOpeningStructure→AnOpeningStructure`,
+  `TClosingStructure→AClosingStructure`, `TCommentary→AComment`,
+  `TCommaSeparated→ACommaListOpener`, `TDocblock→ADocblock`,
+  `TSplittable→ASplittable` (and family), `TConditionOpener→AConditionOpener`.
 
 - **Abstract property hooks on one line.** Interface property hooks and abstract
   class property hooks (`{ get; }`, `{ set; }`, `{ get; set; }`) now render on a

@@ -7,6 +7,6 @@ class TSplitMatchDoubleArrow extends TSplitOperator
 {
     public function splitPriority() : int
     {
-        return TSplittable::MATCH_ARROW;
+        return ASplittable::MATCH_ARROW;
     }
 }

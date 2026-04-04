@@ -12,7 +12,7 @@ class TClosingBracket extends AToken
     {
         $parser->popTernaryNesting();
 
-        if (! $parser->atNesting(TAttribution::class)) {
+        if (! $parser->atNesting(AnAttribute::class)) {
             /** @var class-string<AToken> $closingBracketClass */
             $closingBracketClass = str_replace(
                 'Opening',

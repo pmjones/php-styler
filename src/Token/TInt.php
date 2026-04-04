@@ -5,7 +5,7 @@ namespace PhpStyler\Token;
 
 use PhpStyler\Line;
 
-class TInt extends AToken
+class TInt extends AToken implements AType
 {
     public function render(Line $line) : string
     {

@@ -16,15 +16,7 @@ class TQuestion extends AToken
             $parser->atNesting(TReturnColon::class)
             || $prev instanceof TParamsOpeningParen
             || $prev instanceof TParamsComma
-            || $prev instanceof TPublic
-            || $prev instanceof TProtected
-            || $prev instanceof TPrivate
-            || $prev instanceof TPublicSet
-            || $prev instanceof TProtectedSet
-            || $prev instanceof TPrivateSet
-            || $prev instanceof TReadonly
-            || $prev instanceof TVar
-            || $prev instanceof TStatic
+            || $prev instanceof AModifier
             || $prev instanceof TConst
         ) {
             $parser->parse($source, TNullable::class);

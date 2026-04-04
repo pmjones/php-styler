@@ -5,8 +5,8 @@ namespace PhpStyler;
 
 use PhpStyler\Format\Format;
 use PhpStyler\Format\PlainFormat;
-use PhpStyler\Rule\LineRule;
-use PhpStyler\Rule\TokenRule;
+use PhpStyler\Rule\LineRule\ALineRule;
+use PhpStyler\Rule\TokenRule\ATokenRule;
 use PhpStyler\Token\AToken;
 
 class Styler
@@ -18,12 +18,12 @@ class Styler
     private Splitter $splitter;
 
     /**
-     * @var TokenRule[]
+     * @var ATokenRule[]
      */
     private array $tokenRules = [];
 
     /**
-     * @var LineRule[]
+     * @var ALineRule[]
      */
     private array $lineRules = [];
 
@@ -47,11 +47,11 @@ class Styler
         foreach ($format->rules as $class => $args) {
             $rule = new $class(...$args);
 
-            if ($rule instanceof TokenRule) {
+            if ($rule instanceof ATokenRule) {
                 $this->tokenRules[] = $rule;
             }
 
-            if ($rule instanceof LineRule) {
+            if ($rule instanceof ALineRule) {
                 $this->lineRules[] = $rule;
             }
         }

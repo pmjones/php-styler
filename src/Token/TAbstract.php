@@ -13,7 +13,7 @@ use PhpToken;
  *
  * Reference: https://www.php.net/manual/en/language.oop5.abstract.php Class Abstraction
  */
-class TAbstract extends AToken
+class TAbstract extends AToken implements AModifier
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

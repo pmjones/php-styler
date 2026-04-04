@@ -7,6 +7,6 @@ class TSplitBooleanOr extends TSplitOperator
 {
     public function splitPriority() : int
     {
-        return TSplittable::BOOLEAN_OR;
+        return ASplittable::BOOLEAN_OR;
     }
 }

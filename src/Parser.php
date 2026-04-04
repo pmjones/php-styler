@@ -261,7 +261,7 @@ class Parser
             $this->parenDepth ++;
         }
 
-        if ($token instanceof Token\TSplittableComma && $this->nesting !== []) {
+        if ($token instanceof Token\ASplittableComma && $this->nesting !== []) {
             $this->nesting[array_key_last($this->nesting)]->argCount ++;
         }
 
@@ -336,7 +336,7 @@ class Parser
             return;
         }
 
-        if ($this->hasPrev(Token\TOpeningStructure::class)) {
+        if ($this->hasPrev(Token\AnOpeningStructure::class)) {
             return;
         }
 
@@ -925,19 +925,23 @@ class Parser
         for ($i = $this->parsedCount - 1; $i >= 0; $i --) {
             $prev = $this->parsed[$i];
 
-            if (
-                $prev instanceof Token\TSpace
-                || $prev instanceof Token\TStatic
-                || $prev instanceof Token\TReadonly
-                || $prev instanceof Token\TAbstract
-                || $prev instanceof Token\TFinal
-            ) {
+            if ($prev instanceof Token\TSpace) {
                 continue;
             }
 
-            return $prev instanceof Token\TPublic
-                || $prev instanceof Token\TProtected
-                || $prev instanceof Token\TPrivate;
+            if ($prev instanceof Token\AModifier) {
+                if (
+                    $prev instanceof Token\TPublic
+                    || $prev instanceof Token\TProtected
+                    || $prev instanceof Token\TPrivate
+                ) {
+                    return true;
+                }
+
+                continue;
+            }
+
+            return false;
         }
 
         return false;
@@ -962,62 +966,6 @@ class Parser
 
             $modifiers[] = $source;
             $i ++;
-        }
-
-        foreach ($modifiers as $idx => $mod) {
-            if ($mod->id === T_VAR) {
-                $modifiers[$idx] = new PhpToken(
-                    T_PUBLIC,
-                    'public',
-                    $mod->line,
-                    $mod->pos,
-                );
-            }
-        }
-
-        $hasVisibility = false;
-
-        foreach ($modifiers as $mod) {
-            if ($mod->is([T_PUBLIC, T_PROTECTED, T_PRIVATE])) {
-                $hasVisibility = true;
-                break;
-            }
-        }
-
-        $peekOffset = $i;
-
-        while (
-            $peekOffset < $this->sourceCount
-            && $this->source[$peekOffset]->is(T_WHITESPACE)
-        ) {
-            $peekOffset ++;
-        }
-
-        $nextSource = $peekOffset < $this->sourceCount
-            ? $this->source[$peekOffset]
-            : null;
-
-        if (
-            $this->atClassBody()
-            && ! $hasVisibility
-            && $nextSource !== null
-            && ($nextSource->is(T_FUNCTION) || $nextSource->is(T_CONST))
-        ) {
-            $modifiers[] = new PhpToken(
-                T_PUBLIC,
-                'public',
-                $nextSource->line,
-                $nextSource->pos,
-            );
-        }
-
-        if (count($modifiers) > 1) {
-            usort(
-                $modifiers,
-                fn (PhpToken $a, PhpToken $b)
-                    => self::MODIFIER_PRIORITY[$a->id]
-                        <=> self::MODIFIER_PRIORITY[$b->id],
-            );
         }
 
         foreach ($modifiers as $idx => $mod) {

@@ -50,7 +50,6 @@ class TPipeTest extends TTestCase
                     TClass::class,
                     TClassName::class,
                     TClassOpeningBrace::class,
-                    TPublic::class,
                     TFunction::class,
                     TFunctionName::class,
                     TParamsOpeningParen::class,

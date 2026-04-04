@@ -7,6 +7,6 @@ class TSplitAttribute extends TSplit
 {
     public function splitPriority() : int
     {
-        return TSplittable::ATTRIBUTE;
+        return ASplittable::ATTRIBUTE;
     }
 }

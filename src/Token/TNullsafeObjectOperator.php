@@ -13,7 +13,7 @@ use PhpToken;
  *
  * Reference: https://www.php.net/manual/en/language.oop5.php classes and objects
  */
-class TNullsafeObjectOperator extends AToken implements TSplittableFluent
+class TNullsafeObjectOperator extends AToken implements ASplittableFluent
 {
     public function splitBefore(Parser $parser) : ?TSplit
     {

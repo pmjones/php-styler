@@ -7,6 +7,6 @@ abstract class TSplitFluent extends TSplit
 {
     public function splitPriority() : int
     {
-        return TSplittable::FLUENT;
+        return ASplittable::FLUENT;
     }
 }

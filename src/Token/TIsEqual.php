@@ -12,7 +12,7 @@ use PhpStyler\Parser;
  *
  * Reference: https://www.php.net/manual/en/language.operators.comparison.php comparison operators
  */
-class TIsEqual extends AToken implements TSplittableOperator
+class TIsEqual extends AToken implements ASplittableOperator, AComparisonOperator
 {
     public function splitBefore(Parser $parser) : ?TSplit
     {

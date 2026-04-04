@@ -28,15 +28,6 @@ class TFunction extends AToken
             return;
         }
 
-        if ($parser->atClassBody() && ! $parser->hasPrevVisibility()) {
-            $parser->add(
-                new PhpToken(T_PUBLIC, 'public', $source->line, $source->pos),
-                TPublic::class,
-            );
-
-            $parser->space();
-        }
-
         $parser->addNesting($source, self::class);
     }
 }

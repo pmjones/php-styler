@@ -5,8 +5,8 @@ namespace PhpStyler;
 
 use PhpStyler\Format\DeclarationFormat;
 use PhpStyler\Format\Format;
-use PhpStyler\Rule\NormalizeTrailingCommas;
-use PhpStyler\Rule\RemoveTrailingBlankLines;
+use PhpStyler\Rule\LineRule\NormalizeTrailingCommas;
+use PhpStyler\Rule\LineRule\RemoveTrailingBlankLines;
 use PhpStyler\Styler;
 use PhpStyler\Token\TAssign;
 use PhpStyler\Token\TBinaryPlus;

@@ -5,7 +5,7 @@ namespace PhpStyler\Token;
 
 use PhpStyler\Line;
 
-class TBool extends AToken
+class TBool extends AToken implements AType
 {
     public function render(Line $line) : string
     {

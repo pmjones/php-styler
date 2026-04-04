@@ -6,7 +6,7 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TOpeningBraceless extends AToken implements TOpeningStructure
+class TOpeningBraceless extends AToken implements AnOpeningStructure
 {
     protected const OPENING_BRACE_MAP = [
         TIf::class => TIfOpeningBrace::class,

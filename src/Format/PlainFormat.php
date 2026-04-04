@@ -3,9 +3,10 @@ declare(strict_types=1);
 
 namespace PhpStyler\Format;
 
-use PhpStyler\Rule;
 use PhpStyler\Rule\LineRule;
+use PhpStyler\Rule\LineRule\ALineRule;
 use PhpStyler\Rule\TokenRule;
+use PhpStyler\Rule\TokenRule\ATokenRule;
 use PhpStyler\Token;
 
 /**
@@ -1294,9 +1295,9 @@ class PlainFormat implements Format
      * @inheritdoc
      */
     public protected(set) array $rules = [
-        Rule\RemoveBom::class => [],
-        Rule\RejoinOrphans::class => [],
-        Rule\RemoveTrailingBlankLines::class => [],
+        TokenRule\RemoveBom::class => [],
+        LineRule\RejoinOrphans::class => [],
+        LineRule\RemoveTrailingBlankLines::class => [],
     ];
 
     /**
@@ -1310,7 +1311,7 @@ class PlainFormat implements Format
      * @param 'same_line'|'next_line' $functionBracePosition
      * @param 'same_line'|'next_line' $controlBracePosition
      * @param 'lower'|'upper' $keywordCase
-     * @param array<int, class-string<TokenRule|LineRule>>|array<class-string<TokenRule|LineRule>, array<string, mixed>> $rules
+     * @param array<int, class-string<ATokenRule|ALineRule>>|array<class-string<ATokenRule|ALineRule>, array<string, mixed>> $rules
      * @param parse_as_array $parseAs
      */
     public function __construct(
@@ -1344,11 +1345,11 @@ class PlainFormat implements Format
 
         foreach ($rules as $key => $val) {
             if (is_int($key)) {
-                /** @var class-string<TokenRule|LineRule> $val */
+                /** @var class-string<ATokenRule|ALineRule> $val */
                 $this->rules[$val] = [];
             } else {
                 /**
-                 * @var class-string<TokenRule|LineRule> $key
+                 * @var class-string<ATokenRule|ALineRule> $key
                  * @var array<string, mixed> $val
                  */
                 $this->rules[$key] = $val;

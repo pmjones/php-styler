@@ -10,6 +10,6 @@ namespace PhpStyler\Token;
  *
  * Reference: https://www.php.net/manual/en/language.types.integer.php integers
  */
-class TIntegerLiteral extends AToken
+class TIntegerLiteral extends AToken implements ALiteral
 {
 }

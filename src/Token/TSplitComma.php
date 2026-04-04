@@ -7,7 +7,7 @@ class TSplitComma extends TSplit
 {
     public function splitPriority() : int
     {
-        return TSplittable::COMMA;
+        return ASplittable::COMMA;
     }
 
     public function continuation() : bool

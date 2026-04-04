@@ -32,7 +32,9 @@ class TIncludeTest extends TTestCase
                 [
                     TPhpOpeningTag::class,
                     TInclude::class,
+                    TExpressionOpeningParen::class,
                     TVariable::class,
+                    TExpressionClosingParen::class,
                     TSemicolon::class,
                 ],
             ],

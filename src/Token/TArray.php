@@ -13,7 +13,7 @@ use PhpToken;
  *
  * Reference: https://www.php.net/manual/en/language.types.array.php
  */
-class TArray extends AToken
+class TArray extends AToken implements AType
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

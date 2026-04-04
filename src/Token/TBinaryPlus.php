@@ -5,7 +5,7 @@ namespace PhpStyler\Token;
 
 use PhpStyler\Parser;
 
-class TBinaryPlus extends AToken implements TSplittableOperator
+class TBinaryPlus extends AToken implements ASplittableOperator
 {
     public function splitBefore(Parser $parser) : ?TSplit
     {

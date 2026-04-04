@@ -15,7 +15,7 @@ use PhpToken;
  *
  * Reference: https://www.php.net/manual/en/language.basic-syntax.comments.php PHPDoc style comments
  */
-class TDocComment extends AToken implements TDocblock
+class TDocComment extends AToken implements ADocblock
 {
     protected ?Docblock $docblock = null;
 
@@ -24,7 +24,7 @@ class TDocComment extends AToken implements TDocblock
         if (
             (
                 ! str_contains($source->text, "\n")
-                && $parser->hasPrev(TSplittableComma::class)
+                && $parser->hasPrev(ASplittableComma::class)
             )
             || ! $parser->hasPrevLineBreak()
             || ! $parser->hasNextEol()

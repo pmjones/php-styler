@@ -8,7 +8,7 @@ use PhpStyler\Line;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TCommentStarred extends AToken implements TDocblock
+class TCommentStarred extends AToken implements ADocblock
 {
     protected ?Docblock $docblock = null;
 

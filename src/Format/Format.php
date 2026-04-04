@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace PhpStyler\Format;
 
-use PhpStyler\Rule\LineRule;
-use PhpStyler\Rule\TokenRule;
+use PhpStyler\Rule\LineRule\ALineRule;
+use PhpStyler\Rule\TokenRule\ATokenRule;
 use PhpStyler\Token\AToken;
 
 /**
@@ -24,7 +24,7 @@ use PhpStyler\Token\AToken;
  *     case?: ?(callable(string): string),
  * }
  *
- * @phpstan-type rule_class_string class-string<TokenRule|LineRule>
+ * @phpstan-type rule_class_string class-string<ATokenRule|ALineRule>
  *
  * @phpstan-type rule_args array<string, mixed>
  *

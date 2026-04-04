@@ -19,9 +19,7 @@ class TReference extends AToken
 
         $class = match (true) {
             $prev instanceof TVariable,
-            $prev instanceof TIntegerLiteral,
-            $prev instanceof TFloatLiteral,
-            $prev instanceof TStringLiteral,
+            $prev instanceof ALiteral,
             $prev?->is(')') ?? false,
             $prev?->is(']') ?? false => TBitwiseAnd::class,
 

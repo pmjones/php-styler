@@ -10,6 +10,6 @@ namespace PhpStyler\Token;
  *
  * Reference: https://www.php.net/manual/en/language.types.callable.php callable
  */
-class TCallable extends AToken
+class TCallable extends AToken implements AType
 {
 }

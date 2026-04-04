@@ -7,7 +7,7 @@ class TSplitForSemicolon extends TSplit
 {
     public function splitPriority() : int
     {
-        return TSplittable::FOR_SEMICOLON;
+        return ASplittable::FOR_SEMICOLON;
     }
 
     public function continuation() : bool

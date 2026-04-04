@@ -7,6 +7,6 @@ class TSplitBooleanAnd extends TSplitOperator
 {
     public function splitPriority() : int
     {
-        return TSplittable::BOOLEAN_AND;
+        return ASplittable::BOOLEAN_AND;
     }
 }

@@ -3,13 +3,13 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
+use PhpStyler\Token\AComment;
+use PhpStyler\Token\ASplittable;
+use PhpStyler\Token\ASplittableComma;
 use PhpStyler\Token\AToken;
 use PhpStyler\Token\TBlankLine;
-use PhpStyler\Token\TCommentary;
 use PhpStyler\Token\TSpace;
 use PhpStyler\Token\TSplit;
-use PhpStyler\Token\TSplittable;
-use PhpStyler\Token\TSplittableComma;
 
 class Line
 {
@@ -176,7 +176,7 @@ class Line
         $lastIdx = $this->lastContentIndex();
 
         foreach ($this->tokens as $i => $token) {
-            if ($token instanceof TCommentary && $i < $lastIdx) {
+            if ($token instanceof AComment && $i < $lastIdx) {
                 return true;
             }
         }
@@ -274,12 +274,12 @@ class Line
         $result = [];
 
         foreach ($topLevel as $i => $token) {
-            if ($token instanceof TSplittableComma && $i !== $lastIndex) {
+            if ($token instanceof ASplittableComma && $i !== $lastIndex) {
                 // For actual commas (not semicolons), skip if the only remaining
                 // content after the comma is an inline comment
                 if (
                     $token->text === ','
-                    && $topLevel[$lastIndex] instanceof TCommentary
+                    && $topLevel[$lastIndex] instanceof AComment
                 ) {
                     continue;
                 }
@@ -364,7 +364,7 @@ class Line
                 continue;
             }
 
-            $priority = $token->expandPriority() ?? TSplittable::OTHER_PAREN;
+            $priority = $token->expandPriority() ?? ASplittable::OTHER_PAREN;
 
             $closerPos = $this->findTokenIndex($token->closingToken);
 

@@ -17,7 +17,6 @@ class TEcho extends ALanguageConstruct
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
-        self::tryRemoveParens($parser);
         $parser->addNesting($source, self::class);
     }
 }

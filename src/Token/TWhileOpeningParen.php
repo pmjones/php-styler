@@ -6,7 +6,7 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TWhileOpeningParen extends AToken implements TConditionOpener
+class TWhileOpeningParen extends AToken implements AConditionOpener
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
@@ -15,6 +15,6 @@ class TWhileOpeningParen extends AToken implements TConditionOpener
 
     public function expandPriority() : ?int
     {
-        return TSplittable::CONDITION_PAREN;
+        return ASplittable::CONDITION_PAREN;
     }
 }

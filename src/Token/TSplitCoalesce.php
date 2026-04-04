@@ -7,6 +7,6 @@ class TSplitCoalesce extends TSplitOperator
 {
     public function splitPriority() : int
     {
-        return TSplittable::COALESCE;
+        return ASplittable::COALESCE;
     }
 }

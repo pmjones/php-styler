@@ -72,7 +72,7 @@ class TClosingBrace extends AToken
             return;
         }
 
-        if ($parser->atNesting(TOpeningStructure::class)) {
+        if ($parser->atNesting(AnOpeningStructure::class)) {
             $parser->popNesting($parser->getNesting());
         }
 

@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
+use PhpStyler\Token\AComment;
+use PhpStyler\Token\ASplittable;
 use PhpStyler\Token\AToken;
 use PhpStyler\Token\TBlankLine;
-use PhpStyler\Token\TCommentary;
 use PhpStyler\Token\TSplit;
-use PhpStyler\Token\TSplittable;
 
 class Splitter
 {
@@ -132,11 +132,11 @@ class Splitter
         }
 
         // Expansion strategies from opener tokens
-        $hasFluent = isset($strategies[TSplittable::FLUENT]);
+        $hasFluent = isset($strategies[ASplittable::FLUENT]);
 
         foreach ($line->collectExpansionPairs() as $priority => $pair) {
             // Skip bracket expansion when fluent splits exist
-            if ($hasFluent && $priority === TSplittable::BRACKET) {
+            if ($hasFluent && $priority === ASplittable::BRACKET) {
                 continue;
             }
 
@@ -167,7 +167,7 @@ class Splitter
             $peek ++;
         }
 
-        if (isset($tokens[$peek]) && $tokens[$peek] instanceof TCommentary) {
+        if (isset($tokens[$peek]) && $tokens[$peek] instanceof AComment) {
             return $peek + 1;
         }
 

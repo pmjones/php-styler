@@ -5,7 +5,7 @@ namespace PhpStyler\Token;
 
 use PhpStyler\Parser;
 
-class TMemberDoubleColon extends AToken implements TSplittableFluent
+class TMemberDoubleColon extends AToken implements ASplittableFluent
 {
     public function splitBefore(Parser $parser) : ?TSplit
     {

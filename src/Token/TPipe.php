@@ -51,12 +51,7 @@ class TPipe extends AToken
             || $prevPrev instanceof TUnion
             || $prevPrev instanceof TIntersection
             || $prevPrev instanceof TNullable
-            || $prevPrev instanceof TPublic
-            || $prevPrev instanceof TProtected
-            || $prevPrev instanceof TPrivate
-            || $prevPrev instanceof TReadonly
-            || $prevPrev instanceof TStatic
-            || $prevPrev instanceof TVar
+            || $prevPrev instanceof AModifier
             || $prevPrev instanceof TParamsOpeningParen
             || $prevPrev instanceof TParamsComma;
     }

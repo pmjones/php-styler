@@ -14,7 +14,7 @@ use PhpToken;
  * Reference: https://www.php.net/manual/en/control-structures.declare.php declare,
  * https://www.php.net/manual/en/control-structures.alternative-syntax.php alternative syntax
  */
-class TEnddeclare extends AToken implements TClosingStructure
+class TEnddeclare extends AToken implements AClosingStructure
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

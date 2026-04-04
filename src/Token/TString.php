@@ -14,7 +14,7 @@ use PhpToken;
  * Reference: identifiers, e.g. keywords like `parent` and `self`, function names,
  * class names and more are matched. See also T_CONSTANT_ENCAPSED_STRING.
  */
-class TString extends AToken
+class TString extends AToken implements AType
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
@@ -65,7 +65,7 @@ class TString extends AToken
         if (
             $prev instanceof TUse
             || $prev instanceof TNamespace
-            || $prev instanceof TAttribution
+            || $prev instanceof AnAttribute
             || $prev instanceof TUseTrait
             || $prev instanceof TExtends
             || $prev instanceof TImplements
@@ -75,13 +75,7 @@ class TString extends AToken
             || $prev instanceof TReturnColon
             || $prev instanceof TNullable
             || $prev instanceof TParamsOpeningParen
-            || $prev instanceof TReadonly
-            || $prev instanceof TPublic
-            || $prev instanceof TProtected
-            || $prev instanceof TPrivate
-            || $prev instanceof TPublicSet
-            || $prev instanceof TProtectedSet
-            || $prev instanceof TPrivateSet
+            || $prev instanceof AModifier
             || $prev instanceof TIntersection
             || $prev instanceof TUnion
             || $prev instanceof TImplementsComma

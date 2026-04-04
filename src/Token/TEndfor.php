@@ -14,7 +14,7 @@ use PhpToken;
  * Reference: https://www.php.net/manual/en/control-structures.for.php for,
  * https://www.php.net/manual/en/control-structures.alternative-syntax.php alternative syntax
  */
-class TEndfor extends AToken implements TClosingStructure
+class TEndfor extends AToken implements AClosingStructure
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

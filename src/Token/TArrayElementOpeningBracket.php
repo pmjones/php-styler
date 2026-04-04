@@ -10,7 +10,7 @@ class TArrayElementOpeningBracket extends AToken
 {
     public function expandPriority() : ?int
     {
-        return TSplittable::ELEMENT_BRACKET;
+        return ASplittable::ELEMENT_BRACKET;
     }
 
     public static function parse(Parser $parser, PhpToken $source) : void

@@ -10,7 +10,6 @@ abstract class ALanguageConstruct extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
-        self::tryRemoveParens($parser);
         parent::parse($parser, $source);
     }
 

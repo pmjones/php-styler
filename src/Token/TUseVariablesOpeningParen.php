@@ -6,7 +6,7 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TUseVariablesOpeningParen extends AToken implements TCommaSeparated
+class TUseVariablesOpeningParen extends AToken implements ACommaListOpener
 {
     public function commaClass() : string
     {
@@ -15,7 +15,7 @@ class TUseVariablesOpeningParen extends AToken implements TCommaSeparated
 
     public function expandPriority() : ?int
     {
-        return TSplittable::OTHER_PAREN;
+        return ASplittable::OTHER_PAREN;
     }
 
     public static function parse(Parser $parser, PhpToken $source) : void

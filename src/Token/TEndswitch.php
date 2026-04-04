@@ -14,7 +14,7 @@ use PhpToken;
  * Reference: https://www.php.net/manual/en/control-structures.switch.php switch,
  * https://www.php.net/manual/en/control-structures.alternative-syntax.php alternative syntax
  */
-class TEndswitch extends AToken implements TClosingStructure
+class TEndswitch extends AToken implements AClosingStructure
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

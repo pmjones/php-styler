@@ -32,7 +32,9 @@ class TRequireTest extends TTestCase
                 [
                     TPhpOpeningTag::class,
                     TRequire::class,
+                    TExpressionOpeningParen::class,
                     TVariable::class,
+                    TExpressionClosingParen::class,
                     TSemicolon::class,
                 ],
             ],

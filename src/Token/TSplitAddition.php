@@ -7,6 +7,6 @@ class TSplitAddition extends TSplitOperator
 {
     public function splitPriority() : int
     {
-        return TSplittable::ADDITION;
+        return ASplittable::ADDITION;
     }
 }

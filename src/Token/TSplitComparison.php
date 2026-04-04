@@ -7,6 +7,6 @@ class TSplitComparison extends TSplitOperator
 {
     public function splitPriority() : int
     {
-        return TSplittable::COMPARISON;
+        return ASplittable::COMPARISON;
     }
 }

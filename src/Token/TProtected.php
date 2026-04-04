@@ -13,7 +13,7 @@ use PhpToken;
  *
  * Reference: https://www.php.net/manual/en/language.oop5.php classes and objects
  */
-class TProtected extends AToken
+class TProtected extends AToken implements AModifier
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

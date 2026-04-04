@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
-use PhpStyler\Rule\NormalizeTrailingCommas;
-use PhpStyler\Rule\RejoinOrphans;
-use PhpStyler\Rule\RemoveTrailingBlankLines;
+use PhpStyler\Rule\LineRule\NormalizeTrailingCommas;
+use PhpStyler\Rule\LineRule\RejoinOrphans;
+use PhpStyler\Rule\LineRule\RemoveTrailingBlankLines;
 use PhpStyler\Styler;
 use PhpStyler\TestFormat;
 use PHPUnit\Framework\Attributes\DataProvider;

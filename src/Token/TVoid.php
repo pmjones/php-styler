@@ -3,6 +3,6 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-class TVoid extends AToken
+class TVoid extends AToken implements AType
 {
 }

@@ -13,7 +13,7 @@ use PhpToken;
  *
  * Reference: https://www.php.net/manual/en/language.variables.scope.php variable scope
  */
-class TStatic extends AToken
+class TStatic extends AToken implements AModifier
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

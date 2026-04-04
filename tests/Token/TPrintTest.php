@@ -32,7 +32,9 @@ class TPrintTest extends TTestCase
                 [
                     TPhpOpeningTag::class,
                     TPrint::class,
+                    TExpressionOpeningParen::class,
                     TVariable::class,
+                    TExpressionClosingParen::class,
                     TSemicolon::class,
                 ],
             ],
