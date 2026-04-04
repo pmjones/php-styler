@@ -28,7 +28,6 @@ class SymfonyFormat extends DeclarationFormat
      */
     public protected(set) array $rules = [
         TokenRule\RemoveBom::class => [],
-        // source de-opinionation
         TokenRule\RemoveEmptyAnonymousClassParens::class => [],
         TokenRule\RemoveEmptyAttributeParens::class => [],
         TokenRule\InjectNewParens::class => [],
@@ -39,16 +38,14 @@ class SymfonyFormat extends DeclarationFormat
         TokenRule\ConvertVarToPublic::class => [],
         TokenRule\InsertPublicVisibility::class => [],
         TokenRule\ReorderModifiers::class => [],
-
-        // import cleanup
         TokenRule\NormalizeImports::class => [],
         TokenRule\OrderTypes::class => [],
         TokenRule\MergeParenBracket::class => [],
+        TokenRule\ConvertToYodaConditions::class => [],
+        TokenRule\NormalizeMemberSpacing::class => [],
         LineRule\RejoinOrphans::class => [],
         LineRule\NormalizeTrailingCommas::class => [],
         LineRule\RemoveTrailingBlankLines::class => [],
-        TokenRule\ConvertToYodaConditions::class => [],
-        TokenRule\NormalizeMemberSpacing::class => [],
     ];
 
     /**

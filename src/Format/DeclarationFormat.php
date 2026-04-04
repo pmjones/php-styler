@@ -21,9 +21,7 @@ class DeclarationFormat extends PlainFormat
      * @inheritdoc
      */
     public protected(set) array $rules = [
-        // file-level cleanup
         TokenRule\RemoveBom::class => [],
-        // source de-opinionation
         TokenRule\RemoveEmptyAnonymousClassParens::class => [],
         TokenRule\RemoveEmptyAttributeParens::class => [],
         TokenRule\InjectNewParens::class => [],
@@ -38,12 +36,8 @@ class DeclarationFormat extends PlainFormat
         TokenRule\ConvertToShortListSyntax::class => [],
         TokenRule\RemovePhpClosingTag::class => [],
         TokenRule\RemoveRepeatedSemicolons::class => [],
-
-        // import cleanup
         TokenRule\NormalizeImports::class => [],
-        // types
         TokenRule\OrderTypes::class => [],
-        // structural formatting
         TokenRule\MergeParenBracket::class => [],
         LineRule\RejoinOrphans::class => [],
         LineRule\NormalizeTrailingCommas::class => [],

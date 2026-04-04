@@ -30,7 +30,6 @@ class DoctrineFormat extends DeclarationFormat
      */
     public protected(set) array $rules = [
         TokenRule\RemoveBom::class => [],
-        // source de-opinionation
         TokenRule\RemoveEmptyAnonymousClassParens::class => [],
         TokenRule\RemoveEmptyAttributeParens::class => [],
         TokenRule\InjectNewParens::class => [],
@@ -41,16 +40,14 @@ class DoctrineFormat extends DeclarationFormat
         TokenRule\ConvertVarToPublic::class => [],
         TokenRule\InsertPublicVisibility::class => [],
         TokenRule\ReorderModifiers::class => [],
-
-        // import cleanup
         TokenRule\NormalizeImports::class => [],
         TokenRule\OrderTypes::class => ['order' => ['*', Token\TNull::class]],
         TokenRule\MergeParenBracket::class => [],
+        TokenRule\ConvertFromYodaConditions::class => [],
+        TokenRule\NormalizeMemberSpacing::class => [],
         LineRule\RejoinOrphans::class => [],
         LineRule\NormalizeTrailingCommas::class => [],
         LineRule\RemoveTrailingBlankLines::class => [],
-        TokenRule\ConvertFromYodaConditions::class => [],
-        TokenRule\NormalizeMemberSpacing::class => [],
     ];
 
     /**
