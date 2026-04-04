@@ -39,8 +39,11 @@ return new Config(
 
 ### Common Adjustments
 
-`PlainFormat` (and by extension `DeclarationFormat`) provides constructor
-parameters for frequently customized behavior:
+`PlainFormat` provides constructor parameters for frequently customized
+behavior. `DeclarationFormat` hardcodes these to opinionated defaults (shown
+below) and does not accept them as constructor parameters; to customize them,
+extend `DeclarationFormat` and call the protected setter methods (see
+[Extending a Format Class](#extending-a-format-class)).
 
 | Parameter | Default (Plain) | Default (Declaration) | Values |
 |---|---|---|---|
@@ -53,12 +56,12 @@ parameters for frequently customized behavior:
 | `blankLineAfterBlock` | `false` | `true` | `true` (blank line after closing braces), `false` |
 
 ```php
-use PhpStyler\Format\DeclarationFormat;
+use PhpStyler\Format\PlainFormat;
 
 return new Config(
     files: new Files(__DIR__ . '/src'),
     cache: __DIR__ . '/.php-styler.cache',
-    format: new DeclarationFormat(
+    format: new PlainFormat(
         lineLen: 120,
         controlBracePosition: 'next_line',
         concatenationSpacing: false,
@@ -136,7 +139,7 @@ parameters):
 
 ```php
 use PhpStyler\Format\PlainFormat;
-use PhpStyler\Rule;
+use PhpStyler\Rule\TokenRule;
 use PhpStyler\Token;
 
 return new Config(
@@ -144,8 +147,8 @@ return new Config(
     cache: __DIR__ . '/.php-styler.cache',
     format: new PlainFormat(
         rules: [
-            Rule\NormalizeImports::class => [],
-            Rule\NormalizeTypeOrder::class => ['order' => ['*', Token\TNull::class]],
+            TokenRule\NormalizeImports::class => [],
+            TokenRule\NormalizeTypeOrder::class => ['order' => ['*', Token\TNull::class]],
         ],
     ),
 );
@@ -161,14 +164,28 @@ Available rules:
 |---|---|
 | `CollapseEmptyBody` | Collapse empty method/function bodies to `{}` on one line |
 | `ConvertFromYodaConditions` | Convert `null === $x` to `$x === null` |
+| `ConvertToShortArraySyntax` | Convert `array()` to `[]` |
+| `ConvertToShortListSyntax` | Convert `list()` to `[]` |
 | `ConvertToYodaConditions` | Convert `$x === null` to `null === $x` |
+| `ConvertVarToPublic` | Convert `var` to `public` |
+| `ExpandConstDeclarations` | Expand `const A = 1, B = 2` into separate declarations |
+| `ExpandGroupedImports` | Expand `use Foo\{Bar, Baz}` into individual statements |
+| `ExpandPropertyDeclarations` | Expand `public int $a, $b` into separate declarations |
+| `InsertNewParens` | Add `()` to bare `new Foo` |
+| `InsertPublicVisibility` | Add `public` to class functions/consts without visibility |
+| `MergeParenBrace` | Merge closing paren and opening brace onto one line |
 | `MergeParenBracket` | Merge `])` onto the same line |
-| `NormalizeMemberSpacing` | Normalize blank lines between class members |
 | `NormalizeImports` | Remove unused and sort `use` statements |
+| `NormalizeMemberSpacing` | Normalize blank lines between class members |
+| `NormalizeModifierOrder` | Sort modifiers by priority (abstract/final, visibility, static, readonly) |
 | `NormalizeTrailingCommas` | Normalize trailing commas in split lists |
 | `NormalizeTypeOrder` | Sort union/intersection types; accepts `order` parameter |
-| `MergeParenBrace` | Merge closing paren and opening brace onto one line |
 | `RemoveBom` | Remove UTF-8 byte-order mark |
+| `RemoveEmptyAnonymousClassParens` | Remove empty `()` from `new class()` |
+| `RemoveEmptyAttributeParens` | Remove empty `()` from `#[Attr()]` |
+| `RemoveLanguageConstructParens` | Remove optional parens from `echo()`, `print()`, etc. |
+| `RemovePhpClosingTag` | Remove trailing `?>` |
+| `RemoveRepeatedSemicolons` | Remove duplicate `;;` |
 | `RemoveTrailingBlankLines` | Remove trailing blank lines from blocks |
 
 ### Parse As
@@ -228,7 +245,8 @@ declare(strict_types=1);
 namespace My\Project;
 
 use PhpStyler\Format\DeclarationFormat;
-use PhpStyler\Rule;
+use PhpStyler\Rule\LineRule;
+use PhpStyler\Rule\TokenRule;
 use PhpStyler\Token;
 
 class MyFormat extends DeclarationFormat
@@ -237,12 +255,7 @@ class MyFormat extends DeclarationFormat
      * @inheritdoc
      */
     public protected(set) array $parseAs = [
-        Token\TList::class => Token\TListAsArray::class,
-        Token\TArray::class => Token\TArrayAsShort::class,
         Token\TElse::class => Token\TElseAsElseIf::class,
-        Token\TStringLiteral::class => Token\TStringLiteralAsSingleQuote::class,
-        Token\TPhpClosingTag::class => Token\TPhpClosingTagRemoved::class,
-        Token\TSemicolon::class => Token\TSemicolonSkipRepeats::class,
         Token\TVariable::class => Token\TVariableWithExplicitInterpolation::class,
     ];
 
@@ -250,14 +263,14 @@ class MyFormat extends DeclarationFormat
      * @inheritdoc
      */
     public protected(set) array $rules = [
-        Rule\RemoveBom::class => [],
-        Rule\NormalizeImports::class => [],
-        Rule\NormalizeTypeOrder::class => [],
-        Rule\MergeParenBracket::class => [],
-        Rule\MergeParenBrace::class => [],
-        Rule\NormalizeTrailingCommas::class => [],
-        Rule\RemoveTrailingBlankLines::class => [],
-        Rule\NormalizeMemberSpacing::class => [],
+        TokenRule\RemoveBom::class => [],
+        TokenRule\NormalizeImports::class => [],
+        TokenRule\NormalizeTypeOrder::class => [],
+        TokenRule\MergeParenBracket::class => [],
+        TokenRule\NormalizeMemberSpacing::class => [],
+        LineRule\MergeParenBrace::class => [],
+        LineRule\NormalizeTrailingCommas::class => [],
+        LineRule\RemoveTrailingBlankLines::class => [],
     ];
 
     /**
@@ -270,6 +283,7 @@ class MyFormat extends DeclarationFormat
         bool $indentTab = false,
         array $styles = [],
         array $rules = [],
+        array $parseAs = [],
     ) {
         // styles specific to this format
         $myStyles = [
@@ -293,6 +307,7 @@ class MyFormat extends DeclarationFormat
             indentTab: $indentTab,
             styles: $myStyles,
             rules: $rules,
+            parseAs: $parseAs,
         );
 
         // post-construction adjustments

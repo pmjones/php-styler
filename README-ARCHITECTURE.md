@@ -124,7 +124,7 @@ Parser (src/Parser.php)
     │  applies Styles (spacing, line breaks, casing) from Format
     │  faithfully represents source — no opinionated transforms
     ▼
-Array of AToken objects (~520 classes in src/Token/)
+Array of AToken objects (527 classes in src/Token/)
     │
     ▼
 Token Rules (src/Rule/TokenRule/ implementations)
@@ -166,7 +166,7 @@ Rendered output
 | `Parser` | Maps PhpTokens to AToken subclasses; applies styles; injects synthetic tokens |
 | `AToken` | Abstract base for all 507 token classes; extends `PhpToken`; carries its `Style` instance |
 | `Style` | Per-token spacing, line breaks, blank lines, casing (`readonly`) |
-| `Format` (interface) | Declares `eol`, `lineLen`, `indentLen`, `indentTab`, `parseAs`, `styles`, `rules` |
+| `AFormat` (interface) | Declares `eol`, `lineLen`, `indentLen`, `indentTab`, `parseAs`, `styles`, `rules` |
 | `PlainFormat` | Base format with styles for all token types |
 | `DeclarationFormat` | Extends PlainFormat with opinionated rules and parseAs |
 | `Styler` | Pipeline orchestrator: parse → tokenRules → assemble → split → lineRules → render |
@@ -177,7 +177,7 @@ Rendered output
 | `Nesting` | Tracks nesting context for tokens |
 | `Docblock` / `DocblockTag` | Docblock structure parsing |
 
-### Token System (~520 classes)
+### Token System (527 classes)
 
 Each PHP token and synthetic construct has a dedicated `AToken` subclass.
 
@@ -261,7 +261,7 @@ The Parser (`src/Parser.php`) is the most complex class. Key mechanics:
    large `TOKEN_CLASS` constant array plus auto-naming conventions (e.g.,
    `T_IF` maps to `TIf`, `T_ABSTRACT` maps to `TAbstract`).
 
-2. **Parse-as substitution.** If the `Format::$parseAs` array maps a token class
+2. **Parse-as substitution.** If the `AFormat::$parseAs` array maps a token class
    to another, the substitute class is used instead (e.g., `TArray` →
    `TArrayAsShort` converts `array()` to `[]`).
 
@@ -275,7 +275,7 @@ The Parser (`src/Parser.php`) is the most complex class. Key mechanics:
      (e.g., adding braces to braceless control structures)
 
 4. **Style application.** When `add()` is called, the Parser looks up the token
-   class in `Format::$styles`, creates a `Style` instance, attaches it to the
+   class in `AFormat::$styles`, creates a `Style` instance, attaches it to the
    token (`$token->style`), and applies `spaceBefore`, `spaceAfter`,
    `lineBreakBefore`, `lineBreakAfter`, `blankLineBefore`, `blankLineAfter`,
    and `case` transformation. The attached style is later used by the Splitter
@@ -283,7 +283,7 @@ The Parser (`src/Parser.php`) is the most complex class. Key mechanics:
 
 ### Format System
 
-The `Format` interface defines:
+The `AFormat` interface defines:
 
 - `$eol`, `$lineLen`, `$indentLen`, `$indentTab` — layout settings
 - `$parseAs` — token-class substitution map
@@ -325,7 +325,7 @@ PhpStyler\Rule\ARule                        (findNextContent, findPrevContent)
 Token rules operate on the `AToken[]` array after parsing, before assembly.
 Line rules operate on the `Line[]` array after splitting.
 
-The `Format::$rules` array specifies which rules to instantiate and their
+The `AFormat::$rules` array specifies which rules to instantiate and their
 constructor arguments. The `Styler` instantiates them at construction time and
 applies them in declared order.
 
@@ -387,7 +387,7 @@ unified priority-ordered strategy system:
 | **Input parsing** | nikic/php-parser → AST nodes | PhpToken::tokenize() → token stream |
 | **Core model** | 89 Printable classes (AST constructs) | 507 AToken classes (lexical tokens) |
 | **Transformation** | Visitor pattern on AST; Printer flattening | Token `parse()` callbacks; synthetic token injection |
-| **Styling** | Imperative `s*()` method overrides on Styler | Declarative `styles` array on Format |
+| **Styling** | Imperative `s*()` method overrides on Styler | Declarative `styles` array on AFormat |
 | **Splitting** | Integrated in Styler | Separate Splitter stage with priority-ordered TSplit tokens |
 | **Rules** | None (all logic in Styler methods) | Composable TokenRule and LineRule implementations |
 | **Customization** | Subclass Styler, override methods | Configure Format with styles/rules/parseAs arrays, or extend Format |
