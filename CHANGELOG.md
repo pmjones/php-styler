@@ -1,5 +1,13 @@
 # Change Log
 
+## 0.19.1
+
+- **Fixed `NormalizeImports` truncating output at closure `use` clauses.** The
+  rule mistakenly treated the `use` keyword in `function () use ($var)` as a
+  file-level import, consuming all remaining tokens and silently dropping them
+  from output. Introduced a new `TUseVariables` token class to distinguish
+  closure variable bindings from import statements at the parser level.
+
 ## 0.19.0
 
 - **Most transforms extracted to rules.** Most source-manipulating behavior has
