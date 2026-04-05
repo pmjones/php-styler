@@ -15,7 +15,7 @@ class TOpeningParen extends AToken
 
             TDeclare::class => TDeclareDirectivesOpeningParen::class,
 
-            TUse::class => TUseVariablesOpeningParen::class,
+            TUseVariables::class => TUseVariablesOpeningParen::class,
 
             TElseif::class => TElseifOpeningParen::class,
             TIf::class => TIfOpeningParen::class,

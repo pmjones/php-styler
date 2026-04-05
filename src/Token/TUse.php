@@ -7,9 +7,9 @@ use PhpStyler\Parser;
 use PhpToken;
 
 /**
- * Token: T_USE
+ * Token: T_USE (file-level import)
  *
- * Syntax: use
+ * Syntax: use Foo\Bar;
  *
  * Reference: https://www.php.net/manual/en/language.namespaces.php namespaces
  */
@@ -19,6 +19,11 @@ class TUse extends AToken
     {
         if ($parser->atNesting(TClasslikeOpeningBrace::class)) {
             $parser->parse($source, TUseTrait::class);
+            return;
+        }
+
+        if ($parser->atNesting(TAnonymousFunction::class)) {
+            $parser->parse($source, TUseVariables::class);
             return;
         }
 

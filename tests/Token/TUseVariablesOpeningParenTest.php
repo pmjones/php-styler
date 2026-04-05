@@ -25,7 +25,7 @@ class TUseVariablesOpeningParenTest extends TTestCase
                     TAnonymousFunction::class,
                     TParamsOpeningParen::class,
                     TParamsClosingParen::class,
-                    TUse::class,
+                    TUseVariables::class,
                     TUseVariablesOpeningParen::class,
                     TVariable::class,
                     TUseVariablesClosingParen::class,

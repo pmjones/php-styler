@@ -423,6 +423,39 @@ class NormalizeImportsTest extends TestCase
                 EXPECT,
             ],
 
+            // --- closure use is not an import ---
+            'closure-use-not-treated-as-import' => [
+                <<<'CODE'
+                <?php
+                class Baz
+                {
+                    public function qux() : \Closure
+                    {
+                        $x = 1;
+                        $fn = function () use ($x) : int {
+                            return $x;
+                        };
+                        return $fn;
+                    }
+                }
+                CODE,
+                <<<'EXPECT'
+                <?php
+                class Baz
+                {
+                    public function qux() : \Closure
+                    {
+                        $x = 1;
+                        $fn = function () use ($x) : int {
+                            return $x;
+                        };
+                        return $fn;
+                    }
+                }
+
+                EXPECT,
+            ],
+
             // --- combined test ---
             'remove-unused-then-order' => [
                 <<<'CODE'

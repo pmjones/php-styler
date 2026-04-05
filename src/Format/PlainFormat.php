@@ -1181,6 +1181,9 @@ class PlainFormat implements AFormat
         Token\TUse::class => [
             'spaceAfter' => true,
         ],
+        Token\TUseVariables::class => [
+            'spaceAfter' => true,
+        ],
         Token\TUseAlias::class => [
             'spaceAfter' => true,
         ],

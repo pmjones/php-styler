@@ -16,6 +16,6 @@ class TUseVariablesClosingParen extends AToken
             TUseVariablesOpeningParen::class,
         );
 
-        $parser->popNesting(TUse::class);
+        $parser->popNesting(TUseVariables::class);
     }
 }
