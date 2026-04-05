@@ -88,7 +88,13 @@ class TString extends AToken implements AType
         }
 
         if ($prev instanceof TFunction || $prev instanceof TReference) {
-            $parser->add($source, TFunctionName::class);
+            $class = TFunctionName::class;
+
+            if ($parser->atNesting(TMagicMethod::class)) {
+                $class = TMagicMethodName::class;
+            }
+
+            $parser->add($source, $class);
             return;
         }
 

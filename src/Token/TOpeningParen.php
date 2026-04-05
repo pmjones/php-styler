@@ -29,6 +29,7 @@ class TOpeningParen extends AToken
             TCatch::class,
             TFn::class,
             TFunction::class,
+            TMagicMethod::class,
             TAnonymousFunction::class => TParamsOpeningParen::class,
 
             TAnonymousClass::class => TAnonymousClassArgsOpeningParen::class,

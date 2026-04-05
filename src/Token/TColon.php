@@ -45,6 +45,7 @@ class TColon extends AToken
 
             TFn::class,
             TFunction::class,
+            TMagicMethod::class,
             TAnonymousFunction::class => TReturnColon::class,
 
             TElvisQuestion::class => TElvisColon::class,

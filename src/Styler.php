@@ -27,11 +27,6 @@ class Styler
      */
     private array $lineRules = [];
 
-    public static function fromConfig(Config $config) : self
-    {
-        return new self($config->format);
-    }
-
     public function __construct(private AFormat $format = new PlainFormat())
     {
         $lineFactory = new LineFactory(
@@ -65,6 +60,11 @@ class Styler
         $lines = $this->split($lines);
         $lines = $this->applyLineRules($lines);
         return $this->render($lines);
+    }
+
+    public static function fromConfig(Config $config) : self
+    {
+        return new self($config->format);
     }
 
     /**

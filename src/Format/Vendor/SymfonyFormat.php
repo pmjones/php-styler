@@ -42,7 +42,7 @@ class SymfonyFormat extends DeclarationFormat
         TokenRule\NormalizeTypeOrder::class => [],
         TokenRule\MergeParenBracket::class => [],
         TokenRule\ConvertToYodaConditions::class => [],
-        TokenRule\NormalizeMemberSpacing::class => [],
+        LineRule\NormalizeMemberSpacing::class => [],
         LineRule\MergeParenBrace::class => [],
         LineRule\NormalizeTrailingCommas::class => [],
         LineRule\RemoveTrailingBlankLines::class => [],

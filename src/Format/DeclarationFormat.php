@@ -41,6 +41,7 @@ class DeclarationFormat extends PlainFormat
         TokenRule\MergeParenBracket::class => [],
         LineRule\MergeParenBrace::class => [],
         LineRule\NormalizeTrailingCommas::class => [],
+        LineRule\NormalizeMemberOrder::class => [],
         LineRule\RemoveTrailingBlankLines::class => [],
     ];
 

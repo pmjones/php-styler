@@ -100,6 +100,7 @@ class TClosingBrace extends AToken
 
             // function
             TFunction::class => TFunctionClosingBrace::class,
+            TMagicMethod::class => TMagicMethodClosingBrace::class,
 
             // control
             TCatch::class => TCatchClosingBrace::class,

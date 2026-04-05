@@ -176,6 +176,7 @@ Available rules:
 | `MergeParenBrace` | Merge closing paren and opening brace onto one line |
 | `MergeParenBracket` | Merge `])` onto the same line |
 | `NormalizeImports` | Remove unused and sort `use` statements |
+| `NormalizeMemberOrder` | Reorder class members by type; accepts `order` parameter |
 | `NormalizeMemberSpacing` | Normalize blank lines between class members |
 | `NormalizeModifierOrder` | Sort modifiers by priority (abstract/final, visibility, static, readonly) |
 | `NormalizeTrailingCommas` | Normalize trailing commas in split lists |
@@ -267,8 +268,8 @@ class MyFormat extends DeclarationFormat
         TokenRule\NormalizeImports::class => [],
         TokenRule\NormalizeTypeOrder::class => [],
         TokenRule\MergeParenBracket::class => [],
-        TokenRule\NormalizeMemberSpacing::class => [],
         LineRule\MergeParenBrace::class => [],
+        LineRule\NormalizeMemberSpacing::class => [],
         LineRule\NormalizeTrailingCommas::class => [],
         LineRule\RemoveTrailingBlankLines::class => [],
     ];

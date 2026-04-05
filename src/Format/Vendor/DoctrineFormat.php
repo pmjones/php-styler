@@ -46,7 +46,7 @@ class DoctrineFormat extends DeclarationFormat
         ],
         TokenRule\MergeParenBracket::class => [],
         TokenRule\ConvertFromYodaConditions::class => [],
-        TokenRule\NormalizeMemberSpacing::class => [],
+        LineRule\NormalizeMemberSpacing::class => [],
         LineRule\MergeParenBrace::class => [],
         LineRule\NormalizeTrailingCommas::class => [],
         LineRule\RemoveTrailingBlankLines::class => [],

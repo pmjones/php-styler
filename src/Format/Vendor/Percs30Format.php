@@ -41,7 +41,7 @@ class Percs30Format extends DeclarationFormat
         TokenRule\NormalizeTypeOrder::class => [],
         TokenRule\MergeParenBracket::class => [],
         TokenRule\CollapseEmptyBody::class => [],
-        TokenRule\NormalizeMemberSpacing::class => [],
+        LineRule\NormalizeMemberSpacing::class => [],
         LineRule\MergeParenBrace::class => [],
         LineRule\NormalizeTrailingCommas::class => [],
         LineRule\RemoveTrailingBlankLines::class => [],

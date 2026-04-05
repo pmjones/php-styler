@@ -135,21 +135,6 @@ class Parser
     }
 
     /**
-     * @param class-string<AToken> $class
-     */
-    public function getStyle(string $class) : Style
-    {
-        if (isset($this->styles[$class])) {
-            return $this->styles[$class];
-        }
-
-        $args = $this->format->styles[$class] ?? [];
-        $style = new Style(...$args);
-        $this->styles[$class] = $style;
-        return $style;
-    }
-
-    /**
      * @return array<int, AToken>
      */
     public function __invoke(string $code) : array
@@ -187,6 +172,21 @@ class Parser
         $this->removePrevWhitespace();
 
         return $this->parsed;
+    }
+
+    /**
+     * @param class-string<AToken> $class
+     */
+    public function getStyle(string $class) : Style
+    {
+        if (isset($this->styles[$class])) {
+            return $this->styles[$class];
+        }
+
+        $args = $this->format->styles[$class] ?? [];
+        $style = new Style(...$args);
+        $this->styles[$class] = $style;
+        return $style;
     }
 
     private function getTokenClass(PhpToken $source) : string
@@ -703,7 +703,7 @@ class Parser
         ] = [$this->parsed[$b], $this->parsed[$a]];
     }
 
-    public function getNextSource() : ?PhpToken
+    public function getNextSource(int $skip = 0) : ?PhpToken
     {
         $sourceOffset = $this->sourceOffset + 1;
 
@@ -711,7 +711,11 @@ class Parser
             $source = $this->source[$sourceOffset];
 
             if (! $source->isIgnorable()) {
-                return $source;
+                if ($skip <= 0) {
+                    return $source;
+                }
+
+                $skip --;
             }
 
             $sourceOffset ++;

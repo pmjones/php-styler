@@ -30,7 +30,10 @@ class TOpeningBrace extends AToken
             $parser->popNesting(TReturnColon::class);
         }
 
-        if ($parser->getNesting() === TFunction::class) {
+        if (
+            $parser->getNesting() === TFunction::class
+            || $parser->getNesting() === TMagicMethod::class
+        ) {
             $parser->parse($source, TFunctionOpeningBrace::class);
             return;
         }

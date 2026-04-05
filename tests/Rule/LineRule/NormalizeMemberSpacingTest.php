@@ -1,10 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace PhpStyler\Rule\TokenRule;
+namespace PhpStyler\Rule\LineRule;
 
 use PhpStyler\Format\DeclarationFormat;
-use PhpStyler\Rule\LineRule\RemoveTrailingBlankLines;
 use PhpStyler\Styler;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -16,8 +15,8 @@ class NormalizeMemberSpacingTest extends TestCase
     {
         $styler = new Styler(
             new DeclarationFormat(rules: [
-                NormalizeMemberSpacing::class,
-                RemoveTrailingBlankLines::class,
+                NormalizeMemberSpacing::class => [],
+                RemoveTrailingBlankLines::class => [],
             ]),
         );
 

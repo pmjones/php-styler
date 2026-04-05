@@ -22,20 +22,6 @@ abstract class AToken extends PhpToken
 
     public ?Style $style = null;
 
-    public function isIgnorable() : bool
-    {
-        return $this->id === self::SYNTHETIC || parent::isIgnorable();
-    }
-
-    public static function parse(Parser $parser, PhpToken $source) : void
-    {
-        $parser->add($source, static::class);
-
-        if ($parser->getStyle(static::class)->spaceAfter !== false) {
-            $parser->space();
-        }
-    }
-
     public function __debugInfo() : array
     {
         $vars = ['CLASS' => get_class($this), 'TOKEN' => $this->getTokenName()];
@@ -50,6 +36,20 @@ abstract class AToken extends PhpToken
             : null;
 
         return $info;
+    }
+
+    public function isIgnorable() : bool
+    {
+        return $this->id === self::SYNTHETIC || parent::isIgnorable();
+    }
+
+    public static function parse(Parser $parser, PhpToken $source) : void
+    {
+        $parser->add($source, static::class);
+
+        if ($parser->getStyle(static::class)->spaceAfter !== false) {
+            $parser->space();
+        }
     }
 
     public function isContent() : bool

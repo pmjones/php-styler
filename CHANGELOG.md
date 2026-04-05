@@ -1,5 +1,36 @@
 # Change Log
 
+## NEXT
+
+- **Added `NormalizeMemberOrder` line rule.** Reorders class members into a
+  configurable canonical order: trait uses, enum cases, constants, properties,
+  magic methods, then regular methods. Accepts an `order` parameter to customize
+  the sequence. Blank lines between reordered members are determined by the
+  `blankLineAfter` token style. Skips reassembly when order is unchanged.
+  Included in `DeclarationFormat` by default.
+
+- **Converted `NormalizeMemberSpacing` from TokenRule to LineRule.** Now runs
+  after assembly and splitting, giving it access to line structure. Sole
+  authority for overriding default inter-member spacing (e.g., collapsing blank
+  lines between consecutive constants). Added `betweenMagicMethods` parameter.
+
+- **Fixed anonymous class constants and properties not getting specialized
+  ending tokens.** `TSemicolon` now recognizes `TAnonymousOpeningBrace` as a
+  class body context, so constants get `TConstEndSemicolon` and properties get
+  `TPropertyEndSemicolon` inside anonymous classes.
+
+- **Added magic method tokens.** The parser now identifies PHP magic methods
+  (`__construct`, `__destruct`, `__toString`, etc.) at parse time via
+  `TMagicMethod`, `TMagicMethodName`, `TMagicMethodClosingBrace`, and
+  `TAbstractMagicMethodEndSemicolon` tokens. Only recognized PHP magic method
+  names are classified; user-defined `__` methods are not affected.
+
+- **Fixed `InsertPublicVisibility` not inserting `public` after method bodies.**
+  The scope stack was never popped for closing structures because
+  `AClosingStructure.openingToken` points to the semantic token (e.g.
+  `TFunction`), not the brace token (`TFunctionOpeningBrace`), so the
+  `AnOpeningStructure` instanceof check always failed.
+
 ## 0.19.1
 
 - **Fixed `NormalizeImports` truncating output at closure `use` clauses.** The

@@ -33,7 +33,13 @@ class TSemicolon extends AToken
                 => TPropertyHookSetAbstractSemicolon::class,
 
             TConst::class
-                => $parser->atNesting(TConst::class, TClasslikeOpeningBrace::class)
+                => (
+                    $parser->atNesting(TConst::class, TClasslikeOpeningBrace::class)
+                    || $parser->atNesting(
+                        TConst::class,
+                        TAnonymousOpeningBrace::class,
+                    )
+                )
                 ? TConstEndSemicolon::class
                 : TNamespaceConstEndSemicolon::class,
 
@@ -46,8 +52,13 @@ class TSemicolon extends AToken
             TTernaryColon::class => TTernaryEndSemicolon::class,
             TFnDoubleArrow::class => TFnEndSemicolon::class,
 
-            TReturnColon::class,
+            TReturnColon::class
+                => $parser->atNesting(TReturnColon::class, TMagicMethod::class)
+                ? TAbstractMagicMethodEndSemicolon::class
+                : TAbstractMethodEndSemicolon::class,
+
             TFunction::class => TAbstractMethodEndSemicolon::class,
+            TMagicMethod::class => TAbstractMagicMethodEndSemicolon::class,
 
             TUseTrait::class => TUseTraitEndSemicolon::class,
             TYield::class => TYieldEndSemicolon::class,
@@ -60,7 +71,8 @@ class TSemicolon extends AToken
             TClassOpeningBrace::class,
             TEnumOpeningBrace::class,
             TInterfaceOpeningBrace::class,
-            TTraitOpeningBrace::class => TPropertyEndSemicolon::class,
+            TTraitOpeningBrace::class,
+            TAnonymousOpeningBrace::class => TPropertyEndSemicolon::class,
 
             default => null,
         };

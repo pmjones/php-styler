@@ -59,11 +59,11 @@ class InsertPublicVisibility extends ATokenRule
                 continue;
             }
 
-            if (
-                $token instanceof AClosingStructure
-                && $token->openingToken instanceof AnOpeningStructure
-            ) {
-                array_pop($scopeStack);
+            if ($token instanceof AClosingStructure) {
+                if ($scopeStack !== []) {
+                    array_pop($scopeStack);
+                }
+
                 $result[] = $token;
                 continue;
             }

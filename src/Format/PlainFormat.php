@@ -20,6 +20,11 @@ class PlainFormat implements AFormat
      * @php-styler-expansive
      */
     public protected(set) array $styles = [
+        Token\TAbstractMagicMethodEndSemicolon::class => [
+            'spaceBefore' => false,
+            'spaceAfter' => true,
+            'blankLineAfter' => true,
+        ],
         Token\TAbstractMethodEndSemicolon::class => [
             'spaceBefore' => false,
             'spaceAfter' => true,
@@ -667,6 +672,9 @@ class PlainFormat implements AFormat
         Token\TFunction::class => [
             'spaceAfter' => true,
         ],
+        Token\TMagicMethod::class => [
+            'spaceAfter' => true,
+        ],
         Token\TFunctionCallFullyQualified::class => [
             'spaceAfter' => true,
         ],
@@ -680,6 +688,12 @@ class PlainFormat implements AFormat
             'spaceAfter' => true,
         ],
         Token\TFunctionClosingBrace::class => [
+            'spaceBefore' => false,
+            'spaceAfter' => true,
+            'blankLineBefore' => false,
+            'blankLineAfter' => true,
+        ],
+        Token\TMagicMethodClosingBrace::class => [
             'spaceBefore' => false,
             'spaceAfter' => true,
             'blankLineBefore' => false,
@@ -1542,6 +1556,7 @@ class PlainFormat implements AFormat
         };
 
         foreach ([
+            Token\TAbstractMagicMethodEndSemicolon::class,
             Token\TAbstractMethodEndSemicolon::class,
             Token\TCatchClosingBrace::class,
             Token\TClassClosingBrace::class,
@@ -1561,6 +1576,7 @@ class PlainFormat implements AFormat
             Token\TForClosingBrace::class,
             Token\TForeachClosingBrace::class,
             Token\TFunctionClosingBrace::class,
+            Token\TMagicMethodClosingBrace::class,
             Token\TIfClosingBrace::class,
             Token\TInterfaceClosingBrace::class,
             Token\TNamespaceEndSemicolon::class,

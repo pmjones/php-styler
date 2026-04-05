@@ -28,6 +28,30 @@ class TFunction extends AToken
             return;
         }
 
-        $parser->addNesting($source, self::class);
+        $nestingClass = self::class;
+
+        if ($parser->atClassBody()) {
+            $next = $parser->getNextSource();
+            $nameText = null;
+
+            if ($next?->is(T_STRING)) {
+                $nameText = $next->text;
+            } elseif ($next?->is(T_AMPERSAND_NOT_FOLLOWED_BY_VAR_OR_VARARG)) {
+                $nameToken = $parser->getNextSource(skip: 1);
+
+                if ($nameToken?->is(T_STRING)) {
+                    $nameText = $nameToken->text;
+                }
+            }
+
+            if (
+                $nameText !== null
+                && in_array($nameText, TMagicMethodName::NAMES, true)
+            ) {
+                $nestingClass = TMagicMethod::class;
+            }
+        }
+
+        $parser->addNesting($source, $nestingClass);
     }
 }
