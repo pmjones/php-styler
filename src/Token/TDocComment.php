@@ -17,8 +17,6 @@ use PhpToken;
  */
 class TDocComment extends AToken implements ADocblock
 {
-    protected ?Docblock $docblock = null;
-
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         if (
@@ -35,6 +33,8 @@ class TDocComment extends AToken implements ADocblock
 
         $parser->add($source, self::class);
     }
+
+    protected ?Docblock $docblock = null;
 
     public function getDocblock() : Docblock
     {

@@ -4,38 +4,23 @@ declare(strict_types=1);
 namespace PhpStyler\Rule\LineRule;
 
 use PhpStyler\Line;
+use PhpStyler\Token\AMemberClosing;
 use PhpStyler\Token\AToken;
-use PhpStyler\Token\TAbstractMagicMethodEndSemicolon;
-use PhpStyler\Token\TAbstractMethodEndSemicolon;
-use PhpStyler\Token\TAnonymousClosingBrace;
-use PhpStyler\Token\TAnonymousOpeningBrace;
 use PhpStyler\Token\TBlankLine;
-use PhpStyler\Token\TClasslikeClosingBrace;
-use PhpStyler\Token\TClasslikeOpeningBrace;
-use PhpStyler\Token\TConstEndSemicolon;
-use PhpStyler\Token\TEnumCaseEndSemicolon;
-use PhpStyler\Token\TFunctionClosingBrace;
-use PhpStyler\Token\TMagicMethodClosingBrace;
-use PhpStyler\Token\TPropertyEndSemicolon;
-use PhpStyler\Token\TStatic;
-use PhpStyler\Token\TPropertyHooksAbstractClosingBrace;
-use PhpStyler\Token\TPropertyHooksClosingBrace;
-use PhpStyler\Token\TUseTraitClosingBrace;
-use PhpStyler\Token\TUseTraitEndSemicolon;
 
-class NormalizeMemberOrder extends ALineRule
+class NormalizeMemberOrder extends AMemberNormalizer
 {
     /**
      * @param string[] $order
      */
     public function __construct(
         private array $order = [
-            'traituse',
-            'enumcase',
-            'const',
-            'property',
-            'magic',
-            'method',
+            AMemberClosing::USE_TRAIT,
+            AMemberClosing::ENUM_CASE,
+            AMemberClosing::CONSTANT,
+            AMemberClosing::PROPERTY,
+            AMemberClosing::MAGIC_METHOD,
+            AMemberClosing::METHOD,
         ],
     ) {
     }
@@ -59,59 +44,14 @@ class NormalizeMemberOrder extends ALineRule
 
     /**
      * @param Line[] $lines
-     * @return array<int, array{openIndex: int, closeIndex: int, memberIndent: int}>
-     */
-    private function findClassBodyRegions(array $lines) : array
-    {
-        $stack = [];
-        $regions = [];
-
-        foreach ($lines as $i => $line) {
-            $last = $line->lastContentToken();
-
-            if (
-                $last instanceof TClasslikeOpeningBrace
-                || $last instanceof TAnonymousOpeningBrace
-            ) {
-                $stack[] = ['openIndex' => $i, 'indent' => $line->indent];
-            }
-
-            $first = $line->firstContentToken();
-
-            if (
-                (
-                    $first instanceof TClasslikeClosingBrace
-                    || $first instanceof TAnonymousClosingBrace
-                )
-                && $stack !== []
-            ) {
-                $opener = array_pop($stack);
-
-                if ($opener['indent'] === $line->indent) {
-                    $regions[] = [
-                        'openIndex' => $opener['openIndex'],
-                        'closeIndex' => $i,
-                        'memberIndent' => $opener['indent'] + 1,
-                    ];
-                }
-            }
-        }
-
-        return $regions;
-    }
-
-    /**
-     * @param Line[] $lines
      * @param array{openIndex: int, closeIndex: int, memberIndent: int} $region
      * @return Line[]
      */
     private function reorderRegion(array $lines, array $region) : array
     {
-        $openIndex = $region['openIndex'];
-        $closeIndex = $region['closeIndex'];
+        $regionStart = $region['openIndex'] + 1;
+        $regionEnd = $region['closeIndex'] - 1;
         $memberIndent = $region['memberIndent'];
-        $regionStart = $openIndex + 1;
-        $regionEnd = $closeIndex - 1;
 
         if ($regionStart > $regionEnd) {
             return $lines;
@@ -127,10 +67,14 @@ class NormalizeMemberOrder extends ALineRule
                 continue;
             }
 
-            $type = $this->memberEndType($line->lastContentToken());
+            $lastToken = $line->lastContentToken();
 
-            if ($type !== null) {
-                $memberEndings[] = ['index' => $i, 'type' => $type];
+            if ($lastToken instanceof AMemberClosing) {
+                $memberEndings[] = [
+                    'index' => $i,
+                    'type' => $lastToken->memberType(),
+                    'closesStaticMember' => $lastToken->closesStaticMember,
+                ];
             }
         }
 
@@ -138,7 +82,7 @@ class NormalizeMemberOrder extends ALineRule
             return $lines;
         }
 
-        // Partition into blocks
+        // Partition into blocks with precomputed sort keys
         $blocks = [];
         $blockStart = $regionStart;
 
@@ -151,15 +95,17 @@ class NormalizeMemberOrder extends ALineRule
                 $blockEnd - $blockStart + 1,
             );
 
-            // Strip leading blank lines
             while ($blockLines !== [] && $blockLines[0]->isBlank()) {
                 array_shift($blockLines);
             }
 
             $blocks[] = [
                 'lines' => $blockLines,
-                'type' => $ending['type'],
-                'isStatic' => $this->blockIsStatic($blockLines),
+                'group' => $this->memberGroup(
+                    $ending['type'],
+                    $ending['closesStaticMember'],
+                ),
+                'typeOrder' => $this->typeOrder($ending['type']),
                 'originalIndex' => $seqNum,
             ];
 
@@ -181,28 +127,15 @@ class NormalizeMemberOrder extends ALineRule
             }
         }
 
-        // Stable sort by configured order
+        // Stable sort using precomputed keys
         $sorted = $blocks;
 
         usort(
             $sorted,
-            function ($a, $b) {
-                $aGroup = $this->memberGroup($a['type'], $a['isStatic']);
-                $bGroup = $this->memberGroup($b['type'], $b['isStatic']);
-
-                if ($aGroup !== $bGroup) {
-                    return $aGroup <=> $bGroup;
-                }
-
-                $aOrder = $this->typeOrder($a['type']);
-                $bOrder = $this->typeOrder($b['type']);
-
-                if ($aOrder !== $bOrder) {
-                    return $aOrder <=> $bOrder;
-                }
-
-                return $a['originalIndex'] <=> $b['originalIndex'];
-            },
+            fn ($a, $b)
+                => $a['group'] <=> $b['group']
+                    ?: $a['typeOrder'] <=> $b['typeOrder']
+                    ?: $a['originalIndex'] <=> $b['originalIndex'],
         );
 
         // If order unchanged, leave lines untouched
@@ -213,35 +146,35 @@ class NormalizeMemberOrder extends ALineRule
             return $lines;
         }
 
-        $blocks = $sorted;
-
         // Reassemble with blank lines based on token styles
         $newRegionLines = [];
         $refLine = $lines[$regionStart];
-        $lastBlock = null;
+        $prevBlockLines = null;
 
-        foreach ($blocks as $block) {
-            if ($lastBlock !== null) {
-                $this->insertStyleBlankLine(
-                    $lastBlock['lines'],
-                    $refLine,
-                    $newRegionLines,
-                );
+        foreach ($sorted as $block) {
+            if ($prevBlockLines !== null) {
+                $lastLine = $prevBlockLines[array_key_last($prevBlockLines)];
+                $lastToken = $lastLine->lastContentToken();
+
+                if ($lastToken !== null && $lastToken->wantsBlankLineAfter()) {
+                    $newRegionLines[] = $this->createBlankLine($refLine);
+                }
             }
 
             foreach ($block['lines'] as $line) {
                 $newRegionLines[] = $line;
             }
 
-            $lastBlock = $block;
+            $prevBlockLines = $block['lines'];
         }
 
         if ($trailingLines !== []) {
-            $this->insertStyleBlankLine(
-                $lastBlock['lines'],
-                $refLine,
-                $newRegionLines,
-            );
+            $lastLine = $prevBlockLines[array_key_last($prevBlockLines)];
+            $lastToken = $lastLine->lastContentToken();
+
+            if ($lastToken !== null && $lastToken->wantsBlankLineAfter()) {
+                $newRegionLines[] = $this->createBlankLine($refLine);
+            }
 
             foreach ($trailingLines as $line) {
                 $newRegionLines[] = $line;
@@ -258,22 +191,21 @@ class NormalizeMemberOrder extends ALineRule
         return $lines;
     }
 
-    /**
-     * @param Line[] $blockLines
-     * @param Line[] $newRegionLines
-     */
-    private function insertStyleBlankLine(
-        array $blockLines,
-        Line $refLine,
-        array &$newRegionLines,
-    ) : void
+    private function memberGroup(string $type, bool $closesStaticMember) : int
     {
-        $lastLine = $blockLines[array_key_last($blockLines)] ?? null;
-        $lastToken = $lastLine?->lastContentToken();
+        return match ($type) {
+            AMemberClosing::USE_TRAIT,
+            AMemberClosing::ENUM_CASE,
+            AMemberClosing::CONSTANT => 0,
 
-        if ($lastToken?->style?->blankLineAfter === true) {
-            $newRegionLines[] = $this->createBlankLine($refLine);
-        }
+            default => $closesStaticMember ? 1 : 2,
+        };
+    }
+
+    private function typeOrder(string $type) : int
+    {
+        $pos = array_search($type, $this->order, true);
+        return $pos !== false ? (int) $pos : count($this->order);
     }
 
     private function createBlankLine(Line $refLine) : Line
@@ -284,63 +216,5 @@ class NormalizeMemberOrder extends ALineRule
             $refLine->indentStr,
             $refLine->indentLen,
         );
-    }
-
-    /**
-     * @param Line[] $blockLines
-     */
-    private function blockIsStatic(array $blockLines) : bool
-    {
-        foreach ($blockLines as $line) {
-            foreach ($line->getTokens() as $token) {
-                if ($token instanceof TStatic) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    private function memberGroup(string $type, bool $isStatic) : int
-    {
-        return match ($type) {
-            'traituse', 'enumcase', 'const' => 0,
-            default => $isStatic ? 1 : 2,
-        };
-    }
-
-    private function typeOrder(string $type) : int
-    {
-        $pos = array_search($type, $this->order, true);
-        return $pos !== false ? (int) $pos : count($this->order);
-    }
-
-    private function memberEndType(?AToken $token) : ?string
-    {
-        if ($token === null) {
-            return null;
-        }
-
-        return match (true) {
-            $token instanceof TConstEndSemicolon => 'const',
-
-            $token instanceof TPropertyEndSemicolon,
-            $token instanceof TPropertyHooksClosingBrace,
-            $token instanceof TPropertyHooksAbstractClosingBrace => 'property',
-
-            $token instanceof TEnumCaseEndSemicolon => 'enumcase',
-
-            $token instanceof TUseTraitEndSemicolon,
-            $token instanceof TUseTraitClosingBrace => 'traituse',
-
-            $token instanceof TMagicMethodClosingBrace,
-            $token instanceof TAbstractMagicMethodEndSemicolon => 'magic',
-
-            $token instanceof TFunctionClosingBrace,
-            $token instanceof TAbstractMethodEndSemicolon => 'method',
-
-            default => null,
-        };
     }
 }

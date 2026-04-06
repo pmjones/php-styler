@@ -70,14 +70,6 @@ class TDocCommentTest extends TTestCase
         ];
     }
 
-    #[DataProvider('provideRender')]
-    public function testRender(string $text, int $indent, string $expect) : void
-    {
-        $token = new TDocComment(T_DOC_COMMENT, $text);
-        $line = new Line(indent: $indent);
-        $this->assertSame($expect, $token->render($line));
-    }
-
     /** @return array<string, array{0: string, 1: int, 2: string}> */
     public static function provideRender() : array
     {
@@ -99,5 +91,13 @@ class TDocCommentTest extends TTestCase
                 "/**\n * Foo.\n */",
             ],
         ];
+    }
+
+    #[DataProvider('provideRender')]
+    public function testRender(string $text, int $indent, string $expect) : void
+    {
+        $token = new TDocComment(T_DOC_COMMENT, $text);
+        $line = new Line(indent: $indent);
+        $this->assertSame($expect, $token->render($line));
     }
 }

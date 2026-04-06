@@ -11,20 +11,6 @@ use PHPUnit\Framework\TestCase;
 
 class RemoveRepeatedSemicolonsTest extends TestCase
 {
-    #[DataProvider('provide')]
-    public function test(string $code, string $expect) : void
-    {
-        $styler = new Styler(
-            new DeclarationFormat(rules: [
-                RemoveRepeatedSemicolons::class,
-                RemoveTrailingBlankLines::class,
-            ]),
-        );
-
-        $actual = $styler($code);
-        $this->assertSame($expect, $actual);
-    }
-
     /** @return array<string, array{0: string, 1: string}> */
     public static function provide() : array
     {
@@ -65,5 +51,19 @@ class RemoveRepeatedSemicolonsTest extends TestCase
                 EXPECT,
             ],
         ];
+    }
+
+    #[DataProvider('provide')]
+    public function test(string $code, string $expect) : void
+    {
+        $styler = new Styler(
+            new DeclarationFormat(rules: [
+                RemoveRepeatedSemicolons::class,
+                RemoveTrailingBlankLines::class,
+            ]),
+        );
+
+        $actual = $styler($code);
+        $this->assertSame($expect, $actual);
     }
 }

@@ -12,6 +12,15 @@ abstract class AToken extends PhpToken
 {
     public const SYNTHETIC = -1;
 
+    public static function parse(Parser $parser, PhpToken $source) : void
+    {
+        $parser->add($source, static::class);
+
+        if ($parser->getStyle(static::class)->spaceAfter !== false) {
+            $parser->space();
+        }
+    }
+
     public int $parenDepth = 0;
 
     public int $argCount = 0;
@@ -41,15 +50,6 @@ abstract class AToken extends PhpToken
     public function isIgnorable() : bool
     {
         return $this->id === self::SYNTHETIC || parent::isIgnorable();
-    }
-
-    public static function parse(Parser $parser, PhpToken $source) : void
-    {
-        $parser->add($source, static::class);
-
-        if ($parser->getStyle(static::class)->spaceAfter !== false) {
-            $parser->space();
-        }
     }
 
     public function isContent() : bool
@@ -84,6 +84,11 @@ abstract class AToken extends PhpToken
     public function splitAfter(Parser $parser) : ?TSplit
     {
         return null;
+    }
+
+    public function wantsBlankLineAfter() : bool
+    {
+        return $this->style?->blankLineAfter === true;
     }
 
     public function render(Line $line) : string

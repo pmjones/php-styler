@@ -10,8 +10,6 @@ use PhpToken;
 
 class TCommentStarred extends AToken implements ADocblock
 {
-    protected ?Docblock $docblock = null;
-
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         if (! $parser->hasPrevLineBreak() || ! $parser->hasNextEol()) {
@@ -21,6 +19,8 @@ class TCommentStarred extends AToken implements ADocblock
 
         $parser->add($source, self::class);
     }
+
+    protected ?Docblock $docblock = null;
 
     public function getDocblock() : Docblock
     {

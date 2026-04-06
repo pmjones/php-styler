@@ -5,27 +5,12 @@ namespace PhpStyler\Rule\LineRule;
 
 use PhpStyler\Format\DeclarationFormat;
 use PhpStyler\Styler;
+use PhpStyler\Token\AMemberClosing;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class NormalizeMemberOrderTest extends TestCase
 {
-    /** @param array<string, mixed> $args */
-    #[DataProvider('provide')]
-    public function test(string $code, string $expect, array $args = []) : void
-    {
-        /** @var array<class-string<\PhpStyler\Rule\LineRule\ALineRule|\PhpStyler\Rule\TokenRule\ATokenRule>, array<string, mixed>> $rules */
-        $rules = [
-            NormalizeMemberOrder::class => $args,
-            RemoveTrailingBlankLines::class => [],
-        ];
-
-        $styler = new Styler(new DeclarationFormat(rules: $rules));
-
-        $actual = $styler($code);
-        $this->assertSame($expect, $actual);
-    }
-
     /** @return array<string, array{0: string, 1: string, 2?: array<string, mixed>}> */
     public static function provide() : array
     {
@@ -228,7 +213,13 @@ class NormalizeMemberOrderTest extends TestCase
                 }
 
                 EXPECT,
-                ['order' => ['method', 'property', 'const']],
+                [
+                    'order' => [
+                        AMemberClosing::METHOD,
+                        AMemberClosing::PROPERTY,
+                        AMemberClosing::CONSTANT,
+                    ],
+                ],
             ],
             'stable-sort' => [
                 <<<'CODE'
@@ -601,5 +592,21 @@ class NormalizeMemberOrderTest extends TestCase
                 EXPECT,
             ],
         ];
+    }
+
+    /** @param array<string, mixed> $args */
+    #[DataProvider('provide')]
+    public function test(string $code, string $expect, array $args = []) : void
+    {
+        /** @var array<class-string<\PhpStyler\Rule\LineRule\ALineRule|\PhpStyler\Rule\TokenRule\ATokenRule>, array<string, mixed>> $rules */
+        $rules = [
+            NormalizeMemberOrder::class => $args,
+            RemoveTrailingBlankLines::class => [],
+        ];
+
+        $styler = new Styler(new DeclarationFormat(rules: $rules));
+
+        $actual = $styler($code);
+        $this->assertSame($expect, $actual);
     }
 }

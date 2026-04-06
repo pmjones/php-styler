@@ -6,7 +6,9 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TPropertyHooksAbstractClosingBrace extends AToken implements AClosingStructure
+class TPropertyHooksAbstractClosingBrace extends AToken implements
+    AClosingStructure,
+    AMemberClosing
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
@@ -40,5 +42,12 @@ class TPropertyHooksAbstractClosingBrace extends AToken implements AClosingStruc
             self::class,
             TPropertyHooksAbstractOpeningBrace::class,
         );
+    }
+
+    public bool $closesStaticMember = false;
+
+    public function memberType() : string
+    {
+        return AMemberClosing::PROPERTY;
     }
 }

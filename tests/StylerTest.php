@@ -18,32 +18,6 @@ use PHPUnit\Framework\TestCase;
 
 class StylerTest extends TestCase
 {
-    private Styler $styler;
-
-    protected function setUp() : void
-    {
-        $this->styler = new Styler(
-            new TestFormat(rules: [
-                ExpandGroupedImports::class,
-                ConvertVarToPublic::class,
-                InsertPublicVisibility::class,
-                NormalizeModifierOrder::class,
-                ConvertToShortArraySyntax::class,
-                ConvertToShortListSyntax::class,
-                MergeParenBrace::class,
-                NormalizeTrailingCommas::class,
-                RemoveTrailingBlankLines::class,
-            ]),
-        );
-    }
-
-    #[DataProvider('provide')]
-    public function test(string $code, string $expect) : void
-    {
-        $actual = ($this->styler)($code);
-        $this->assertSame($expect, $actual);
-    }
-
     /** @return array<string, array{0: string, 1: string}> */
     public static function provide() : array
     {
@@ -3004,5 +2978,31 @@ class StylerTest extends TestCase
             ],
 
         ];
+    }
+
+    private Styler $styler;
+
+    protected function setUp() : void
+    {
+        $this->styler = new Styler(
+            new TestFormat(rules: [
+                ExpandGroupedImports::class,
+                ConvertVarToPublic::class,
+                InsertPublicVisibility::class,
+                NormalizeModifierOrder::class,
+                ConvertToShortArraySyntax::class,
+                ConvertToShortListSyntax::class,
+                MergeParenBrace::class,
+                NormalizeTrailingCommas::class,
+                RemoveTrailingBlankLines::class,
+            ]),
+        );
+    }
+
+    #[DataProvider('provide')]
+    public function test(string $code, string $expect) : void
+    {
+        $actual = ($this->styler)($code);
+        $this->assertSame($expect, $actual);
     }
 }

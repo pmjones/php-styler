@@ -5,12 +5,6 @@ namespace PhpStyler;
 
 class DocblockTag
 {
-    public function __construct(
-        public readonly string $name,
-        public readonly string $body,
-    ) {
-    }
-
     /**
      * @return list<self>
      */
@@ -62,6 +56,12 @@ class DocblockTag
         }
 
         return $tags;
+    }
+
+    public function __construct(
+        public readonly string $name,
+        public readonly string $body,
+    ) {
     }
 
     public function getType() : ?string

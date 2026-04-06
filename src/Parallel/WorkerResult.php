@@ -5,15 +5,6 @@ namespace PhpStyler\Parallel;
 
 class WorkerResult
 {
-    public function __construct(
-        public readonly string $file,
-        public readonly bool $ok = true,
-        public readonly ?string $error = null,
-        public readonly ?bool $isMatch = null,
-        public readonly ?string $diff = null,
-    ) {
-    }
-
     /**
      * @param array<string, mixed> $data
      */
@@ -38,6 +29,15 @@ class WorkerResult
             isMatch: $isMatch,
             diff: $diff,
         );
+    }
+
+    public function __construct(
+        public readonly string $file,
+        public readonly bool $ok = true,
+        public readonly ?string $error = null,
+        public readonly ?bool $isMatch = null,
+        public readonly ?string $diff = null,
+    ) {
     }
 
     /**

@@ -15,4 +15,9 @@ class TMagicMethodClosingBrace extends TFunctionClosingBrace
 
         $parser->closeNesting($source, self::class, TMagicMethod::class);
     }
+
+    public function memberType() : string
+    {
+        return AMemberClosing::MAGIC_METHOD;
+    }
 }

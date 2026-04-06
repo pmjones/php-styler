@@ -15,11 +15,6 @@ use PhpToken;
  */
 class TNullsafeObjectOperator extends AToken implements ASplittableFluent
 {
-    public function splitBefore(Parser $parser) : ?TSplit
-    {
-        return new TSplitPropertyAccess(AToken::SYNTHETIC, '');
-    }
-
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $class = $parser->inEncapsedString()
@@ -27,5 +22,10 @@ class TNullsafeObjectOperator extends AToken implements ASplittableFluent
             : static::class;
 
         $parser->add($source, $class);
+    }
+
+    public function splitBefore(Parser $parser) : ?TSplit
+    {
+        return new TSplitPropertyAccess(AToken::SYNTHETIC, '');
     }
 }

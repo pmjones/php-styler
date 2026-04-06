@@ -18,6 +18,11 @@ abstract class TTestCase extends \PHPUnit\Framework\TestCase
     protected const REPORT_SYNTHETIC = 'REPORT_SYNTHETIC';
 
     /**
+     * @return array<string, array{0:string, 1:array<int, class-string>, 2?:array<int, class-string>}>
+     */
+    abstract public static function provide() : array;
+
+    /**
      * @param array<int, class-string> $expect
      * @param array<int, class-string> $finalNesting
      */
@@ -103,9 +108,4 @@ abstract class TTestCase extends \PHPUnit\Framework\TestCase
             $this->assertSame($finalNesting, $parser->listNesting());
         }
     }
-
-    /**
-     * @return array<string, array{0:string, 1:array<int, class-string>, 2?:array<int, class-string>}>
-     */
-    abstract public static function provide() : array;
 }

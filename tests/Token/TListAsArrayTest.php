@@ -9,6 +9,75 @@ use PHPUnit\Framework\Attributes\DataProvider;
 
 class TListAsArrayTest extends TTestCase
 {
+    /**
+     * @inheritdoc
+     */
+    public static function provide() : array
+    {
+        /** @php-styler-expansive */
+        return [
+            'basic' => [
+                <<<'CODE'
+                <?php
+                list($foo, $bar) = $baz;
+                CODE,
+                [
+                    TPhpOpeningTag::class,
+                    TArrayOpeningBracket::class,
+                    TVariable::class,
+                    TArrayComma::class,
+                    TVariable::class,
+                    TArrayClosingBracket::class,
+                    TAssign::class,
+                    TVariable::class,
+                    TSemicolon::class,
+                ],
+            ],
+            'with-keys' => [
+                <<<'CODE'
+                <?php
+                list(0 => $foo, 1 => $bar) = $baz;
+                CODE,
+                [
+                    TPhpOpeningTag::class,
+                    TArrayOpeningBracket::class,
+                    TIntegerLiteral::class,
+                    TArrayDoubleArrow::class,
+                    TVariable::class,
+                    TArrayComma::class,
+                    TIntegerLiteral::class,
+                    TArrayDoubleArrow::class,
+                    TVariable::class,
+                    TArrayClosingBracket::class,
+                    TAssign::class,
+                    TVariable::class,
+                    TSemicolon::class,
+                ],
+            ],
+            'nested' => [
+                <<<'CODE'
+                <?php
+                list($a, list($b, $c)) = $d;
+                CODE,
+                [
+                    TPhpOpeningTag::class,
+                    TArrayOpeningBracket::class,
+                    TVariable::class,
+                    TArrayComma::class,
+                    TArrayOpeningBracket::class,
+                    TVariable::class,
+                    TArrayComma::class,
+                    TVariable::class,
+                    TArrayClosingBracket::class,
+                    TArrayClosingBracket::class,
+                    TAssign::class,
+                    TVariable::class,
+                    TSemicolon::class,
+                ],
+            ],
+        ];
+    }
+
     #[DataProvider('provide')]
     public function test(
         string $code,
@@ -86,74 +155,5 @@ class TListAsArrayTest extends TTestCase
             $this->assertSame($expect, $actual);
             $this->assertSame($finalNesting, $parser->listNesting());
         }
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public static function provide() : array
-    {
-        /** @php-styler-expansive */
-        return [
-            'basic' => [
-                <<<'CODE'
-                <?php
-                list($foo, $bar) = $baz;
-                CODE,
-                [
-                    TPhpOpeningTag::class,
-                    TArrayOpeningBracket::class,
-                    TVariable::class,
-                    TArrayComma::class,
-                    TVariable::class,
-                    TArrayClosingBracket::class,
-                    TAssign::class,
-                    TVariable::class,
-                    TSemicolon::class,
-                ],
-            ],
-            'with-keys' => [
-                <<<'CODE'
-                <?php
-                list(0 => $foo, 1 => $bar) = $baz;
-                CODE,
-                [
-                    TPhpOpeningTag::class,
-                    TArrayOpeningBracket::class,
-                    TIntegerLiteral::class,
-                    TArrayDoubleArrow::class,
-                    TVariable::class,
-                    TArrayComma::class,
-                    TIntegerLiteral::class,
-                    TArrayDoubleArrow::class,
-                    TVariable::class,
-                    TArrayClosingBracket::class,
-                    TAssign::class,
-                    TVariable::class,
-                    TSemicolon::class,
-                ],
-            ],
-            'nested' => [
-                <<<'CODE'
-                <?php
-                list($a, list($b, $c)) = $d;
-                CODE,
-                [
-                    TPhpOpeningTag::class,
-                    TArrayOpeningBracket::class,
-                    TVariable::class,
-                    TArrayComma::class,
-                    TArrayOpeningBracket::class,
-                    TVariable::class,
-                    TArrayComma::class,
-                    TVariable::class,
-                    TArrayClosingBracket::class,
-                    TArrayClosingBracket::class,
-                    TAssign::class,
-                    TVariable::class,
-                    TSemicolon::class,
-                ],
-            ],
-        ];
     }
 }

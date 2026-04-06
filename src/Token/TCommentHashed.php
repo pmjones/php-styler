@@ -9,8 +9,6 @@ use PhpToken;
 
 class TCommentHashed extends AToken implements ADocblock
 {
-    protected ?Docblock $docblock = null;
-
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         if ($parser->hasPrevLineBreak()) {
@@ -20,6 +18,8 @@ class TCommentHashed extends AToken implements ADocblock
 
         $parser->add($source, TCommentHashedMidStatement::class);
     }
+
+    protected ?Docblock $docblock = null;
 
     public function getDocblock() : Docblock
     {

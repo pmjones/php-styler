@@ -6,7 +6,7 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TAbstractMethodEndSemicolon extends AToken
+class TAbstractMethodEndSemicolon extends AToken implements AMemberClosing
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
@@ -17,5 +17,12 @@ class TAbstractMethodEndSemicolon extends AToken
         $parser->popNesting(TFunction::class);
 
         $parser->add($source, self::class);
+    }
+
+    public bool $closesStaticMember = false;
+
+    public function memberType() : string
+    {
+        return AMemberClosing::METHOD;
     }
 }

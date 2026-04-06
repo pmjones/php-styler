@@ -13,29 +13,6 @@ use PHPUnit\Framework\TestCase;
 
 class SplitterTest extends TestCase
 {
-    private function assertSplit(string $code, string $expect, int $lineLen) : void
-    {
-        $styler = new Styler(
-            new TestFormat(
-                lineLen: $lineLen,
-                rules: [
-                    MergeParenBrace::class,
-                    NormalizeTrailingCommas::class,
-                    RemoveTrailingBlankLines::class,
-                ],
-            ),
-        );
-
-        $actual = $styler($code);
-        $this->assertSame($expect, $actual);
-    }
-
-    #[DataProvider('provide44')]
-    public function test44(string $code, string $expect) : void
-    {
-        $this->assertSplit($code, $expect, 44);
-    }
-
     /** @return array<string, array{0: string, 1: string}> */
     public static function provide44() : array
     {
@@ -583,12 +560,6 @@ class SplitterTest extends TestCase
         ];
     }
 
-    #[DataProvider('provide88')]
-    public function test88(string $code, string $expect) : void
-    {
-        $this->assertSplit($code, $expect, 88);
-    }
-
     /** @return array<string, array{0: string, 1: string}> */
     public static function provide88() : array
     {
@@ -980,5 +951,34 @@ class SplitterTest extends TestCase
             ],
 
         ];
+    }
+
+    private function assertSplit(string $code, string $expect, int $lineLen) : void
+    {
+        $styler = new Styler(
+            new TestFormat(
+                lineLen: $lineLen,
+                rules: [
+                    MergeParenBrace::class,
+                    NormalizeTrailingCommas::class,
+                    RemoveTrailingBlankLines::class,
+                ],
+            ),
+        );
+
+        $actual = $styler($code);
+        $this->assertSame($expect, $actual);
+    }
+
+    #[DataProvider('provide44')]
+    public function test44(string $code, string $expect) : void
+    {
+        $this->assertSplit($code, $expect, 44);
+    }
+
+    #[DataProvider('provide88')]
+    public function test88(string $code, string $expect) : void
+    {
+        $this->assertSplit($code, $expect, 88);
     }
 }

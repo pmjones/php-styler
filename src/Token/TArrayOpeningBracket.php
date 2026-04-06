@@ -8,6 +8,11 @@ use PhpToken;
 
 class TArrayOpeningBracket extends AToken implements ACommaListOpener
 {
+    public static function parse(Parser $parser, PhpToken $source) : void
+    {
+        $parser->addNesting($source, self::class);
+    }
+
     public function commaClass() : string
     {
         return TArrayComma::class;
@@ -16,10 +21,5 @@ class TArrayOpeningBracket extends AToken implements ACommaListOpener
     public function expandPriority() : ?int
     {
         return ASplittable::BRACKET;
-    }
-
-    public static function parse(Parser $parser, PhpToken $source) : void
-    {
-        $parser->addNesting($source, self::class);
     }
 }

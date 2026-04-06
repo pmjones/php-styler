@@ -116,52 +116,6 @@ use PHPUnit\Framework\Attributes\DataProvider;
 
 class AssemblerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @param array<int, array<int, class-string>> $expect
-     */
-    #[DataProvider('provide')]
-    public function test(string $code, array $expect) : void
-    {
-        $styler = new Styler(new Format\DeclarationFormat());
-        $tokens = $styler->parse($code);
-        $lines = $styler->assemble($tokens);
-        $lines = $styler->split($lines);
-
-        $actual = [];
-
-        foreach ($lines as $line) {
-            $classes = array_values(
-                array_filter(
-                    array_map(get_class(...), $line->getTokens()),
-                    fn (string $class)
-                        => $class !== TIndentIncrement::class
-                            && $class !== TIndentDecrement::class
-                            && $class !== TSpace::class
-                            && ! is_a($class, TSplit::class, true),
-                ),
-            );
-
-            $actual[] = $classes;
-        }
-
-        if (empty($expect)) {
-            $message = 'Actual assembled lines:' . PHP_EOL;
-
-            foreach ($actual as $i => $lineClasses) {
-                $message .= "    Line {$i}:" . PHP_EOL;
-
-                foreach ($lineClasses as $class) {
-                    $parts = explode('\\', $class);
-                    $message .= '        ' . end($parts) . '::class,' . PHP_EOL;
-                }
-            }
-
-            $this->markTestIncomplete($message);
-        } else {
-            $this->assertSame($expect, $actual);
-        }
-    }
-
     /** @return array<string, array{0: string, 1: array<int, array<int, class-string>>}> */
     public static function provide() : array
     {
@@ -1269,5 +1223,51 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
         ];
+    }
+
+    /**
+     * @param array<int, array<int, class-string>> $expect
+     */
+    #[DataProvider('provide')]
+    public function test(string $code, array $expect) : void
+    {
+        $styler = new Styler(new Format\DeclarationFormat());
+        $tokens = $styler->parse($code);
+        $lines = $styler->assemble($tokens);
+        $lines = $styler->split($lines);
+
+        $actual = [];
+
+        foreach ($lines as $line) {
+            $classes = array_values(
+                array_filter(
+                    array_map(get_class(...), $line->getTokens()),
+                    fn (string $class)
+                        => $class !== TIndentIncrement::class
+                            && $class !== TIndentDecrement::class
+                            && $class !== TSpace::class
+                            && ! is_a($class, TSplit::class, true),
+                ),
+            );
+
+            $actual[] = $classes;
+        }
+
+        if (empty($expect)) {
+            $message = 'Actual assembled lines:' . PHP_EOL;
+
+            foreach ($actual as $i => $lineClasses) {
+                $message .= "    Line {$i}:" . PHP_EOL;
+
+                foreach ($lineClasses as $class) {
+                    $parts = explode('\\', $class);
+                    $message .= '        ' . end($parts) . '::class,' . PHP_EOL;
+                }
+            }
+
+            $this->markTestIncomplete($message);
+        } else {
+            $this->assertSame($expect, $actual);
+        }
     }
 }

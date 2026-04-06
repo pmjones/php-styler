@@ -11,6 +11,11 @@ use PhpStyler\Token\AToken;
 
 class Styler
 {
+    public static function fromConfig(Config $config) : self
+    {
+        return new self($config->format);
+    }
+
     private Parser $parser;
 
     private Assembler $assembler;
@@ -60,11 +65,6 @@ class Styler
         $lines = $this->split($lines);
         $lines = $this->applyLineRules($lines);
         return $this->render($lines);
-    }
-
-    public static function fromConfig(Config $config) : self
-    {
-        return new self($config->format);
     }
 
     /**

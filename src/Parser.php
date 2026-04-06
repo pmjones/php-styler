@@ -94,6 +94,11 @@ class Parser
         T_READONLY => 5,
     ];
 
+    private static function hasEol(string $text) : bool
+    {
+        return strpos($text, "\r") !== false || strpos($text, "\n") !== false;
+    }
+
     private AFormat $format;
 
     /**
@@ -259,6 +264,10 @@ class Parser
 
         if ($token->text === '(' || $token->text === '[') {
             $this->parenDepth ++;
+        }
+
+        if ($token instanceof Token\AMemberClosing) {
+            $token->closesStaticMember = $this->hasPrevStatic();
         }
 
         if ($token instanceof Token\ASplittableComma && $this->nesting !== []) {
@@ -789,11 +798,6 @@ class Parser
         return false;
     }
 
-    private static function hasEol(string $text) : bool
-    {
-        return strpos($text, "\r") !== false || strpos($text, "\n") !== false;
-    }
-
     private function findUpcomingInlineComment() : ?int
     {
         $currentText = $this->source[$this->sourceOffset]->text;
@@ -922,6 +926,28 @@ class Parser
                 Token\TAnonymousOpeningBrace::class,
                 Token\TAnonymousClass::class,
             );
+    }
+
+    public function hasPrevStatic() : bool
+    {
+        for ($i = $this->parsedCount - 1; $i >= 0; $i --) {
+            $prev = $this->parsed[$i];
+
+            if ($prev instanceof Token\TStatic) {
+                return true;
+            }
+
+            // stop at class body boundaries or previous member endings
+            if (
+                $prev instanceof Token\AMemberClosing
+                || $prev instanceof Token\TClasslikeOpeningBrace
+                || $prev instanceof Token\TAnonymousOpeningBrace
+            ) {
+                return false;
+            }
+        }
+
+        return false;
     }
 
     public function hasPrevVisibility() : bool

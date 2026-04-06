@@ -8,13 +8,13 @@ use PhpToken;
 
 class TMatchDoubleArrow extends AToken implements ASplittableOperator
 {
-    public function splitBefore(Parser $parser) : ?TSplit
-    {
-        return new TSplitMatchDoubleArrow(AToken::SYNTHETIC, '');
-    }
-
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->addNesting($source, self::class);
+    }
+
+    public function splitBefore(Parser $parser) : ?TSplit
+    {
+        return new TSplitMatchDoubleArrow(AToken::SYNTHETIC, '');
     }
 }

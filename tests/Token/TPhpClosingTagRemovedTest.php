@@ -11,20 +11,6 @@ use PHPUnit\Framework\TestCase;
 
 class TPhpClosingTagRemovedTest extends TestCase
 {
-    #[DataProvider('provide')]
-    public function test(string $code, string $expect) : void
-    {
-        $styler = new Styler(
-            new DeclarationFormat(
-                parseAs: [TPhpClosingTag::class => TPhpClosingTagRemoved::class],
-                rules: [RemoveTrailingBlankLines::class],
-            ),
-        );
-
-        $actual = $styler($code);
-        $this->assertSame($expect, $actual);
-    }
-
     /** @return array<string, array{0: string, 1: string}> */
     public static function provide() : array
     {
@@ -53,5 +39,19 @@ class TPhpClosingTagRemovedTest extends TestCase
                 EXPECT,
             ],
         ];
+    }
+
+    #[DataProvider('provide')]
+    public function test(string $code, string $expect) : void
+    {
+        $styler = new Styler(
+            new DeclarationFormat(
+                parseAs: [TPhpClosingTag::class => TPhpClosingTagRemoved::class],
+                rules: [RemoveTrailingBlankLines::class],
+            ),
+        );
+
+        $actual = $styler($code);
+        $this->assertSame($expect, $actual);
     }
 }

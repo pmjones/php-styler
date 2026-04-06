@@ -7,6 +7,43 @@ use PhpStyler\Exception;
 
 class WorkerPool
 {
+    public static function detectCpuCount() : int
+    {
+        // Linux
+        if (is_readable('/proc/cpuinfo')) {
+            $contents = (string) file_get_contents('/proc/cpuinfo');
+            $count = substr_count($contents, 'processor');
+
+            if ($count > 0) {
+                return $count;
+            }
+        }
+
+        // macOS
+        $sysctl = @shell_exec('sysctl -n hw.ncpu 2>/dev/null');
+
+        if ($sysctl !== null && $sysctl !== false) {
+            $count = (int) trim($sysctl);
+
+            if ($count > 0) {
+                return $count;
+            }
+        }
+
+        // Windows
+        $env = getenv('NUMBER_OF_PROCESSORS');
+
+        if ($env !== false) {
+            $count = (int) $env;
+
+            if ($count > 0) {
+                return $count;
+            }
+        }
+
+        return 4;
+    }
+
     /**
      * @param string[] $files
      * @return WorkerResult[]
@@ -94,42 +131,5 @@ class WorkerPool
     protected function binPath() : string
     {
         return dirname(__DIR__, 2) . '/bin/php-styler';
-    }
-
-    public static function detectCpuCount() : int
-    {
-        // Linux
-        if (is_readable('/proc/cpuinfo')) {
-            $contents = (string) file_get_contents('/proc/cpuinfo');
-            $count = substr_count($contents, 'processor');
-
-            if ($count > 0) {
-                return $count;
-            }
-        }
-
-        // macOS
-        $sysctl = @shell_exec('sysctl -n hw.ncpu 2>/dev/null');
-
-        if ($sysctl !== null && $sysctl !== false) {
-            $count = (int) trim($sysctl);
-
-            if ($count > 0) {
-                return $count;
-            }
-        }
-
-        // Windows
-        $env = getenv('NUMBER_OF_PROCESSORS');
-
-        if ($env !== false) {
-            $count = (int) $env;
-
-            if ($count > 0) {
-                return $count;
-            }
-        }
-
-        return 4;
     }
 }

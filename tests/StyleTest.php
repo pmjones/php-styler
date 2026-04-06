@@ -22,14 +22,6 @@ use PHPUnit\Framework\TestCase;
 
 class StyleTest extends TestCase
 {
-    #[DataProvider('provide')]
-    public function test(AFormat $format, string $code, string $expect) : void
-    {
-        $styler = new Styler($format);
-        $actual = $styler($code);
-        $this->assertSame($expect, $actual);
-    }
-
     /** @return array<string, array{0: AFormat, 1: string, 2: string}> */
     public static function provide() : array
     {
@@ -292,5 +284,13 @@ class StyleTest extends TestCase
             ],
 
         ];
+    }
+
+    #[DataProvider('provide')]
+    public function test(AFormat $format, string $code, string $expect) : void
+    {
+        $styler = new Styler($format);
+        $actual = $styler($code);
+        $this->assertSame($expect, $actual);
     }
 }

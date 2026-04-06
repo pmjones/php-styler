@@ -5,15 +5,6 @@ namespace PhpStyler;
 
 class Docblock
 {
-    /**
-     * @param list<DocblockTag> $tags
-     */
-    public function __construct(
-        public readonly string $text,
-        public readonly array $tags,
-    ) {
-    }
-
     public static function parse(string $comment) : self
     {
         $comment = trim($comment);
@@ -62,5 +53,14 @@ class Docblock
         $tags = DocblockTag::parseAll($comment);
 
         return new self($text, $tags);
+    }
+
+    /**
+     * @param list<DocblockTag> $tags
+     */
+    public function __construct(
+        public readonly string $text,
+        public readonly array $tags,
+    ) {
     }
 }

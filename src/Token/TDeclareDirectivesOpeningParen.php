@@ -8,13 +8,13 @@ use PhpToken;
 
 class TDeclareDirectivesOpeningParen extends AToken
 {
-    public function expandPriority() : ?int
-    {
-        return ASplittable::OTHER_PAREN;
-    }
-
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->addNesting($source, self::class);
+    }
+
+    public function expandPriority() : ?int
+    {
+        return ASplittable::OTHER_PAREN;
     }
 }

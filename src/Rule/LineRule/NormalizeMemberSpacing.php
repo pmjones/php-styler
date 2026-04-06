@@ -4,31 +4,17 @@ declare(strict_types=1);
 namespace PhpStyler\Rule\LineRule;
 
 use PhpStyler\Line;
+use PhpStyler\Token\AMemberClosing;
 use PhpStyler\Token\AToken;
-use PhpStyler\Token\TAbstractMagicMethodEndSemicolon;
-use PhpStyler\Token\TAbstractMethodEndSemicolon;
-use PhpStyler\Token\TAnonymousClosingBrace;
-use PhpStyler\Token\TAnonymousOpeningBrace;
 use PhpStyler\Token\TBlankLine;
-use PhpStyler\Token\TClasslikeClosingBrace;
-use PhpStyler\Token\TClasslikeOpeningBrace;
-use PhpStyler\Token\TConstEndSemicolon;
-use PhpStyler\Token\TEnumCaseEndSemicolon;
-use PhpStyler\Token\TFunctionClosingBrace;
-use PhpStyler\Token\TMagicMethodClosingBrace;
-use PhpStyler\Token\TPropertyEndSemicolon;
-use PhpStyler\Token\TPropertyHooksAbstractClosingBrace;
-use PhpStyler\Token\TPropertyHooksClosingBrace;
-use PhpStyler\Token\TUseTraitClosingBrace;
-use PhpStyler\Token\TUseTraitEndSemicolon;
 
-class NormalizeMemberSpacing extends ALineRule
+class NormalizeMemberSpacing extends AMemberNormalizer
 {
     public function __construct(
         private int $betweenConstants = 0,
         private int $betweenProperties = 0,
         private int $betweenEnumCases = 0,
-        private int $betweenTraitUses = 0,
+        private int $betweenUseTraits = 0,
         private int $betweenMethods = 1,
         private int $betweenMagicMethods = 1,
     ) {
@@ -49,49 +35,6 @@ class NormalizeMemberSpacing extends ALineRule
         }
 
         return $lines;
-    }
-
-    /**
-     * @param Line[] $lines
-     * @return array<int, array{openIndex: int, closeIndex: int, memberIndent: int}>
-     */
-    private function findClassBodyRegions(array $lines) : array
-    {
-        $stack = [];
-        $regions = [];
-
-        foreach ($lines as $i => $line) {
-            $last = $line->lastContentToken();
-
-            if (
-                $last instanceof TClasslikeOpeningBrace
-                || $last instanceof TAnonymousOpeningBrace
-            ) {
-                $stack[] = ['openIndex' => $i, 'indent' => $line->indent];
-            }
-
-            $first = $line->firstContentToken();
-
-            if (
-                (
-                    $first instanceof TClasslikeClosingBrace
-                    || $first instanceof TAnonymousClosingBrace
-                )
-                && $stack !== []
-            ) {
-                $opener = array_pop($stack);
-
-                if ($opener['indent'] === $line->indent) {
-                    $regions[] = [
-                        'openIndex' => $opener['openIndex'],
-                        'closeIndex' => $i,
-                        'memberIndent' => $opener['indent'] + 1,
-                    ];
-                }
-            }
-        }
-
-        return $regions;
     }
 
     /**
@@ -119,10 +62,13 @@ class NormalizeMemberSpacing extends ALineRule
                 continue;
             }
 
-            $type = $this->memberEndType($line->lastContentToken());
+            $lastToken = $line->lastContentToken();
 
-            if ($type !== null) {
-                $memberEndings[] = ['index' => $i, 'type' => $type];
+            if ($lastToken instanceof AMemberClosing) {
+                $memberEndings[] = [
+                    'index' => $i,
+                    'type' => $lastToken->memberType(),
+                ];
             }
         }
 
@@ -157,7 +103,6 @@ class NormalizeMemberSpacing extends ALineRule
             }
 
             if ($actual > $desired) {
-                // Remove excess blank lines (from the end to preserve indices)
                 $toRemove = $actual - $desired;
 
                 for (
@@ -168,7 +113,6 @@ class NormalizeMemberSpacing extends ALineRule
                     array_splice($lines, $blankIndices[$r], 1);
                 }
             } elseif ($actual < $desired) {
-                // Insert blank lines after the first member's ending line
                 $insertAt = $current['index'] + 1;
                 $refLine = $lines[$regionStart];
 
@@ -193,41 +137,13 @@ class NormalizeMemberSpacing extends ALineRule
     private function desiredBlanks(string $type) : int
     {
         return match ($type) {
-            'const' => $this->betweenConstants,
-            'property' => $this->betweenProperties,
-            'enumcase' => $this->betweenEnumCases,
-            'traituse' => $this->betweenTraitUses,
-            'magic' => $this->betweenMagicMethods,
-            'method' => $this->betweenMethods,
+            AMemberClosing::CONSTANT => $this->betweenConstants,
+            AMemberClosing::PROPERTY => $this->betweenProperties,
+            AMemberClosing::ENUM_CASE => $this->betweenEnumCases,
+            AMemberClosing::USE_TRAIT => $this->betweenUseTraits,
+            AMemberClosing::MAGIC_METHOD => $this->betweenMagicMethods,
+            AMemberClosing::METHOD => $this->betweenMethods,
             default => 1,
-        };
-    }
-
-    private function memberEndType(?AToken $token) : ?string
-    {
-        if ($token === null) {
-            return null;
-        }
-
-        return match (true) {
-            $token instanceof TConstEndSemicolon => 'const',
-
-            $token instanceof TPropertyEndSemicolon,
-            $token instanceof TPropertyHooksClosingBrace,
-            $token instanceof TPropertyHooksAbstractClosingBrace => 'property',
-
-            $token instanceof TEnumCaseEndSemicolon => 'enumcase',
-
-            $token instanceof TUseTraitEndSemicolon,
-            $token instanceof TUseTraitClosingBrace => 'traituse',
-
-            $token instanceof TMagicMethodClosingBrace,
-            $token instanceof TAbstractMagicMethodEndSemicolon => 'magic',
-
-            $token instanceof TFunctionClosingBrace,
-            $token instanceof TAbstractMethodEndSemicolon => 'method',
-
-            default => null,
         };
     }
 }

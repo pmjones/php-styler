@@ -6,7 +6,9 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TUseTraitClosingBrace extends AToken implements AClosingStructure
+class TUseTraitClosingBrace extends AToken implements
+    AClosingStructure,
+    AMemberClosing
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
@@ -14,5 +16,12 @@ class TUseTraitClosingBrace extends AToken implements AClosingStructure
         $parser->indentDecr();
 
         $parser->closeNesting($source, self::class, TUseTrait::class);
+    }
+
+    public bool $closesStaticMember = false;
+
+    public function memberType() : string
+    {
+        return AMemberClosing::USE_TRAIT;
     }
 }

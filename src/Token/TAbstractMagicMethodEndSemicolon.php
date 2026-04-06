@@ -18,4 +18,9 @@ class TAbstractMagicMethodEndSemicolon extends TAbstractMethodEndSemicolon
 
         $parser->add($source, self::class);
     }
+
+    public function memberType() : string
+    {
+        return AMemberClosing::MAGIC_METHOD;
+    }
 }

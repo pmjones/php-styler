@@ -10,22 +10,6 @@ use PHPUnit\Framework\TestCase;
 
 class RemoveTrailingBlankLinesTest extends TestCase
 {
-    private function assertStyled(string $code, string $expect) : void
-    {
-        $styler = new Styler(
-            new DeclarationFormat(rules: [RemoveTrailingBlankLines::class]),
-        );
-
-        $actual = $styler($code);
-        $this->assertSame($expect, $actual);
-    }
-
-    #[DataProvider('provide')]
-    public function test(string $code, string $expect) : void
-    {
-        $this->assertStyled($code, $expect);
-    }
-
     /** @return array<string, array{0: string, 1: string}> */
     public static function provide() : array
     {
@@ -66,5 +50,21 @@ class RemoveTrailingBlankLinesTest extends TestCase
             ],
 
         ];
+    }
+
+    private function assertStyled(string $code, string $expect) : void
+    {
+        $styler = new Styler(
+            new DeclarationFormat(rules: [RemoveTrailingBlankLines::class]),
+        );
+
+        $actual = $styler($code);
+        $this->assertSame($expect, $actual);
+    }
+
+    #[DataProvider('provide')]
+    public function test(string $code, string $expect) : void
+    {
+        $this->assertStyled($code, $expect);
     }
 }

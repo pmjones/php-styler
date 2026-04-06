@@ -12,21 +12,6 @@ use PHPUnit\Framework\TestCase;
 
 class NormalizeTypeOrderTest extends TestCase
 {
-    #[DataProvider('provide')]
-    public function test(string $code, string $expect) : void
-    {
-        $styler = new Styler(
-            new TestFormat(rules: [
-                InsertPublicVisibility::class,
-                NormalizeTypeOrder::class,
-                RemoveTrailingBlankLines::class,
-            ]),
-        );
-
-        $actual = $styler($code);
-        $this->assertSame($expect, $actual);
-    }
-
     /** @return array<string, array{0: string, 1: string}> */
     public static function provide() : array
     {
@@ -195,20 +180,6 @@ class NormalizeTypeOrderTest extends TestCase
         ];
     }
 
-    #[DataProvider('provideNullLast')]
-    public function testNullLast(string $code, string $expect) : void
-    {
-        $styler = new Styler(
-            new TestFormat(rules: [
-                NormalizeTypeOrder::class => ['order' => ['*', TNull::class]],
-                RemoveTrailingBlankLines::class,
-            ]),
-        );
-
-        $actual = $styler($code);
-        $this->assertSame($expect, $actual);
-    }
-
     /** @return array<string, array{0: string, 1: string}> */
     public static function provideNullLast() : array
     {
@@ -305,5 +276,34 @@ class NormalizeTypeOrderTest extends TestCase
                 EXPECT,
             ],
         ];
+    }
+
+    #[DataProvider('provide')]
+    public function test(string $code, string $expect) : void
+    {
+        $styler = new Styler(
+            new TestFormat(rules: [
+                InsertPublicVisibility::class,
+                NormalizeTypeOrder::class,
+                RemoveTrailingBlankLines::class,
+            ]),
+        );
+
+        $actual = $styler($code);
+        $this->assertSame($expect, $actual);
+    }
+
+    #[DataProvider('provideNullLast')]
+    public function testNullLast(string $code, string $expect) : void
+    {
+        $styler = new Styler(
+            new TestFormat(rules: [
+                NormalizeTypeOrder::class => ['order' => ['*', TNull::class]],
+                RemoveTrailingBlankLines::class,
+            ]),
+        );
+
+        $actual = $styler($code);
+        $this->assertSame($expect, $actual);
     }
 }

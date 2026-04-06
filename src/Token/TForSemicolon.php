@@ -8,11 +8,6 @@ use PhpToken;
 
 class TForSemicolon extends AToken implements ASplittableComma
 {
-    public function splitAfter(Parser $parser) : ?TSplit
-    {
-        return new TSplitForSemicolon(AToken::SYNTHETIC, '');
-    }
-
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         if (
@@ -25,5 +20,10 @@ class TForSemicolon extends AToken implements ASplittableComma
         }
 
         $parser->add($source, self::class);
+    }
+
+    public function splitAfter(Parser $parser) : ?TSplit
+    {
+        return new TSplitForSemicolon(AToken::SYNTHETIC, '');
     }
 }
