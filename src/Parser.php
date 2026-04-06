@@ -279,27 +279,13 @@ class Parser
         Style $style,
     ) : AToken
     {
-        /** @var AToken $token */
-        $token = new $tokenClass(
-            $source->id,
-            $source->text,
-            $source->line,
-            $source->pos,
-        );
-
-        $token->style = $style;
-
-        if ($style->case !== null) {
-            $token->text = ($style->case)($token->text);
-        }
-
-        if ($token->text === ')' || $token->text === ']') {
+        if ($source->text === ')' || $source->text === ']') {
             $this->parenDepth = max(0, $this->parenDepth - 1);
         }
 
-        $token->parenDepth = $this->parenDepth;
+        $token = AToken::new($source, $tokenClass, $style, $this->parenDepth);
 
-        if ($token->text === '(' || $token->text === '[') {
+        if ($source->text === '(' || $source->text === '[') {
             $this->parenDepth ++;
         }
 
@@ -680,8 +666,7 @@ class Parser
         $opener = $this->popNesting($openerClass, ...$openerClasses);
         $opener->argCount = $argCount;
         $closer = $this->add($source, $closerClass);
-        $opener->closingToken = $closer;
-        $closer->openingToken = $opener;
+        AToken::pair($opener, $closer);
 
         return $closer;
     }

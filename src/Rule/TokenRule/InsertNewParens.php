@@ -71,8 +71,7 @@ class InsertNewParens extends ATokenRule
 
             $opener = new TArgsOpeningParen(AToken::SYNTHETIC, '(');
             $closer = new TArgsClosingParen(AToken::SYNTHETIC, ')');
-            $opener->closingToken = $closer;
-            $closer->openingToken = $opener;
+            AToken::pair($opener, $closer);
             $result[] = $opener;
             $result[] = $closer;
 
