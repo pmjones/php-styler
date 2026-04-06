@@ -393,16 +393,16 @@ class Parser
 
     public function removeTrailingBlankLine() : void
     {
-        for ($i = $this->parsedCount - 1; $i >= 0; $i --) {
-            if ($this->parsed[$i] instanceof Token\TBlankLine) {
-                $this->removeParsedAt($i);
-                return;
-            }
+        $this->scanParsedTrail(
+            function (AToken $token, int $i) : ?bool {
+                if ($token instanceof Token\TBlankLine) {
+                    $this->removeParsedAt($i);
+                    return true;
+                }
 
-            if (! $this->parsed[$i]->is([AToken::SYNTHETIC, T_WHITESPACE])) {
-                return;
-            }
-        }
+                return $token->is([AToken::SYNTHETIC, T_WHITESPACE]) ? null : false;
+            },
+        );
     }
 
     public function lineBreak() : void
@@ -428,15 +428,16 @@ class Parser
 
     private function removeTrailingSpaces() : void
     {
-        for ($i = $this->parsedCount - 1; $i >= 0; $i --) {
-            $prev = $this->parsed[$i];
+        $this->scanParsedTrail(
+            function (AToken $token, int $i) : ?bool {
+                if ($token instanceof Token\TSpace) {
+                    $this->removeParsedAt($i);
+                    return null;
+                }
 
-            if ($prev instanceof Token\TSpace) {
-                $this->removeParsedAt($i);
-            } elseif (! $prev->is([AToken::SYNTHETIC, T_WHITESPACE])) {
-                break;
-            }
-        }
+                return $token->is([AToken::SYNTHETIC, T_WHITESPACE]) ? null : false;
+            },
+        );
     }
 
     public function space() : void
@@ -445,23 +446,43 @@ class Parser
             return;
         }
 
+        $found = $this->scanParsedTrail(
+            fn (AToken $token) : ?bool => match (true) {
+                $token instanceof Token\TSpace,
+                $token instanceof Token\TLineBreak => true,
+
+                $token->is([AToken::SYNTHETIC, T_WHITESPACE]) => null,
+                default => false,
+            },
+        );
+
+        if (! $found) {
+            $this->emit(new Token\TSpace(T_WHITESPACE, ' '));
+        }
+    }
+
+    /**
+     * Scan backwards through parsed tokens.
+     *
+     * Callback receives (AToken $token, int $index) and returns:
+     *
+     * - null: skip this token, keep scanning
+     * - true: stop scanning (found/handled)
+     * - false: stop scanning (not found/not handled)
+     *
+     * @param callable(AToken, int):?bool $callback
+     */
+    private function scanParsedTrail(callable $callback) : bool
+    {
         for ($i = $this->parsedCount - 1; $i >= 0; $i --) {
-            $prev = $this->parsed[$i];
+            $result = $callback($this->parsed[$i], $i);
 
-            if ($prev instanceof Token\TSpace) {
-                return;
-            }
-
-            if ($prev instanceof Token\TLineBreak) {
-                return;
-            }
-
-            if (! $prev->is([AToken::SYNTHETIC, T_WHITESPACE])) {
-                break;
+            if ($result !== null) {
+                return $result;
             }
         }
 
-        $this->emit(new Token\TSpace(T_WHITESPACE, ' '));
+        return false;
     }
 
     private function emit(AToken $token) : void
@@ -478,41 +499,37 @@ class Parser
 
     private function noSpace() : void
     {
-        for ($i = $this->parsedCount - 1; $i >= 0; $i --) {
-            $prev = $this->parsed[$i];
+        $this->scanParsedTrail(
+            function (AToken $token, int $i) : ?bool {
+                if ($token instanceof Token\TSpace) {
+                    $this->removeParsedAt($i);
+                    return true;
+                }
 
-            if ($prev instanceof Token\TSpace) {
-                $this->removeParsedAt($i);
-                return;
-            }
-
-            if ($prev instanceof Token\TLineBreak) {
-                return;
-            }
-
-            if (! $prev->is([AToken::SYNTHETIC, T_WHITESPACE])) {
-                return;
-            }
-        }
+                return match (true) {
+                    $token instanceof Token\TLineBreak => true,
+                    $token->is([AToken::SYNTHETIC, T_WHITESPACE]) => null,
+                    default => false,
+                };
+            },
+        );
     }
 
     private function removePrevWhitespace() : void
     {
-        for ($i = $this->parsedCount - 1; $i >= 0; $i --) {
-            $prev = $this->parsed[$i];
+        $this->scanParsedTrail(
+            function (AToken $token, int $i) : ?bool {
+                if (
+                    $token instanceof Token\TWhitespaceEol
+                    || $token instanceof Token\TWhitespace
+                ) {
+                    $this->removeParsedAt($i);
+                    return null;
+                }
 
-            if (
-                $prev instanceof Token\TWhitespaceEol
-                || $prev instanceof Token\TWhitespace
-            ) {
-                $this->removeParsedAt($i);
-                continue;
-            }
-
-            if (! $prev->is([AToken::SYNTHETIC, T_WHITESPACE])) {
-                return;
-            }
-        }
+                return $token->is([AToken::SYNTHETIC, T_WHITESPACE]) ? null : false;
+            },
+        );
     }
 
     /**
@@ -577,6 +594,7 @@ class Parser
      */
     public function listNesting() : array
     {
+        /** @var array<int, class-string> */
         return array_map(fn (Nesting $n) => $n->class, $this->nesting);
     }
 
@@ -649,8 +667,8 @@ class Parser
     {
         $expects = [$expect, ...$expects];
         $nesting = array_pop($this->nesting);
-        $actual = $nesting?->token;
-        $actualClass = $nesting?->class ?? '';
+        $actual = $nesting->token ?? null;
+        $actualClass = $nesting->class ?? '';
 
         if (! in_array($actualClass, $expects)) {
             throw new \RuntimeException(
@@ -791,17 +809,13 @@ class Parser
 
     public function hasPrev(string $class) : bool
     {
-        for ($i = $this->parsedCount - 1; $i >= 0; $i --) {
-            $parsed = $this->parsed[$i];
-
-            if ($parsed instanceof $class) {
-                return true;
-            } elseif (! $parsed->is([AToken::SYNTHETIC, T_WHITESPACE])) {
-                return false;
-            }
-        }
-
-        return false;
+        return $this->scanParsedTrail(
+            fn (AToken $token) : ?bool => match (true) {
+                $token instanceof $class => true,
+                $token->is([AToken::SYNTHETIC, T_WHITESPACE]) => null,
+                default => false,
+            },
+        );
     }
 
     public function hasNextEol() : bool
