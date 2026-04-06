@@ -733,6 +733,36 @@ class Parser
         return null;
     }
 
+    public function reclassifyNextSourceAsName() : void
+    {
+        $offset = $this->sourceOffset + 1;
+
+        while ($offset < $this->sourceCount) {
+            $source = $this->source[$offset];
+
+            if ($source->isIgnorable()) {
+                $offset ++;
+                continue;
+            }
+
+            // only reclassify keyword tokens that look like identifiers,
+            // not variables ($foo), braces ({), or other symbols
+            if (
+                $source->id !== T_STRING
+                && preg_match('/^[a-zA-Z_]\w*$/', $source->text)
+            ) {
+                $this->source[$offset] = new \PhpToken(
+                    T_STRING,
+                    $source->text,
+                    $source->line,
+                    $source->pos,
+                );
+            }
+
+            return;
+        }
+    }
+
     public function findNextNonWhitespaceOffset(?int $from = null) : ?int
     {
         $i = $from ?? $this->sourceOffset + 1;

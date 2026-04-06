@@ -19,9 +19,11 @@ class TDoubleColon extends AToken
     {
         if ($parser->atNesting(TUseTraitOpeningBrace::class)) {
             $parser->add($source, TUseTraitDoubleColon::class);
+            $parser->reclassifyNextSourceAsName();
             return;
         }
 
         $parser->add($source, TMemberDoubleColon::class);
+        $parser->reclassifyNextSourceAsName();
     }
 }

@@ -22,6 +22,7 @@ class TObjectOperator extends AToken implements ASplittableFluent
             : static::class;
 
         $parser->add($source, $class);
+        $parser->reclassifyNextSourceAsName();
     }
 
     public function splitBefore(Parser $parser) : ?TSplit
