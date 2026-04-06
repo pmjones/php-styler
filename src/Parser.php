@@ -776,6 +776,47 @@ class Parser
         }
     }
 
+    public function reclassifyNextNamedArg() : void
+    {
+        $keywordOffset = null;
+
+        for ($i = $this->sourceOffset + 1; $i < $this->sourceCount; $i ++) {
+            if (! $this->source[$i]->isIgnorable()) {
+                $keywordOffset = $i;
+                break;
+            }
+        }
+
+        if ($keywordOffset === null) {
+            return;
+        }
+
+        $keyword = $this->source[$keywordOffset];
+
+        if (
+            $keyword->id === T_STRING
+            || ! preg_match('/^[a-zA-Z_]\w*$/', $keyword->text)
+        ) {
+            return;
+        }
+
+        // reclassify only if the token after the keyword is ':'
+        for ($j = $keywordOffset + 1; $j < $this->sourceCount; $j ++) {
+            if (! $this->source[$j]->isIgnorable()) {
+                if ($this->source[$j]->text === ':') {
+                    $this->source[$keywordOffset] = new \PhpToken(
+                        T_STRING,
+                        $keyword->text,
+                        $keyword->line,
+                        $keyword->pos,
+                    );
+                }
+
+                return;
+            }
+        }
+    }
+
     public function findNextNonWhitespaceOffset(?int $from = null) : ?int
     {
         $i = $from ?? $this->sourceOffset + 1;

@@ -11,6 +11,7 @@ class TArgsOpeningParen extends AToken implements ACommaListOpener
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->addNesting($source, self::class);
+        $parser->reclassifyNextNamedArg();
     }
 
     public function commaClass() : string

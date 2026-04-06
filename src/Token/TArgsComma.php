@@ -11,6 +11,7 @@ class TArgsComma extends AToken implements ASplittableComma
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->add($source, static::class);
+        $parser->reclassifyNextNamedArg();
     }
 
     public function splitAfter(Parser $parser) : ?TSplit

@@ -27,6 +27,34 @@ abstract class AToken extends PhpToken
         $closer->openingToken = $opener;
     }
 
+    /**
+     * @param class-string<self> $tokenClass
+     */
+    public static function new(
+        PhpToken $source,
+        string $tokenClass,
+        Style $style,
+        int $parenDepth = 0,
+    ) : self
+    {
+        /** @var self $token */
+        $token = new $tokenClass(
+            $source->id,
+            $source->text,
+            $source->line,
+            $source->pos,
+        );
+
+        $token->style = $style;
+        $token->parenDepth = $parenDepth;
+
+        if ($style->case !== null) {
+            $token->text = ($style->case)($token->text);
+        }
+
+        return $token;
+    }
+
     public private(set) int $parenDepth = 0;
 
     public int $argCount = 0;
@@ -90,34 +118,6 @@ abstract class AToken extends PhpToken
     public function splitAfter(Parser $parser) : ?TSplit
     {
         return null;
-    }
-
-    /**
-     * @param class-string<self> $tokenClass
-     */
-    public static function new(
-        PhpToken $source,
-        string $tokenClass,
-        Style $style,
-        int $parenDepth = 0,
-    ) : self
-    {
-        /** @var self $token */
-        $token = new $tokenClass(
-            $source->id,
-            $source->text,
-            $source->line,
-            $source->pos,
-        );
-
-        $token->style = $style;
-        $token->parenDepth = $parenDepth;
-
-        if ($style->case !== null) {
-            $token->text = ($style->case)($token->text);
-        }
-
-        return $token;
     }
 
     public function wantsBlankLineAfter() : bool

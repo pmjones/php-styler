@@ -19,7 +19,13 @@ class ConvertVarToPublic extends ATokenRule
 
         foreach ($tokens as $token) {
             if ($token instanceof TVar && $token->style !== null) {
-                $source = new \PhpToken(T_PUBLIC, 'public', $token->line, $token->pos);
+                $source = new \PhpToken(
+                    T_PUBLIC,
+                    'public',
+                    $token->line,
+                    $token->pos,
+                );
+
                 $result[] = AToken::new($source, TPublic::class, $token->style);
             } else {
                 $result[] = $token;
