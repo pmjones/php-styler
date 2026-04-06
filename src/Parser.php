@@ -246,21 +246,39 @@ class Parser
      */
     public function add(PhpToken $source, string $tokenClass) : AToken
     {
-        $this->removePrevWhitespace();
         $style = $this->getStyle($tokenClass);
+        $this->applyStyleBefore($style);
+        $token = $this->createToken($source, $tokenClass, $style);
 
-        if ($style->spaceBefore === true) {
-            $this->space();
-        } elseif ($style->spaceBefore === false) {
-            $this->noSpace();
+        $splitBefore = $token->splitBefore($this);
+
+        if ($splitBefore !== null) {
+            $this->addSplit($splitBefore);
         }
 
-        if ($style->blankLineBefore === true) {
-            $this->blankLine();
-        } elseif ($style->lineBreakBefore === true) {
-            $this->lineBreak();
+        $this->lastAddedIndex = $this->parsedCount;
+        $this->emit($token);
+
+        $splitAfter = $token->splitAfter($this);
+
+        if ($splitAfter !== null) {
+            $this->addSplit($splitAfter);
         }
 
+        $this->applyStyleAfter($style);
+
+        return $token;
+    }
+
+    /**
+     * @param class-string<AToken> $tokenClass
+     */
+    private function createToken(
+        PhpToken $source,
+        string $tokenClass,
+        Style $style,
+    ) : AToken
+    {
         /** @var AToken $token */
         $token = new $tokenClass(
             $source->id,
@@ -293,21 +311,28 @@ class Parser
             end($this->nesting)->argCount ++;
         }
 
-        $splitBefore = $token->splitBefore($this);
+        return $token;
+    }
 
-        if ($splitBefore !== null) {
-            $this->addSplit($splitBefore);
+    private function applyStyleBefore(Style $style) : void
+    {
+        $this->removePrevWhitespace();
+
+        if ($style->spaceBefore === true) {
+            $this->space();
+        } elseif ($style->spaceBefore === false) {
+            $this->noSpace();
         }
 
-        $this->lastAddedIndex = $this->parsedCount;
-        $this->emit($token);
-
-        $splitAfter = $token->splitAfter($this);
-
-        if ($splitAfter !== null) {
-            $this->addSplit($splitAfter);
+        if ($style->blankLineBefore === true) {
+            $this->blankLine();
+        } elseif ($style->lineBreakBefore === true) {
+            $this->lineBreak();
         }
+    }
 
+    private function applyStyleAfter(Style $style) : void
+    {
         if ($style->spaceAfter === true) {
             $this->space();
         }
@@ -317,8 +342,6 @@ class Parser
         } elseif ($style->lineBreakAfter === true) {
             $this->lineBreak();
         }
-
-        return $token;
     }
 
     public function addSplit(Token\TSplit $split) : void
