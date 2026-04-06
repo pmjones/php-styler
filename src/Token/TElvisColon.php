@@ -6,7 +6,7 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TElvisColon extends AToken
+class TElvisColon extends AToken implements ATernaryNesting
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

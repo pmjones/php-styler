@@ -6,7 +6,7 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TTernaryColon extends AToken implements ASplittableOperator
+class TTernaryColon extends AToken implements ASplittableOperator, ATernaryNesting
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

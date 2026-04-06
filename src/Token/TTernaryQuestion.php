@@ -6,7 +6,9 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TTernaryQuestion extends AToken implements ASplittableOperator
+class TTernaryQuestion extends AToken implements
+    ASplittableOperator,
+    ATernaryNesting
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

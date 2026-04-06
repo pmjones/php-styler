@@ -6,7 +6,7 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TElvisQuestion extends AToken implements ASplittableOperator
+class TElvisQuestion extends AToken implements ASplittableOperator, ATernaryNesting
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

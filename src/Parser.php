@@ -94,9 +94,25 @@ class Parser
         T_READONLY => 5,
     ];
 
+    /** @var array<string, class-string<AToken>> */
+    private const BRACELESS_CONTINUATION = [
+        Token\TIf::class => Token\TIfContinuationBraceless::class,
+        Token\TElseif::class => Token\TElseifContinuationBraceless::class,
+    ];
+
+    /** @var array<string, class-string<AToken>> */
+    private const BRACELESS_CLOSING = [
+        Token\TIf::class => Token\TIfClosingBraceless::class,
+        Token\TElse::class => Token\TElseClosingBraceless::class,
+        Token\TElseif::class => Token\TElseifClosingBraceless::class,
+        Token\TWhile::class => Token\TWhileClosingBraceless::class,
+        Token\TFor::class => Token\TForClosingBraceless::class,
+        Token\TForeach::class => Token\TForeachClosingBraceless::class,
+    ];
+
     private static function hasEol(string $text) : bool
     {
-        return strpos($text, "\r") !== false || strpos($text, "\n") !== false;
+        return str_contains($text, "\r") || str_contains($text, "\n");
     }
 
     private AFormat $format;
@@ -271,7 +287,7 @@ class Parser
         }
 
         if ($token instanceof Token\ASplittableComma && $this->nesting !== []) {
-            $this->nesting[array_key_last($this->nesting)]->argCount ++;
+            end($this->nesting)->argCount ++;
         }
 
         $splitBefore = $token->splitBefore($this);
@@ -574,61 +590,28 @@ class Parser
         $this->popNesting(Token\TOpeningBraceless::class);
         $nesting = $this->getNesting();
 
-        $braceless = match (true) {
-            $isContinuation && $nesting === Token\TIf::class
-                => Token\TIfContinuationBraceless::class,
+        $map = $isContinuation
+            ? self::BRACELESS_CONTINUATION
+            : self::BRACELESS_CLOSING;
 
-            $isContinuation && $nesting === Token\TElseif::class
-                => Token\TElseifContinuationBraceless::class,
-
-            ! $isContinuation && $nesting === Token\TIf::class
-                => Token\TIfClosingBraceless::class,
-
-            ! $isContinuation && $nesting === Token\TElse::class
-                => Token\TElseClosingBraceless::class,
-
-            ! $isContinuation && $nesting === Token\TElseif::class
-                => Token\TElseifClosingBraceless::class,
-
-            ! $isContinuation && $nesting === Token\TWhile::class
-                => Token\TWhileClosingBraceless::class,
-
-            ! $isContinuation && $nesting === Token\TFor::class
-                => Token\TForClosingBraceless::class,
-
-            ! $isContinuation && $nesting === Token\TForeach::class
-                => Token\TForeachClosingBraceless::class,
-
-            default
-                => throw new Exception(
-                    ($isContinuation ? "Unknown continuation" : "Unknown closing")
-                        . " braceless in nesting "
-                        . var_export($this->listNesting(), true),
-                ),
-        };
+        $braceless = $map[$nesting]
+            ?? throw new Exception(
+                ($isContinuation ? "Unknown continuation" : "Unknown closing")
+                    . " braceless in nesting "
+                    . var_export($this->listNesting(), true),
+            );
 
         $this->parse($source, $braceless);
     }
 
     public function popTernaryNesting() : void
     {
-        while (true) {
-            $nesting = end($this->nesting);
+        while ($this->nesting !== []) {
+            $token = end($this->nesting)->token;
 
-            if ($nesting === false) {
-                break;
-            }
-
-            $token = $nesting->token;
-
-            if (
-                $token instanceof Token\TTernaryColon
-                || $token instanceof Token\TElvisColon
-                || $token instanceof Token\TTernaryQuestion
-                || $token instanceof Token\TElvisQuestion
-            ) {
+            if ($token instanceof Token\ATernaryNesting) {
                 array_pop($this->nesting);
-            } elseif ($token instanceof Token\TFnDoubleArrow) {
+            } elseif ($token instanceof Token\AFnNesting) {
                 array_pop($this->nesting); // TFnDoubleArrow
                 array_pop($this->nesting); // TFn
             } else {
@@ -830,9 +813,7 @@ class Parser
 
     private function findUpcomingInlineComment() : ?int
     {
-        $currentText = $this->source[$this->sourceOffset]->text;
-
-        if (self::hasEol($currentText)) {
+        if (self::hasEol($this->source[$this->sourceOffset]->text)) {
             return null;
         }
 
@@ -841,44 +822,41 @@ class Parser
 
             if ($source->is(T_WHITESPACE)) {
                 if (self::hasEol($source->text)) {
-                    return null; // newline before comment
+                    return null;
                 }
 
                 continue;
             }
 
-            // Skip already-replaced tokens
             if ($source instanceof AToken) {
                 return null;
             }
 
-            if (! $source->is(T_COMMENT) && ! $source->is(T_DOC_COMMENT)) {
-                return null; // non-comment token
-            }
-
-            // // and # always end the line
-            if (
-                str_starts_with($source->text, '//')
-                || str_starts_with($source->text, '#')
-            ) {
-                return $i;
-            }
-
-            // /* */ and /** */ — must have EOL after to be end-of-line
-            $next = $this->source[$i + 1] ?? null;
-
-            if ($next === null) {
-                return $i; // end of file
-            }
-
-            if ($next->is(T_WHITESPACE) && self::hasEol($next->text)) {
-                return $i;
-            }
-
-            return null; // code continues after comment
+            return $this->isInlineComment($source, $i) ? $i : null;
         }
 
         return null;
+    }
+
+    private function isInlineComment(PhpToken $source, int $index) : bool
+    {
+        if (! $source->is(T_COMMENT) && ! $source->is(T_DOC_COMMENT)) {
+            return false;
+        }
+
+        // // and # always end the line
+        if (
+            str_starts_with($source->text, '//')
+            || str_starts_with($source->text, '#')
+        ) {
+            return true;
+        }
+
+        // /* */ and /** */ — inline only if followed by EOL or EOF
+        $next = $this->source[$index + 1] ?? null;
+
+        return $next === null
+            || ($next->is(T_WHITESPACE) && self::hasEol($next->text));
     }
 
     public function getSourceOffset() : int

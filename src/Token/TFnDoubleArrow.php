@@ -6,7 +6,7 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TFnDoubleArrow extends AToken implements ASplittableOperator
+class TFnDoubleArrow extends AToken implements ASplittableOperator, AFnNesting
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
