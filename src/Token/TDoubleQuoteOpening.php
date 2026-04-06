@@ -6,7 +6,7 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TDoubleQuoteOpening extends AToken
+class TDoubleQuoteOpening extends AToken implements AnEncapsedStringOpening
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

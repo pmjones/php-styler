@@ -144,6 +144,8 @@ class Parser
 
     public ?Token\TSplit $lastSplit = null;
 
+    private int $lastSplitIndex = -1;
+
     /** @var array<string, string> */
     private array $tokenClass = [];
 
@@ -169,6 +171,7 @@ class Parser
         $this->sourceOffset = 0;
         $this->parenDepth = 0;
         $this->lastSplit = null;
+        $this->lastSplitIndex = -1;
 
         for (
             $this->sourceOffset = 0;
@@ -320,18 +323,20 @@ class Parser
 
     public function addSplit(Token\TSplit $split) : void
     {
+        $this->lastSplitIndex = $this->parsedCount;
         $this->emit($split);
         $this->lastSplit = $split;
     }
 
     public function replaceLastSplit(Token\TSplit $replacement) : void
     {
-        for ($i = $this->parsedCount - 1; $i >= 0; $i --) {
-            if ($this->parsed[$i] === $this->lastSplit) {
-                $this->parsed[$i] = $replacement;
-                $this->lastSplit = $replacement;
-                return;
-            }
+        if (
+            $this->lastSplitIndex >= 0
+            && $this->lastSplitIndex < $this->parsedCount
+            && $this->parsed[$this->lastSplitIndex] === $this->lastSplit
+        ) {
+            $this->parsed[$this->lastSplitIndex] = $replacement;
+            $this->lastSplit = $replacement;
         }
     }
 
@@ -564,7 +569,7 @@ class Parser
         $nesting = end($this->nesting);
 
         /** @var class-string */
-        return $nesting !== false ? get_class($nesting->token) : '';
+        return $nesting !== false ? $nesting->class : '';
     }
 
     /**
@@ -572,16 +577,15 @@ class Parser
      */
     public function listNesting() : array
     {
-        return array_map(fn (Nesting $n) => get_class($n->token), $this->nesting);
+        return array_map(fn (Nesting $n) => $n->class, $this->nesting);
     }
 
     public function inEncapsedString() : bool
     {
-        return $this->atNesting(Token\TCurlyOpen::class)
-            || $this->atNesting(Token\TDollarOpenCurlyBraces::class)
-            || $this->atNesting(Token\TDoubleQuoteOpening::class)
-            || $this->atNesting(Token\THeredocStart::class)
-            || $this->atNesting(Token\TBacktickOpening::class);
+        $nesting = end($this->nesting);
+
+        return $nesting !== false
+            && $nesting->token instanceof Token\AnEncapsedStringOpening;
     }
 
     public function endBracelessBody(PhpToken $source) : void
@@ -646,7 +650,7 @@ class Parser
         $expects = [$expect, ...$expects];
         $nesting = array_pop($this->nesting);
         $actual = $nesting?->token;
-        $actualClass = $actual !== null ? get_class($actual) : '';
+        $actualClass = $nesting?->class ?? '';
 
         if (! in_array($actualClass, $expects)) {
             throw new \RuntimeException(

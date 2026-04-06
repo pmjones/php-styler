@@ -13,7 +13,7 @@ use PhpToken;
  *         ^
  * Reference: https://www.php.net/manual/en/language.types.string.php#language.types.string.parsing.complex complex variable parsed syntax
  */
-class TCurlyOpen extends AToken
+class TCurlyOpen extends AToken implements AnEncapsedStringOpening
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

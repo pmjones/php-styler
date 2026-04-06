@@ -6,7 +6,7 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TBacktickOpening extends AToken
+class TBacktickOpening extends AToken implements AnEncapsedStringOpening
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
