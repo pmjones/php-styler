@@ -120,29 +120,27 @@ class Parser
     /**
      * @var array<int, Nesting>
      */
-    protected array $nesting = [];
+    private array $nesting = [];
 
     /**
      * @var array<int, AToken>
      */
-    protected array $parsed = [];
+    private array $parsed = [];
 
-    protected int $parsedCount = 0;
+    private int $parsedCount = 0;
 
     /**
      * @var array<PhpToken>
      */
-    protected array $source = [];
+    private array $source = [];
 
-    protected int $sourceCount = 0;
+    private int $sourceCount = 0;
 
-    protected int $sourceOffset = 0;
+    private int $sourceOffset = 0;
 
-    protected int $lastAddedIndex = 0;
+    private int $parenDepth = 0;
 
-    protected int $parenDepth = 0;
-
-    public ?Token\TSplit $lastSplit = null;
+    public private(set) ?Token\TSplit $lastSplit = null;
 
     private int $lastSplitIndex = -1;
 
@@ -165,7 +163,6 @@ class Parser
         $this->nesting = [];
         $this->parsed = [];
         $this->parsedCount = 0;
-        $this->lastAddedIndex = 0;
         $this->source = PhpToken::tokenize($code);
         $this->sourceCount = count($this->source);
         $this->sourceOffset = 0;
@@ -256,7 +253,6 @@ class Parser
             $this->addSplit($splitBefore);
         }
 
-        $this->lastAddedIndex = $this->parsedCount;
         $this->emit($token);
 
         $splitAfter = $token->splitAfter($this);
