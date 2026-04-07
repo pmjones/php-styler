@@ -1,5 +1,7 @@
 # PHP Styler
 
+"Reveals the beauty already in your code."
+
 **WARNING!!!**
 
 PHP-Styler will **completely reformat** your PHP code, discarding any previous formatting entirely.
@@ -108,21 +110,12 @@ in place:
 ./vendor/bin/php-styler apply
 ```
 
-PHP-Styler will only apply formatting to files with a modification time *later*
-than the cache file. Use `--force` to format all files regardless:
-
-```
-./vendor/bin/php-styler apply --force
-```
-
 To apply styling to specific paths instead of those in the config file, pass
 them as arguments:
 
 ```
 ./vendor/bin/php-styler apply ./src/File.php ./resources/
 ```
-
-When paths are given explicitly, the cache time is not honored.
 
 #### `check`
 
@@ -187,7 +180,6 @@ use PhpStyler\Format\DeclarationFormat;
 
 return new Config(
     files: new Files(__DIR__ . '/src'),
-    cache: __DIR__ . '/.php-styler.cache',
     format: new DeclarationFormat(
         lineLen: 84,
         indentLen: 4,
@@ -202,13 +194,8 @@ return new Config(
   `Files` is insufficient, try
   [Symfony Finder](https://symfony.com/doc/current/components/finder.html).)
 
-- `?string $cache` — path to the cache file; `null` disables caching.
-
 - `AFormat $format` — an instance of `AFormat` controlling all styling behavior
   (defaults to `PlainFormat` when not present).
-
-Changing the config file will invalidate the cache, causing all files to be
-reformatted.
 
 ### Formats
 
@@ -244,7 +231,6 @@ use PhpStyler\Format\PlainFormat;
 
 return new Config(
     files: new Files(__DIR__ . '/src'),
-    cache: __DIR__ . '/.php-styler.cache',
     format: new PlainFormat(lineLen: 120),
 );
 ```
@@ -290,7 +276,6 @@ use PhpStyler\Format\Vendor\Percs30Format;
 return new Config(
     files: new Files(__DIR__ . '/src'),
     format: new Percs30Format(),
-    cache: __DIR__ . '/.php-styler.cache',
 );
 ```
 

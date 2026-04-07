@@ -13,7 +13,6 @@ class Config
      */
     public function __construct(
         public readonly iterable $files,
-        public readonly ?string $cache,
         public readonly AFormat $format = new PlainFormat(),
     ) {
     }

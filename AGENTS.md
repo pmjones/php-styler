@@ -43,7 +43,7 @@ PHP code formatter that parses source into custom token objects, applies transfo
 
 ### Configuration
 
-`php-styler.php` at project root returns a `Config` object specifying `cache`, `files`, and `format`. The `files` list explicitly enumerates which paths are style-checked — `src/`, `tests/Rule/`, `tests/Token/`, and individual test files. `tests/Examples/` and `tests/Format/` are not style-checked.
+`php-styler.php` at project root returns a `Config` object specifying `files` and `format`. The `files` list explicitly enumerates which paths are style-checked — `src/`, `tests/Rule/`, `tests/Token/`, and individual test files. `tests/Examples/` and `tests/Format/` are not style-checked.
 
 ## Coding Conventions
 

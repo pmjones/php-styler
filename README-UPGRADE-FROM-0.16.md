@@ -34,7 +34,6 @@ return new Config(
         lineLen: 84,
         indentLen: 4,
     ),
-    cache: __DIR__ . '/.php-styler.cache',
 );
 ```
 
@@ -48,7 +47,6 @@ use PhpStyler\Format\PlainFormat;
 
 return new Config(
     files: new Files(__DIR__ . '/src'),
-    cache: __DIR__ . '/.php-styler.cache',
     format: new PlainFormat(
         lineLen: 84,
         indentLen: 4,
@@ -56,8 +54,8 @@ return new Config(
 );
 ```
 
-The `files` and `cache` parameters work the same as before. The new `format`
-parameter defaults to `PlainFormat` if omitted.
+The `files` parameter works the same as before. The `cache` parameter has been
+removed. The new `format` parameter defaults to `PlainFormat` if omitted.
 
 ### Choosing a Format
 
@@ -114,7 +112,6 @@ return new Config(
             return '';
         }
     },
-    cache: __DIR__ . '/.php-styler.cache',
 );
 ```
 
@@ -128,7 +125,6 @@ use PhpStyler\Token;
 
 return new Config(
     files: new Files(__DIR__ . '/src'),
-    cache: __DIR__ . '/.php-styler.cache',
     format: new PlainFormat(
         lineLen: 84,
         classBracePosition: 'same_line',

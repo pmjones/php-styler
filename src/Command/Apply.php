@@ -32,30 +32,14 @@ class Apply extends ACommand
         echo "Loading config file " . $configFile . PHP_EOL;
         $config = $this->loadConfigFile($configFile);
 
-        // load cache time
-        $cacheTime = $options->force
-            ? 0
-            : $this->getCacheTime($configFile, $config->cache);
-
         // apply styling
         try {
             $workerCount = $this->resolveWorkerCount($options->workers);
 
-            $count = $this->applyStyle(
-                $config,
-                $configFile,
-                $paths,
-                $cacheTime,
-                $workerCount,
-            );
+            $count = $this->applyStyle($config, $configFile, $paths, $workerCount);
         } catch (Exception $e) {
             echo $e->getMessage() . PHP_EOL;
             return 1;
-        }
-
-        // update cache time
-        if ($config->cache && ! $paths) {
-            touch($config->cache);
         }
 
         // statistics
@@ -76,31 +60,6 @@ class Apply extends ACommand
         return 0;
     }
 
-    protected function getCacheTime(string $configFile, ?string $cacheFile) : int
-    {
-        if (! $cacheFile) {
-            echo "No cache file specified." . PHP_EOL;
-            return 0;
-        }
-
-        if (! file_exists($cacheFile)) {
-            echo "Creating cache file {$cacheFile}" . PHP_EOL;
-            touch($cacheFile);
-            return 0;
-        }
-
-        echo "Using cache file {$cacheFile}" . PHP_EOL;
-        $cacheTime = (int) filemtime($cacheFile);
-        $configTime = (int) filemtime($configFile);
-
-        if ($configTime > $cacheTime) {
-            echo "Config file modified after last cache time." . PHP_EOL;
-            return 0;
-        }
-
-        return $cacheTime;
-    }
-
     /**
      * @param string[] $paths
      */
@@ -108,18 +67,12 @@ class Apply extends ACommand
         Config $config,
         string $configFile,
         array $paths,
-        false|int $cacheTime,
         int $workerCount,
     ) : int
     {
-        if ($paths) {
-            $cacheTime = false;
-            $files = new Files(...$paths);
-        } else {
-            $files = $config->files;
-        }
+        $files = $paths ? new Files(...$paths) : $config->files;
 
-        $fileList = $this->collectFiles($files, $cacheTime);
+        $fileList = $this->collectFiles($files);
 
         if ($fileList === [] || $workerCount <= 1 || count($fileList) < 8) {
             return $this->applySequential($config, $fileList);
@@ -132,19 +85,13 @@ class Apply extends ACommand
      * @param iterable<mixed> $files
      * @return string[]
      */
-    protected function collectFiles(iterable $files, false|int $cacheTime) : array
+    protected function collectFiles(iterable $files) : array
     {
         $collected = [];
 
         /** @var string $file */
         foreach ($files as $file) {
-            $file = (string) $file;
-
-            if ($cacheTime && filemtime($file) <= $cacheTime) {
-                continue;
-            }
-
-            $collected[] = $file;
+            $collected[] = (string) $file;
         }
 
         return $collected;

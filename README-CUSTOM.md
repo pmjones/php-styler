@@ -28,7 +28,6 @@ use PhpStyler\Format\PlainFormat;
 
 return new Config(
     files: new Files(__DIR__ . '/src'),
-    cache: __DIR__ . '/.php-styler.cache',
     format: new PlainFormat(
         lineLen: 120,
         indentLen: 2,
@@ -60,7 +59,6 @@ use PhpStyler\Format\PlainFormat;
 
 return new Config(
     files: new Files(__DIR__ . '/src'),
-    cache: __DIR__ . '/.php-styler.cache',
     format: new PlainFormat(
         lineLen: 120,
         controlBracePosition: 'next_line',
@@ -82,7 +80,6 @@ use PhpStyler\Token;
 
 return new Config(
     files: new Files(__DIR__ . '/src'),
-    cache: __DIR__ . '/.php-styler.cache',
     format: new DeclarationFormat(
         styles: [
             // blank line before every return statement
@@ -144,7 +141,6 @@ use PhpStyler\Token;
 
 return new Config(
     files: new Files(__DIR__ . '/src'),
-    cache: __DIR__ . '/.php-styler.cache',
     format: new PlainFormat(
         rules: [
             TokenRule\NormalizeImports::class => [],
@@ -200,7 +196,6 @@ use PhpStyler\Token;
 
 return new Config(
     files: new Files(__DIR__ . '/src'),
-    cache: __DIR__ . '/.php-styler.cache',
     format: new PlainFormat(
         parseAs: [
             // convert array() to []
@@ -328,7 +323,6 @@ use PhpStyler\Files;
 
 return new Config(
     files: new Files(__DIR__ . '/src'),
-    cache: __DIR__ . '/.php-styler.cache',
     format: new MyFormat(),
 );
 ```
