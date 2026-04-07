@@ -8,6 +8,8 @@ use PhpToken;
 
 class TForOpeningParen extends AToken implements AConditionOpener
 {
+    public const END_SEMICOLON = TForSemicolon::class;
+
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->addNesting($source, self::class);

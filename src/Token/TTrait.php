@@ -15,6 +15,10 @@ use PhpToken;
  */
 class TTrait extends AToken
 {
+    public const OPENING_BRACE = TTraitOpeningBrace::class;
+
+    public const CLOSING_BRACE = TTraitClosingBrace::class;
+
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->addNesting($source, self::class);

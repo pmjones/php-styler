@@ -8,6 +8,8 @@ use PhpToken;
 
 class TAnonymousOpeningBrace extends AToken implements AnOpeningStructure
 {
+    public const END_SEMICOLON = TPropertyEndSemicolon::class;
+
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->addNesting($source, static::class);

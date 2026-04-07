@@ -15,6 +15,8 @@ use PhpToken;
  */
 class TYield extends AToken
 {
+    public const END_SEMICOLON = TYieldEndSemicolon::class;
+
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->addNesting($source, self::class);

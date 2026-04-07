@@ -15,6 +15,10 @@ use PhpToken;
  */
 class TIf extends AToken
 {
+    public const OPENING_BRACE = TIfOpeningBrace::class;
+
+    public const CLOSING_BRACE = TIfClosingBrace::class;
+
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->addNesting($source, self::class);

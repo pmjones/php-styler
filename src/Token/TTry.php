@@ -15,6 +15,8 @@ use PhpToken;
  */
 class TTry extends AToken
 {
+    public const OPENING_BRACE = TTryOpeningBrace::class;
+
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->addNesting($source, self::class);

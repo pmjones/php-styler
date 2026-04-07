@@ -15,6 +15,10 @@ use PhpToken;
  */
 class TElse extends AToken
 {
+    public const OPENING_BRACE = TElseOpeningBrace::class;
+
+    public const CLOSING_BRACE = TElseClosingBrace::class;
+
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         if (

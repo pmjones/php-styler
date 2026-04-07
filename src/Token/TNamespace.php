@@ -15,6 +15,12 @@ use PhpToken;
  */
 class TNamespace extends AToken
 {
+    public const OPENING_BRACE = TNamespaceOpeningBrace::class;
+
+    public const CLOSING_BRACE = TNamespaceClosingBrace::class;
+
+    public const END_SEMICOLON = TNamespaceEndSemicolon::class;
+
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->addNesting($source, self::class);

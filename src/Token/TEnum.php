@@ -15,6 +15,10 @@ use PhpToken;
  */
 class TEnum extends AToken
 {
+    public const OPENING_BRACE = TEnumOpeningBrace::class;
+
+    public const CLOSING_BRACE = TEnumClosingBrace::class;
+
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->addNesting($source, self::class);

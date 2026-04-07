@@ -8,6 +8,8 @@ use PhpToken;
 
 class TPropertyHookGetAbstract extends AToken
 {
+    public const END_SEMICOLON = TPropertyHookGetAbstractSemicolon::class;
+
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->addNesting($source, self::class);

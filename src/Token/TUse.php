@@ -15,6 +15,12 @@ use PhpToken;
  */
 class TUse extends AToken
 {
+    public const OPENING_BRACE = TUseOpeningBrace::class;
+
+    public const CLOSING_BRACE = TUseClosingBrace::class;
+
+    public const END_SEMICOLON = TUseEndSemicolon::class;
+
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         if ($parser->atNesting(TClasslikeOpeningBrace::class)) {

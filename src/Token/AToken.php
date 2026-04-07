@@ -12,6 +12,15 @@ abstract class AToken extends PhpToken
 {
     public const SYNTHETIC = -1;
 
+    /** @var ?class-string<self> */
+    public const OPENING_BRACE = null;
+
+    /** @var ?class-string<self> */
+    public const CLOSING_BRACE = null;
+
+    /** @var ?class-string<self> */
+    public const END_SEMICOLON = null;
+
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->add($source, static::class);

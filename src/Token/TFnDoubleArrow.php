@@ -8,6 +8,8 @@ use PhpToken;
 
 class TFnDoubleArrow extends AToken implements ASplittableOperator, AFnNesting
 {
+    public const END_SEMICOLON = TFnEndSemicolon::class;
+
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->addNesting($source, self::class);

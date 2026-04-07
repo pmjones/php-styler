@@ -15,6 +15,10 @@ use PhpToken;
  */
 class TCatch extends AToken
 {
+    public const OPENING_BRACE = TCatchOpeningBrace::class;
+
+    public const CLOSING_BRACE = TCatchClosingBrace::class;
+
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->addNesting($source, self::class);

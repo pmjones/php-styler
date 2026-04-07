@@ -11,6 +11,10 @@ use PhpToken;
  */
 class TAnonymousClass extends AToken
 {
+    public const OPENING_BRACE = TAnonymousOpeningBrace::class;
+
+    public const CLOSING_BRACE = TAnonymousClosingBrace::class;
+
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->addNesting($source, self::class);

@@ -564,6 +564,33 @@ class Parser
     }
 
     /**
+     * @return ?class-string<AToken>
+     */
+    public function getNestingOpeningBrace() : ?string
+    {
+        $nesting = end($this->nesting);
+        return $nesting !== false ? $nesting->openingBrace : null;
+    }
+
+    /**
+     * @return ?class-string<AToken>
+     */
+    public function getNestingClosingBrace() : ?string
+    {
+        $nesting = end($this->nesting);
+        return $nesting !== false ? $nesting->closingBrace : null;
+    }
+
+    /**
+     * @return ?class-string<AToken>
+     */
+    public function getNestingEndSemicolon() : ?string
+    {
+        $nesting = end($this->nesting);
+        return $nesting !== false ? $nesting->endSemicolon : null;
+    }
+
+    /**
      * @param class-string $kind
      */
     public function atNesting(string $kind, string ...$kinds) : bool

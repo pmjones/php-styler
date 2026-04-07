@@ -8,6 +8,8 @@ use PhpToken;
 
 class TTernaryColon extends AToken implements ASplittableOperator, ATernaryNesting
 {
+    public const END_SEMICOLON = TTernaryEndSemicolon::class;
+
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->popNesting(TTernaryQuestion::class);

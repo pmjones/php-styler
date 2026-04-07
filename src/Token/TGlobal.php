@@ -15,6 +15,8 @@ use PhpToken;
  */
 class TGlobal extends AToken
 {
+    public const END_SEMICOLON = TGlobalEndSemicolon::class;
+
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->addNesting($source, self::class);

@@ -15,6 +15,10 @@ use PhpToken;
  */
 class TInterface extends AToken
 {
+    public const OPENING_BRACE = TInterfaceOpeningBrace::class;
+
+    public const CLOSING_BRACE = TInterfaceClosingBrace::class;
+
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->addNesting($source, self::class);

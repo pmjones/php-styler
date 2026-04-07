@@ -15,6 +15,10 @@ use PhpToken;
  */
 class TSwitch extends AToken
 {
+    public const OPENING_BRACE = TSwitchOpeningBrace::class;
+
+    public const CLOSING_BRACE = TSwitchClosingBrace::class;
+
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->addNesting($source, self::class);

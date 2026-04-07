@@ -49,6 +49,7 @@ class TClosingBrace extends AToken
 
         $nesting = $parser->getNesting();
 
+        // use-import braces use add() instead of parse()
         $useClass = match ($nesting) {
             TUse::class => TUseClosingBrace::class,
             TUseFunction::class => TUseFunctionClosingBrace::class,
@@ -87,52 +88,21 @@ class TClosingBrace extends AToken
             return;
         }
 
-        $nestedBraceClass = match ($nesting) {
-            // classlike
-            TClass::class => TClassClosingBrace::class,
-            TEnum::class => TEnumClosingBrace::class,
-            TInterface::class => TInterfaceClosingBrace::class,
-            TTrait::class => TTraitClosingBrace::class,
-
-            // anonymous
-            TAnonymousClass::class,
-            TAnonymousFunction::class => TAnonymousClosingBrace::class,
-
-            // function
-            TFunction::class => TFunctionClosingBrace::class,
-            TMagicMethod::class => TMagicMethodClosingBrace::class,
-
-            // control
-            TCatch::class => TCatchClosingBrace::class,
-            TElse::class => TElseClosingBrace::class,
-            TElseif::class => TElseifClosingBrace::class,
-            TFinally::class => TFinallyClosingBrace::class,
-            TFor::class => TForClosingBrace::class,
-            TForeach::class => TForeachClosingBrace::class,
-            TIf::class => TIfClosingBrace::class,
-            TMatch::class => TMatchClosingBrace::class,
-
-            TSwitch::class => $closesCase
+        // TSwitch conditional: depends on case state
+        if ($nesting === TSwitch::class) {
+            $braceClass = $closesCase
                 ? TSwitchAfterCaseClosingBrace::class
-                : TSwitchClosingBrace::class,
+                : TSwitchClosingBrace::class;
 
-            TWhile::class => TWhileClosingBrace::class,
+            $parser->parse($source, $braceClass);
+            return;
+        }
 
-            // other
-            TDeclare::class => TDeclareClosingBrace::class,
-            TNamespace::class => TNamespaceClosingBrace::class,
-            TUseTrait::class => TUseTraitClosingBrace::class,
+        // lookup from nesting token constant
+        $braceClass = $parser->getNestingClosingBrace();
 
-            // property hooks
-            TPropertyHookGet::class => TPropertyHookGetClosingBrace::class,
-            TPropertyHookSet::class => TPropertyHookSetClosingBrace::class,
-
-            // none
-            default => null,
-        };
-
-        if ($nestedBraceClass) {
-            $parser->parse($source, $nestedBraceClass);
+        if ($braceClass !== null) {
+            $parser->parse($source, $braceClass);
             return;
         }
 

@@ -16,6 +16,12 @@ use PhpToken;
  */
 class TWhile extends AToken
 {
+    public const OPENING_BRACE = TWhileOpeningBrace::class;
+
+    public const CLOSING_BRACE = TWhileClosingBrace::class;
+
+    public const END_SEMICOLON = TDoWhileEndSemicolon::class;
+
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->addNesting($source, self::class);

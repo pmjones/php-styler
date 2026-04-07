@@ -15,6 +15,8 @@ use PhpToken;
  */
 class THaltCompiler extends AToken
 {
+    public const END_SEMICOLON = THaltCompilerSemicolon::class;
+
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->addNesting($source, self::class);

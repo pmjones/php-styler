@@ -15,25 +15,9 @@ class TSemicolon extends AToken
             return;
         }
 
-        $parseClass = match ($parser->getNesting()) {
-            TEnumCase::class => TEnumCaseEndSemicolon::class,
-            TDeclare::class => TDeclareEndSemicolon::class,
-            TNamespace::class => TNamespaceEndSemicolon::class,
-
-            TPropertyHookGet::class,
-            TPropertyHookGetDoubleArrow::class => TPropertyHookGetSemicolon::class,
-
-            TPropertyHookGetAbstract::class
-                => TPropertyHookGetAbstractSemicolon::class,
-
-            TPropertyHookSet::class,
-            TPropertyHookSetDoubleArrow::class => TPropertyHookSetSemicolon::class,
-
-            TPropertyHookSetAbstract::class
-                => TPropertyHookSetAbstractSemicolon::class,
-
-            TConst::class
-                => (
+        // TConst conditional: class body vs namespace
+        if ($parser->getNesting() === TConst::class) {
+            $parseClass = (
                     $parser->atNesting(TConst::class, TClasslikeOpeningBrace::class)
                     || $parser->atNesting(
                         TConst::class,
@@ -41,46 +25,41 @@ class TSemicolon extends AToken
                     )
                 )
                 ? TConstEndSemicolon::class
-                : TNamespaceConstEndSemicolon::class,
+                : TNamespaceConstEndSemicolon::class;
 
-            TUse::class,
-            TUseFunction::class,
-            TUseConst::class => TUseEndSemicolon::class,
-
-            TEcho::class => TEchoEndSemicolon::class,
-            TElvisColon::class => TElvisEndSemicolon::class,
-            TTernaryColon::class => TTernaryEndSemicolon::class,
-            TFnDoubleArrow::class => TFnEndSemicolon::class,
-
-            TReturnColon::class
-                => $parser->atNesting(TReturnColon::class, TMagicMethod::class)
-                ? TAbstractMagicMethodEndSemicolon::class
-                : TAbstractMethodEndSemicolon::class,
-
-            TFunction::class => TAbstractMethodEndSemicolon::class,
-            TMagicMethod::class => TAbstractMagicMethodEndSemicolon::class,
-
-            TUseTrait::class => TUseTraitEndSemicolon::class,
-            TYield::class => TYieldEndSemicolon::class,
-            TGlobal::class => TGlobalEndSemicolon::class,
-            TStaticVar::class => TStaticVarEndSemicolon::class,
-            THaltCompiler::class => THaltCompilerSemicolon::class,
-            TForOpeningParen::class => TForSemicolon::class,
-            TWhile::class => TDoWhileEndSemicolon::class,
-
-            TClassOpeningBrace::class,
-            TEnumOpeningBrace::class,
-            TInterfaceOpeningBrace::class,
-            TTraitOpeningBrace::class,
-            TAnonymousOpeningBrace::class => TPropertyEndSemicolon::class,
-
-            default => null,
-        };
-
-        if ($parseClass) {
             $parser->parse($source, $parseClass);
 
-            // After *EndSemicolon popped its nesting, close any exposed braceless body
+            if ($parser->atNesting(TOpeningBraceless::class)) {
+                $parser->endBracelessBody($source);
+            }
+
+            return;
+        }
+
+        // TReturnColon conditional: magic vs regular
+        if ($parser->getNesting() === TReturnColon::class) {
+            $parseClass = $parser->atNesting(
+                    TReturnColon::class,
+                    TMagicMethod::class,
+                )
+                ? TAbstractMagicMethodEndSemicolon::class
+                : TAbstractMethodEndSemicolon::class;
+
+            $parser->parse($source, $parseClass);
+
+            if ($parser->atNesting(TOpeningBraceless::class)) {
+                $parser->endBracelessBody($source);
+            }
+
+            return;
+        }
+
+        // lookup from nesting token constant
+        $parseClass = $parser->getNestingEndSemicolon();
+
+        if ($parseClass !== null) {
+            $parser->parse($source, $parseClass);
+
             if ($parser->atNesting(TOpeningBraceless::class)) {
                 $parser->endBracelessBody($source);
             }
