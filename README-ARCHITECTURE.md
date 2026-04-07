@@ -174,7 +174,8 @@ Rendered output
 | `Splitter` | Splits long lines at priority-ordered split points; inserts blank lines around split groups |
 | `Line` | A single output line; holds AToken array and indent level |
 | `LineFactory` | Creates Line instances with configured dimensions |
-| `Nesting` | Tracks nesting context for tokens |
+| `NestingStack` | Stack of `Nesting` objects; push/pop/query for tracking nested structures during parsing |
+| `Nesting` | Tracks nesting context for a single token (class name, opening/closing brace, end semicolon) |
 | `Docblock` / `DocblockTag` | Docblock structure parsing |
 
 ### Token System (527 classes)

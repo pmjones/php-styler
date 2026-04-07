@@ -1,6 +1,6 @@
 # Change Log
 
-## NEXT
+## 0.20.0
 
 - **Added `NormalizeMemberOrder` line rule.** Reorders class members into a
   configurable canonical order: trait uses, enum cases, constants, properties,
@@ -47,6 +47,15 @@
 - **Added `AMemberNormalizer` abstract base class** with shared
   `findClassBodyRegions()` for `NormalizeMemberOrder` and
   `NormalizeMemberSpacing`.
+
+- **Removed `cache` parameter from `Config`.** The `--force`/`-f` option on the
+  `apply` command has also been removed. All files are now formatted on every
+  run.
+
+- **Extracted `NestingStack` from `Parser`.** The nesting stack (push, pop, and
+  query operations for tracking nested structures during parsing) has been moved
+  from inline `Parser` logic to a dedicated `NestingStack` class, including
+  `inEncapsedString()` and `popTernary()` methods.
 
 - **Parser refactoring:**
   - `AToken::new()` static factory replaces direct construction; `$style` and
