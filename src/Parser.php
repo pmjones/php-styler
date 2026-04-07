@@ -117,10 +117,7 @@ class Parser
 
     private AFormat $format;
 
-    /**
-     * @var array<int, Nesting>
-     */
-    private array $nesting = [];
+    private NestingStack $nestingStack;
 
     /**
      * @var array<int, AToken>
@@ -160,7 +157,7 @@ class Parser
      */
     public function __invoke(string $code) : array
     {
-        $this->nesting = [];
+        $this->nestingStack = new NestingStack();
         $this->parsed = [];
         $this->parsedCount = 0;
         $this->source = PhpToken::tokenize($code);
@@ -289,8 +286,8 @@ class Parser
             $token->closesStaticMember = $this->hasPrevStatic();
         }
 
-        if ($token instanceof Token\ASplittableComma && $this->nesting !== []) {
-            end($this->nesting)->argCount ++;
+        if ($token instanceof Token\ASplittableComma) {
+            $this->nestingStack->incrementArgCount();
         }
 
         return $token;
@@ -543,7 +540,7 @@ class Parser
     public function addNesting(PhpToken $source, string $tokenClass) : AToken
     {
         $token = $this->add($source, $tokenClass);
-        $this->nesting[] = new Nesting($token);
+        $this->nestingStack->push($token);
         return $token;
     }
 
@@ -560,7 +557,7 @@ class Parser
             $source->pos,
         );
 
-        $this->nesting[] = new Nesting($token);
+        $this->nestingStack->push($token);
     }
 
     /**
@@ -568,8 +565,7 @@ class Parser
      */
     public function getNestingOpeningBrace() : ?string
     {
-        $nesting = end($this->nesting);
-        return $nesting !== false ? $nesting->openingBrace : null;
+        return $this->nestingStack->getOpeningBrace();
     }
 
     /**
@@ -577,8 +573,7 @@ class Parser
      */
     public function getNestingClosingBrace() : ?string
     {
-        $nesting = end($this->nesting);
-        return $nesting !== false ? $nesting->closingBrace : null;
+        return $this->nestingStack->getClosingBrace();
     }
 
     /**
@@ -586,8 +581,7 @@ class Parser
      */
     public function getNestingEndSemicolon() : ?string
     {
-        $nesting = end($this->nesting);
-        return $nesting !== false ? $nesting->endSemicolon : null;
+        return $this->nestingStack->getEndSemicolon();
     }
 
     /**
@@ -595,19 +589,7 @@ class Parser
      */
     public function atNesting(string $kind, string ...$kinds) : bool
     {
-        array_unshift($kinds, $kind);
-        $nestingOffset = count($this->nesting);
-
-        foreach ($kinds as $kind) {
-            $nestingOffset --;
-            $nesting = $this->nesting[$nestingOffset] ?? null;
-
-            if (! $nesting?->token instanceof $kind) {
-                return false;
-            }
-        }
-
-        return true;
+        return $this->nestingStack->at($kind, ...$kinds);
     }
 
     /**
@@ -615,10 +597,7 @@ class Parser
      */
     public function getNesting() : string
     {
-        $nesting = end($this->nesting);
-
-        /** @var class-string */
-        return $nesting !== false ? $nesting->class : '';
+        return $this->nestingStack->getClass();
     }
 
     /**
@@ -626,16 +605,12 @@ class Parser
      */
     public function listNesting() : array
     {
-        /** @var array<int, class-string> */
-        return array_map(fn (Nesting $n) => $n->class, $this->nesting);
+        return $this->nestingStack->listAll();
     }
 
     public function inEncapsedString() : bool
     {
-        $nesting = end($this->nesting);
-
-        return $nesting !== false
-            && $nesting->token instanceof Token\AnEncapsedStringOpening;
+        return $this->nestingStack->inEncapsedString();
     }
 
     public function endBracelessBody(PhpToken $source) : void
@@ -660,18 +635,7 @@ class Parser
 
     public function popTernaryNesting() : void
     {
-        while ($this->nesting !== []) {
-            $token = end($this->nesting)->token;
-
-            if ($token instanceof Token\ATernaryNesting) {
-                array_pop($this->nesting);
-            } elseif ($token instanceof Token\AFnNesting) {
-                array_pop($this->nesting); // TFnDoubleArrow
-                array_pop($this->nesting); // TFn
-            } else {
-                break;
-            }
-        }
+        $this->nestingStack->popTernary();
     }
 
     /**
@@ -684,9 +648,8 @@ class Parser
         string ...$openerClasses,
     ) : AToken
     {
-        $current = end($this->nesting);
-        $argCount = $current !== false ? $current->argCount : 0;
-        $opener = $this->popNesting($openerClass, ...$openerClasses);
+        $argCount = $this->nestingStack->getArgCount();
+        $opener = $this->nestingStack->pop($openerClass, ...$openerClasses);
         $opener->argCount = $argCount;
         $closer = $this->add($source, $closerClass);
         AToken::pair($opener, $closer);
@@ -696,21 +659,7 @@ class Parser
 
     public function popNesting(string $expect, string ...$expects) : AToken
     {
-        $expects = [$expect, ...$expects];
-        $nesting = array_pop($this->nesting);
-        $actual = $nesting->token ?? null;
-        $actualClass = $nesting->class ?? '';
-
-        if (! in_array($actualClass, $expects)) {
-            throw new \RuntimeException(
-                "Expected to pop "
-                    . implode('|', $expects)
-                    . ", got {$actualClass} instead",
-            );
-        }
-
-        /** @var AToken $actual */
-        return $actual;
+        return $this->nestingStack->pop($expect, ...$expects);
     }
 
     public function getPrevParsed(int $skip = 0) : ?AToken
