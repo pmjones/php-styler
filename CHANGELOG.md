@@ -31,6 +31,43 @@
   `TFunction`), not the brace token (`TFunctionOpeningBrace`), so the
   `AnOpeningStructure` instanceof check always failed.
 
+- **Fixed context-dependent keyword parsing.** PHP keywords used as names after
+  `::`, `->`, and `?->` (e.g., `Foo::match()`, `$obj->static`) are now
+  reclassified as `T_STRING` before dispatch, routing them through
+  `TString::parse()`. Similarly, keywords used as named argument names (e.g.,
+  `case:` in function calls) are reclassified by `TArgsOpeningParen` and
+  `TArgsComma`.
+
+- **Added `AMemberClosing` interface** on member-ending tokens with
+  `memberType()` method and `closesStaticMember` property. Eliminates
+  instanceof chains in member ordering/spacing rules. Member type constants
+  (`CONSTANT`, `PROPERTY`, `METHOD`, `MAGIC_METHOD`, `ENUM_CASE`, `USE_TRAIT`)
+  defined on the interface.
+
+- **Added `AMemberNormalizer` abstract base class** with shared
+  `findClassBodyRegions()` for `NormalizeMemberOrder` and
+  `NormalizeMemberSpacing`.
+
+- **Parser refactoring:**
+  - `AToken::new()` static factory replaces direct construction; `$style` and
+    `$parenDepth` are `public private(set)`.
+  - `AToken::pair()` encapsulates bidirectional opener/closer token linking.
+  - `add()` broken into `applyStyleBefore()`, `createToken()`,
+    `applyStyleAfter()`.
+  - `scanParsedTrail()` helper deduplicates 6 backwards-scanning methods.
+  - `replaceLastSplit()` O(n) → O(1) via cached index.
+  - `inEncapsedString()` reduced to single `AnEncapsedStringOpening` instanceof.
+  - `popTernaryNesting()` uses `ATernaryNesting`/`AFnNesting` marker interfaces.
+  - `endBracelessBody()` match expression → constant maps.
+  - `Nesting` caches class name, opening brace, closing brace, and end semicolon
+    from token constants.
+  - Brace/semicolon dispatch (`TOpeningBrace`, `TClosingBrace`, `TSemicolon`)
+    replaced large match expressions with constant lookups on nesting tokens
+    (`OPENING_BRACE`, `CLOSING_BRACE`, `END_SEMICOLON`).
+  - All Parser properties changed from `protected` to `private`; `$lastSplit`
+    is `public private(set)`.
+  - Dead property `$lastAddedIndex` removed.
+
 ## 0.19.1
 
 - **Fixed `NormalizeImports` truncating output at closure `use` clauses.** The
