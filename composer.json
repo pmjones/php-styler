@@ -15,7 +15,7 @@
         "style",
         "styler"
     ],
-    "license": "BSD-3-Clause",
+    "license": "MIT",
     "autoload": {
         "files": ["src/compat.php"],
         "psr-4" : {
