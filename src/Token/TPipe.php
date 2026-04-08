@@ -24,7 +24,9 @@ class TPipe extends AToken
             $prev instanceof TTrue,
             $prev instanceof TFalse,
             $prev instanceof TNull,
-            $prev instanceof TCallable => TUnion::class,
+            $prev instanceof TArray,
+            $prev instanceof TCallable,
+            $prev instanceof TStaticType => TUnion::class,
 
             $prev instanceof TUnqualifiedName,
             $prev instanceof TQualifiedName,

@@ -65,6 +65,55 @@ class TPipeTest extends TTestCase
                     TClassClosingBrace::class,
                 ],
             ],
+            'array-union' => [
+                <<<'CODE'
+                <?php
+                function foo() : array|false
+                {
+                }
+                CODE,
+                [
+                    TPhpOpeningTag::class,
+                    TFunction::class,
+                    TFunctionName::class,
+                    TParamsOpeningParen::class,
+                    TParamsClosingParen::class,
+                    TReturnColon::class,
+                    TArray::class,
+                    TUnion::class,
+                    TFalse::class,
+                    TFunctionOpeningBrace::class,
+                    TFunctionClosingBrace::class,
+                ],
+            ],
+            'static-union' => [
+                <<<'CODE'
+                <?php
+                class Foo
+                {
+                    function bar() : static|null
+                    {
+                    }
+                }
+                CODE,
+                [
+                    TPhpOpeningTag::class,
+                    TClass::class,
+                    TClassName::class,
+                    TClassOpeningBrace::class,
+                    TFunction::class,
+                    TFunctionName::class,
+                    TParamsOpeningParen::class,
+                    TParamsClosingParen::class,
+                    TReturnColon::class,
+                    TStaticType::class,
+                    TUnion::class,
+                    TNull::class,
+                    TFunctionOpeningBrace::class,
+                    TFunctionClosingBrace::class,
+                    TClassClosingBrace::class,
+                ],
+            ],
             'bitwise-or' => [
                 <<<'CODE'
                 <?php
