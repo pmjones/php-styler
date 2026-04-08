@@ -13,13 +13,13 @@ use PhpStyler\Token;
  * @phpstan-import-type styles_array from AFormat
  * @phpstan-import-type parse_as_array from AFormat
  */
-class PlainFormat implements AFormat
+class PlainFormat extends AFormat
 {
     /**
      * @var styles_array
      * @php-styler-expansive
      */
-    public protected(set) array $styles = [
+    public array $styles = [
         Token\TAbstractMagicMethodEndSemicolon::class => [
             'spaceBefore' => false,
             'spaceAfter' => true,
@@ -1311,7 +1311,7 @@ class PlainFormat implements AFormat
     /**
      * @inheritdoc
      */
-    public protected(set) array $rules = [
+    public array $rules = [
         TokenRule\RemoveBom::class => [],
         LineRule\MergeParenBrace::class => [],
         LineRule\RemoveTrailingBlankLines::class => [],
@@ -1320,7 +1320,7 @@ class PlainFormat implements AFormat
     /**
      * @inheritdoc
      */
-    public protected(set) array $parseAs = [];
+    public array $parseAs = [];
 
     /**
      * @param styles_array $styles
@@ -1332,10 +1332,10 @@ class PlainFormat implements AFormat
      * @param parse_as_array $parseAs
      */
     public function __construct(
-        public protected(set) string $eol = "\n",
-        public protected(set) int $lineLen = 84,
-        public protected(set) int $indentLen = 4,
-        public protected(set) bool $indentTab = false,
+        public string $eol = "\n",
+        public int $lineLen = 84,
+        public int $indentLen = 4,
+        public bool $indentTab = false,
         string $classBracePosition = 'same_line',
         string $functionBracePosition = 'same_line',
         string $controlBracePosition = 'same_line',

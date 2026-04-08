@@ -64,15 +64,17 @@ abstract class AToken extends PhpToken
         return $token;
     }
 
-    public private(set) int $parenDepth = 0;
+    public int $parenDepth = 0;
 
     public int $argCount = 0;
+
+    public bool $closesStaticMember = false;
 
     public ?AToken $openingToken = null;
 
     public ?AToken $closingToken = null;
 
-    public private(set) ?Style $style = null;
+    public ?Style $style = null;
 
     public function __debugInfo() : array
     {

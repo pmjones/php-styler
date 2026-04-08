@@ -17,6 +17,7 @@
     ],
     "license": "BSD-3-Clause",
     "autoload": {
+        "files": ["src/compat.php"],
         "psr-4" : {
             "PhpStyler\\": "src/"
         }
@@ -27,14 +28,14 @@
         }
     },
     "require": {
-        "php": ">=8.4",
+        "php": ">=8.1",
         "pmjones/auto-shell": "^1.0"
     },
     "require-dev": {
         "pds/composer-script-names": "^1.0",
         "pds/skeleton": "^1.0",
         "phpstan/phpstan": "^2.0",
-        "phpunit/phpunit": "^11.0"
+        "phpunit/phpunit": "^10.5 || ^11.0"
     },
     "bin": [
         "bin/php-styler"

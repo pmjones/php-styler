@@ -30,22 +30,22 @@ use PhpStyler\Token\AToken;
  *
  * @phpstan-type rules_array array<rule_class_string, rule_args>
  */
-interface AFormat
+abstract class AFormat
 {
-    public string $eol { get; }
+    public string $eol = "\n";
 
-    public int $lineLen { get; }
+    public int $lineLen = 84;
 
-    public int $indentLen { get; }
+    public int $indentLen = 4;
 
-    public bool $indentTab { get; }
+    public bool $indentTab = false;
 
     /** @var parse_as_array */
-    public array $parseAs { get; }
+    public array $parseAs = [];
 
     /** @var styles_array */
-    public array $styles { get; }
+    public array $styles = [];
 
     /** @var rules_array */
-    public array $rules { get; }
+    public array $rules = [];
 }

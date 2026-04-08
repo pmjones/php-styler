@@ -18,8 +18,6 @@ class TUseTraitClosingBrace extends AToken implements
         $parser->closeNesting($source, self::class, TUseTrait::class);
     }
 
-    public bool $closesStaticMember = false;
-
     public function memberType() : string
     {
         return AMemberClosing::USE_TRAIT;

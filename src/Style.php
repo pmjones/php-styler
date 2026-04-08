@@ -3,19 +3,19 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
-readonly class Style
+class Style
 {
     /**
      * @param ?callable(string):string $case
      */
     public function __construct(
-        public ?bool $spaceBefore = null,
-        public ?bool $spaceAfter = null,
-        public ?bool $lineBreakBefore = null,
-        public ?bool $lineBreakAfter = null,
-        public ?bool $blankLineBefore = null,
-        public ?bool $blankLineAfter = null,
-        public mixed $case = null,
+        public readonly ?bool $spaceBefore = null,
+        public readonly ?bool $spaceAfter = null,
+        public readonly ?bool $lineBreakBefore = null,
+        public readonly ?bool $lineBreakAfter = null,
+        public readonly ?bool $blankLineBefore = null,
+        public readonly ?bool $blankLineAfter = null,
+        public readonly mixed $case = null,
     ) {
     }
 }

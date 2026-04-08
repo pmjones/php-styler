@@ -237,27 +237,35 @@ class TPropertyTest extends TTestCase
                     TClassClosingBrace::class,
                 ],
             ],
-            'private-set' => [
-                <<<'CODE'
-                <?php
-                class Foo
-                {
-                    public private(set) string $a;
-                }
-                CODE,
-                [
-                    TPhpOpeningTag::class,
-                    TClass::class,
-                    TClassName::class,
-                    TClassOpeningBrace::class,
-                    TPublic::class,
-                    TPrivateSet::class,
-                    TString::class,
-                    TVariable::class,
-                    TPropertyEndSemicolon::class,
-                    TClassClosingBrace::class,
-                ],
-            ],
+            ...(
+                PHP_VERSION_ID
+                    >= 80400
+                ? [
+                    'private-set' => [
+                        <<<'CODE'
+                    <?php
+                    class Foo
+                    {
+                        public private(set) string $a;
+                    }
+                    CODE,
+                        [
+                            TPhpOpeningTag::class,
+                            TClass::class,
+                            TClassName::class,
+                            TClassOpeningBrace::class,
+                            TPublic::class,
+                            TPrivateSet::class,
+                            TString::class,
+                            TVariable::class,
+                            TPropertyEndSemicolon::class,
+                            TClassClosingBrace::class,
+                        ],
+                    ],
+                ]
+                : [
+                ]
+            ),
             'with-default' => [
                 <<<'CODE'
                 <?php

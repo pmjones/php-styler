@@ -13,7 +13,7 @@ class DoctrineFormat extends DeclarationFormat
     /**
      * @inheritdoc
      */
-    public protected(set) array $parseAs = [
+    public array $parseAs = [
         Token\TList::class => Token\TListAsArray::class,
         Token\TArray::class => Token\TArrayAsShort::class,
         Token\TLogicalAnd::class => Token\TLogicalAndAsBooleanAnd::class,
@@ -28,7 +28,7 @@ class DoctrineFormat extends DeclarationFormat
     /**
      * @inheritdoc
      */
-    public protected(set) array $rules = [
+    public array $rules = [
         TokenRule\RemoveBom::class => [],
         TokenRule\RemoveEmptyAnonymousClassParens::class => [],
         TokenRule\RemoveEmptyAttributeParens::class => [],

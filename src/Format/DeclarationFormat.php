@@ -12,7 +12,7 @@ class DeclarationFormat extends PlainFormat
     /**
      * @inheritdoc
      */
-    public protected(set) array $parseAs = [
+    public array $parseAs = [
         Token\TElse::class => Token\TElseAsElseIf::class,
         Token\TVariable::class => Token\TVariableWithExplicitInterpolation::class,
     ];
@@ -20,7 +20,7 @@ class DeclarationFormat extends PlainFormat
     /**
      * @inheritdoc
      */
-    public protected(set) array $rules = [
+    public array $rules = [
         TokenRule\RemoveBom::class => [],
         TokenRule\RemoveEmptyAnonymousClassParens::class => [],
         TokenRule\RemoveEmptyAttributeParens::class => [],

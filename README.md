@@ -27,7 +27,7 @@ applies configurable formatting rules and styles, and reconstructs the code
 with consistent horizontal spacing, vertical spacing, and automatic line
 splitting.
 
-PHP-Styler has no dependencies beyond PHP 8.4 itself (plus
+PHP-Styler has no dependencies beyond PHP 8.1 itself (plus
 [AutoShell](https://github.com/pmjones/AutoShell) for the CLI).
 
 ### Design Goals

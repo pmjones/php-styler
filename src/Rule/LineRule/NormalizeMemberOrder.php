@@ -152,7 +152,7 @@ class NormalizeMemberOrder extends AMemberNormalizer
         $prevBlockLines = null;
 
         foreach ($sorted as $block) {
-            if ($prevBlockLines !== null) {
+            if ($prevBlockLines !== null && $prevBlockLines !== []) {
                 $lastLine = $prevBlockLines[array_key_last($prevBlockLines)];
                 $lastToken = $lastLine->lastContentToken();
 
@@ -168,7 +168,7 @@ class NormalizeMemberOrder extends AMemberNormalizer
             $prevBlockLines = $block['lines'];
         }
 
-        if ($trailingLines !== []) {
+        if ($trailingLines !== [] && $prevBlockLines !== []) {
             $lastLine = $prevBlockLines[array_key_last($prevBlockLines)];
             $lastToken = $lastLine->lastContentToken();
 

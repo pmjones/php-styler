@@ -1950,116 +1950,8 @@ class StylerTest extends TestCase
                 EXPECT,
             ],
 
-            // Property hooks
-            'prop-hook-get' => [
-                <<<'CODE'
-                <?php class Foo { public string $name { get { return $this->_name; } } }
-                CODE,
-                <<<'EXPECT'
-                <?php class Foo
-                {
-                    public string $name {
-                        get {
-                            return $this->_name;
-                        }
-                    }
-                }
-
-                EXPECT,
-            ],
-            'prop-hook-set' => [
-                <<<'CODE'
-                <?php class Foo { public string $name { set(string $value) { $this->_name = $value; } } }
-                CODE,
-                <<<'EXPECT'
-                <?php class Foo
-                {
-                    public string $name {
-                        set(string $value) {
-                            $this->_name = $value;
-                        }
-                    }
-                }
-
-                EXPECT,
-            ],
-            'prop-hook-arrow' => [
-                <<<'CODE'
-                <?php class Foo { public string $name { get => $this->_name; } }
-                CODE,
-                <<<'EXPECT'
-                <?php class Foo
-                {
-                    public string $name {
-                        get => $this->_name;
-                    }
-                }
-
-                EXPECT,
-            ],
-
-            // Abstract property hooks
-            'prop-hook-abstract-get' => [
-                <<<'CODE'
-                <?php interface Foo { public string $name { get; } }
-                CODE,
-                <<<'EXPECT'
-                <?php interface Foo
-                {
-                    public string $name { get; }
-                }
-
-                EXPECT,
-            ],
-            'prop-hook-abstract-set' => [
-                <<<'CODE'
-                <?php interface Foo { public string $name { set; } }
-                CODE,
-                <<<'EXPECT'
-                <?php interface Foo
-                {
-                    public string $name { set; }
-                }
-
-                EXPECT,
-            ],
-            'prop-hook-abstract-get-set' => [
-                <<<'CODE'
-                <?php interface Foo { public string $name { get; set; } }
-                CODE,
-                <<<'EXPECT'
-                <?php interface Foo
-                {
-                    public string $name { get; set; }
-                }
-
-                EXPECT,
-            ],
-            'prop-hook-abstract-reorder' => [
-                <<<'CODE'
-                <?php interface Foo { public string $name { set; get; } }
-                CODE,
-                <<<'EXPECT'
-                <?php interface Foo
-                {
-                    public string $name { get; set; }
-                }
-
-                EXPECT,
-            ],
-
-            'prop-hook-abstract-class' => [
-                <<<'CODE'
-                <?php abstract class Foo { abstract public string $name { set; get; } }
-                CODE,
-                <<<'EXPECT'
-                <?php abstract class Foo
-                {
-                    abstract public string $name { get; set; }
-                }
-
-                EXPECT,
-            ],
+            // Property hooks (PHP 8.4+)
+            ...self::providePropertyHooks(),
 
             // Trait aliasing
             'trait-insteadof' => [
@@ -2977,6 +2869,123 @@ class StylerTest extends TestCase
                 EXPECT,
             ],
 
+        ];
+    }
+
+    /** @return array<string, array{0: string, 1: string}> */
+    private static function providePropertyHooks() : array
+    {
+        if (PHP_VERSION_ID < 80400) {
+            return [];
+        }
+
+        return [
+            'prop-hook-get' => [
+                <<<'CODE'
+                <?php class Foo { public string $name { get { return $this->_name; } } }
+                CODE,
+                <<<'EXPECT'
+                <?php class Foo
+                {
+                    public string $name {
+                        get {
+                            return $this->_name;
+                        }
+                    }
+                }
+
+                EXPECT,
+            ],
+            'prop-hook-set' => [
+                <<<'CODE'
+                <?php class Foo { public string $name { set(string $value) { $this->_name = $value; } } }
+                CODE,
+                <<<'EXPECT'
+                <?php class Foo
+                {
+                    public string $name {
+                        set(string $value) {
+                            $this->_name = $value;
+                        }
+                    }
+                }
+
+                EXPECT,
+            ],
+            'prop-hook-arrow' => [
+                <<<'CODE'
+                <?php class Foo { public string $name { get => $this->_name; } }
+                CODE,
+                <<<'EXPECT'
+                <?php class Foo
+                {
+                    public string $name {
+                        get => $this->_name;
+                    }
+                }
+
+                EXPECT,
+            ],
+            'prop-hook-abstract-get' => [
+                <<<'CODE'
+                <?php interface Foo { public string $name { get; } }
+                CODE,
+                <<<'EXPECT'
+                <?php interface Foo
+                {
+                    public string $name { get; }
+                }
+
+                EXPECT,
+            ],
+            'prop-hook-abstract-set' => [
+                <<<'CODE'
+                <?php interface Foo { public string $name { set; } }
+                CODE,
+                <<<'EXPECT'
+                <?php interface Foo
+                {
+                    public string $name { set; }
+                }
+
+                EXPECT,
+            ],
+            'prop-hook-abstract-get-set' => [
+                <<<'CODE'
+                <?php interface Foo { public string $name { get; set; } }
+                CODE,
+                <<<'EXPECT'
+                <?php interface Foo
+                {
+                    public string $name { get; set; }
+                }
+
+                EXPECT,
+            ],
+            'prop-hook-abstract-reorder' => [
+                <<<'CODE'
+                <?php interface Foo { public string $name { set; get; } }
+                CODE,
+                <<<'EXPECT'
+                <?php interface Foo
+                {
+                    public string $name { get; set; }
+                }
+
+                EXPECT,
+            ],
+            'prop-hook-abstract-class' => [
+                <<<'CODE'
+                <?php abstract class Foo { abstract public string $name { set; get; } }
+                CODE,
+                <<<'EXPECT'
+                <?php abstract class Foo
+                {
+                    abstract public string $name { get; set; }
+                }
+
+                EXPECT,
+            ],
         ];
     }
 

@@ -8,11 +8,11 @@ use PhpStyler\Token;
 
 class TestFormat extends DeclarationFormat
 {
-    public protected(set) array $parseAs = [
+    public array $parseAs = [
         Token\TElse::class => Token\TElseAsElseIf::class,
     ];
 
-    public protected(set) array $rules = [];
+    public array $rules = [];
 
     /**
      * @param array<class-string<\PhpStyler\Token\AToken>, class-string<\PhpStyler\Token\AToken>> $parseAs

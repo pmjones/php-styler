@@ -20,6 +20,7 @@ class TTest extends \PHPUnit\Framework\TestCase
             'pos' => 88,
             'parenDepth' => 0,
             'argCount' => 0,
+            'closesStaticMember' => false,
             'openingToken' => null,
             'closingToken' => null,
             'style' => null,

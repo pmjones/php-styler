@@ -19,8 +19,6 @@ class TAbstractMethodEndSemicolon extends AToken implements AMemberClosing
         $parser->add($source, self::class);
     }
 
-    public bool $closesStaticMember = false;
-
     public function memberType() : string
     {
         return AMemberClosing::METHOD;

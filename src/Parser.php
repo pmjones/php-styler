@@ -137,7 +137,7 @@ class Parser
 
     private int $parenDepth = 0;
 
-    public private(set) ?Token\TSplit $lastSplit = null;
+    public ?Token\TSplit $lastSplit = null;
 
     private int $lastSplitIndex = -1;
 

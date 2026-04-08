@@ -279,23 +279,25 @@ class Percs30FormatTest extends TestCase
 
                 EXPECT,
             ],
-            'set-visibility-ordering' => [
-                <<<'CODE'
-                <?php
-                class Foo
-                {
-                    static public protected(set) string $bar = '';
-                }
-                CODE,
-                <<<'EXPECT'
-                <?php
-                class Foo
-                {
-                    public protected(set) static string $bar = '';
-                }
+            ...(PHP_VERSION_ID >= 80400 ? [
+                'set-visibility-ordering' => [
+                    <<<'CODE'
+                    <?php
+                    class Foo
+                    {
+                        static public protected(set) string $bar = '';
+                    }
+                    CODE,
+                    <<<'EXPECT'
+                    <?php
+                    class Foo
+                    {
+                        public protected(set) static string $bar = '';
+                    }
 
-                EXPECT,
-            ],
+                    EXPECT,
+                ],
+            ] : []),
             'heredoc-to-nowdoc' => [
                 <<<'CODE'
                 <?php

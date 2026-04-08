@@ -44,8 +44,6 @@ class TPropertyHooksAbstractClosingBrace extends AToken implements
         );
     }
 
-    public bool $closesStaticMember = false;
-
     public function memberType() : string
     {
         return AMemberClosing::PROPERTY;

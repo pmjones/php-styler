@@ -5,39 +5,39 @@ namespace PhpStyler\Token;
 
 interface ASplittable
 {
-    public const int CONDITION_PAREN = 10;
+    public const CONDITION_PAREN = 10;
 
-    public const int ATTRIBUTE = 20;
+    public const ATTRIBUTE = 20;
 
-    public const int FOR_SEMICOLON = 30;
+    public const FOR_SEMICOLON = 30;
 
-    public const int COMMA = 40;
+    public const COMMA = 40;
 
-    public const int FOR_COMMA = 50;
+    public const FOR_COMMA = 50;
 
-    public const int FN_ARROW = 60;
+    public const FN_ARROW = 60;
 
-    public const int TERNARY = 70;
+    public const TERNARY = 70;
 
-    public const int COALESCE = 80;
+    public const COALESCE = 80;
 
-    public const int BRACKET = 90;
+    public const BRACKET = 90;
 
-    public const int MATCH_ARROW = 100;
+    public const MATCH_ARROW = 100;
 
-    public const int BOOLEAN_OR = 110;
+    public const BOOLEAN_OR = 110;
 
-    public const int BOOLEAN_AND = 120;
+    public const BOOLEAN_AND = 120;
 
-    public const int COMPARISON = 130;
+    public const COMPARISON = 130;
 
-    public const int ADDITION = 140;
+    public const ADDITION = 140;
 
-    public const int MULTIPLICATION = 150;
+    public const MULTIPLICATION = 150;
 
-    public const int FLUENT = 160;
+    public const FLUENT = 160;
 
-    public const int OTHER_PAREN = 170;
+    public const OTHER_PAREN = 170;
 
-    public const int ELEMENT_BRACKET = 180;
+    public const ELEMENT_BRACKET = 180;
 }

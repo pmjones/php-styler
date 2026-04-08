@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
+use PHPUnit\Framework\Attributes\RequiresPhp;
+
+#[RequiresPhp('>=8.4')]
 class TPublicSetTest extends TTestCase
 {
     /**

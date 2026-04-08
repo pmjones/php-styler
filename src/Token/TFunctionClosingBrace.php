@@ -18,8 +18,6 @@ class TFunctionClosingBrace extends AToken implements
         $parser->closeNesting($source, self::class, TFunction::class);
     }
 
-    public bool $closesStaticMember = false;
-
     public function memberType() : string
     {
         return AMemberClosing::METHOD;

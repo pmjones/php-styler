@@ -17,7 +17,5 @@ interface AMemberClosing
 
     public const USE_TRAIT = 'USE_TRAIT';
 
-    public bool $closesStaticMember { get; set; }
-
     public function memberType() : string;
 }
