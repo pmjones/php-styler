@@ -591,6 +591,37 @@ class NormalizeMemberOrderTest extends TestCase
 
                 EXPECT,
             ],
+            'static-fn-in-instance-method' => [
+                <<<'CODE'
+                <?php
+                class Foo
+                {
+                    public function __construct()
+                    {
+                    }
+
+                    public function bar()
+                    {
+                        $x = static fn() => 1;
+                    }
+                }
+                CODE,
+                <<<'EXPECT'
+                <?php
+                class Foo
+                {
+                    public function __construct()
+                    {
+                    }
+
+                    public function bar()
+                    {
+                        $x = static fn () => 1;
+                    }
+                }
+
+                EXPECT,
+            ],
         ];
     }
 

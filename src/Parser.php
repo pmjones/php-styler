@@ -654,6 +654,12 @@ class Parser
         $closer = $this->add($source, $closerClass);
         AToken::pair($opener, $closer);
 
+        if ($closer instanceof Token\AMemberClosing) {
+            $closer->closesStaticMember = $this->hasPrevStaticBefore(
+                $closer->openingToken,
+            );
+        }
+
         return $closer;
     }
 
@@ -985,6 +991,37 @@ class Parser
             }
 
             // stop at class body boundaries or previous member endings
+            if (
+                $prev instanceof Token\AMemberClosing
+                || $prev instanceof Token\TClasslikeOpeningBrace
+                || $prev instanceof Token\TAnonymousOpeningBrace
+            ) {
+                return false;
+            }
+        }
+
+        return false;
+    }
+
+    private function hasPrevStaticBefore(Token\AToken $before) : bool
+    {
+        $found = false;
+
+        for ($i = $this->parsedCount - 1; $i >= 0; $i --) {
+            if (! $found) {
+                if ($this->parsed[$i] === $before) {
+                    $found = true;
+                }
+
+                continue;
+            }
+
+            $prev = $this->parsed[$i];
+
+            if ($prev instanceof Token\TStatic) {
+                return true;
+            }
+
             if (
                 $prev instanceof Token\AMemberClosing
                 || $prev instanceof Token\TClasslikeOpeningBrace
