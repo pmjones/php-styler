@@ -34,6 +34,8 @@ class TFunction extends AToken
             return;
         }
 
+        $parser->reclassifyNextSourceAsName();
+
         $nestingClass = self::class;
 
         if ($parser->atClassBody()) {
