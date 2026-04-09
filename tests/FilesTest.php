@@ -50,6 +50,7 @@ class FilesTest extends TestCase
             'CheckOptions.php',
             'Diff.php',
             'DiffOptions.php',
+            'Init.php',
             'Preview.php',
             'PreviewOptions.php',
             'Worker.php',
