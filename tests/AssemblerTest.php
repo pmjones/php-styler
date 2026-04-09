@@ -818,10 +818,14 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                     [
                         TVariable::class,
                         TCommentSlashedMidStatement::class,
+                    ],
+                    [
                         TForeachAs::class,
                         TVariable::class,
                         TForeachDoubleArrow::class,
                         TCommentSlashedMidStatement::class,
+                    ],
+                    [
                         TVariable::class,
                         TCommentSlashedMidStatement::class,
                     ],
@@ -1084,6 +1088,8 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                     [
                         TMatchDoubleArrow::class,
                         TCommentSlashedMidStatement::class,
+                    ],
+                    [
                         TStringLiteral::class,
                         TMatchReturnComma::class,
                     ],
@@ -1096,6 +1102,8 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                     [
                         TMatchDoubleArrow::class,
                         TCommentSlashedMidStatement::class,
+                    ],
+                    [
                         TStringLiteral::class,
                         TMatchReturnComma::class,
                     ],
@@ -1142,6 +1150,8 @@ class AssemblerTest extends \PHPUnit\Framework\TestCase
                     [
                         TFullyQualifiedName::class,
                         TCommentSlashedMidStatement::class,
+                    ],
+                    [
                         TUnion::class,
                         TFullyQualifiedName::class,
                         TVariable::class,

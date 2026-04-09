@@ -98,6 +98,10 @@ class Splitter
         $split = $this->trySplit($line);
 
         if ($split === null) {
+            $split = $this->splitAtInteriorLineComments($line);
+        }
+
+        if ($split === null) {
             return $lines;
         }
 
@@ -154,6 +158,35 @@ class Splitter
         }
 
         return null;
+    }
+
+    /**
+     * @return ?Line[]
+     */
+    private function splitAtInteriorLineComments(Line $line) : ?array
+    {
+        $tokens = $line->getTokens();
+        $lastIdx = $line->lastContentIndex();
+        $positions = [];
+
+        foreach ($tokens as $i => $token) {
+            if (
+                $token instanceof AComment
+                && $i < $lastIdx
+                && (
+                    str_starts_with($token->text, '//')
+                    || str_starts_with($token->text, '#')
+                )
+            ) {
+                $positions[] = $i + 1;
+            }
+        }
+
+        if ($positions === []) {
+            return null;
+        }
+
+        return $this->splitAtPositions($line, $positions, false);
     }
 
     /**
