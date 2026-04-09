@@ -84,15 +84,15 @@ Use `composer` to add PHP-Styler as a dev requirement:
 composer require --dev pmjones/php-styler 0.x@dev
 ```
 
-Copy the default `php-styler.php` config file to your package root:
+Then initialize a config file for your project like so:
 
 ```
-cp ./vendor/pmjones/php-styler/resources/php-styler.php .
+./vendor/bin/php-styler init
 ```
 
 ### Commands
 
-#### `preview`
+\#### `preview`
 
 Safely preview how PHP-Styler will reformat a source file (does not modify
 anything):

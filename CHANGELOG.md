@@ -1,5 +1,15 @@
 # Change Log
 
+## NEXT
+
+- **Added `init` command.** Copies the default `php-styler.php` config file to
+  the current directory. Will not overwrite an existing config file.
+
+- **Backported to PHP 8.1.** The minimum PHP version is now 8.1 (was 8.4).
+
+- **Fixed `array` not recognized as a type.** The `array` keyword is now
+  correctly classified as a type in union/intersection type declarations.
+
 ## 0.20.0
 
 - **Added `NormalizeMemberOrder` line rule.** Reorders class members into a
