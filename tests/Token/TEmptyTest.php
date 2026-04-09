@@ -20,9 +20,9 @@ class TEmptyTest extends TTestCase
                 [
                     TPhpOpeningTag::class,
                     TEmpty::class,
-                    TArgsOpeningParen::class,
+                    TKeywordArgsOpeningParen::class,
                     TVariable::class,
-                    TArgsClosingParen::class,
+                    TKeywordArgsClosingParen::class,
                     TSemicolon::class,
                 ],
             ],

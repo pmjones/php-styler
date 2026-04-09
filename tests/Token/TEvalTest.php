@@ -20,9 +20,9 @@ class TEvalTest extends TTestCase
                 [
                     TPhpOpeningTag::class,
                     TEval::class,
-                    TArgsOpeningParen::class,
+                    TKeywordArgsOpeningParen::class,
                     TVariable::class,
-                    TArgsClosingParen::class,
+                    TKeywordArgsClosingParen::class,
                     TSemicolon::class,
                 ],
             ],

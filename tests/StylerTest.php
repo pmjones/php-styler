@@ -2902,6 +2902,32 @@ class StylerTest extends TestCase
                 EXPECT,
             ],
 
+            // empty() must not get trailing comma
+            'empty-no-trailing-comma' => [
+                <<<'CODE'
+                <?php empty($this->veryLongPropertyName->anotherLongChain()->methodCall()->finallyDone());
+                CODE,
+                <<<'EXPECT'
+                <?php empty(
+                    $this->veryLongPropertyName->anotherLongChain()->methodCall()->finallyDone()
+                );
+
+                EXPECT,
+            ],
+
+            // eval() must not get trailing comma
+            'eval-no-trailing-comma' => [
+                <<<'CODE'
+                <?php eval($this->veryLongPropertyName->anotherLongChain()->methodCall()->finallyDone());
+                CODE,
+                <<<'EXPECT'
+                <?php eval(
+                    $this->veryLongPropertyName->anotherLongChain()->methodCall()->finallyDone()
+                );
+
+                EXPECT,
+            ],
+
         ];
     }
 

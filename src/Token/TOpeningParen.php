@@ -51,6 +51,15 @@ class TOpeningParen extends AToken
             ?->is([
                 T_EMPTY,
                 T_EVAL,
+            ])
+        ) {
+            $parser->parse($source, TKeywordArgsOpeningParen::class);
+            return;
+        }
+
+        if (
+            $parser->getPrevParsed()
+            ?->is([
                 T_EXIT,
                 T_HALT_COMPILER,
                 T_ISSET,

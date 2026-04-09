@@ -63,6 +63,13 @@ class PlainFormat extends AFormat
         Token\TArgsOpeningParen::class => [
             'spaceBefore' => false,
         ],
+        Token\TKeywordArgsOpeningParen::class => [
+            'spaceBefore' => false,
+        ],
+        Token\TKeywordArgsClosingParen::class => [
+            'spaceBefore' => false,
+            'spaceAfter' => true,
+        ],
         Token\TArray::class => [
             'spaceAfter' => true,
             'case' => 'strtolower',
