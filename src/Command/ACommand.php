@@ -23,7 +23,7 @@ abstract class ACommand
             return $file;
         }
 
-        throw new Exception("Could not find {$file}");
+        throw new Exception("Could not find {$file}; have you tried `php-styler init`?");
     }
 
     protected function resolveWorkerCount(?string $workers) : int
