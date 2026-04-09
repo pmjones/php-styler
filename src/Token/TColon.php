@@ -11,6 +11,13 @@ class TColon extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
+        $nesting = $parser->getNesting();
+
+        while ($nesting === TTernaryColon::class || $nesting === TElvisColon::class) {
+            $parser->popNesting($nesting);
+            $nesting = $parser->getNesting();
+        }
+
         if (
             $parser->atNesting(TCase::class)
             || $parser->atNesting(TDefaultCase::class)

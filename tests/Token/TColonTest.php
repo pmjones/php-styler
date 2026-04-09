@@ -87,6 +87,72 @@ class TColonTest extends TTestCase
                     TTernaryEndSemicolon::class,
                 ],
             ],
+            'nested-ternary' => [
+                <<<'CODE'
+                <?php
+                $foo = $a ? $b ? 1 : 2 : 3;
+                CODE,
+                [
+                    TPhpOpeningTag::class,
+                    TVariable::class,
+                    TAssign::class,
+                    TVariable::class,
+                    TTernaryQuestion::class,
+                    TVariable::class,
+                    TTernaryQuestion::class,
+                    TIntegerLiteral::class,
+                    TTernaryColon::class,
+                    TIntegerLiteral::class,
+                    TTernaryColon::class,
+                    TIntegerLiteral::class,
+                    TTernaryEndSemicolon::class,
+                ],
+            ],
+            'nested-elvis-in-ternary' => [
+                <<<'CODE'
+                <?php
+                $foo = $a ? $b ?: 2 : 3;
+                CODE,
+                [
+                    TPhpOpeningTag::class,
+                    TVariable::class,
+                    TAssign::class,
+                    TVariable::class,
+                    TTernaryQuestion::class,
+                    TVariable::class,
+                    TElvisQuestion::class,
+                    TElvisColon::class,
+                    TIntegerLiteral::class,
+                    TTernaryColon::class,
+                    TIntegerLiteral::class,
+                    TTernaryEndSemicolon::class,
+                ],
+            ],
+            'deeply-nested-ternary' => [
+                <<<'CODE'
+                <?php
+                $foo = $a ? $b ? $c ? 1 : 2 : 3 : 4;
+                CODE,
+                [
+                    TPhpOpeningTag::class,
+                    TVariable::class,
+                    TAssign::class,
+                    TVariable::class,
+                    TTernaryQuestion::class,
+                    TVariable::class,
+                    TTernaryQuestion::class,
+                    TVariable::class,
+                    TTernaryQuestion::class,
+                    TIntegerLiteral::class,
+                    TTernaryColon::class,
+                    TIntegerLiteral::class,
+                    TTernaryColon::class,
+                    TIntegerLiteral::class,
+                    TTernaryColon::class,
+                    TIntegerLiteral::class,
+                    TTernaryEndSemicolon::class,
+                ],
+            ],
         ];
     }
 }

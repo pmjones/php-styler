@@ -2515,6 +2515,39 @@ class StylerTest extends TestCase
                 EXPECT,
             ],
 
+            // Nested ternary without parens
+            'ternary-nested-no-parens' => [
+                <<<'CODE'
+                <?php $x = $a ? $b ? 1 : 2 : 3;
+                CODE,
+                <<<'EXPECT'
+                <?php $x = $a ? $b ? 1 : 2 : 3;
+
+                EXPECT,
+            ],
+
+            // Nested elvis in ternary
+            'ternary-nested-elvis' => [
+                <<<'CODE'
+                <?php $x = $a ? $b ?: 2 : 3;
+                CODE,
+                <<<'EXPECT'
+                <?php $x = $a ? $b ?: 2 : 3;
+
+                EXPECT,
+            ],
+
+            // Deeply nested ternary
+            'ternary-deeply-nested' => [
+                <<<'CODE'
+                <?php $x = $a ? $b ? $c ? 1 : 2 : 3 : 4;
+                CODE,
+                <<<'EXPECT'
+                <?php $x = $a ? $b ? $c ? 1 : 2 : 3 : 4;
+
+                EXPECT,
+            ],
+
             // Ternary in function args
             'ternary-in-args' => [
                 <<<'CODE'
