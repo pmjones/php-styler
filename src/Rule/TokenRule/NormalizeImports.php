@@ -9,6 +9,7 @@ use PhpStyler\Token\TBlankLine;
 use PhpStyler\Token\TConstName;
 use PhpStyler\Token\TFunctionCallName;
 use PhpStyler\Token\TFunctionCallQualified;
+use PhpStyler\Token\TFunctionName;
 use PhpStyler\Token\TLineBreak;
 use PhpStyler\Token\TQualifiedName;
 use PhpStyler\Token\TUnknownString;
@@ -230,6 +231,8 @@ class NormalizeImports extends ATokenRule
             if (
                 $token instanceof TQualifiedName
                 || $token instanceof TUnqualifiedName
+                || $token instanceof TFunctionName
+                || $token instanceof TConstName
             ) {
                 $parts = explode('\\', $token->text);
                 $localName = end($parts);

@@ -98,6 +98,11 @@ class TString extends AToken implements AType
             return;
         }
 
+        if ($prev instanceof TUseAs) {
+            $parser->add($source, TUseAlias::class);
+            return;
+        }
+
         $nestingAddClass = match ($parser->getNesting()) {
             TUseFunction::class => TFunctionName::class,
             TUseConst::class => TConstName::class,
@@ -140,7 +145,6 @@ class TString extends AToken implements AType
             $prev instanceof TConst => TConstantName::class,
             $prev instanceof TConstComma => TConstantName::class,
             $prev instanceof TEnumCase => TEnumCaseName::class,
-            $prev instanceof TUseAs => TUseAlias::class,
             $prev instanceof TUseTraitAs => TTraitAlias::class,
             default => null,
         };

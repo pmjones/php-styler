@@ -268,6 +268,66 @@ class NormalizeImportsTest extends TestCase
 
                 EXPECT,
             ],
+            'function-import-unqualified-used' => [
+                <<<'CODE'
+                <?php
+                use function bar;
+
+                bar();
+                CODE,
+                <<<'EXPECT'
+                <?php
+                use function bar;
+
+                bar();
+
+                EXPECT,
+            ],
+            'const-import-unqualified-used' => [
+                <<<'CODE'
+                <?php
+                use const BAR;
+
+                echo BAR;
+                CODE,
+                <<<'EXPECT'
+                <?php
+                use const BAR;
+
+                echo BAR;
+
+                EXPECT,
+            ],
+            'function-import-aliased-used' => [
+                <<<'CODE'
+                <?php
+                use function Foo\bar as baz;
+
+                baz();
+                CODE,
+                <<<'EXPECT'
+                <?php
+                use function Foo\bar as baz;
+
+                baz();
+
+                EXPECT,
+            ],
+            'const-import-aliased-used' => [
+                <<<'CODE'
+                <?php
+                use const Foo\BAR as BAZ;
+
+                echo BAZ;
+                CODE,
+                <<<'EXPECT'
+                <?php
+                use const Foo\BAR as BAZ;
+
+                echo BAZ;
+
+                EXPECT,
+            ],
             'aliased-import-used-by-alias' => [
                 <<<'CODE'
                 <?php
