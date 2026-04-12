@@ -13,7 +13,9 @@ class TColon extends AToken
     {
         $nesting = $parser->getNesting();
 
-        while ($nesting === TTernaryColon::class || $nesting === TElvisColon::class) {
+        while (
+            $nesting === TTernaryColon::class || $nesting === TElvisColon::class
+        ) {
             $parser->popNesting($nesting);
             $nesting = $parser->getNesting();
         }

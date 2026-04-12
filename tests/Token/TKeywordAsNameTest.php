@@ -182,6 +182,7 @@ class TKeywordAsNameTest extends TTestCase
                     TClassClosingBrace::class,
                 ],
             ],
+
             // method name with return type and reference
             'method-name-use-with-reference-and-return-type' => [
                 '<?php class Foo { function &use() : string {} }',

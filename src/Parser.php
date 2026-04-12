@@ -141,6 +141,10 @@ class Parser
 
     private int $lastSplitIndex = -1;
 
+    private int $fluentChainIndex = -1;
+
+    private int $fluentChainPosition = -1;
+
     /** @var array<string, string> */
     private array $tokenClass = [];
 
@@ -166,6 +170,8 @@ class Parser
         $this->parenDepth = 0;
         $this->lastSplit = null;
         $this->lastSplitIndex = -1;
+        $this->fluentChainIndex = -1;
+        $this->fluentChainPosition = -1;
 
         for (
             $this->sourceOffset = 0;
@@ -330,6 +336,27 @@ class Parser
         $this->lastSplit = $split;
     }
 
+    /**
+     * @return array{int, int}
+     */
+    public function startFluentChain() : array
+    {
+        $this->fluentChainIndex ++;
+        $this->fluentChainPosition = 0;
+
+        return [$this->fluentChainIndex, $this->fluentChainPosition];
+    }
+
+    /**
+     * @return array{int, int}
+     */
+    public function continueFluentChain() : array
+    {
+        $this->fluentChainPosition ++;
+
+        return [$this->fluentChainIndex, $this->fluentChainPosition];
+    }
+
     public function replaceLastSplit(Token\TSplit $replacement) : void
     {
         if (
@@ -337,6 +364,14 @@ class Parser
             && $this->lastSplitIndex < $this->parsedCount
             && $this->parsed[$this->lastSplitIndex] === $this->lastSplit
         ) {
+            if (
+                $this->lastSplit instanceof Token\TSplitFluent
+                && $replacement instanceof Token\TSplitFluent
+            ) {
+                $replacement->chainIndex = $this->lastSplit->chainIndex;
+                $replacement->chainPosition = $this->lastSplit->chainPosition;
+            }
+
             $this->parsed[$this->lastSplitIndex] = $replacement;
             $this->lastSplit = $replacement;
         }
@@ -655,9 +690,8 @@ class Parser
         AToken::pair($opener, $closer);
 
         if ($closer instanceof Token\AMemberClosing) {
-            $closer->closesStaticMember = $this->hasPrevStaticBefore(
-                $closer->openingToken,
-            );
+            $closer->closesStaticMember = $this
+                ->hasPrevStaticBefore($closer->openingToken);
         }
 
         return $closer;
@@ -979,6 +1013,19 @@ class Parser
                 Token\TAnonymousOpeningBrace::class,
                 Token\TAnonymousClass::class,
             );
+    }
+
+    public function isPrevStaticPropertyAccess() : bool
+    {
+        for ($i = $this->parsedCount - 2; $i >= 0; $i --) {
+            $token = $this->parsed[$i];
+
+            if ($token->isContent()) {
+                return $token instanceof Token\TMemberDoubleColon;
+            }
+        }
+
+        return false;
     }
 
     public function hasPrevStatic() : bool

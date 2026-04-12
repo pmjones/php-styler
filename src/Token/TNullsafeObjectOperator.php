@@ -27,6 +27,15 @@ class TNullsafeObjectOperator extends AToken implements ASplittableFluent
 
     public function splitBefore(Parser $parser) : ?TSplit
     {
-        return new TSplitPropertyAccess(AToken::SYNTHETIC, '');
+        $split = new TSplitPropertyAccess(AToken::SYNTHETIC, '');
+
+        $newChain = $parser->getPrevParsed() instanceof TVariable
+            && ! $parser->isPrevStaticPropertyAccess();
+
+        [$split->chainIndex, $split->chainPosition] = $newChain
+            ? $parser->startFluentChain()
+            : $parser->continueFluentChain();
+
+        return $split;
     }
 }

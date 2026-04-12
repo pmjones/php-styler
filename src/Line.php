@@ -10,6 +10,7 @@ use PhpStyler\Token\AToken;
 use PhpStyler\Token\TBlankLine;
 use PhpStyler\Token\TSpace;
 use PhpStyler\Token\TSplit;
+use PhpStyler\Token\TSplitFluent;
 
 class Line
 {
@@ -409,12 +410,22 @@ class Line
         }
 
         foreach ($groups as $priority => &$group) {
-            /** @var TSplit $firstSplit */
-            $firstSplit = $tokens[$group['positions'][0]];
+            $filtered = [];
 
-            if ($firstSplit->shouldSkipFirst()) {
-                array_shift($group['positions']);
+            foreach ($group['positions'] as $pos) {
+                $split = $tokens[$pos];
+
+                if (
+                    $split instanceof TSplitFluent
+                    && $split->chainPosition === 0
+                ) {
+                    continue;
+                }
+
+                $filtered[] = $pos;
             }
+
+            $group['positions'] = $filtered;
 
             if ($group['positions'] === []) {
                 unset($groups[$priority]);

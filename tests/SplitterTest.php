@@ -482,6 +482,84 @@ class SplitterTest extends TestCase
                 EXPECT,
             ],
 
+            // Two independent chains: $a->prop and $b->method()->chain()
+            'fluent-two-independent-chains' => [
+                <<<'CODE'
+                <?php
+                $a->longPropertyName = $b->longMethodAlpha()->longMethodBravo();
+                CODE,
+                <<<'EXPECT'
+                <?php
+
+                $a->longPropertyName = $b->longMethodAlpha()
+                    ->longMethodBravo();
+
+                EXPECT,
+            ],
+
+            // $this not orphaned from its method call
+            'fluent-this-not-orphaned' => [
+                <<<'CODE'
+                <?php
+                $closer->closesStaticMember = $this->hasPrevStaticBefore($closer->openingToken);
+                CODE,
+                <<<'EXPECT'
+                <?php
+
+                $closer->closesStaticMember = $this->hasPrevStaticBefore(
+                    $closer->openingToken,
+                );
+
+                EXPECT,
+            ],
+
+            // Static property chain keeps ::$prop->method() splittable
+            'fluent-static-property-chain' => [
+                <<<'CODE'
+                <?php
+                $x = ClassName::$veryLongPropertyName->veryLongMethodAlpha()->veryLongMethodBravo();
+                CODE,
+                <<<'EXPECT'
+                <?php
+
+                $x = ClassName::$veryLongPropertyName
+                    ->veryLongMethodAlpha()
+                    ->veryLongMethodBravo();
+
+                EXPECT,
+            ],
+
+            // Static method chain
+            'fluent-static-method-chain' => [
+                <<<'CODE'
+                <?php
+                $x = ClassName::veryLongStaticMethod()->veryLongMethodAlpha()->veryLongMethodBravo();
+                CODE,
+                <<<'EXPECT'
+                <?php
+
+                $x = ClassName::veryLongStaticMethod()
+                    ->veryLongMethodAlpha()
+                    ->veryLongMethodBravo();
+
+                EXPECT,
+            ],
+
+            // Nullsafe chain not orphaned
+            'fluent-nullsafe-not-orphaned' => [
+                <<<'CODE'
+                <?php
+                $a->longPropertyName = $b?->longMethodAlpha()?->longMethodBravo();
+                CODE,
+                <<<'EXPECT'
+                <?php
+
+                $a->longPropertyName = $b?->longMethodAlpha()
+                    ?->longMethodBravo();
+
+                EXPECT,
+            ],
+
             'operator-mixed-boolean' => [
                 <<<'CODE'
                 <?php
@@ -922,6 +1000,73 @@ class SplitterTest extends TestCase
                             ->prepare($inputData)
                             ->apply($transformerCallback)
                             ->finalize();
+                    }
+                }
+
+                EXPECT,
+            ],
+
+            // Two independent chains at 88-char: each chain's first split is skipped
+            'fluent-multi-chain-assign' => [
+                <<<'CODE'
+                <?php
+                class Foo { public function bar() { $this->longPropertyName = $this->veryLongMethodAlpha()->veryLongMethodBravo()->veryLongMethodCharlie(); } }
+                CODE,
+                <<<'EXPECT'
+                <?php
+                class Foo
+                {
+                    public function bar()
+                    {
+                        $this->longPropertyName = $this->veryLongMethodAlpha()
+                            ->veryLongMethodBravo()
+                            ->veryLongMethodCharlie();
+                    }
+                }
+
+                EXPECT,
+            ],
+
+            // Static property chain at 88-char: ::$prop is part of the chain, not a new start
+            'fluent-static-prop-88' => [
+                <<<'CODE'
+                <?php
+                class Foo { public function bar() { $result = SomeClassName::$longStaticProperty->veryLongMethodAlpha()->veryLongMethodBravo(); } }
+                CODE,
+                <<<'EXPECT'
+                <?php
+                class Foo
+                {
+                    public function bar()
+                    {
+                        $result = SomeClassName::$longStaticProperty
+                            ->veryLongMethodAlpha()
+                            ->veryLongMethodBravo();
+                    }
+                }
+
+                EXPECT,
+            ],
+
+            // $this in array argument not confused with outer static chain
+            'fluent-this-in-array-arg' => [
+                <<<'CODE'
+                <?php
+                class Foo { public function bar() { $payload = Payload::updated(['result' => $this->veryLongMethodName(fn () : string => $this->anotherMethodName($source, $target))]); } }
+                CODE,
+                <<<'EXPECT'
+                <?php
+                class Foo
+                {
+                    public function bar()
+                    {
+                        $payload = Payload::updated(
+                            [
+                                'result' => $this->veryLongMethodName(
+                                    fn () : string => $this->anotherMethodName($source, $target),
+                                ),
+                            ],
+                        );
                     }
                 }
 
