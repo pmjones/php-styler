@@ -31,6 +31,6 @@ class TContinuationBrace extends AToken
             . " on line {$source->line}"
             . " at position {$source->pos}";
 
-        throw new Exception($message);
+        throw Exception::fromParser($message, $parser, $source);
     }
 }

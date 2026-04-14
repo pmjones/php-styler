@@ -48,6 +48,8 @@ class FilesTest extends TestCase
             'ApplyOptions.php',
             'Check.php',
             'CheckOptions.php',
+            'Debug.php',
+            'DebugOptions.php',
             'Diff.php',
             'DiffOptions.php',
             'Init.php',

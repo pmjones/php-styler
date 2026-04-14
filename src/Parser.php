@@ -659,10 +659,12 @@ class Parser
             : self::BRACELESS_CLOSING;
 
         $braceless = $map[$nesting]
-            ?? throw new Exception(
+            ?? throw Exception::fromParser(
                 ($isContinuation ? "Unknown continuation" : "Unknown closing")
                     . " braceless on line {$source->line}"
                     . " at position {$source->pos}",
+                $this,
+                $source,
             );
 
         $this->parse($source, $braceless);
