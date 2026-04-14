@@ -27,11 +27,9 @@ class TContinuationBrace extends AToken
             return;
         }
 
-        $message = "Unknown kind of parting brace "
-            . "on line {$source->line} "
-            . "at position {$source->pos} "
-            . "in nesting "
-            . var_export($parser->listNesting(), true);
+        $message = "Unknown kind of parting brace"
+            . " on line {$source->line}"
+            . " at position {$source->pos}";
 
         throw new Exception($message);
     }

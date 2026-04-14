@@ -25,6 +25,7 @@ class Apply extends ACommand
         string ...$paths,
     ) : int
     {
+        $this->errors = [];
         $start = hrtime(true);
 
         // load config
@@ -57,7 +58,8 @@ class Apply extends ACommand
         }
 
         echo '.' . PHP_EOL;
-        return 0;
+        $this->reportErrors();
+        return $this->errors ? 1 : 0;
     }
 
     /**
@@ -106,8 +108,13 @@ class Apply extends ACommand
 
         foreach ($files as $file) {
             echo $file . PHP_EOL;
-            $code = $styler((string) file_get_contents($file));
-            file_put_contents($file, $code);
+
+            try {
+                $code = $styler((string) file_get_contents($file));
+                file_put_contents($file, $code);
+            } catch (Exception $e) {
+                $this->errors[$file] = $e->getMessage();
+            }
         }
 
         return count($files);
@@ -130,7 +137,7 @@ class Apply extends ACommand
             echo $result->file . PHP_EOL;
 
             if (! $result->ok) {
-                echo "  ERROR: {$result->error}" . PHP_EOL;
+                $this->errors[$result->file] = $result->error ?? 'Unknown error';
             }
         }
 

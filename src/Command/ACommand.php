@@ -9,6 +9,25 @@ use PhpStyler\Parallel\WorkerPool;
 
 abstract class ACommand
 {
+    /** @var array<string, string> file => error message */
+    protected array $errors = [];
+
+    protected function reportErrors() : void
+    {
+        if ($this->errors === []) {
+            return;
+        }
+
+        $count = count($this->errors);
+        $noun = $count === 1 ? 'file' : 'files';
+        echo PHP_EOL . "{$count} {$noun} failed:" . PHP_EOL;
+
+        foreach ($this->errors as $file => $error) {
+            echo "  {$file}" . PHP_EOL
+                . "    {$error}" . PHP_EOL;
+        }
+    }
+
     protected function loadConfigFile(string $configFile) : Config
     {
         /** @var Config */

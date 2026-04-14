@@ -28,6 +28,7 @@ class Diff extends ACommand
     ) : int
     {
         $this->hasDiff = false;
+        $this->errors = [];
 
         $configFile = $options->configFile ?? $this->findConfigFile();
         $config = $this->loadConfigFile($configFile);
@@ -40,7 +41,8 @@ class Diff extends ACommand
             return 1;
         }
 
-        return (int) $this->hasDiff;
+        $this->reportErrors();
+        return (int) ($this->hasDiff || $this->errors);
     }
 
     /**
@@ -82,15 +84,19 @@ class Diff extends ACommand
         $styler = new Styler($config->format);
 
         foreach ($files as $file) {
-            $source = (string) file_get_contents($file);
-            $styled = $styler($source);
+            try {
+                $source = (string) file_get_contents($file);
+                $styled = $styler($source);
 
-            if ($source === $styled) {
-                continue;
+                if ($source === $styled) {
+                    continue;
+                }
+
+                $this->hasDiff = true;
+                $this->showDiff($file, $styled);
+            } catch (Exception $e) {
+                $this->errors[$file] = $e->getMessage();
             }
-
-            $this->hasDiff = true;
-            $this->showDiff($file, $styled);
         }
     }
 
@@ -109,7 +115,7 @@ class Diff extends ACommand
 
         foreach ($results as $result) {
             if (! $result->ok) {
-                echo $result->file . " ERROR: {$result->error}" . PHP_EOL;
+                $this->errors[$result->file] = $result->error ?? 'Unknown error';
                 continue;
             }
 

@@ -661,8 +661,8 @@ class Parser
         $braceless = $map[$nesting]
             ?? throw new Exception(
                 ($isContinuation ? "Unknown continuation" : "Unknown closing")
-                    . " braceless in nesting "
-                    . var_export($this->listNesting(), true),
+                    . " braceless on line {$source->line}"
+                    . " at position {$source->pos}",
             );
 
         $this->parse($source, $braceless);

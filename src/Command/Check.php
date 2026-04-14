@@ -20,6 +20,7 @@ class Check extends ACommand
     public function __invoke(CheckOptions $options) : int
     {
         $this->failure = [];
+        $this->errors = [];
         $start = hrtime(true);
 
         // load config
@@ -56,7 +57,8 @@ class Check extends ACommand
         /** @phpstan-ignore-next-line */
         $phrase = $failed === 1 ? 'file appears' : 'files appear';
         echo "{$failed} {$phrase} to need styling." . PHP_EOL;
-        return (int) $this->failure;
+        $this->reportErrors();
+        return (int) ($this->failure || $this->errors);
     }
 
     protected function checkStyle(
@@ -86,12 +88,16 @@ class Check extends ACommand
         $styler = new Styler($config->format);
 
         foreach ($files as $file) {
-            $source = (string) file_get_contents($file);
-            $styled = $styler($source);
+            try {
+                $source = (string) file_get_contents($file);
+                $styled = $styler($source);
 
-            if ($source !== $styled) {
-                echo $file . PHP_EOL;
-                $this->failure[] = $file;
+                if ($source !== $styled) {
+                    echo $file . PHP_EOL;
+                    $this->failure[] = $file;
+                }
+            } catch (Exception $e) {
+                $this->errors[$file] = $e->getMessage();
             }
         }
 
@@ -113,8 +119,7 @@ class Check extends ACommand
 
         foreach ($results as $result) {
             if (! $result->ok) {
-                echo $result->file . " ERROR: {$result->error}" . PHP_EOL;
-                $this->failure[] = $result->file;
+                $this->errors[$result->file] = $result->error ?? 'Unknown error';
             } elseif ($result->isMatch === false) {
                 echo $result->file . PHP_EOL;
                 $this->failure[] = $result->file;
