@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace PhpStyler\Command;
 
 use AutoShell\Help;
-use PhpStyler\Exception;
 use PhpStyler\Styler;
+use Throwable;
 
 #[Help("Internal worker process for parallel styling.")]
 class Worker extends ACommand
@@ -70,7 +70,7 @@ class Worker extends ACommand
             $code = $styler((string) file_get_contents($file));
             file_put_contents($file, $code);
             return ['file' => $file, 'ok' => true];
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return ['file' => $file, 'ok' => false, 'error' => $e->getMessage()];
         }
     }
@@ -84,7 +84,7 @@ class Worker extends ACommand
             $source = (string) file_get_contents($file);
             $styled = $styler($source);
             return ['file' => $file, 'ok' => true, 'match' => $source === $styled];
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return ['file' => $file, 'ok' => false, 'error' => $e->getMessage()];
         }
     }
@@ -104,7 +104,7 @@ class Worker extends ACommand
 
             $diff = $this->computeDiff($file, $styled);
             return ['file' => $file, 'ok' => true, 'diff' => $diff];
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return ['file' => $file, 'ok' => false, 'error' => $e->getMessage()];
         }
     }

@@ -26,7 +26,7 @@ class NestingStack
         $actualClass = $nesting->class ?? '';
 
         if (! in_array($actualClass, $expects)) {
-            throw new \RuntimeException(
+            throw new Exception(
                 "Expected to pop "
                     . implode('|', $expects)
                     . ", got {$actualClass} instead",

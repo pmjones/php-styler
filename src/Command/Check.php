@@ -8,6 +8,7 @@ use PhpStyler\Config;
 use PhpStyler\Exception;
 use PhpStyler\Parallel\WorkerPool;
 use PhpStyler\Styler;
+use Throwable;
 
 #[Help("Checks if any of the configured files need styling.")]
 class Check extends ACommand
@@ -96,7 +97,7 @@ class Check extends ACommand
                     echo $file . PHP_EOL;
                     $this->failure[] = $file;
                 }
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
                 $this->errors[$file] = $e->getMessage();
             }
         }

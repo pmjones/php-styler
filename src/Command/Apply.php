@@ -9,6 +9,7 @@ use PhpStyler\Exception;
 use PhpStyler\Files;
 use PhpStyler\Parallel\WorkerPool;
 use PhpStyler\Styler;
+use Throwable;
 
 #[Help("Applies styling to the configured files, rewriting them in place.")]
 class Apply extends ACommand
@@ -112,7 +113,7 @@ class Apply extends ACommand
             try {
                 $code = $styler((string) file_get_contents($file));
                 file_put_contents($file, $code);
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
                 $this->errors[$file] = $e->getMessage();
             }
         }

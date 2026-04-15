@@ -6,6 +6,7 @@ namespace PhpStyler\Command;
 use AutoShell\Help;
 use PhpStyler\Exception;
 use PhpStyler\Styler;
+use Throwable;
 
 #[Help("Runs the styler on a single file and shows detailed error diagnostics.")]
 class Debug extends ACommand
@@ -27,31 +28,33 @@ class Debug extends ACommand
             $styler($source);
             echo "No styling errors in {$sourceFile}" . PHP_EOL;
             return 0;
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             $this->renderError($sourceFile, $source, $e);
             return 1;
         }
     }
 
-    private function renderError(string $file, string $source, Exception $e) : void
+    private function renderError(string $file, string $source, Throwable $e) : void
     {
         echo "Styling error in {$file}:" . PHP_EOL;
         echo PHP_EOL;
         echo "  {$e->getMessage()}" . PHP_EOL;
 
-        if ($e->debug === []) {
+        $debug = $e instanceof Exception ? $e->debug : [];
+
+        if ($debug === []) {
             return;
         }
 
-        $line = $e->debug['line'] ?? null;
+        $line = $debug['line'] ?? null;
 
         if (is_int($line)) {
             echo PHP_EOL;
             $this->renderSourceContext($source, $line);
         }
 
-        $current = $e->debug['currentTokenText'] ?? null;
-        $name = $e->debug['currentTokenName'] ?? null;
+        $current = $debug['currentTokenText'] ?? null;
+        $name = $debug['currentTokenName'] ?? null;
 
         if ($current !== null) {
             echo PHP_EOL;
@@ -65,7 +68,7 @@ class Debug extends ACommand
             echo PHP_EOL;
         }
 
-        $before = $e->debug['recentSourceText'] ?? null;
+        $before = $debug['recentSourceText'] ?? null;
 
         if ($before !== null && $before !== '') {
             echo PHP_EOL;
@@ -73,7 +76,7 @@ class Debug extends ACommand
             echo "    " . json_encode($before) . PHP_EOL;
         }
 
-        $after = $e->debug['upcomingSourceText'] ?? null;
+        $after = $debug['upcomingSourceText'] ?? null;
 
         if ($after !== null && $after !== '') {
             echo PHP_EOL;

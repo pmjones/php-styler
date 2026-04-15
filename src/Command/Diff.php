@@ -9,6 +9,7 @@ use PhpStyler\Exception;
 use PhpStyler\Files;
 use PhpStyler\Parallel\WorkerPool;
 use PhpStyler\Styler;
+use Throwable;
 
 #[Help("Shows a unified diff of source files vs their styled versions.")]
 class Diff extends ACommand
@@ -94,7 +95,7 @@ class Diff extends ACommand
 
                 $this->hasDiff = true;
                 $this->showDiff($file, $styled);
-            } catch (Exception $e) {
+            } catch (Throwable $e) {
                 $this->errors[$file] = $e->getMessage();
             }
         }
