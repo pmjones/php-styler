@@ -172,6 +172,23 @@ class Line
         return 0;
     }
 
+    public function hasFluentSplits(int $minCount = 1) : bool
+    {
+        $count = 0;
+
+        foreach ($this->getTopLevelTokens() as $token) {
+            if ($token instanceof TSplitFluent) {
+                $count ++;
+
+                if ($count >= $minCount) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     public function hasInteriorComment() : bool
     {
         $lastIdx = $this->lastContentIndex();
@@ -415,10 +432,7 @@ class Line
             foreach ($group['positions'] as $pos) {
                 $split = $tokens[$pos];
 
-                if (
-                    $split instanceof TSplitFluent
-                    && $split->chainPosition === 0
-                ) {
+                if ($split instanceof TSplitFluent && $split->chainPosition === 0) {
                     continue;
                 }
 

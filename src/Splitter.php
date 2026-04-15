@@ -136,7 +136,8 @@ class Splitter
         }
 
         // Expansion strategies from opener tokens
-        $hasFluent = isset($strategies[ASplittable::FLUENT]);
+        $hasFluent = isset($strategies[ASplittable::FLUENT])
+            || $line->hasFluentSplits(minCount: 2);
 
         foreach ($line->collectExpansionPairs() as $priority => $pair) {
             // Skip bracket expansion when fluent splits exist
@@ -472,9 +473,8 @@ class Splitter
                 }
 
                 // Split before closer if it's not the first token on its line
-                $closerTokenIndex = $lines[$closerLineIndex]->findTokenIndex(
-                    $token->closingToken,
-                );
+                $closerTokenIndex = $lines[$closerLineIndex]
+                    ->findTokenIndex($token->closingToken);
 
                 if ($closerTokenIndex !== null && $closerTokenIndex > 0) {
                     return $this->splitBeforeCloser(

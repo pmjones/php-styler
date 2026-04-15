@@ -13,7 +13,11 @@ class TMemberDoubleColon extends AToken implements ASplittableFluent
 
         if ($next?->is(T_VARIABLE) || $next?->is('{')) {
             $split = new TSplitStaticMember(AToken::SYNTHETIC, '');
-            [$split->chainIndex, $split->chainPosition] = $parser->startFluentChain();
+
+            [
+                $split->chainIndex,
+                $split->chainPosition,
+            ] = $parser->startFluentChain();
 
             return $split;
         }
@@ -35,7 +39,11 @@ class TMemberDoubleColon extends AToken implements ASplittableFluent
             && $parser->getSourceAt($afterMemberOffset)->is('(')
         ) {
             $split = new TSplitStaticMethodCall(AToken::SYNTHETIC, '');
-            [$split->chainIndex, $split->chainPosition] = $parser->startFluentChain();
+
+            [
+                $split->chainIndex,
+                $split->chainPosition,
+            ] = $parser->startFluentChain();
 
             return $split;
         }

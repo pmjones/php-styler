@@ -692,8 +692,9 @@ class Parser
         AToken::pair($opener, $closer);
 
         if ($closer instanceof Token\AMemberClosing) {
-            $closer->closesStaticMember = $this
-                ->hasPrevStaticBefore($closer->openingToken);
+            $closer->closesStaticMember = $this->hasPrevStaticBefore(
+                $closer->openingToken,
+            );
         }
 
         return $closer;

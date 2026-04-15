@@ -7,19 +7,6 @@ use PhpToken;
 
 class Exception extends \Exception
 {
-    /** @var array<string, mixed> */
-    public readonly array $debug;
-
-    public function __construct(
-        string $message = '',
-        int $code = 0,
-        ?\Throwable $previous = null,
-        array $debug = [],
-    ) {
-        parent::__construct($message, $code, $previous);
-        $this->debug = $debug;
-    }
-
     public static function fromParser(
         string $message,
         Parser $parser,
@@ -51,5 +38,18 @@ class Exception extends \Exception
                 'upcomingSourceText' => $upcomingSourceText,
             ],
         );
+    }
+
+    /** @var array<string, mixed> */
+    public readonly array $debug;
+
+    public function __construct(
+        string $message = '',
+        int $code = 0,
+        ?\Throwable $previous = null,
+        array $debug = [],
+    ) {
+        parent::__construct($message, $code, $previous);
+        $this->debug = $debug;
     }
 }

@@ -23,8 +23,7 @@ abstract class ACommand
         echo PHP_EOL . "{$count} {$noun} failed:" . PHP_EOL;
 
         foreach ($this->errors as $file => $error) {
-            echo "  {$file}" . PHP_EOL
-                . "    {$error}" . PHP_EOL;
+            echo "  {$file}" . PHP_EOL . "    {$error}" . PHP_EOL;
         }
     }
 

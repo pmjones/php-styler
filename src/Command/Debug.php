@@ -33,11 +33,7 @@ class Debug extends ACommand
         }
     }
 
-    private function renderError(
-        string $file,
-        string $source,
-        Exception $e,
-    ) : void
+    private function renderError(string $file, string $source, Exception $e) : void
     {
         echo "Styling error in {$file}:" . PHP_EOL;
         echo PHP_EOL;
