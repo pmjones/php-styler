@@ -43,6 +43,9 @@ class Exception extends \Exception
     /** @var array<string, mixed> */
     public readonly array $debug;
 
+    /**
+     * @param array<string, mixed> $debug
+     */
     public function __construct(
         string $message = '',
         int $code = 0,

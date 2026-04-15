@@ -25,7 +25,9 @@ class ExceptionTest extends TestCase
             $this->assertIsInt($e->debug['pos']);
             $this->assertSame(':', $e->debug['currentTokenText']);
             $this->assertSame(':', $e->debug['currentTokenName']);
+            $this->assertIsString($e->debug['recentSourceText']);
             $this->assertStringContainsString('never', $e->debug['recentSourceText']);
+            $this->assertIsString($e->debug['upcomingSourceText']);
             $this->assertStringContainsString('int', $e->debug['upcomingSourceText']);
         }
     }
@@ -49,6 +51,7 @@ class ExceptionTest extends TestCase
         } catch (Exception $e) {
             $this->assertSame(4, $e->debug['line']);
             $this->assertSame(':', $e->debug['currentTokenText']);
+            $this->assertIsString($e->debug['recentSourceText']);
             $this->assertStringContainsString('never', $e->debug['recentSourceText']);
         }
     }

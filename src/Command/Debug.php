@@ -45,7 +45,7 @@ class Debug extends ACommand
 
         $line = $e->debug['line'] ?? null;
 
-        if ($line !== null) {
+        if (is_int($line)) {
             echo PHP_EOL;
             $this->renderSourceContext($source, $line);
         }
@@ -58,7 +58,7 @@ class Debug extends ACommand
             echo "  Current token:" . PHP_EOL;
             echo "    " . json_encode($current);
 
-            if ($name !== null) {
+            if (is_string($name)) {
                 echo " ({$name})";
             }
 
