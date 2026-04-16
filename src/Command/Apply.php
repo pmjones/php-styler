@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace PhpStyler\Command;
 
 use AutoShell\Help;
+use PhpStyler\Cache;
 use PhpStyler\Config;
 use PhpStyler\Exception;
 use PhpStyler\Files;
@@ -35,14 +36,27 @@ class Apply extends ACommand
         $config = $this->loadConfigFile($configFile);
 
         // apply styling
+        $cache = $this->createCache($configFile, $config);
+
         try {
             $workerCount = $this->resolveWorkerCount($options->workers);
 
-            $count = $this->applyStyle($config, $configFile, $paths, $workerCount);
+            [
+                $count,
+                $skipped,
+            ] = $this->applyStyle(
+                $config,
+                $configFile,
+                $paths,
+                $workerCount,
+                $cache,
+            );
         } catch (Exception $e) {
             echo $e->getMessage() . PHP_EOL;
             return 1;
         }
+
+        $cache->save();
 
         // statistics
         $time = (hrtime(true) - $start) / 1000000000;
@@ -52,7 +66,13 @@ class Apply extends ACommand
 
         // report
         $noun = $count === 1 ? 'file' : 'files';
-        echo "Styled {$count} {$noun} in {$sum} seconds";
+        echo "Styled {$count} {$noun}";
+
+        if ($skipped) {
+            echo ", skipped {$skipped} unchanged";
+        }
+
+        echo " in {$sum} seconds";
 
         if ($count) {
             echo " ({$avg} seconds/file, {$mem} MB peak memory usage)";
@@ -65,23 +85,25 @@ class Apply extends ACommand
 
     /**
      * @param string[] $paths
+     * @return array{int, int} [styled count, skipped count]
      */
     protected function applyStyle(
         Config $config,
         string $configFile,
         array $paths,
         int $workerCount,
-    ) : int
+        Cache $cache,
+    ) : array
     {
         $files = $paths ? new Files(...$paths) : $config->files;
 
         $fileList = $this->collectFiles($files);
 
         if ($fileList === [] || $workerCount <= 1 || count($fileList) < 8) {
-            return $this->applySequential($config, $fileList);
+            return $this->applySequential($config, $fileList, $cache);
         }
 
-        return $this->applyParallel($configFile, $fileList, $workerCount);
+        return $this->applyParallel($configFile, $fileList, $workerCount, $cache);
     }
 
     /**
@@ -102,46 +124,73 @@ class Apply extends ACommand
 
     /**
      * @param string[] $files
+     * @return array{int, int}
      */
-    protected function applySequential(Config $config, array $files) : int
+    protected function applySequential(
+        Config $config,
+        array $files,
+        Cache $cache,
+    ) : array
     {
         $styler = new Styler($config->format);
+        $skipped = 0;
 
         foreach ($files as $file) {
+            if ($cache->isCurrent($file)) {
+                $skipped ++;
+                continue;
+            }
+
             echo $file . PHP_EOL;
 
             try {
                 $code = $styler((string) file_get_contents($file));
                 file_put_contents($file, $code);
+                $cache->update($file);
+                $cache->save();
             } catch (Throwable $e) {
                 $this->errors[$file] = $e->getMessage();
             }
         }
 
-        return count($files);
+        return [count($files) - $skipped, $skipped];
     }
 
     /**
      * @param string[] $files
+     * @return array{int, int}
      */
     protected function applyParallel(
         string $configFile,
         array $files,
         int $workerCount,
-    ) : int
+        Cache $cache,
+    ) : array
     {
+        $uncached = array_values(
+            array_filter($files, fn (string $f) => ! $cache->isCurrent($f)),
+        );
+
+        $skipped = count($files) - count($uncached);
+
+        if ($uncached === []) {
+            return [0, $skipped];
+        }
+
         echo "Using {$workerCount} parallel workers." . PHP_EOL;
         $pool = new WorkerPool();
-        $results = $pool->run($files, 'apply', $configFile, $workerCount);
+        $results = $pool->run($uncached, 'apply', $configFile, $workerCount);
 
         foreach ($results as $result) {
             echo $result->file . PHP_EOL;
 
             if (! $result->ok) {
                 $this->errors[$result->file] = $result->error ?? 'Unknown error';
+            } else {
+                $cache->update($result->file);
             }
         }
 
-        return count($results);
+        return [count($results), $skipped];
     }
 }

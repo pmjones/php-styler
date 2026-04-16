@@ -14,6 +14,7 @@ class Config
     public function __construct(
         public readonly iterable $files,
         public readonly AFormat $format = new PlainFormat(),
+        public readonly ?string $cache = null,
     ) {
     }
 }

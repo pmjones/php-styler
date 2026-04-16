@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Command;
 
+use PhpStyler\Cache;
 use PhpStyler\Config;
 use PhpStyler\Exception;
 use PhpStyler\Parallel\WorkerPool;
@@ -25,6 +26,18 @@ abstract class ACommand
         foreach ($this->errors as $file => $error) {
             echo "  {$file}" . PHP_EOL . "    {$error}" . PHP_EOL;
         }
+    }
+
+    protected function createCache(string $configFile, Config $config) : Cache
+    {
+        $cacheFile = $config->cache
+            ?? dirname($configFile) . DIRECTORY_SEPARATOR . '.php-styler.cache';
+
+        echo "Using cache file " . $cacheFile . PHP_EOL;
+        $cache = new Cache($cacheFile, (string) md5_file($configFile));
+        $cache->load();
+
+        return $cache;
     }
 
     protected function loadConfigFile(string $configFile) : Config

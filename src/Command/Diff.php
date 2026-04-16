@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace PhpStyler\Command;
 
 use AutoShell\Help;
+use PhpStyler\Cache;
 use PhpStyler\Config;
 use PhpStyler\Exception;
 use PhpStyler\Files;
@@ -34,14 +35,18 @@ class Diff extends ACommand
         $configFile = $options->configFile ?? $this->findConfigFile();
         $config = $this->loadConfigFile($configFile);
 
+        $cache = $this->createCache($configFile, $config);
+
         try {
             $workerCount = $this->resolveWorkerCount($options->workers);
-            $this->diffStyle($config, $configFile, $paths, $workerCount);
+
+            $this->diffStyle($config, $configFile, $paths, $workerCount, $cache);
         } catch (Exception $e) {
             echo $e->getMessage() . PHP_EOL;
             return 1;
         }
 
+        $cache->save();
         $this->reportErrors();
         return (int) ($this->hasDiff || $this->errors);
     }
@@ -54,6 +59,7 @@ class Diff extends ACommand
         string $configFile,
         array $paths,
         int $workerCount,
+        Cache $cache,
     ) : void
     {
         if ($paths) {
@@ -70,26 +76,36 @@ class Diff extends ACommand
         }
 
         if ($files === [] || $workerCount <= 1 || count($files) < 8) {
-            $this->diffSequential($config, $files);
+            $this->diffSequential($config, $files, $cache);
             return;
         }
 
-        $this->diffParallel($configFile, $files, $workerCount);
+        $this->diffParallel($configFile, $files, $workerCount, $cache);
     }
 
     /**
      * @param string[] $files
      */
-    protected function diffSequential(Config $config, array $files) : void
+    protected function diffSequential(
+        Config $config,
+        array $files,
+        Cache $cache,
+    ) : void
     {
         $styler = new Styler($config->format);
 
         foreach ($files as $file) {
+            if ($cache->isCurrent($file)) {
+                continue;
+            }
+
             try {
                 $source = (string) file_get_contents($file);
                 $styled = $styler($source);
 
                 if ($source === $styled) {
+                    $cache->update($file);
+                    $cache->save();
                     continue;
                 }
 
@@ -108,11 +124,20 @@ class Diff extends ACommand
         string $configFile,
         array $files,
         int $workerCount,
+        Cache $cache,
     ) : void
     {
+        $uncached = array_values(
+            array_filter($files, fn (string $f) => ! $cache->isCurrent($f)),
+        );
+
+        if ($uncached === []) {
+            return;
+        }
+
         echo "Using {$workerCount} parallel workers." . PHP_EOL;
         $pool = new WorkerPool();
-        $results = $pool->run($files, 'diff', $configFile, $workerCount);
+        $results = $pool->run($uncached, 'diff', $configFile, $workerCount);
 
         foreach ($results as $result) {
             if (! $result->ok) {
@@ -123,6 +148,8 @@ class Diff extends ACommand
             if ($result->diff !== null && $result->diff !== '') {
                 $this->hasDiff = true;
                 echo $result->diff;
+            } else {
+                $cache->update($result->file);
             }
         }
     }
