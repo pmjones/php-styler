@@ -16,6 +16,10 @@ class TFunctionClosingBrace extends AToken implements
         $parser->indentDecr();
 
         $parser->closeNesting($source, self::class, TFunction::class);
+
+        if ($parser->atNesting(TOpeningBraceless::class)) {
+            $parser->endBracelessBody($source);
+        }
     }
 
     public function memberType() : string

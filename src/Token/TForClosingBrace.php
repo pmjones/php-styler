@@ -14,5 +14,9 @@ class TForClosingBrace extends AToken implements AClosingStructure
         $parser->indentDecr();
 
         $parser->closeNesting($source, self::class, TFor::class);
+
+        if ($parser->atNesting(TOpeningBraceless::class)) {
+            $parser->endBracelessBody($source);
+        }
     }
 }

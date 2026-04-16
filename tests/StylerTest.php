@@ -2928,6 +2928,105 @@ class StylerTest extends TestCase
                 EXPECT,
             ],
 
+            // braceless if with switch body (was causing nesting corruption)
+            'braceless-if-switch' => [
+                <<<'CODE'
+                <?php
+                if (!$x)
+                    switch ($y) {
+                        default:
+                            break;
+                    }
+                echo "after";
+                CODE,
+                <<<'EXPECT'
+                <?php
+                if (! $x) {
+                    switch ($y) {
+                        default:
+                            break;
+                    }
+                }
+
+                echo "after";
+
+                EXPECT,
+            ],
+
+            // braceless if with try-catch body
+            'braceless-if-try-catch' => [
+                <<<'CODE'
+                <?php
+                if ($x)
+                    try {
+                        foo();
+                    } catch (Exception $e) {
+                        bar();
+                    }
+                echo "after";
+                CODE,
+                <<<'EXPECT'
+                <?php
+                if ($x) {
+                    try {
+                        foo();
+                    } catch (Exception $e) {
+                        bar();
+                    }
+                }
+
+                echo "after";
+
+                EXPECT,
+            ],
+
+            // switch inside braceless if inside switch inside try inside while
+            'braceless-if-switch-in-try-while' => [
+                <<<'CODE'
+                <?php
+                while (true) {
+                    try {
+                        switch ($state) {
+                            case "a":
+                                if (!$x)
+                                    switch ($y) {
+                                        default:
+                                            break;
+                                    }
+                                break;
+                            default:
+                                break;
+                        }
+                    } catch (Exception $e) {
+                        echo $e;
+                    }
+                }
+                CODE,
+                <<<'EXPECT'
+                <?php
+                while (true) {
+                    try {
+                        switch ($state) {
+                            case "a":
+                                if (! $x) {
+                                    switch ($y) {
+                                        default:
+                                            break;
+                                    }
+                                }
+
+                                break;
+                            default:
+                                break;
+                        }
+                    } catch (Exception $e) {
+                        echo $e;
+                    }
+                }
+
+                EXPECT,
+            ],
+
         ];
     }
 
