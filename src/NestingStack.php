@@ -18,23 +18,11 @@ class NestingStack
         $this->nesting[] = new Nesting($token);
     }
 
-    public function pop(string $expect, string ...$expects) : AToken
+    public function pop() : ?AToken
     {
-        $expects = [$expect, ...$expects];
         $nesting = array_pop($this->nesting);
-        $actual = $nesting->token ?? null;
-        $actualClass = $nesting->class ?? '';
 
-        if (! in_array($actualClass, $expects)) {
-            throw new Exception(
-                "Expected to pop "
-                    . implode('|', $expects)
-                    . ", got {$actualClass} instead",
-            );
-        }
-
-        /** @var AToken $actual */
-        return $actual;
+        return $nesting->token ?? null;
     }
 
     /**

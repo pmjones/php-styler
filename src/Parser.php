@@ -686,7 +686,7 @@ class Parser
     ) : AToken
     {
         $argCount = $this->nestingStack->getArgCount();
-        $opener = $this->nestingStack->pop($openerClass, ...$openerClasses);
+        $opener = $this->popNesting($openerClass, ...$openerClasses);
         $opener->argCount = $argCount;
         $closer = $this->add($source, $closerClass);
         AToken::pair($opener, $closer);
@@ -700,7 +700,22 @@ class Parser
 
     public function popNesting(string $expect, string ...$expects) : AToken
     {
-        return $this->nestingStack->pop($expect, ...$expects);
+        $token = $this->nestingStack->pop();
+        $expects = [$expect, ...$expects];
+
+        if ($token === null || ! in_array(get_class($token), $expects, true)) {
+            $actual = $token !== null ? get_class($token) : '';
+
+            throw Exception::fromParser(
+                "Expected to pop "
+                    . implode('|', $expects)
+                    . ", got {$actual} instead",
+                $this,
+                $this->source[$this->sourceOffset],
+            );
+        }
+
+        return $token;
     }
 
     public function getPrevParsed(int $skip = 0) : ?AToken
