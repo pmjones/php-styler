@@ -6,17 +6,17 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-/**
- * Token: T_CLOSE_TAG
- *
- * Syntax: ?> or %>
- *
- * Reference: https://www.php.net/manual/en/language.basic-syntax.phpmode.php escaping from HTML
- */
 class TPhpClosingTag extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
+        $parser->popTernaryNesting();
+
+        // closing tag acts as semicolon for short echo tags
+        if ($parser->atNesting(TEcho::class)) {
+            $parser->parse($source, TEchoEndSemicolon::class);
+        }
+
         $parser->add($source, static::class);
     }
 }

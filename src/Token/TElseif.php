@@ -21,9 +21,15 @@ class TElseif extends AToken
 
     public static function parse(Parser $parser, PhpToken $source) : void
     {
+        $prev = $parser->getPrevParsed();
+
         if (
-            $parser->atNesting(TIfColon::class)
-            || $parser->atNesting(TElseifColon::class)
+            ! $prev instanceof TIfContinuationBrace
+            && ! $prev instanceof TElseifContinuationBrace
+            && (
+                $parser->atNesting(TIfColon::class)
+                || $parser->atNesting(TElseifColon::class)
+            )
         ) {
             $parser->popNesting(TIfColon::class, TElseifColon::class);
             $parser->popNesting(TIf::class, TElseif::class);
