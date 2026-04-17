@@ -13,7 +13,7 @@ use PhpToken;
  *
  * Reference: https://www.php.net/manual/en/function.echo.php echo
  */
-class TEcho extends ALanguageConstruct
+class TEcho extends ALanguageConstruct implements AStatementNesting
 {
     public const END_SEMICOLON = TEchoEndSemicolon::class;
 

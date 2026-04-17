@@ -13,7 +13,7 @@ use PhpToken;
  *
  * Reference: https://www.php.net/manual/en/language.generators.syntax.php#control-structures.yield generators
  */
-class TYield extends AToken
+class TYield extends AToken implements AStatementNesting
 {
     public const END_SEMICOLON = TYieldEndSemicolon::class;
 
