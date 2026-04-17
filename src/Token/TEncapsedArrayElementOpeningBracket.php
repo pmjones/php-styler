@@ -12,4 +12,9 @@ class TEncapsedArrayElementOpeningBracket extends AToken
     {
         $parser->addNesting($source, self::class);
     }
+
+    public function isOpener() : bool
+    {
+        return false;
+    }
 }
