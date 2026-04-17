@@ -8,6 +8,7 @@ use PhpStyler\Token\ASplittable;
 use PhpStyler\Token\ASplittableComma;
 use PhpStyler\Token\AToken;
 use PhpStyler\Token\TBlankLine;
+use PhpStyler\Token\TInlineHtml;
 use PhpStyler\Token\TSpace;
 use PhpStyler\Token\TSplit;
 use PhpStyler\Token\TSplitFluent;
@@ -261,7 +262,7 @@ class Line
             return $this->length = 0;
         }
 
-        $contentLen = 0;
+        $column = $this->indent * $this->indentLen;
         $skipLeading = true;
 
         foreach ($this->tokens as $token) {
@@ -270,10 +271,22 @@ class Line
             }
 
             $skipLeading = false;
-            $contentLen += strlen($token->text);
+
+            if ($token instanceof TInlineHtml) {
+                // advance column to position after last newline in HTML
+                $lastNewline = strrpos($token->text, "\n");
+
+                if ($lastNewline !== false) {
+                    $column = strlen($token->text) - $lastNewline - 1;
+                } else {
+                    $column += strlen($token->text);
+                }
+            } else {
+                $column += strlen($token->text);
+            }
         }
 
-        return $this->length = $this->indent * $this->indentLen + $contentLen;
+        return $this->length = $column;
     }
 
     public function findTopLevelComma() : ?int
