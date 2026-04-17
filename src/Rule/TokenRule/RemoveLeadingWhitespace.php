@@ -17,10 +17,7 @@ class RemoveLeadingWhitespace extends ATokenRule
         while ($tokens !== []) {
             $token = $tokens[0];
 
-            if (
-                $token instanceof TInlineHtml
-                && trim($token->text) === ''
-            ) {
+            if ($token instanceof TInlineHtml && trim($token->text) === '') {
                 array_shift($tokens);
                 continue;
             }
