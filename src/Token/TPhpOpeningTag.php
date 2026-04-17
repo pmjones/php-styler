@@ -17,8 +17,18 @@ class TPhpOpeningTag extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
+        $isContinuation = $parser->getPrevParsed() instanceof TInlineHtml;
+
         $eol = strpos($source->text, "\n") !== false
             || strpos($source->text, "\r") !== false;
+
+        if ($isContinuation) {
+            // keep trailing space as part of the token text
+            // so it survives spaceBefore:false on the next token
+            $parser->add($source, TPhpOpeningTagContinuation::class);
+
+            return;
+        }
 
         $class = $eol ? self::class : TPhpOpeningTagInline::class;
         $trimmed = rtrim($source->text);

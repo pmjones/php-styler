@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
+use PhpStyler\Parser;
+use PhpToken;
+
 /**
  * Token: T_OPEN_TAG_WITH_ECHO
  *
@@ -12,4 +15,12 @@ namespace PhpStyler\Token;
  */
 class TPhpEchoOpeningTag extends AToken
 {
+    public static function parse(Parser $parser, PhpToken $source) : void
+    {
+        $class = $parser->getPrevParsed() instanceof TInlineHtml
+            ? TPhpEchoOpeningTagContinuation::class
+            : static::class;
+
+        $parser->add($source, $class);
+    }
 }

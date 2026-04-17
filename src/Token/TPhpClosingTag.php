@@ -10,11 +10,10 @@ class TPhpClosingTag extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
-        $parser->popTernaryNesting();
+        if ($parser->getNextSource() !== null) {
+            $parser->parse($source, TPhpClosingTagContinuation::class);
 
-        // closing tag acts as semicolon for short echo tags
-        if ($parser->atNesting(TEcho::class)) {
-            $parser->parse($source, TEchoEndSemicolon::class);
+            return;
         }
 
         $parser->add($source, static::class);

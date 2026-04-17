@@ -930,6 +930,14 @@ class PlainFormat extends AFormat
             'spaceBefore' => false,
             'spaceAfter' => true,
         ],
+        Token\TPhpOpeningTagContinuation::class => [
+        ],
+        Token\TPhpClosingTagContinuation::class => [
+            'spaceBefore' => true,
+        ],
+        Token\TPhpEchoOpeningTagContinuation::class => [
+            'spaceAfter' => true,
+        ],
         Token\TPipe::class => [
             'spaceAfter' => true,
         ],

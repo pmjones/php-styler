@@ -22,6 +22,7 @@ class DeclarationFormat extends PlainFormat
      */
     public array $rules = [
         TokenRule\RemoveBom::class => [],
+        TokenRule\RemoveLeadingWhitespace::class => [],
         TokenRule\RemoveEmptyAnonymousClassParens::class => [],
         TokenRule\RemoveEmptyAttributeParens::class => [],
         TokenRule\InsertNewParens::class => [],

@@ -442,6 +442,24 @@ class Parser
         );
     }
 
+    public function removeTrailingLineBreaks() : void
+    {
+        $this->scanParsedTrail(
+            function (AToken $token, int $i) : ?bool {
+                if (
+                    $token instanceof Token\TLineBreak
+                    || $token instanceof Token\TBlankLine
+                ) {
+                    $this->removeParsedAt($i);
+
+                    return null;
+                }
+
+                return $token->is([AToken::SYNTHETIC, T_WHITESPACE]) ? null : false;
+            },
+        );
+    }
+
     public function lineBreak() : void
     {
         $this->removeTrailingSpaces();
@@ -893,6 +911,15 @@ class Parser
                 default => false,
             },
         );
+    }
+
+    public function hasPrevSourceEol() : bool
+    {
+        $prev = $this->source[$this->sourceOffset - 1] ?? null;
+
+        return $prev !== null
+            && $prev->is(T_WHITESPACE)
+            && self::hasEol($prev->text);
     }
 
     public function hasNextEol() : bool
