@@ -63,11 +63,7 @@ class TSemicolon extends AToken
             // pop stacked statement-level nesting left after ternary/elvis
             // (e.g., echo $x ? "a" : "b"; leaves TEcho after TTernaryColon pops)
             if ($parser->atNesting(AStatementNesting::class)) {
-                $nextEnd = $parser->getNestingEndSemicolon();
-
-                if ($nextEnd !== null) {
-                    $parser->parse($source, $nextEnd);
-                }
+                $parser->popNesting($parser->getNesting());
             }
 
             if ($parser->atNesting(TOpeningBraceless::class)) {

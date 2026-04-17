@@ -3027,6 +3027,61 @@ class StylerTest extends TestCase
                 EXPECT,
             ],
 
+            // bare braces should not steal enclosing structure nesting
+            'bare-brace-in-foreach' => [
+                <<<'CODE'
+                <?php
+                if ($a) {
+                    foreach ($items as $item) {
+                        {
+                            echo $item;
+                        }
+                    }
+                } else {
+                    echo "none";
+                }
+                CODE,
+                <<<'EXPECT'
+                <?php
+                if ($a) {
+                    foreach ($items as $item) {
+                        { echo $item;
+                        }}
+                } else {
+                    echo "none";
+                }
+
+                EXPECT,
+            ],
+
+            // string interpolation brackets should not be expanded
+            'string-interpolation-brackets' => [
+                <<<'CODE'
+                <?php
+                echo "<span>$GLOBALS[gCheckMark]</span>";
+                CODE,
+                <<<'EXPECT'
+                <?php
+                echo "<span>$GLOBALS[gCheckMark]</span>";
+
+                EXPECT,
+            ],
+
+            // echo with ternary should pop both ternary and echo nesting
+            'echo-ternary' => [
+                <<<'CODE'
+                <?php
+                echo $yes ? "true" : "false";
+                echo "after";
+                CODE,
+                <<<'EXPECT'
+                <?php
+                echo $yes ? "true" : "false";
+                echo "after";
+
+                EXPECT,
+            ],
+
         ];
     }
 
