@@ -8,6 +8,8 @@ use PhpToken;
 
 class TUseVariablesOpeningParen extends ACommaListOpener
 {
+    public const EXPAND_PRIORITY = ASplittable::OTHER_PAREN;
+
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->addNesting($source, self::class);
@@ -16,10 +18,5 @@ class TUseVariablesOpeningParen extends ACommaListOpener
     public function commaClass() : string
     {
         return TUseVariablesComma::class;
-    }
-
-    public function expandPriority() : ?int
-    {
-        return ASplittable::OTHER_PAREN;
     }
 }

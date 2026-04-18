@@ -10,13 +10,10 @@ class TForOpeningParen extends AToken implements AConditionOpener
 {
     public const END_SEMICOLON = TForSemicolon::class;
 
+    public const EXPAND_PRIORITY = ASplittable::CONDITION_PAREN;
+
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->addNesting($source, self::class);
-    }
-
-    public function expandPriority() : ?int
-    {
-        return ASplittable::CONDITION_PAREN;
     }
 }

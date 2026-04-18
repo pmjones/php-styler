@@ -21,6 +21,8 @@ abstract class AToken extends PhpToken
     /** @var ?class-string<self> */
     public const END_SEMICOLON = null;
 
+    public const EXPAND_PRIORITY = null;
+
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->add($source, static::class);
@@ -100,7 +102,7 @@ abstract class AToken extends PhpToken
 
     public function expandPriority() : ?int
     {
-        return null;
+        return static::EXPAND_PRIORITY;
     }
 
     public function splObjectId() : int

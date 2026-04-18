@@ -8,6 +8,8 @@ use PhpToken;
 
 class TArrayElementOpeningBracket extends AToken
 {
+    public const EXPAND_PRIORITY = ASplittable::ELEMENT_BRACKET;
+
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $class = $parser->inEncapsedString()
@@ -15,10 +17,5 @@ class TArrayElementOpeningBracket extends AToken
             : self::class;
 
         $parser->addNesting($source, $class);
-    }
-
-    public function expandPriority() : ?int
-    {
-        return ASplittable::ELEMENT_BRACKET;
     }
 }
