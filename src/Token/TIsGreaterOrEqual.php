@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-use PhpStyler\Parser;
-
 /**
  * Token: T_IS_GREATER_OR_EQUAL
  *
@@ -12,10 +10,6 @@ use PhpStyler\Parser;
  *
  * Reference: https://www.php.net/manual/en/language.operators.comparison.php comparison operators
  */
-class TIsGreaterOrEqual extends AToken implements ASplittableOperator
+class TIsGreaterOrEqual extends AComparison
 {
-    public function splitBefore(Parser $parser) : ?TSplit
-    {
-        return new TSplitComparison(AToken::SYNTHETIC, '');
-    }
 }

@@ -3,12 +3,6 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-use PhpStyler\Parser;
-
-class TGreaterThan extends AToken implements ASplittableOperator
+class TGreaterThan extends AComparison
 {
-    public function splitBefore(Parser $parser) : ?TSplit
-    {
-        return new TSplitComparison(AToken::SYNTHETIC, '');
-    }
 }
