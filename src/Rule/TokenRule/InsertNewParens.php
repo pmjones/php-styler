@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Rule\TokenRule;
 
+use PhpStyler\Token\AnObjectOperator;
 use PhpStyler\Token\AToken;
 use PhpStyler\Token\TArgsClosingParen;
 use PhpStyler\Token\TArgsOpeningParen;
@@ -10,8 +11,6 @@ use PhpStyler\Token\TArrayElementOpeningBracket;
 use PhpStyler\Token\TDoubleColon;
 use PhpStyler\Token\TFullyQualifiedName;
 use PhpStyler\Token\TNew;
-use PhpStyler\Token\TNullsafeObjectOperator;
-use PhpStyler\Token\TObjectOperator;
 use PhpStyler\Token\TQualifiedName;
 use PhpStyler\Token\TUnqualifiedName;
 use PhpStyler\Token\TVariable;
@@ -91,8 +90,7 @@ class InsertNewParens extends ATokenRule
 
     private function isContinuationToken(AToken $token) : bool
     {
-        return $token instanceof TObjectOperator
-            || $token instanceof TNullsafeObjectOperator
+        return $token instanceof AnObjectOperator
             || $token instanceof TDoubleColon
             || $token instanceof TArrayElementOpeningBracket;
     }

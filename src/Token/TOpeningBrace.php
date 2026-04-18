@@ -18,8 +18,7 @@ class TOpeningBrace extends AnOpeningStructure
         }
 
         if (
-            $prev instanceof TObjectOperator
-            || $prev instanceof TNullsafeObjectOperator
+            $prev instanceof AnObjectOperator
             || $prev instanceof TMemberDoubleColon
         ) {
             $parser->addNesting($source, TDynamicMemberOpeningBrace::class);
