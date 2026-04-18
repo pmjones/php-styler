@@ -789,44 +789,24 @@ class Parser
 
     public function reclassifyNextSourceAsName() : void
     {
-        $offset = $this->sourceOffset + 1;
-
-        while ($offset < count($this->source)) {
-            $source = $this->source[$offset];
-
-            if ($source->isIgnorable()) {
-                $offset ++;
-                continue;
-            }
-
-            // only reclassify keyword tokens that look like identifiers,
-            // not variables ($foo), braces ({), or other symbols
-            if (
-                $source->id !== T_STRING
-                && preg_match('/^[a-zA-Z_]\w*$/', $source->text)
-            ) {
-                $this->source[$offset] = new \PhpToken(
-                    T_STRING,
-                    $source->text,
-                    $source->line,
-                    $source->pos,
-                );
-            }
-
-            return;
-        }
+        $this->reclassifyNextIdentifier();
     }
 
     public function reclassifyNextNamedArg() : void
     {
-        $keywordOffset = null;
+        $this->reclassifyNextIdentifier(function (int $keywordOffset) : bool {
+            $next = $this->findNextNonIgnorableOffset($keywordOffset + 1);
 
-        for ($i = $this->sourceOffset + 1; $i < count($this->source); $i ++) {
-            if (! $this->source[$i]->isIgnorable()) {
-                $keywordOffset = $i;
-                break;
-            }
-        }
+            return $next !== null && $this->source[$next]->text === ':';
+        });
+    }
+
+    /**
+     * @param ?callable(int): bool $extraCheck
+     */
+    private function reclassifyNextIdentifier(?callable $extraCheck = null) : void
+    {
+        $keywordOffset = $this->findNextNonIgnorableOffset($this->sourceOffset + 1);
 
         if ($keywordOffset === null) {
             return;
@@ -834,6 +814,8 @@ class Parser
 
         $keyword = $this->source[$keywordOffset];
 
+        // only reclassify keyword tokens that look like identifiers,
+        // not variables ($foo), braces ({), or other symbols
         if (
             $keyword->id === T_STRING
             || ! preg_match('/^[a-zA-Z_]\w*$/', $keyword->text)
@@ -841,21 +823,27 @@ class Parser
             return;
         }
 
-        // reclassify only if the token after the keyword is ':'
-        for ($j = $keywordOffset + 1; $j < count($this->source); $j ++) {
-            if (! $this->source[$j]->isIgnorable()) {
-                if ($this->source[$j]->text === ':') {
-                    $this->source[$keywordOffset] = new \PhpToken(
-                        T_STRING,
-                        $keyword->text,
-                        $keyword->line,
-                        $keyword->pos,
-                    );
-                }
+        if ($extraCheck !== null && ! $extraCheck($keywordOffset)) {
+            return;
+        }
 
-                return;
+        $this->source[$keywordOffset] = new \PhpToken(
+            T_STRING,
+            $keyword->text,
+            $keyword->line,
+            $keyword->pos,
+        );
+    }
+
+    private function findNextNonIgnorableOffset(int $from) : ?int
+    {
+        for ($i = $from; $i < count($this->source); $i ++) {
+            if (! $this->source[$i]->isIgnorable()) {
+                return $i;
             }
         }
+
+        return null;
     }
 
     public function findNextNonWhitespaceOffset(?int $from = null) : ?int
