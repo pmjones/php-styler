@@ -1067,7 +1067,23 @@ class Parser
 
     public function hasPrevStatic() : bool
     {
+        return $this->hasPrevStaticFrom(count($this->parsed) - 1);
+    }
+
+    private function hasPrevStaticBefore(Token\AToken $before) : bool
+    {
         for ($i = count($this->parsed) - 1; $i >= 0; $i --) {
+            if ($this->parsed[$i] === $before) {
+                return $this->hasPrevStaticFrom($i - 1);
+            }
+        }
+
+        return false;
+    }
+
+    private function hasPrevStaticFrom(int $fromIndex) : bool
+    {
+        for ($i = $fromIndex; $i >= 0; $i --) {
             $prev = $this->parsed[$i];
 
             if ($prev instanceof Token\TStatic) {
@@ -1075,37 +1091,6 @@ class Parser
             }
 
             // stop at class body boundaries or previous member endings
-            if (
-                $prev instanceof Token\AMemberClosing
-                || $prev instanceof Token\TClasslikeOpeningBrace
-                || $prev instanceof Token\TAnonymousOpeningBrace
-            ) {
-                return false;
-            }
-        }
-
-        return false;
-    }
-
-    private function hasPrevStaticBefore(Token\AToken $before) : bool
-    {
-        $found = false;
-
-        for ($i = count($this->parsed) - 1; $i >= 0; $i --) {
-            if (! $found) {
-                if ($this->parsed[$i] === $before) {
-                    $found = true;
-                }
-
-                continue;
-            }
-
-            $prev = $this->parsed[$i];
-
-            if ($prev instanceof Token\TStatic) {
-                return true;
-            }
-
             if (
                 $prev instanceof Token\AMemberClosing
                 || $prev instanceof Token\TClasslikeOpeningBrace
