@@ -6,16 +6,11 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TArgsComma extends AToken implements ASplittableComma
+class TArgsComma extends ASplittableComma
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->add($source, static::class);
         $parser->reclassifyNextNamedArg();
-    }
-
-    public function splitAfter(Parser $parser) : ?TSplit
-    {
-        return new TSplitComma(AToken::SYNTHETIC, '');
     }
 }

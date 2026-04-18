@@ -6,17 +6,12 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TMatchReturnComma extends AToken implements ASplittableComma
+class TMatchReturnComma extends ASplittableComma
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->popNesting(TMatchDoubleArrow::class);
 
         $parser->add($source, self::class);
-    }
-
-    public function splitAfter(Parser $parser) : ?TSplit
-    {
-        return new TSplitComma(AToken::SYNTHETIC, '');
     }
 }
