@@ -27,6 +27,7 @@ abstract class AToken extends PhpToken
     /** @var ?class-string<self> */
     public const CONTINUATION_BRACELESS = null;
 
+    /** @var ?int */
     public const EXPAND_PRIORITY = null;
 
     public static function parse(Parser $parser, PhpToken $source) : void

@@ -83,6 +83,24 @@ class NestingStack
         return $nesting !== false ? $nesting->endSemicolon : null;
     }
 
+    /**
+     * @return ?class-string<AToken>
+     */
+    public function getClosingBraceless() : ?string
+    {
+        $nesting = end($this->nesting);
+        return $nesting !== false ? $nesting->closingBraceless : null;
+    }
+
+    /**
+     * @return ?class-string<AToken>
+     */
+    public function getContinuationBraceless() : ?string
+    {
+        $nesting = end($this->nesting);
+        return $nesting !== false ? $nesting->continuationBraceless : null;
+    }
+
     public function getArgCount() : int
     {
         $nesting = end($this->nesting);

@@ -646,11 +646,10 @@ class Parser
     {
         $isContinuation = $this->getNextSource()?->is([T_ELSE, T_ELSEIF]);
         $this->popNesting(Token\TOpeningBraceless::class);
-        $nesting = $this->getNesting();
 
         $braceless = $isContinuation
-            ? $nesting::CONTINUATION_BRACELESS
-            : $nesting::CLOSING_BRACELESS;
+            ? $this->nestingStack->getContinuationBraceless()
+            : $this->nestingStack->getClosingBraceless();
 
         if ($braceless === null) {
             throw Exception::fromParser(

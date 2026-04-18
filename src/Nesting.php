@@ -18,6 +18,12 @@ class Nesting
     /** @var ?class-string<AToken> */
     public readonly ?string $endSemicolon;
 
+    /** @var ?class-string<AToken> */
+    public readonly ?string $closingBraceless;
+
+    /** @var ?class-string<AToken> */
+    public readonly ?string $continuationBraceless;
+
     public function __construct(
         public readonly AToken $token,
         public int $argCount = 0,
@@ -26,5 +32,7 @@ class Nesting
         $this->openingBrace = $token::OPENING_BRACE;
         $this->closingBrace = $token::CLOSING_BRACE;
         $this->endSemicolon = $token::END_SEMICOLON;
+        $this->closingBraceless = $token::CLOSING_BRACELESS;
+        $this->continuationBraceless = $token::CONTINUATION_BRACELESS;
     }
 }

@@ -9,7 +9,7 @@ use PhpToken;
 abstract class AnObjectOperator extends AToken implements ASplittableFluent
 {
     /** @var class-string<AToken> */
-    protected const ENCAPSED_CLASS = '';
+    protected const ENCAPSED_CLASS = AToken::class;
 
     public static function parse(Parser $parser, PhpToken $source) : void
     {
