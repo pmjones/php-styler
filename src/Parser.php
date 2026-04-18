@@ -364,9 +364,8 @@ class Parser
     {
         if (
             count($this->parsed) > 0
-            && $this->parsed[
-                count($this->parsed) - 1
-            ] instanceof Token\TIndentIncrement
+            && $this->parsed[count($this->parsed) - 1]
+                instanceof Token\TIndentIncrement
         ) {
             $this->removeParsedAt(count($this->parsed) - 1);
             return;
@@ -390,7 +389,8 @@ class Parser
         if (
             ! (
                 count($this->parsed) > 0
-                && $this->parsed[count($this->parsed) - 1] instanceof Token\TLineBreak
+                && $this->parsed[count($this->parsed) - 1]
+                    instanceof Token\TLineBreak
             )
         ) {
             $commentIndex = $this->findUpcomingInlineComment();
@@ -685,6 +685,7 @@ class Parser
         if ($opener instanceof Token\ACommaListOpener) {
             $opener->argCount = $argCount;
         }
+
         $closer = $this->add($source, $closerClass);
         AToken::pair($opener, $closer);
 
@@ -778,11 +779,13 @@ class Parser
 
     public function reclassifyNextNamedArg() : void
     {
-        $this->reclassifyNextIdentifier(function (int $keywordOffset) : bool {
-            $next = $this->findNextNonIgnorableOffset($keywordOffset + 1);
+        $this->reclassifyNextIdentifier(
+            function (int $keywordOffset) : bool {
+                $next = $this->findNextNonIgnorableOffset($keywordOffset + 1);
 
-            return $next !== null && $this->source[$next]->text === ':';
-        });
+                return $next !== null && $this->source[$next]->text === ':';
+            },
+        );
     }
 
     /**

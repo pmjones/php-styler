@@ -21,10 +21,7 @@ class MergeParenBracket extends ATokenRule
             if (
                 $token->text === '('
                 && $token->closingToken !== null
-                && (
-                    ! $token instanceof ACommaListOpener
-                    || $token->argCount === 0
-                )
+                && (! $token instanceof ACommaListOpener || $token->argCount === 0)
             ) {
                 $this->unlinkIfContainsBracket(
                     $token,
