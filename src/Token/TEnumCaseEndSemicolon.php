@@ -6,7 +6,7 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TEnumCaseEndSemicolon extends AToken implements AMemberClosing
+class TEnumCaseEndSemicolon extends AMemberClosing
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

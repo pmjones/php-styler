@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-interface AMemberClosing
+abstract class AMemberClosing extends AToken
 {
     public const CONSTANT = 'CONSTANT';
 
@@ -17,5 +17,7 @@ interface AMemberClosing
 
     public const USE_TRAIT = 'USE_TRAIT';
 
-    public function memberType() : string;
+    public bool $closesStaticMember = false;
+
+    abstract public function memberType() : string;
 }

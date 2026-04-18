@@ -124,14 +124,10 @@ class Parser
      */
     private array $parsed = [];
 
-    private int $parsedCount = 0;
-
     /**
      * @var array<PhpToken>
      */
     private array $source = [];
-
-    private int $sourceCount = 0;
 
     private int $sourceOffset = 0;
 
@@ -163,9 +159,7 @@ class Parser
     {
         $this->nestingStack = new NestingStack();
         $this->parsed = [];
-        $this->parsedCount = 0;
         $this->source = PhpToken::tokenize($code);
-        $this->sourceCount = count($this->source);
         $this->sourceOffset = 0;
         $this->parenDepth = 0;
         $this->lastSplit = null;
@@ -175,7 +169,7 @@ class Parser
 
         for (
             $this->sourceOffset = 0;
-            $this->sourceOffset < $this->sourceCount;
+            $this->sourceOffset < count($this->source);
             $this->sourceOffset ++
         ) {
             $source = $this->source[$this->sourceOffset];
@@ -331,7 +325,7 @@ class Parser
 
     public function addSplit(Token\TSplit $split) : void
     {
-        $this->lastSplitIndex = $this->parsedCount;
+        $this->lastSplitIndex = count($this->parsed);
         $this->emit($split);
         $this->lastSplit = $split;
     }
@@ -361,7 +355,7 @@ class Parser
     {
         if (
             $this->lastSplitIndex >= 0
-            && $this->lastSplitIndex < $this->parsedCount
+            && $this->lastSplitIndex < count($this->parsed)
             && $this->parsed[$this->lastSplitIndex] === $this->lastSplit
         ) {
             if (
@@ -385,12 +379,12 @@ class Parser
     public function indentDecr() : void
     {
         if (
-            $this->parsedCount > 0
+            count($this->parsed) > 0
             && $this->parsed[
-                $this->parsedCount - 1
+                count($this->parsed) - 1
             ] instanceof Token\TIndentIncrement
         ) {
-            $this->removeParsedAt($this->parsedCount - 1);
+            $this->removeParsedAt(count($this->parsed) - 1);
             return;
         }
 
@@ -411,8 +405,8 @@ class Parser
 
         if (
             ! (
-                $this->parsedCount > 0
-                && $this->parsed[$this->parsedCount - 1] instanceof Token\TLineBreak
+                count($this->parsed) > 0
+                && $this->parsed[count($this->parsed) - 1] instanceof Token\TLineBreak
             )
         ) {
             $commentIndex = $this->findUpcomingInlineComment();
@@ -465,8 +459,8 @@ class Parser
         $this->removeTrailingSpaces();
 
         if (
-            $this->parsedCount > 0
-            && $this->parsed[$this->parsedCount - 1] instanceof Token\TLineBreak
+            count($this->parsed) > 0
+            && $this->parsed[count($this->parsed) - 1] instanceof Token\TLineBreak
         ) {
             return;
         }
@@ -497,7 +491,7 @@ class Parser
 
     public function space() : void
     {
-        if ($this->parsedCount === 0) {
+        if (count($this->parsed) === 0) {
             return;
         }
 
@@ -529,7 +523,7 @@ class Parser
      */
     private function scanParsedTrail(callable $callback) : bool
     {
-        for ($i = $this->parsedCount - 1; $i >= 0; $i --) {
+        for ($i = count($this->parsed) - 1; $i >= 0; $i --) {
             $result = $callback($this->parsed[$i], $i);
 
             if ($result !== null) {
@@ -543,13 +537,11 @@ class Parser
     private function emit(AToken $token) : void
     {
         $this->parsed[] = $token;
-        $this->parsedCount ++;
     }
 
     private function removeParsedAt(int $index) : void
     {
         array_splice($this->parsed, $index, 1);
-        $this->parsedCount --;
     }
 
     private function noSpace() : void
@@ -705,7 +697,10 @@ class Parser
     {
         $argCount = $this->nestingStack->getArgCount();
         $opener = $this->popNesting($openerClass, ...$openerClasses);
-        $opener->argCount = $argCount;
+
+        if ($opener instanceof Token\ACommaListOpener) {
+            $opener->argCount = $argCount;
+        }
         $closer = $this->add($source, $closerClass);
         AToken::pair($opener, $closer);
 
@@ -740,7 +735,7 @@ class Parser
     {
         $found = 0;
 
-        for ($i = $this->parsedCount - 1; $i >= 0; $i --) {
+        for ($i = count($this->parsed) - 1; $i >= 0; $i --) {
             if (! $this->parsed[$i]->isIgnorable()) {
                 if ($found >= $skip) {
                     return $this->parsed[$i];
@@ -755,7 +750,7 @@ class Parser
 
     public function getParsedCount() : int
     {
-        return $this->parsedCount;
+        return count($this->parsed);
     }
 
     public function getParsedAt(int $index) : AToken
@@ -775,7 +770,7 @@ class Parser
     {
         $sourceOffset = $this->sourceOffset + 1;
 
-        while ($sourceOffset < $this->sourceCount) {
+        while ($sourceOffset < count($this->source)) {
             $source = $this->source[$sourceOffset];
 
             if (! $source->isIgnorable()) {
@@ -796,7 +791,7 @@ class Parser
     {
         $offset = $this->sourceOffset + 1;
 
-        while ($offset < $this->sourceCount) {
+        while ($offset < count($this->source)) {
             $source = $this->source[$offset];
 
             if ($source->isIgnorable()) {
@@ -826,7 +821,7 @@ class Parser
     {
         $keywordOffset = null;
 
-        for ($i = $this->sourceOffset + 1; $i < $this->sourceCount; $i ++) {
+        for ($i = $this->sourceOffset + 1; $i < count($this->source); $i ++) {
             if (! $this->source[$i]->isIgnorable()) {
                 $keywordOffset = $i;
                 break;
@@ -847,7 +842,7 @@ class Parser
         }
 
         // reclassify only if the token after the keyword is ':'
-        for ($j = $keywordOffset + 1; $j < $this->sourceCount; $j ++) {
+        for ($j = $keywordOffset + 1; $j < count($this->source); $j ++) {
             if (! $this->source[$j]->isIgnorable()) {
                 if ($this->source[$j]->text === ':') {
                     $this->source[$keywordOffset] = new \PhpToken(
@@ -867,11 +862,11 @@ class Parser
     {
         $i = $from ?? $this->sourceOffset + 1;
 
-        while ($i < $this->sourceCount && $this->source[$i]->is(T_WHITESPACE)) {
+        while ($i < count($this->source) && $this->source[$i]->is(T_WHITESPACE)) {
             $i ++;
         }
 
-        return $i < $this->sourceCount ? $i : null;
+        return $i < count($this->source) ? $i : null;
     }
 
     public function findMatchingCloseParenOffset(int $openOffset) : ?int
@@ -879,7 +874,7 @@ class Parser
         $depth = 1;
         $i = $openOffset + 1;
 
-        while ($i < $this->sourceCount && $depth > 0) {
+        while ($i < count($this->source) && $depth > 0) {
             $text = $this->source[$i]->text;
 
             if ($text === '(') {
@@ -939,7 +934,7 @@ class Parser
             return null;
         }
 
-        for ($i = $this->sourceOffset + 1; $i < $this->sourceCount; $i ++) {
+        for ($i = $this->sourceOffset + 1; $i < count($this->source); $i ++) {
             $source = $this->source[$i];
 
             if ($source->is(T_WHITESPACE)) {
@@ -998,7 +993,7 @@ class Parser
 
     public function getSourceCount() : int
     {
-        return $this->sourceCount;
+        return count($this->source);
     }
 
     public function setSourceOffset(int $offset) : void
@@ -1016,7 +1011,6 @@ class Parser
     ) : void
     {
         array_splice($this->source, $offset, $deleteCount, $tokens);
-        $this->sourceCount = count($this->source);
     }
 
     private function replaceSourceComment(int $index, bool $blankLine) : void
@@ -1060,7 +1054,7 @@ class Parser
 
     public function isPrevStaticPropertyAccess() : bool
     {
-        for ($i = $this->parsedCount - 2; $i >= 0; $i --) {
+        for ($i = count($this->parsed) - 2; $i >= 0; $i --) {
             $token = $this->parsed[$i];
 
             if ($token->isContent()) {
@@ -1073,7 +1067,7 @@ class Parser
 
     public function hasPrevStatic() : bool
     {
-        for ($i = $this->parsedCount - 1; $i >= 0; $i --) {
+        for ($i = count($this->parsed) - 1; $i >= 0; $i --) {
             $prev = $this->parsed[$i];
 
             if ($prev instanceof Token\TStatic) {
@@ -1097,7 +1091,7 @@ class Parser
     {
         $found = false;
 
-        for ($i = $this->parsedCount - 1; $i >= 0; $i --) {
+        for ($i = count($this->parsed) - 1; $i >= 0; $i --) {
             if (! $found) {
                 if ($this->parsed[$i] === $before) {
                     $found = true;
@@ -1126,7 +1120,7 @@ class Parser
 
     public function hasPrevVisibility() : bool
     {
-        for ($i = $this->parsedCount - 1; $i >= 0; $i --) {
+        for ($i = count($this->parsed) - 1; $i >= 0; $i --) {
             $prev = $this->parsed[$i];
 
             if ($prev instanceof Token\TSpace) {
@@ -1156,7 +1150,7 @@ class Parser
         $modifiers = [];
         $i = $this->sourceOffset;
 
-        while ($i < $this->sourceCount) {
+        while ($i < count($this->source)) {
             $source = $this->source[$i];
 
             if ($source->is(T_WHITESPACE)) {

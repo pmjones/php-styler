@@ -6,7 +6,7 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TArrayConstructOpeningParen extends AToken implements ACommaListOpener
+class TArrayConstructOpeningParen extends ACommaListOpener
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

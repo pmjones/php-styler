@@ -6,7 +6,7 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TConstEndSemicolon extends AToken implements AMemberClosing
+class TConstEndSemicolon extends AMemberClosing
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

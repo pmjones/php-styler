@@ -3,10 +3,12 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-interface ACommaListOpener
+abstract class ACommaListOpener extends AToken
 {
+    public int $argCount = 0;
+
     /**
      * @return class-string<ASplittableComma&AToken>
      */
-    public function commaClass() : string;
+    abstract public function commaClass() : string;
 }

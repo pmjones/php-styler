@@ -66,10 +66,6 @@ abstract class AToken extends PhpToken
 
     public int $parenDepth = 0;
 
-    public int $argCount = 0;
-
-    public bool $closesStaticMember = false;
-
     public ?AToken $openingToken = null;
 
     public ?AToken $closingToken = null;

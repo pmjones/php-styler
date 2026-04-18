@@ -6,7 +6,7 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TUseVariablesOpeningParen extends AToken implements ACommaListOpener
+class TUseVariablesOpeningParen extends ACommaListOpener
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

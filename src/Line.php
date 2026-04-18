@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
+use PhpStyler\Token\ACommaListOpener;
 use PhpStyler\Token\AComment;
 use PhpStyler\Token\ASplittable;
 use PhpStyler\Token\ASplittableComma;
@@ -369,7 +370,8 @@ class Line
                 continue;
             }
 
-            $pairs[] = [$i, $closerPos, $token->argCount];
+            $argCount = $token instanceof ACommaListOpener ? $token->argCount : 0;
+            $pairs[] = [$i, $closerPos, $argCount];
             $i = $closerPos;
         }
 
@@ -420,7 +422,8 @@ class Line
                 continue;
             }
 
-            $result[$priority] ??= [$i, $closerPos, $token->argCount];
+            $argCount = $token instanceof ACommaListOpener ? $token->argCount : 0;
+            $result[$priority] ??= [$i, $closerPos, $argCount];
             $i = $closerPos;
         }
 

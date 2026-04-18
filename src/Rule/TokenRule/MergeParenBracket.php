@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Rule\TokenRule;
 
+use PhpStyler\Token\ACommaListOpener;
 use PhpStyler\Token\ASplittableOperator;
 use PhpStyler\Token\AToken;
 
@@ -20,7 +21,10 @@ class MergeParenBracket extends ATokenRule
             if (
                 $token->text === '('
                 && $token->closingToken !== null
-                && $token->argCount === 0
+                && (
+                    ! $token instanceof ACommaListOpener
+                    || $token->argCount === 0
+                )
             ) {
                 $this->unlinkIfContainsBracket(
                     $token,
