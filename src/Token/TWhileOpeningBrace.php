@@ -3,14 +3,6 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-use PhpStyler\Parser;
-use PhpToken;
-
-class TWhileOpeningBrace extends AToken implements AnOpeningStructure
+class TWhileOpeningBrace extends AnOpeningStructure
 {
-    public static function parse(Parser $parser, PhpToken $source) : void
-    {
-        $parser->addNesting($source, static::class);
-        $parser->indentIncr();
-    }
 }

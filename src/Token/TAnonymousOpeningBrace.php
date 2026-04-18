@@ -3,16 +3,7 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-use PhpStyler\Parser;
-use PhpToken;
-
-class TAnonymousOpeningBrace extends AToken implements AnOpeningStructure
+class TAnonymousOpeningBrace extends AnOpeningStructure
 {
     public const END_SEMICOLON = TPropertyEndSemicolon::class;
-
-    public static function parse(Parser $parser, PhpToken $source) : void
-    {
-        $parser->addNesting($source, static::class);
-        $parser->indentIncr();
-    }
 }
