@@ -190,6 +190,20 @@ class Line
         return false;
     }
 
+    public function hasEchoTag() : bool
+    {
+        foreach ($this->tokens as $token) {
+            if (
+                $token instanceof Token\TPhpEchoOpeningTag
+                || $token instanceof Token\TPhpEchoOpeningTagContinuation
+            ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function hasInteriorComment() : bool
     {
         $lastIdx = $this->lastContentIndex();

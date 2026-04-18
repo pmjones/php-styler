@@ -81,6 +81,10 @@ class Splitter
     {
         $lines = [$line];
 
+        if ($line->hasEchoTag()) {
+            return $lines;
+        }
+
         if (! $line->forceExpand && $line->hasInteriorComment()) {
             $line->forceExpand = true;
         }
