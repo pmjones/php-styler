@@ -19,6 +19,8 @@ class TElse extends AToken
 
     public const CLOSING_BRACE = TElseClosingBrace::class;
 
+    public const CLOSING_BRACELESS = TElseClosingBraceless::class;
+
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $prev = $parser->getPrevParsed();

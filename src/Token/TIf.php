@@ -19,6 +19,10 @@ class TIf extends AToken
 
     public const CLOSING_BRACE = TIfClosingBrace::class;
 
+    public const CLOSING_BRACELESS = TIfClosingBraceless::class;
+
+    public const CONTINUATION_BRACELESS = TIfContinuationBraceless::class;
+
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->addNesting($source, self::class);

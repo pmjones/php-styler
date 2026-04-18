@@ -94,22 +94,6 @@ class Parser
         T_READONLY => 5,
     ];
 
-    /** @var array<string, class-string<AToken>> */
-    private const BRACELESS_CONTINUATION = [
-        Token\TIf::class => Token\TIfContinuationBraceless::class,
-        Token\TElseif::class => Token\TElseifContinuationBraceless::class,
-    ];
-
-    /** @var array<string, class-string<AToken>> */
-    private const BRACELESS_CLOSING = [
-        Token\TIf::class => Token\TIfClosingBraceless::class,
-        Token\TElse::class => Token\TElseClosingBraceless::class,
-        Token\TElseif::class => Token\TElseifClosingBraceless::class,
-        Token\TWhile::class => Token\TWhileClosingBraceless::class,
-        Token\TFor::class => Token\TForClosingBraceless::class,
-        Token\TForeach::class => Token\TForeachClosingBraceless::class,
-    ];
-
     private static function hasEol(string $text) : bool
     {
         return str_contains($text, "\r") || str_contains($text, "\n");
@@ -664,18 +648,19 @@ class Parser
         $this->popNesting(Token\TOpeningBraceless::class);
         $nesting = $this->getNesting();
 
-        $map = $isContinuation
-            ? self::BRACELESS_CONTINUATION
-            : self::BRACELESS_CLOSING;
+        $braceless = $isContinuation
+            ? $nesting::CONTINUATION_BRACELESS
+            : $nesting::CLOSING_BRACELESS;
 
-        $braceless = $map[$nesting]
-            ?? throw Exception::fromParser(
+        if ($braceless === null) {
+            throw Exception::fromParser(
                 ($isContinuation ? "Unknown continuation" : "Unknown closing")
                     . " braceless on line {$source->line}"
                     . " at position {$source->pos}",
                 $this,
                 $source,
             );
+        }
 
         $this->parse($source, $braceless);
     }

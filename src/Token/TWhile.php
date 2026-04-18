@@ -20,6 +20,8 @@ class TWhile extends AToken
 
     public const CLOSING_BRACE = TWhileClosingBrace::class;
 
+    public const CLOSING_BRACELESS = TWhileClosingBraceless::class;
+
     public const END_SEMICOLON = TDoWhileEndSemicolon::class;
 
     public static function parse(Parser $parser, PhpToken $source) : void

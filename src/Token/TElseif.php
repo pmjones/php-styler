@@ -19,6 +19,10 @@ class TElseif extends AToken
 
     public const CLOSING_BRACE = TElseifClosingBrace::class;
 
+    public const CLOSING_BRACELESS = TElseifClosingBraceless::class;
+
+    public const CONTINUATION_BRACELESS = TElseifContinuationBraceless::class;
+
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $prev = $parser->getPrevParsed();

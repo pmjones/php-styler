@@ -21,6 +21,12 @@ abstract class AToken extends PhpToken
     /** @var ?class-string<self> */
     public const END_SEMICOLON = null;
 
+    /** @var ?class-string<self> */
+    public const CLOSING_BRACELESS = null;
+
+    /** @var ?class-string<self> */
+    public const CONTINUATION_BRACELESS = null;
+
     public const EXPAND_PRIORITY = null;
 
     public static function parse(Parser $parser, PhpToken $source) : void

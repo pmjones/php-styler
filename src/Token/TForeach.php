@@ -19,6 +19,8 @@ class TForeach extends AToken
 
     public const CLOSING_BRACE = TForeachClosingBrace::class;
 
+    public const CLOSING_BRACELESS = TForeachClosingBraceless::class;
+
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->addNesting($source, self::class);
