@@ -42,10 +42,11 @@
     ],
     "scripts": {
         "analyze": "./vendor/bin/phpstan --memory-limit=256M",
-        "check": "composer test && composer analyze && composer cs-check",
+        "check": "composer test && composer analyze && composer cs-clear && composer cs-check",
         "cs-check": "php bin/php-styler check --workers=auto",
         "cs-fix": "php bin/php-styler apply --workers=auto",
         "cs-preview": "php bin/php-styler preview",
+        "cs-clear": "php bin/php-styler clear-cache",
         "test": "./vendor/bin/phpunit",
         "test-coverage": "./vendor/bin/phpunit --coverage-html=./tmp/coverage"
     }
