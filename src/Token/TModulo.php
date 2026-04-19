@@ -3,12 +3,6 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-use PhpStyler\Parser;
-
-class TModulo extends AToken implements ASplittableOperator
+class TModulo extends AMultiplicationOperator
 {
-    public function splitBefore(Parser $parser) : ?TSplit
-    {
-        return new TSplitMultiplication(AToken::SYNTHETIC, '');
-    }
 }
