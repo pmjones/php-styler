@@ -18,7 +18,7 @@ class TPhpClosingTagContinuation extends AToken
         }
 
         // only remove style-inserted line breaks; keep source-originating ones
-        if (! $parser->hasPrevSourceEol()) {
+        if (! $parser->source->hasPrevEol()) {
             $parser->removeTrailingLineBreaks();
             $parser->space();
         }

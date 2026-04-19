@@ -16,7 +16,7 @@ class TDynamicMemberClosingBrace extends AToken
             TDynamicMemberOpeningBrace::class,
         );
 
-        if ($parser->getNextSource()?->is('(') && $parser->lastSplit !== null) {
+        if ($parser->source->peek()?->is('(') && $parser->lastSplit !== null) {
             if ($parser->lastSplit instanceof TSplitStaticMember) {
                 $parser->replaceLastSplit(
                     new TSplitStaticMethodCall(AToken::SYNTHETIC, ''),

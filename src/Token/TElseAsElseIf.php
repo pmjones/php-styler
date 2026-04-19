@@ -10,13 +10,13 @@ class TElseAsElseIf extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
-        if (! $parser->getNextSource()?->is(T_IF)) {
+        if (! $parser->source->peek()?->is(T_IF)) {
             TElse::parse($parser, $source);
             return;
         }
 
         // Find the T_IF offset in source, skipping T_WHITESPACE
-        $ifOffset = $parser->findNextNonWhitespaceOffset();
+        $ifOffset = $parser->source->findNextNonWhitespace();
 
         if ($ifOffset === null) {
             TElse::parse($parser, $source);
@@ -24,12 +24,13 @@ class TElseAsElseIf extends AToken
         }
 
         // Replace T_IF with T_ELSEIF
-        $if = $parser->getSourceAt($ifOffset);
+        $if = $parser->source->getAt($ifOffset);
 
-        $parser->setSourceAt(
-            $ifOffset,
-            new PhpToken(T_ELSEIF, 'elseif', $if->line, $if->pos),
-        );
+        $parser->source
+            ->replaceAt(
+                $ifOffset,
+                new PhpToken(T_ELSEIF, 'elseif', $if->line, $if->pos),
+            );
 
         // Don't emit 'else' keyword; the main loop will pick up the T_ELSEIF
     }

@@ -11,7 +11,7 @@ class TArrayAsShort extends AToken
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         // Find the next non-whitespace source token after 'array'
-        $openOffset = $parser->findNextNonWhitespaceOffset();
+        $openOffset = $parser->source->findNextNonWhitespace();
 
         if ($openOffset === null) {
             $parser->add($source, TArray::class);
@@ -19,32 +19,34 @@ class TArrayAsShort extends AToken
         }
 
         // If not '(', this is a type hint — fall through to normal TArray
-        if ($parser->getSourceAt($openOffset)->text !== '(') {
+        if ($parser->source->getAt($openOffset)->text !== '(') {
             $parser->add($source, TArray::class);
             return;
         }
 
         // Find the matching ')'
-        $closeOffset = $parser->findMatchingCloseParenOffset($openOffset);
+        $closeOffset = $parser->source->matchingCloseParen($openOffset);
 
         if ($closeOffset === null) {
             return;
         }
 
         // Replace '(' with '[' and ')' with ']'
-        $open = $parser->getSourceAt($openOffset);
+        $open = $parser->source->getAt($openOffset);
 
-        $parser->setSourceAt(
-            $openOffset,
-            new PhpToken(ord('['), '[', $open->line, $open->pos),
-        );
+        $parser->source
+            ->replaceAt(
+                $openOffset,
+                new PhpToken(ord('['), '[', $open->line, $open->pos),
+            );
 
-        $close = $parser->getSourceAt($closeOffset);
+        $close = $parser->source->getAt($closeOffset);
 
-        $parser->setSourceAt(
-            $closeOffset,
-            new PhpToken(ord(']'), ']', $close->line, $close->pos),
-        );
+        $parser->source
+            ->replaceAt(
+                $closeOffset,
+                new PhpToken(ord(']'), ']', $close->line, $close->pos),
+            );
 
         // Don't emit any token for 'array' keyword
     }

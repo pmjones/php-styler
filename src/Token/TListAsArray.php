@@ -11,33 +11,35 @@ class TListAsArray extends AToken
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         // Find the '(' after 'list', skipping whitespace
-        $openOffset = $parser->findNextNonWhitespaceOffset();
+        $openOffset = $parser->source->findNextNonWhitespace();
 
         if ($openOffset === null) {
             return;
         }
 
         // Find the matching ')'
-        $closeOffset = $parser->findMatchingCloseParenOffset($openOffset);
+        $closeOffset = $parser->source->matchingCloseParen($openOffset);
 
         if ($closeOffset === null) {
             return;
         }
 
         // Replace '(' with '[' and ')' with ']'
-        $open = $parser->getSourceAt($openOffset);
+        $open = $parser->source->getAt($openOffset);
 
-        $parser->setSourceAt(
-            $openOffset,
-            new PhpToken(ord('['), '[', $open->line, $open->pos),
-        );
+        $parser->source
+            ->replaceAt(
+                $openOffset,
+                new PhpToken(ord('['), '[', $open->line, $open->pos),
+            );
 
-        $close = $parser->getSourceAt($closeOffset);
+        $close = $parser->source->getAt($closeOffset);
 
-        $parser->setSourceAt(
-            $closeOffset,
-            new PhpToken(ord(']'), ']', $close->line, $close->pos),
-        );
+        $parser->source
+            ->replaceAt(
+                $closeOffset,
+                new PhpToken(ord(']'), ']', $close->line, $close->pos),
+            );
 
         // Don't emit any token for 'list' keyword
     }

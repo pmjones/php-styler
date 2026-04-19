@@ -11,9 +11,9 @@ class TAttributeComma extends AToken
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         // trailing comma before ] — skip silently
-        $nextOffset = $parser->findNextNonWhitespaceOffset();
+        $nextOffset = $parser->source->findNextNonWhitespace();
 
-        if ($nextOffset !== null && $parser->getSourceAt($nextOffset)->is(']')) {
+        if ($nextOffset !== null && $parser->source->getAt($nextOffset)->is(']')) {
             return;
         }
 

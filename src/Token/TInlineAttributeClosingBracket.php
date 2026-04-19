@@ -12,7 +12,7 @@ class TInlineAttributeClosingBracket extends AToken
     {
         $parser->closeNesting($source, self::class, TInlineAttribute::class);
 
-        if ($parser->hasNextEol()) {
+        if ($parser->source->hasNextEol()) {
             $parser->lineBreak();
         } else {
             $parser->addSplit(new TSplitAttribute(AToken::SYNTHETIC, ''));

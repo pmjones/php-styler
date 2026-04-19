@@ -159,25 +159,25 @@ class TString extends AToken implements AType
             return;
         }
 
-        if ($parser->getNextSource()?->is(T_DOUBLE_COLON)) {
+        if ($parser->source->peek()?->is(T_DOUBLE_COLON)) {
             $parser->add($source, TUnqualifiedName::class);
             return;
         }
 
         if (
-            $parser->getNextSource()?->is(':')
+            $parser->source->peek()?->is(':')
             && $parser->atNesting(TArgsOpeningParen::class)
         ) {
             $parser->add($source, TNamedArgName::class);
             return;
         }
 
-        if ($prev instanceof TGoto || $parser->getNextSource()?->is(':')) {
+        if ($prev instanceof TGoto || $parser->source->peek()?->is(':')) {
             $parser->add($source, TGotoLabel::class);
             return;
         }
 
-        if ($parser->getNextSource()?->is('(')) {
+        if ($parser->source->peek()?->is('(')) {
             if ($prev?->is([T_OBJECT_OPERATOR, T_NULLSAFE_OBJECT_OPERATOR])) {
                 if ($parser->lastSplit !== null) {
                     $parser->replaceLastSplit(

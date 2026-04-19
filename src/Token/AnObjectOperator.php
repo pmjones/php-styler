@@ -18,7 +18,7 @@ abstract class AnObjectOperator extends AToken implements ASplittableFluent
             : static::class;
 
         $parser->add($source, $class);
-        $parser->reclassifyNextSourceAsName();
+        $parser->source->reclassifyNextAsName();
     }
 
     public function splitBefore(Parser $parser) : ?TSplit

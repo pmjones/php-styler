@@ -22,7 +22,7 @@ class TEllipsis extends AToken
         if (
             $nesting === TArgsOpeningParen::class
             && $parser->getPrevParsed() instanceof TArgsOpeningParen
-            && $parser->getNextSource()?->is(')')
+            && $parser->source->peek()?->is(')')
         ) {
             $parser->add($source, TFirstClassCallableEllipsis::class);
             return;

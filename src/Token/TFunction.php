@@ -29,23 +29,23 @@ class TFunction extends AToken
             return;
         }
 
-        if ($parser->getNextSource()?->is('(')) {
+        if ($parser->source->peek()?->is('(')) {
             $parser->parse($source, TAnonymousFunction::class);
             return;
         }
 
-        $parser->reclassifyNextSourceAsName();
+        $parser->source->reclassifyNextAsName();
 
         $nestingClass = self::class;
 
         if ($parser->atClassBody()) {
-            $next = $parser->getNextSource();
+            $next = $parser->source->peek();
             $nameText = null;
 
             if ($next?->is(T_STRING)) {
                 $nameText = $next->text;
             } elseif ($next?->is(T_AMPERSAND_NOT_FOLLOWED_BY_VAR_OR_VARARG)) {
-                $nameToken = $parser->getNextSource(skip: 1);
+                $nameToken = $parser->source->peek(1);
 
                 if ($nameToken?->is(T_STRING)) {
                     $nameText = $nameToken->text;

@@ -12,7 +12,7 @@ class TElseifClosingParen extends AToken
     {
         $parser->closeNesting($source, self::class, TElseifOpeningParen::class);
 
-        if (! $parser->getNextSource()?->is(['{', ':'])) {
+        if (! $parser->source->peek()?->is(['{', ':'])) {
             $parser->parse($source, TOpeningBraceless::class);
         }
     }

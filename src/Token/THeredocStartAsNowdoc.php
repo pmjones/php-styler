@@ -17,10 +17,10 @@ class THeredocStartAsNowdoc extends AToken
         }
 
         // scan forward in source tokens for interpolation
-        $i = $parser->getSourceOffset() + 1;
+        $i = $parser->source->offset() + 1;
 
         while (true) {
-            $peek = $parser->getSourceAt($i);
+            $peek = $parser->source->getAt($i);
 
             if ($peek->is(T_END_HEREDOC)) {
                 break;

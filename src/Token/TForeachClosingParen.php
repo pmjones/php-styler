@@ -12,7 +12,7 @@ class TForeachClosingParen extends AToken
     {
         $parser->closeNesting($source, self::class, TForeachOpeningParen::class);
 
-        if (! $parser->getNextSource()?->is(['{', ':', ';'])) {
+        if (! $parser->source->peek()?->is(['{', ':', ';'])) {
             $parser->parse($source, TOpeningBraceless::class);
         }
     }

@@ -80,7 +80,7 @@ class TClosingBrace extends AToken
         $nesting = $parser->getNesting();
 
         if (
-            $parser->getNextSource()?->is([T_CATCH, T_ELSE, T_ELSEIF, T_FINALLY])
+            $parser->source->peek()?->is([T_CATCH, T_ELSE, T_ELSEIF, T_FINALLY])
             || $nesting === TDo::class
             || $nesting === TTry::class
         ) {

@@ -633,7 +633,7 @@ class Parser
 
     public function endBracelessBody(PhpToken $source) : void
     {
-        $isContinuation = $this->getNextSource()?->is([T_ELSE, T_ELSEIF]);
+        $isContinuation = $this->source->peek()?->is([T_ELSE, T_ELSEIF]);
         $this->popNesting(Token\TOpeningBraceless::class);
 
         $braceless = $isContinuation
@@ -740,31 +740,6 @@ class Parser
         ] = [$this->parsed[$b], $this->parsed[$a]];
     }
 
-    public function getNextSource(int $skip = 0) : ?PhpToken
-    {
-        return $this->source->peek($skip);
-    }
-
-    public function reclassifyNextSourceAsName() : void
-    {
-        $this->source->reclassifyNextAsName();
-    }
-
-    public function reclassifyNextNamedArg() : void
-    {
-        $this->source->reclassifyNextNamedArg();
-    }
-
-    public function findNextNonWhitespaceOffset(?int $from = null) : ?int
-    {
-        return $this->source->findNextNonWhitespace($from);
-    }
-
-    public function findMatchingCloseParenOffset(int $openOffset) : ?int
-    {
-        return $this->source->matchingCloseParen($openOffset);
-    }
-
     public function hasPrevLineBreak() : bool
     {
         return $this->hasPrev(Token\TLineBreak::class)
@@ -780,53 +755,6 @@ class Parser
                 default => false,
             },
         );
-    }
-
-    public function hasPrevSourceEol() : bool
-    {
-        return $this->source->hasPrevEol();
-    }
-
-    public function hasNextEol() : bool
-    {
-        return $this->source->hasNextEol();
-    }
-
-    public function getSourceOffset() : int
-    {
-        return $this->source->offset();
-    }
-
-    public function getSourceAt(int $index) : PhpToken
-    {
-        return $this->source->getAt($index);
-    }
-
-    public function setSourceAt(int $index, PhpToken $token) : void
-    {
-        $this->source->replaceAt($index, $token);
-    }
-
-    public function getSourceCount() : int
-    {
-        return $this->source->count();
-    }
-
-    public function setSourceOffset(int $offset) : void
-    {
-        $this->source->setOffset($offset);
-    }
-
-    /**
-     * @param PhpToken[] $tokens
-     */
-    public function spliceSource(
-        int $offset,
-        int $deleteCount,
-        array $tokens,
-    ) : void
-    {
-        $this->source->splice($offset, $deleteCount, $tokens);
     }
 
     public function atClassBody() : bool

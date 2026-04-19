@@ -18,7 +18,7 @@ class TQualifiedName extends AToken implements AType
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         if (
-            $parser->getNextSource()?->is('(')
+            $parser->source->peek()?->is('(')
             && ! $parser->getPrevParsed()
                 ?->is([
                     T_NEW,

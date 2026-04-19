@@ -37,14 +37,14 @@ class TElse extends AToken
             $parser->popNesting(TIf::class, TElseif::class);
         }
 
-        if ($parser->getNextSource()?->is(T_IF)) {
+        if ($parser->source->peek()?->is(T_IF)) {
             $parser->add($source, self::class);
             return;
         }
 
         $parser->addNesting($source, self::class);
 
-        if (! $parser->getNextSource()?->is(['{', ':'])) {
+        if (! $parser->source->peek()?->is(['{', ':'])) {
             $parser->parse($source, TOpeningBraceless::class);
         }
     }

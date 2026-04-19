@@ -16,7 +16,7 @@ class TContinueAsBreak extends AToken
         }
 
         // Check for `continue N` where N > 1
-        $next = $parser->getNextSource();
+        $next = $parser->source->peek();
 
         if ($next !== null && $next->is(T_LNUMBER) && (int) $next->text > 1) {
             TContinue::parse($parser, $source);

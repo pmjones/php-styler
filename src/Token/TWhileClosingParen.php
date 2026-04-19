@@ -13,13 +13,13 @@ class TWhileClosingParen extends AToken
         $parser->closeNesting($source, self::class, TWhileOpeningParen::class);
 
         if (
-            $parser->atNesting(TWhile::class) && $parser->getNextSource()?->is(';')
+            $parser->atNesting(TWhile::class) && $parser->source->peek()?->is(';')
         ) {
             // do-while: leave TWhile nesting for TDoWhileEndSemicolon to handle
             return;
         }
 
-        if (! $parser->getNextSource()?->is(['{', ':', ';'])) {
+        if (! $parser->source->peek()?->is(['{', ':', ';'])) {
             $parser->parse($source, TOpeningBraceless::class);
         }
     }

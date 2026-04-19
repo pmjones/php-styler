@@ -15,41 +15,45 @@ abstract class ALanguageConstruct extends AToken
 
     protected static function tryRemoveParens(Parser $parser) : void
     {
-        $openOffset = $parser->findNextNonWhitespaceOffset();
+        $openOffset = $parser->source->findNextNonWhitespace();
 
         if (
-            $openOffset === null || $parser->getSourceAt($openOffset)->text !== '('
+            $openOffset === null
+            || $parser->source->getAt($openOffset)->text !== '('
         ) {
             return;
         }
 
-        $closeOffset = $parser->findMatchingCloseParenOffset($openOffset);
+        $closeOffset = $parser->source->matchingCloseParen($openOffset);
 
         if ($closeOffset === null) {
             return;
         }
 
-        $afterClose = $parser->findNextNonWhitespaceOffset($closeOffset + 1);
+        $afterClose = $parser->source->findNextNonWhitespace($closeOffset + 1);
 
         if (
-            $afterClose === null || $parser->getSourceAt($afterClose)->text !== ';'
+            $afterClose === null
+            || $parser->source->getAt($afterClose)->text !== ';'
         ) {
             return;
         }
 
         // Remove parens: replace ( with space and ) with empty whitespace
-        $open = $parser->getSourceAt($openOffset);
+        $open = $parser->source->getAt($openOffset);
 
-        $parser->setSourceAt(
-            $openOffset,
-            new PhpToken(T_WHITESPACE, ' ', $open->line, $open->pos),
-        );
+        $parser->source
+            ->replaceAt(
+                $openOffset,
+                new PhpToken(T_WHITESPACE, ' ', $open->line, $open->pos),
+            );
 
-        $close = $parser->getSourceAt($closeOffset);
+        $close = $parser->source->getAt($closeOffset);
 
-        $parser->setSourceAt(
-            $closeOffset,
-            new PhpToken(T_WHITESPACE, '', $close->line, $close->pos),
-        );
+        $parser->source
+            ->replaceAt(
+                $closeOffset,
+                new PhpToken(T_WHITESPACE, '', $close->line, $close->pos),
+            );
     }
 }

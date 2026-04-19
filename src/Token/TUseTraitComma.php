@@ -11,11 +11,11 @@ class TUseTraitComma extends AToken
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         // conflict resolution (use A, B { ... }) — keep comma
-        $sourceCount = $parser->getSourceCount();
-        $offset = $parser->getSourceOffset();
+        $sourceCount = $parser->source->count();
+        $offset = $parser->source->offset();
 
         for ($i = $offset + 1; $i < $sourceCount; $i ++) {
-            $token = $parser->getSourceAt($i);
+            $token = $parser->source->getAt($i);
 
             if ($token->is(';')) {
                 break; // simple trait use — expand

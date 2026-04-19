@@ -10,7 +10,7 @@ class TPhpClosingTagRemoved extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
-        if ($parser->getNextSource() === null) {
+        if ($parser->source->peek() === null) {
             return;
         }
 

@@ -11,6 +11,6 @@ class TArgsComma extends ASplittableComma
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->add($source, static::class);
-        $parser->reclassifyNextNamedArg();
+        $parser->source->reclassifyNextNamedArg();
     }
 }

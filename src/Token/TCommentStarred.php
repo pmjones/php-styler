@@ -12,7 +12,7 @@ class TCommentStarred extends AToken implements ADocblock
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
-        if (! $parser->hasPrevLineBreak() || ! $parser->hasNextEol()) {
+        if (! $parser->hasPrevLineBreak() || ! $parser->source->hasNextEol()) {
             $parser->add($source, TCommentStarredMidStatement::class);
             return;
         }

@@ -23,7 +23,7 @@ class TQuestion extends AToken
             return;
         }
 
-        if ($parser->getNextSource()?->is(':')) {
+        if ($parser->source->peek()?->is(':')) {
             $parser->parse($source, TElvisQuestion::class);
             return;
         }

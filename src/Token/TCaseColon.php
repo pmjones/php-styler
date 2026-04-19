@@ -10,7 +10,7 @@ class TCaseColon extends AnOpeningStructure
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
-        if ($parser->getNextSource()?->is([T_CASE, T_DEFAULT])) {
+        if ($parser->source->peek()?->is([T_CASE, T_DEFAULT])) {
             $parser->popNesting(
                 TCase::class,
                 TDefaultCase::class,

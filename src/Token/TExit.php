@@ -18,7 +18,7 @@ class TExit extends AToken
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->add($source, static::class);
-        $next = $parser->getNextSource();
+        $next = $parser->source->peek();
 
         if ($next !== null && $next->text === '(') {
             if ($parser->getStyle(static::class)->spaceAfter !== false) {

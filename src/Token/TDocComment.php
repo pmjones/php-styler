@@ -25,7 +25,7 @@ class TDocComment extends AToken implements ADocblock
                 && $parser->hasPrev(ASplittableComma::class)
             )
             || ! $parser->hasPrevLineBreak()
-            || ! $parser->hasNextEol()
+            || ! $parser->source->hasNextEol()
         ) {
             $parser->add($source, TDocCommentMidStatement::class);
             return;

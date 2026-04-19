@@ -28,7 +28,7 @@ class TFullyQualifiedName extends AToken implements AType
         }
 
         if (
-            $parser->getNextSource()?->is('(')
+            $parser->source->peek()?->is('(')
             && ! $parser->getPrevParsed()
                 ?->is([
                     T_NEW,

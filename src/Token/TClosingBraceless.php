@@ -11,7 +11,7 @@ class TClosingBraceless extends AToken
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
-        if ($parser->getNextSource()?->is([T_ELSE, T_ELSEIF])) {
+        if ($parser->source->peek()?->is([T_ELSE, T_ELSEIF])) {
             $parser->parse($source, TContinuationBraceless::class);
             return;
         }

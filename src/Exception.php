@@ -14,17 +14,17 @@ class Exception extends \Exception
     ) : self
     {
         $recentSourceText = '';
-        $offset = $parser->getSourceOffset();
+        $offset = $parser->source->offset();
 
         for ($i = max(0, $offset - 10); $i < $offset; $i ++) {
-            $recentSourceText .= $parser->getSourceAt($i)->text;
+            $recentSourceText .= $parser->source->getAt($i)->text;
         }
 
         $upcomingSourceText = '';
-        $count = $parser->getSourceCount();
+        $count = $parser->source->count();
 
         for ($i = $offset + 1; $i < min($count, $offset + 6); $i ++) {
-            $upcomingSourceText .= $parser->getSourceAt($i)->text;
+            $upcomingSourceText .= $parser->source->getAt($i)->text;
         }
 
         return new self(

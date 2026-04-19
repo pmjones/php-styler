@@ -3,8 +3,8 @@ declare(strict_types=1);
 
 namespace PhpStyler;
 
-use PhpStyler\Token\AToken;
 use PhpStyler\Token;
+use PhpStyler\Token\AToken;
 use PhpToken;
 
 class Source
@@ -205,11 +205,13 @@ class Source
 
     public function reclassifyNextNamedArg() : void
     {
-        $this->reclassifyNextIdentifier(function (int $keywordOffset) : bool {
-            $next = $this->findNextNonIgnorable($keywordOffset + 1);
+        $this->reclassifyNextIdentifier(
+            function (int $keywordOffset) : bool {
+                $next = $this->findNextNonIgnorable($keywordOffset + 1);
 
-            return $next !== null && $this->tokens[$next]->text === ':';
-        });
+                return $next !== null && $this->tokens[$next]->text === ':';
+            },
+        );
     }
 
     public function findUpcomingInlineComment() : ?int

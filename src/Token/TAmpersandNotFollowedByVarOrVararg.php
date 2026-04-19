@@ -38,7 +38,7 @@ class TAmpersandNotFollowedByVarOrVararg extends AToken
         $parser->add($source, $class);
 
         if ($class === TReference::class) {
-            $parser->reclassifyNextSourceAsName();
+            $parser->source->reclassifyNextAsName();
         }
     }
 }

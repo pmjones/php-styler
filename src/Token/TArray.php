@@ -17,7 +17,7 @@ class TArray extends AToken implements AType
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
-        if ($parser->getNextSource()?->is('(')) {
+        if ($parser->source->peek()?->is('(')) {
             $parser->addNesting($source, TArrayConstruct::class);
         } else {
             $parser->add($source, self::class);

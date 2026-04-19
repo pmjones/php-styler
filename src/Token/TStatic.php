@@ -17,7 +17,7 @@ class TStatic extends AToken implements AModifier
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {
-        if ($parser->getNextSource()?->is(T_DOUBLE_COLON)) {
+        if ($parser->source->peek()?->is(T_DOUBLE_COLON)) {
             $parser->add($source, TStaticBinding::class);
 
             return;
@@ -37,7 +37,7 @@ class TStatic extends AToken implements AModifier
         }
 
         if (
-            $parser->getNextSource()?->is(T_VARIABLE)
+            $parser->source->peek()?->is(T_VARIABLE)
             && ! $parser->atNesting(TClasslikeOpeningBrace::class)
         ) {
             $parser->addNesting($source, TStaticVar::class);
