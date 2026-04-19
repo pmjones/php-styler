@@ -94,11 +94,6 @@ class Parser
         T_READONLY => 5,
     ];
 
-    private static function hasEol(string $text) : bool
-    {
-        return str_contains($text, "\r") || str_contains($text, "\n");
-    }
-
     private AFormat $format;
 
     private NestingStack $nestingStack;
@@ -108,12 +103,7 @@ class Parser
      */
     private array $parsed = [];
 
-    /**
-     * @var array<PhpToken>
-     */
-    private array $source = [];
-
-    private int $sourceOffset = 0;
+    public Source $source;
 
     private int $parenDepth = 0;
 
@@ -143,8 +133,7 @@ class Parser
     {
         $this->nestingStack = new NestingStack();
         $this->parsed = [];
-        $this->source = PhpToken::tokenize($code);
-        $this->sourceOffset = 0;
+        $this->source = new Source($code);
         $this->parenDepth = 0;
         $this->lastSplit = null;
         $this->lastSplitIndex = -1;
@@ -152,11 +141,11 @@ class Parser
         $this->fluentChainPosition = -1;
 
         for (
-            $this->sourceOffset = 0;
-            $this->sourceOffset < count($this->source);
-            $this->sourceOffset ++
+            $this->source->setOffset(0);
+            $this->source->hasMore();
+            $this->source->advance()
         ) {
-            $source = $this->source[$this->sourceOffset];
+            $source = $this->source->current();
 
             // Skip non-EOL whitespace — it produces no parsed output
             if (
@@ -393,10 +382,10 @@ class Parser
                     instanceof Token\TLineBreak
             )
         ) {
-            $commentIndex = $this->findUpcomingInlineComment();
+            $commentIndex = $this->source->findUpcomingInlineComment();
 
             if ($commentIndex !== null) {
-                $this->replaceSourceComment($commentIndex, blankLine: true);
+                $this->source->replaceCommentAt($commentIndex, blankLine: true);
                 return;
             }
         }
@@ -449,10 +438,10 @@ class Parser
             return;
         }
 
-        $commentIndex = $this->findUpcomingInlineComment();
+        $commentIndex = $this->source->findUpcomingInlineComment();
 
         if ($commentIndex !== null) {
-            $this->replaceSourceComment($commentIndex, blankLine: false);
+            $this->source->replaceCommentAt($commentIndex, blankLine: false);
             return;
         }
 
@@ -709,7 +698,7 @@ class Parser
                     . implode('|', $expects)
                     . ", got {$actual} instead",
                 $this,
-                $this->source[$this->sourceOffset],
+                $this->source->current(),
             );
         }
 
@@ -753,117 +742,27 @@ class Parser
 
     public function getNextSource(int $skip = 0) : ?PhpToken
     {
-        $sourceOffset = $this->sourceOffset + 1;
-
-        while ($sourceOffset < count($this->source)) {
-            $source = $this->source[$sourceOffset];
-
-            if (! $source->isIgnorable()) {
-                if ($skip <= 0) {
-                    return $source;
-                }
-
-                $skip --;
-            }
-
-            $sourceOffset ++;
-        }
-
-        return null;
+        return $this->source->peek($skip);
     }
 
     public function reclassifyNextSourceAsName() : void
     {
-        $this->reclassifyNextIdentifier();
+        $this->source->reclassifyNextAsName();
     }
 
     public function reclassifyNextNamedArg() : void
     {
-        $this->reclassifyNextIdentifier(
-            function (int $keywordOffset) : bool {
-                $next = $this->findNextNonIgnorableOffset($keywordOffset + 1);
-
-                return $next !== null && $this->source[$next]->text === ':';
-            },
-        );
-    }
-
-    /**
-     * @param ?callable(int): bool $extraCheck
-     */
-    private function reclassifyNextIdentifier(?callable $extraCheck = null) : void
-    {
-        $keywordOffset = $this->findNextNonIgnorableOffset($this->sourceOffset + 1);
-
-        if ($keywordOffset === null) {
-            return;
-        }
-
-        $keyword = $this->source[$keywordOffset];
-
-        // only reclassify keyword tokens that look like identifiers,
-        // not variables ($foo), braces ({), or other symbols
-        if (
-            $keyword->id === T_STRING
-            || ! preg_match('/^[a-zA-Z_]\w*$/', $keyword->text)
-        ) {
-            return;
-        }
-
-        if ($extraCheck !== null && ! $extraCheck($keywordOffset)) {
-            return;
-        }
-
-        $this->source[$keywordOffset] = new \PhpToken(
-            T_STRING,
-            $keyword->text,
-            $keyword->line,
-            $keyword->pos,
-        );
-    }
-
-    private function findNextNonIgnorableOffset(int $from) : ?int
-    {
-        for ($i = $from; $i < count($this->source); $i ++) {
-            if (! $this->source[$i]->isIgnorable()) {
-                return $i;
-            }
-        }
-
-        return null;
+        $this->source->reclassifyNextNamedArg();
     }
 
     public function findNextNonWhitespaceOffset(?int $from = null) : ?int
     {
-        $i = $from ?? $this->sourceOffset + 1;
-
-        while ($i < count($this->source) && $this->source[$i]->is(T_WHITESPACE)) {
-            $i ++;
-        }
-
-        return $i < count($this->source) ? $i : null;
+        return $this->source->findNextNonWhitespace($from);
     }
 
     public function findMatchingCloseParenOffset(int $openOffset) : ?int
     {
-        $depth = 1;
-        $i = $openOffset + 1;
-
-        while ($i < count($this->source) && $depth > 0) {
-            $text = $this->source[$i]->text;
-
-            if ($text === '(') {
-                $depth ++;
-            } elseif ($text === ')') {
-                $depth --;
-            }
-
-            if ($depth > 0) {
-                $i ++;
-            }
-        }
-
-        return $depth === 0 ? $i : null;
+        return $this->source->matchingCloseParen($openOffset);
     }
 
     public function hasPrevLineBreak() : bool
@@ -885,95 +784,37 @@ class Parser
 
     public function hasPrevSourceEol() : bool
     {
-        $prev = $this->source[$this->sourceOffset - 1] ?? null;
-
-        return $prev !== null
-            && $prev->is(T_WHITESPACE)
-            && self::hasEol($prev->text);
+        return $this->source->hasPrevEol();
     }
 
     public function hasNextEol() : bool
     {
-        $source = $this->source[$this->sourceOffset + 1] ?? null;
-
-        if ($source?->is(T_WHITESPACE)) {
-            return self::hasEol($source->text);
-        }
-
-        return false;
-    }
-
-    private function findUpcomingInlineComment() : ?int
-    {
-        if (self::hasEol($this->source[$this->sourceOffset]->text)) {
-            return null;
-        }
-
-        for ($i = $this->sourceOffset + 1; $i < count($this->source); $i ++) {
-            $source = $this->source[$i];
-
-            if ($source->is(T_WHITESPACE)) {
-                if (self::hasEol($source->text)) {
-                    return null;
-                }
-
-                continue;
-            }
-
-            if ($source instanceof AToken) {
-                return null;
-            }
-
-            return $this->isInlineComment($source, $i) ? $i : null;
-        }
-
-        return null;
-    }
-
-    private function isInlineComment(PhpToken $source, int $index) : bool
-    {
-        if (! $source->is(T_COMMENT) && ! $source->is(T_DOC_COMMENT)) {
-            return false;
-        }
-
-        // // and # always end the line
-        if (
-            str_starts_with($source->text, '//')
-            || str_starts_with($source->text, '#')
-        ) {
-            return true;
-        }
-
-        // /* */ and /** */ — inline only if followed by EOL or EOF
-        $next = $this->source[$index + 1] ?? null;
-
-        return $next === null
-            || ($next->is(T_WHITESPACE) && self::hasEol($next->text));
+        return $this->source->hasNextEol();
     }
 
     public function getSourceOffset() : int
     {
-        return $this->sourceOffset;
+        return $this->source->offset();
     }
 
     public function getSourceAt(int $index) : PhpToken
     {
-        return $this->source[$index];
+        return $this->source->getAt($index);
     }
 
     public function setSourceAt(int $index, PhpToken $token) : void
     {
-        $this->source[$index] = $token;
+        $this->source->replaceAt($index, $token);
     }
 
     public function getSourceCount() : int
     {
-        return count($this->source);
+        return $this->source->count();
     }
 
     public function setSourceOffset(int $offset) : void
     {
-        $this->sourceOffset = $offset;
+        $this->source->setOffset($offset);
     }
 
     /**
@@ -985,37 +826,7 @@ class Parser
         array $tokens,
     ) : void
     {
-        array_splice($this->source, $offset, $deleteCount, $tokens);
-    }
-
-    private function replaceSourceComment(int $index, bool $blankLine) : void
-    {
-        $source = $this->source[$index];
-
-        $class = match (true) {
-            $source->is(T_DOC_COMMENT) => $blankLine
-                ? Token\TDocCommentBlankLine::class
-                : Token\TDocCommentLineBreak::class,
-
-            str_starts_with($source->text, '//') => $blankLine
-                ? Token\TCommentSlashedBlankLine::class
-                : Token\TCommentSlashedLineBreak::class,
-
-            str_starts_with($source->text, '#') => $blankLine
-                ? Token\TCommentHashedBlankLine::class
-                : Token\TCommentHashedLineBreak::class,
-
-            default => $blankLine
-                ? Token\TCommentStarredBlankLine::class
-                : Token\TCommentStarredLineBreak::class,
-        };
-
-        $this->source[$index] = new $class(
-            $source->id,
-            $source->text,
-            $source->line,
-            $source->pos,
-        );
+        $this->source->splice($offset, $deleteCount, $tokens);
     }
 
     public function atClassBody() : bool
@@ -1108,10 +919,11 @@ class Parser
     public function handleModifier() : void
     {
         $modifiers = [];
-        $i = $this->sourceOffset;
+        $i = $this->source->offset();
+        $count = $this->source->count();
 
-        while ($i < count($this->source)) {
-            $source = $this->source[$i];
+        while ($i < $count) {
+            $source = $this->source->getAt($i);
 
             if ($source->is(T_WHITESPACE)) {
                 $i ++;
@@ -1137,6 +949,6 @@ class Parser
         }
 
         $this->space();
-        $this->sourceOffset = $i - 1;
+        $this->source->setOffset($i - 1);
     }
 }
