@@ -121,3 +121,10 @@ if (true) {
             : $endpoint->getUri();
     }
 }
+
+// static var initializer with ternary (AStatementNesting regression)
+function staticVarWithTernary()
+{
+    static $x = $cond ? 1 : 2;
+    echo $x;
+}
