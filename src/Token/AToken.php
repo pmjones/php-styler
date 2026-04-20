@@ -52,7 +52,6 @@ abstract class AToken extends PhpToken
         PhpToken $source,
         string $tokenClass,
         Style $style,
-        int $parenDepth = 0,
     ) : self
     {
         /** @var self $token */
@@ -64,7 +63,6 @@ abstract class AToken extends PhpToken
         );
 
         $token->style = $style;
-        $token->parenDepth = $parenDepth;
 
         if ($style->case !== null) {
             $token->text = ($style->case)($token->text);
@@ -72,8 +70,6 @@ abstract class AToken extends PhpToken
 
         return $token;
     }
-
-    public int $parenDepth = 0;
 
     public ?AToken $openingToken = null;
 

@@ -18,7 +18,6 @@ class TTest extends \PHPUnit\Framework\TestCase
             'text' => 'fake',
             'line' => 79,
             'pos' => 88,
-            'parenDepth' => 0,
             'openingToken' => null,
             'closingToken' => null,
             'style' => null,

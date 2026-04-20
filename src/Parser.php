@@ -105,8 +105,6 @@ class Parser
 
     public Source $source;
 
-    private int $parenDepth = 0;
-
     public ?Token\TSplit $lastSplit = null;
 
     private int $lastSplitIndex = -1;
@@ -134,7 +132,6 @@ class Parser
         $this->nestingStack = new NestingStack();
         $this->parsed = [];
         $this->source = new Source($code);
-        $this->parenDepth = 0;
         $this->lastSplit = null;
         $this->lastSplitIndex = -1;
         $this->fluentChainIndex = -1;
@@ -245,15 +242,7 @@ class Parser
         Style $style,
     ) : AToken
     {
-        if ($source->text === ')' || $source->text === ']') {
-            $this->parenDepth = max(0, $this->parenDepth - 1);
-        }
-
-        $token = AToken::new($source, $tokenClass, $style, $this->parenDepth);
-
-        if ($source->text === '(' || $source->text === '[') {
-            $this->parenDepth ++;
-        }
+        $token = AToken::new($source, $tokenClass, $style);
 
         if ($token instanceof Token\AMemberClosing) {
             $token->closesStaticMember = $this->hasPrevStatic();
