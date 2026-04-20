@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace PhpStyler\Rule\TokenRule;
 
 use PhpStyler\Token\ADocblock;
+use PhpStyler\Token\ALineBreaking;
 use PhpStyler\Token\AToken;
 use PhpStyler\Token\TBlankLine;
 use PhpStyler\Token\TConstName;
@@ -19,7 +20,6 @@ use PhpStyler\Token\TUseAlias;
 use PhpStyler\Token\TUseConst;
 use PhpStyler\Token\TUseEndSemicolon;
 use PhpStyler\Token\TUseFunction;
-use PhpStyler\Token\TWhitespaceEol;
 
 class NormalizeImports extends ATokenRule
 {
@@ -251,9 +251,7 @@ class NormalizeImports extends ATokenRule
 
     private function isSeparator(AToken $token) : bool
     {
-        return $token instanceof TWhitespaceEol
-            || $token instanceof TLineBreak
-            || $token instanceof TBlankLine;
+        return $token instanceof ALineBreaking;
     }
 
     /**

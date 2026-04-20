@@ -6,7 +6,7 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TWhitespaceEol extends AToken
+class TWhitespaceEol extends AToken implements ALineBreaking
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

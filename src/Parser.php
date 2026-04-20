@@ -402,10 +402,7 @@ class Parser
     {
         $this->scanParsedTrail(
             function (AToken $token, int $i) : ?bool {
-                if (
-                    $token instanceof Token\TLineBreak
-                    || $token instanceof Token\TBlankLine
-                ) {
+                if ($token instanceof Token\ALineBreaking) {
                     $this->removeParsedAt($i);
 
                     return null;
@@ -758,8 +755,7 @@ class Parser
 
     public function hasPrevLineBreak() : bool
     {
-        return $this->hasPrev(Token\TLineBreak::class)
-            || $this->hasPrev(Token\TWhitespaceEol::class);
+        return $this->hasPrev(Token\ALineBreaking::class);
     }
 
     public function hasPrev(string $class) : bool

@@ -3,6 +3,6 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-class TLineBreak extends AToken
+class TLineBreak extends AToken implements ALineBreaking
 {
 }
