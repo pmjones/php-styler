@@ -451,43 +451,39 @@ class Splitter
         array $tokenLineMap,
     ) : ?array
     {
-        foreach ($lines as $lineIndex => $line) {
-            $tokens = $line->getTokens();
+        foreach (Line::eachOpener($lines, $tokenLineMap) as [
+            $lineIndex,
+            $tokenIndex,
+            $closerLineIndex,
+            ,
+            $closer,
+        ]) {
+            if ($closerLineIndex === $lineIndex) {
+                continue;
+            }
 
-            foreach ($tokens as $tokenIndex => $token) {
-                if (! $token->isOpener()) {
-                    continue;
-                }
+            $line = $lines[$lineIndex];
 
-                $closerId = $token->closingToken->splObjectId();
-                $closerLineIndex = $tokenLineMap[$closerId] ?? null;
+            // Split after opener if it's not the last token on its line
+            if ($tokenIndex < $line->lastContentIndex()) {
+                return $this->splitAfterOpener(
+                    $lines,
+                    $lineIndex,
+                    $tokenIndex,
+                    $closerLineIndex + 1,
+                );
+            }
 
-                if ($closerLineIndex === null || $closerLineIndex === $lineIndex) {
-                    continue;
-                }
+            // Split before closer if it's not the first token on its line
+            $closerTokenIndex = $lines[$closerLineIndex]->findTokenIndex($closer);
 
-                // Split after opener if it's not the last token on its line
-                if ($tokenIndex < $line->lastContentIndex()) {
-                    return $this->splitAfterOpener(
-                        $lines,
-                        $lineIndex,
-                        $tokenIndex,
-                        $closerLineIndex + 1,
-                    );
-                }
-
-                // Split before closer if it's not the first token on its line
-                $closerTokenIndex = $lines[$closerLineIndex]
-                    ->findTokenIndex($token->closingToken);
-
-                if ($closerTokenIndex !== null && $closerTokenIndex > 0) {
-                    return $this->splitBeforeCloser(
-                        $lines,
-                        $closerLineIndex,
-                        $closerTokenIndex,
-                        $line->indent,
-                    );
-                }
+            if ($closerTokenIndex !== null && $closerTokenIndex > 0) {
+                return $this->splitBeforeCloser(
+                    $lines,
+                    $closerLineIndex,
+                    $closerTokenIndex,
+                    $line->indent,
+                );
             }
         }
 
@@ -591,35 +587,31 @@ class Splitter
         // Collect all line indices that need comma splitting
         $lineIndices = [];
 
-        foreach ($lines as $lineIndex => $line) {
-            foreach ($line->getTokens() as $token) {
-                if (! $token->isOpener()) {
+        foreach (Line::eachOpener($lines, $tokenLineMap) as [
+            $lineIndex,
+            ,
+            $closerLineIndex,
+        ]) {
+            if ($closerLineIndex <= $lineIndex) {
+                continue;
+            }
+
+            $line = $lines[$lineIndex];
+            $contentIndent = $line->indent + 1;
+            $foundIndent = false;
+
+            for ($i = $lineIndex + 1; $i < $closerLineIndex; $i ++) {
+                if ($lines[$i]->isBlank()) {
                     continue;
                 }
 
-                $closerId = $token->closingToken->splObjectId();
-                $closerLineIndex = $tokenLineMap[$closerId] ?? null;
-
-                if ($closerLineIndex === null || $closerLineIndex <= $lineIndex) {
-                    continue;
+                if (! $foundIndent) {
+                    $contentIndent = $lines[$i]->indent;
+                    $foundIndent = true;
                 }
 
-                $contentIndent = $line->indent + 1;
-                $foundIndent = false;
-
-                for ($i = $lineIndex + 1; $i < $closerLineIndex; $i ++) {
-                    if ($lines[$i]->isBlank()) {
-                        continue;
-                    }
-
-                    if (! $foundIndent) {
-                        $contentIndent = $lines[$i]->indent;
-                        $foundIndent = true;
-                    }
-
-                    if ($lines[$i]->findTopLevelComma() !== null) {
-                        $lineIndices[$i] = $contentIndent;
-                    }
+                if ($lines[$i]->findTopLevelComma() !== null) {
+                    $lineIndices[$i] = $contentIndent;
                 }
             }
         }

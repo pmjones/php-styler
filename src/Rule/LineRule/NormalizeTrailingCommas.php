@@ -19,30 +19,24 @@ class NormalizeTrailingCommas extends ALineRule
     {
         $tokenLineMap = Line::buildTokenLineMap($lines);
 
-        foreach ($lines as $lineIndex => $line) {
-            foreach ($line->getTokens() as $token) {
-                if (! $token->isOpener() || ! $token instanceof ACommaListOpener) {
-                    continue;
-                }
+        foreach (Line::eachOpener($lines, $tokenLineMap) as [
+            $lineIndex,
+            ,
+            $closerLineIndex,
+            $opener,
+        ]) {
+            if (! $opener instanceof ACommaListOpener) {
+                continue;
+            }
 
-                $closerLineIndex = $tokenLineMap[
-                        $token->closingToken->splObjectId()
-                    ]
-                    ?? null;
-
-                if ($closerLineIndex === null) {
-                    continue;
-                }
-
-                if ($closerLineIndex !== $lineIndex) {
-                    $this->ensureTrailingComma(
-                        $lines,
-                        $closerLineIndex,
-                        $token->commaClass(),
-                    );
-                } else {
-                    $this->removeTrailingComma($lines, $lineIndex, $token);
-                }
+            if ($closerLineIndex !== $lineIndex) {
+                $this->ensureTrailingComma(
+                    $lines,
+                    $closerLineIndex,
+                    $opener->commaClass(),
+                );
+            } else {
+                $this->removeTrailingComma($lines, $lineIndex, $opener);
             }
         }
 

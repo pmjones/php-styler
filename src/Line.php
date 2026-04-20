@@ -33,6 +33,38 @@ class Line
         return $map;
     }
 
+    /**
+     * Yield (openerLineIndex, tokenIndexInLine, closerLineIndex, opener,
+     * closer) for every opener whose closer is findable in $tokenLineMap.
+     * Callers decide whether to skip same-line pairs, apply type filters, etc.
+     *
+     * @param Line[] $lines
+     * @param array<int, int> $tokenLineMap
+     * @return \Generator<int, array{int, int, int, AToken, AToken}>
+     */
+    public static function eachOpener(
+        array $lines,
+        array $tokenLineMap,
+    ) : \Generator
+    {
+        foreach ($lines as $lineIndex => $line) {
+            foreach ($line->getTokens() as $tokenIndex => $token) {
+                if (! $token->isOpener()) {
+                    continue;
+                }
+
+                $closer = $token->closingToken;
+                $closerLineIndex = $tokenLineMap[$closer->splObjectId()] ?? null;
+
+                if ($closerLineIndex === null) {
+                    continue;
+                }
+
+                yield [$lineIndex, $tokenIndex, $closerLineIndex, $token, $closer];
+            }
+        }
+    }
+
     public bool $isExpanded = false;
 
     public bool $forceExpand = false;
@@ -338,26 +370,22 @@ class Line
     }
 
     /**
-     * @param ?callable(AToken): bool $filter
-     * @return ?array{int, int, int}
+     * Yield (openerPos, closerPos, opener) for each expandable top-level pair.
+     *
+     * Expandable means: the closer is findable within this line AND the pair
+     * spans >1 token (unless forceExpand is set, which admits singletons too).
+     *
+     * @return \Generator<int, array{int, int, AToken}>
      */
-    public function findBestPair(?callable $filter = null) : ?array
+    private function topLevelPairs() : \Generator
     {
         $tokens = $this->tokens;
         $count = count($tokens);
-
-        // Phase 1: Collect all top-level pairs
-        $pairs = [];
 
         for ($i = 0; $i < $count; $i ++) {
             $token = $tokens[$i];
 
             if (! $token->isOpener()) {
-                continue;
-            }
-
-            if ($filter !== null && ! $filter($token)) {
-                $i = $this->findTokenIndex($token->closingToken) ?? $i;
                 continue;
             }
 
@@ -370,16 +398,28 @@ class Line
                 continue;
             }
 
-            $argCount = $token instanceof ACommaListOpener ? $token->argCount : 0;
-            $pairs[] = [$i, $closerPos, $argCount];
+            yield [$i, $closerPos, $token];
             $i = $closerPos;
+        }
+    }
+
+    /**
+     * @return ?array{int, int, int}
+     */
+    public function findBestPair() : ?array
+    {
+        $pairs = [];
+
+        foreach ($this->topLevelPairs() as [$openerPos, $closerPos, $opener]) {
+            $argCount = $opener instanceof ACommaListOpener ? $opener->argCount : 0;
+            $pairs[] = [$openerPos, $closerPos, $argCount];
         }
 
         if ($pairs === []) {
             return null;
         }
 
-        // Phase 2: Select best pair — prefer the one with commas if exactly one has them
+        // prefer the pair with commas if exactly one has them
         $commaIndices = [];
 
         foreach ($pairs as $idx => $pair) {
@@ -400,31 +440,12 @@ class Line
      */
     public function collectExpansionPairs() : array
     {
-        $tokens = $this->tokens;
-        $count = count($tokens);
         $result = [];
 
-        for ($i = 0; $i < $count; $i ++) {
-            $token = $tokens[$i];
-
-            if (! $token->isOpener()) {
-                continue;
-            }
-
-            $priority = $token->expandPriority() ?? ASplittable::OTHER_PAREN;
-
-            $closerPos = $this->findTokenIndex($token->closingToken);
-
-            if (
-                $closerPos === null
-                || (! $this->forceExpand && $closerPos - $i <= 1)
-            ) {
-                continue;
-            }
-
-            $argCount = $token instanceof ACommaListOpener ? $token->argCount : 0;
-            $result[$priority] ??= [$i, $closerPos, $argCount];
-            $i = $closerPos;
+        foreach ($this->topLevelPairs() as [$openerPos, $closerPos, $opener]) {
+            $priority = $opener->expandPriority() ?? ASplittable::OTHER_PAREN;
+            $argCount = $opener instanceof ACommaListOpener ? $opener->argCount : 0;
+            $result[$priority] ??= [$openerPos, $closerPos, $argCount];
         }
 
         return $result;
