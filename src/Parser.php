@@ -805,7 +805,7 @@ class Parser
         return false;
     }
 
-    public function hasPrevStatic() : bool
+    private function hasPrevStatic() : bool
     {
         return $this->hasPrevStaticFrom(count($this->parsed) - 1);
     }
