@@ -30,6 +30,18 @@ abstract class AToken extends PhpToken
     /** @var ?int */
     public const EXPAND_PRIORITY = null;
 
+    /**
+     * Default: emit the token, then append a trailing space unless the style
+     * explicitly declares `spaceAfter: false`.
+     *
+     * Note the asymmetry with Parser::applyStyleAfter (run inside add()):
+     * applyStyleAfter emits a space only on `spaceAfter === true`; the default
+     * parse treats unspecified (`null`) as "yes, emit space." This serves as
+     * convenience for keyword-like tokens that inherit the default parse
+     * without configuring spaceAfter explicitly. Tokens that override parse()
+     * and call $parser->add() directly get the strict behavior (no space
+     * unless spaceAfter === true).
+     */
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         $parser->add($source, static::class);
