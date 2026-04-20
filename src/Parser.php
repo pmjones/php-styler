@@ -707,19 +707,31 @@ class Parser
 
     public function getPrevParsed(int $skip = 0) : ?AToken
     {
-        $found = 0;
-
-        for ($i = count($this->parsed) - 1; $i >= 0; $i --) {
-            if (! $this->parsed[$i]->isIgnorable()) {
-                if ($found >= $skip) {
-                    return $this->parsed[$i];
-                }
-
-                $found ++;
+        foreach ($this->parsedBackward() as $token) {
+            if ($skip -- <= 0) {
+                return $token;
             }
         }
 
         return null;
+    }
+
+    /**
+     * Yields non-ignorable parsed tokens newest → oldest.
+     *
+     * @return \Generator<int, AToken>
+     */
+    private function parsedBackward(?int $fromIndex = null) : \Generator
+    {
+        $i = $fromIndex ?? count($this->parsed) - 1;
+
+        for (; $i >= 0; $i --) {
+            $token = $this->parsed[$i];
+
+            if (! $token->isIgnorable()) {
+                yield $i => $token;
+            }
+        }
     }
 
     public function getParsedCount() : int
@@ -768,12 +780,11 @@ class Parser
 
     public function isPrevStaticPropertyAccess() : bool
     {
-        for ($i = count($this->parsed) - 2; $i >= 0; $i --) {
-            $token = $this->parsed[$i];
-
-            if ($token->isContent()) {
-                return $token instanceof Token\TMemberDoubleColon;
-            }
+        // skip the most recent parsed token (the just-emitted prev) and look one
+        // further back — the caller is splitBefore() on a member operator, asking
+        // "is the property name immediately preceded by ::?"
+        foreach ($this->parsedBackward(count($this->parsed) - 2) as $token) {
+            return $token instanceof Token\TMemberDoubleColon;
         }
 
         return false;
@@ -786,8 +797,8 @@ class Parser
 
     private function hasPrevStaticBefore(Token\AToken $before) : bool
     {
-        for ($i = count($this->parsed) - 1; $i >= 0; $i --) {
-            if ($this->parsed[$i] === $before) {
+        foreach ($this->parsedBackward() as $i => $token) {
+            if ($token === $before) {
                 return $this->hasPrevStaticFrom($i - 1);
             }
         }
@@ -797,48 +808,19 @@ class Parser
 
     private function hasPrevStaticFrom(int $fromIndex) : bool
     {
-        for ($i = $fromIndex; $i >= 0; $i --) {
-            $prev = $this->parsed[$i];
-
-            if ($prev instanceof Token\TStatic) {
+        foreach ($this->parsedBackward($fromIndex) as $token) {
+            if ($token instanceof Token\TStatic) {
                 return true;
             }
 
             // stop at class body boundaries or previous member endings
             if (
-                $prev instanceof Token\AMemberClosing
-                || $prev instanceof Token\TClasslikeOpeningBrace
-                || $prev instanceof Token\TAnonymousOpeningBrace
+                $token instanceof Token\AMemberClosing
+                || $token instanceof Token\TClasslikeOpeningBrace
+                || $token instanceof Token\TAnonymousOpeningBrace
             ) {
                 return false;
             }
-        }
-
-        return false;
-    }
-
-    public function hasPrevVisibility() : bool
-    {
-        for ($i = count($this->parsed) - 1; $i >= 0; $i --) {
-            $prev = $this->parsed[$i];
-
-            if ($prev instanceof Token\TSpace) {
-                continue;
-            }
-
-            if ($prev instanceof Token\AModifier) {
-                if (
-                    $prev instanceof Token\TPublic
-                    || $prev instanceof Token\TProtected
-                    || $prev instanceof Token\TPrivate
-                ) {
-                    return true;
-                }
-
-                continue;
-            }
-
-            return false;
         }
 
         return false;
