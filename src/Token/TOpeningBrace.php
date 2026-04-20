@@ -51,7 +51,7 @@ class TOpeningBrace extends AnOpeningStructure
         }
 
         // lookup from nesting token constant
-        $braceClass = $parser->getNestingOpeningBrace();
+        $braceClass = $parser->nestingStack->getOpeningBrace();
 
         if ($braceClass !== null) {
             $parser->parse($source, $braceClass);

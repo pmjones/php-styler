@@ -99,7 +99,7 @@ class TClosingBrace extends AToken
         }
 
         // lookup from nesting token constant
-        $braceClass = $parser->getNestingClosingBrace();
+        $braceClass = $parser->nestingStack->getClosingBrace();
 
         if ($braceClass !== null) {
             $parser->parse($source, $braceClass);

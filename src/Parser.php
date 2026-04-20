@@ -96,7 +96,7 @@ class Parser
 
     private AFormat $format;
 
-    private NestingStack $nestingStack;
+    public NestingStack $nestingStack;
 
     /**
      * @var array<int, AToken>
@@ -570,30 +570,6 @@ class Parser
         );
 
         $this->nestingStack->push($token);
-    }
-
-    /**
-     * @return ?class-string<AToken>
-     */
-    public function getNestingOpeningBrace() : ?string
-    {
-        return $this->nestingStack->getOpeningBrace();
-    }
-
-    /**
-     * @return ?class-string<AToken>
-     */
-    public function getNestingClosingBrace() : ?string
-    {
-        return $this->nestingStack->getClosingBrace();
-    }
-
-    /**
-     * @return ?class-string<AToken>
-     */
-    public function getNestingEndSemicolon() : ?string
-    {
-        return $this->nestingStack->getEndSemicolon();
     }
 
     /**

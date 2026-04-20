@@ -55,7 +55,7 @@ class TSemicolon extends AToken
         }
 
         // lookup from nesting token constant
-        $parseClass = $parser->getNestingEndSemicolon();
+        $parseClass = $parser->nestingStack->getEndSemicolon();
 
         if ($parseClass !== null) {
             $parser->parse($source, $parseClass);
