@@ -484,7 +484,15 @@ class Parser
     }
 
     /**
-     * Scan backwards through parsed tokens.
+     * Scan backwards through parsed tokens — trail-walk semantics.
+     *
+     * Use this for whitespace-cleanup scans where you want to inspect the trail
+     * of recently-emitted tokens but STOP when you encounter real content
+     * (including comments). Whitespace and synthetic tokens are skippable; the
+     * callback decides via its return value.
+     *
+     * For content-walks (find the previous PHP token, treating whitespace AND
+     * comments AND splits as transparent), use `prevContentTokens()` instead.
      *
      * Callback receives (AToken $token, int $index) and returns:
      *
@@ -707,7 +715,7 @@ class Parser
 
     public function getPrevParsed(int $skip = 0) : ?AToken
     {
-        foreach ($this->parsedBackward() as $token) {
+        foreach ($this->prevContentTokens() as $token) {
             if ($skip -- <= 0) {
                 return $token;
             }
@@ -717,11 +725,18 @@ class Parser
     }
 
     /**
-     * Yields non-ignorable parsed tokens newest → oldest.
+     * Yield previous content tokens, newest → oldest — content-walk semantics.
+     *
+     * Use this when you want to look back at the actual previous PHP token(s),
+     * treating whitespace, splits, comments, and other ignorables as
+     * transparent. The yielded keys are the original parsed-array indices.
+     *
+     * For trail-walk scans where comments STOP the search (e.g. blank-line
+     * placement decisions), use `scanParsedTrail()` instead.
      *
      * @return \Generator<int, AToken>
      */
-    private function parsedBackward(?int $fromIndex = null) : \Generator
+    private function prevContentTokens(?int $fromIndex = null) : \Generator
     {
         $i = $fromIndex ?? count($this->parsed) - 1;
 
@@ -783,7 +798,7 @@ class Parser
         // skip the most recent parsed token (the just-emitted prev) and look one
         // further back — the caller is splitBefore() on a member operator, asking
         // "is the property name immediately preceded by ::?"
-        foreach ($this->parsedBackward(count($this->parsed) - 2) as $token) {
+        foreach ($this->prevContentTokens(count($this->parsed) - 2) as $token) {
             return $token instanceof Token\TMemberDoubleColon;
         }
 
@@ -797,7 +812,7 @@ class Parser
 
     private function hasPrevStaticBefore(Token\AToken $before) : bool
     {
-        foreach ($this->parsedBackward() as $i => $token) {
+        foreach ($this->prevContentTokens() as $i => $token) {
             if ($token === $before) {
                 return $this->hasPrevStaticFrom($i - 1);
             }
@@ -808,7 +823,7 @@ class Parser
 
     private function hasPrevStaticFrom(int $fromIndex) : bool
     {
-        foreach ($this->parsedBackward($fromIndex) as $token) {
+        foreach ($this->prevContentTokens($fromIndex) as $token) {
             if ($token instanceof Token\TStatic) {
                 return true;
             }
