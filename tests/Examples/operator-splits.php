@@ -43,3 +43,11 @@ $args = $this->getUriScheme()
 $args = $this->getUriScheme()
     % $this->getUriHostAndPort()
     % $this->getUriPathAndQuery();
+
+$args = $this->getUriScheme()
+    | $this->getUriHostAndPort()
+    | $this->getUriPathAndQuery();
+
+$args = $this->getUriScheme()
+    & $this->getUriHostAndPort()
+    & $this->getUriPathAndQuery();

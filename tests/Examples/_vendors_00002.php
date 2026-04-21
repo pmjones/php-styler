@@ -84,9 +84,8 @@ if (true) {
 
 if (true) {
     if (true) {
-        $flags = \PHP_OUTPUT_HANDLER_REMOVABLE | (
-            $flush ? \PHP_OUTPUT_HANDLER_FLUSHABLE : \PHP_OUTPUT_HANDLER_CLEANABLE
-        );
+        $flags = \PHP_OUTPUT_HANDLER_REMOVABLE
+            | ($flush ? \PHP_OUTPUT_HANDLER_FLUSHABLE : \PHP_OUTPUT_HANDLER_CLEANABLE);
     }
 }
 

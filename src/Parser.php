@@ -754,6 +754,19 @@ class Parser
             );
     }
 
+    public function isTypeContext() : bool
+    {
+        $prevPrev = $this->getPrevParsed(skip: 1);
+
+        return $prevPrev instanceof Token\TReturnColon
+            || $prevPrev instanceof Token\TUnion
+            || $prevPrev instanceof Token\TIntersection
+            || $prevPrev instanceof Token\TNullable
+            || $prevPrev instanceof Token\AModifier
+            || $prevPrev instanceof Token\TParamsOpeningParen
+            || $prevPrev instanceof Token\TParamsComma;
+    }
+
     public function isPrevStaticPropertyAccess() : bool
     {
         // skip the most recent parsed token (the just-emitted prev) and look one

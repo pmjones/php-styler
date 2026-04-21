@@ -29,6 +29,12 @@ interface ASplittable
 
     public const BOOLEAN_AND = 120;
 
+    public const BITWISE_OR = 122;
+
+    public const BITWISE_XOR = 124;
+
+    public const BITWISE_AND = 126;
+
     public const COMPARISON = 130;
 
     public const ADDITION = 140;

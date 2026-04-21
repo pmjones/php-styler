@@ -48,6 +48,22 @@ class TAmpersandNotFollowedByVarOrVarargTest extends TTestCase
                     TFunctionClosingBrace::class,
                 ],
             ],
+            'bitwise-and-of-constants' => [
+                <<<'CODE'
+                <?php
+                const FLAGS = FOO & BAR;
+                CODE,
+                [
+                    TPhpOpeningTag::class,
+                    TConst::class,
+                    TConstantName::class,
+                    TAssignConst::class,
+                    TUnknownString::class,
+                    TBitwiseAnd::class,
+                    TUnknownString::class,
+                    TNamespaceConstEndSemicolon::class,
+                ],
+            ],
         ];
     }
 }

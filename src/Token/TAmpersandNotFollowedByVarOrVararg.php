@@ -26,7 +26,9 @@ class TAmpersandNotFollowedByVarOrVararg extends AToken
             $prev instanceof TRelativeName,
             $prev instanceof TSelf,
             $prev instanceof TParent,
-            $prev instanceof TUnknownString => TIntersection::class,
+            $prev instanceof TUnknownString => $parser->isTypeContext()
+                ? TIntersection::class
+                : TBitwiseAnd::class,
 
             $prev instanceof TFunction,
             $prev instanceof TFn,

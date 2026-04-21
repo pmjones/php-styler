@@ -35,7 +35,7 @@ class TPipe extends AToken
             $prev instanceof TSelf,
             $prev instanceof TParent,
             $prev instanceof TUnknownString,
-            $prev instanceof TString => self::isTypeContext($parser)
+            $prev instanceof TString => $parser->isTypeContext()
                 ? TUnion::class
                 : TBitwiseOr::class,
 
@@ -43,18 +43,5 @@ class TPipe extends AToken
         };
 
         $parser->add($source, $class);
-    }
-
-    private static function isTypeContext(Parser $parser) : bool
-    {
-        $prevPrev = $parser->getPrevParsed(skip: 1);
-
-        return $prevPrev instanceof TReturnColon
-            || $prevPrev instanceof TUnion
-            || $prevPrev instanceof TIntersection
-            || $prevPrev instanceof TNullable
-            || $prevPrev instanceof AModifier
-            || $prevPrev instanceof TParamsOpeningParen
-            || $prevPrev instanceof TParamsComma;
     }
 }
