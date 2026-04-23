@@ -50,6 +50,28 @@ class RemoveRepeatedSemicolonsTest extends TestCase
 
                 EXPECT,
             ],
+            'synthetic-semicolon-after-real-semicolon-kept' => [
+                <<<'CODE'
+                <?php
+                namespace App\Demo;
+
+                use Foo\{Bar, Baz};
+
+                new Bar();
+                new Baz();
+                CODE,
+                <<<'EXPECT'
+                <?php
+                namespace App\Demo;
+
+                use Foo\Bar;
+                use Foo\Baz;
+
+                new Bar();
+                new Baz();
+
+                EXPECT,
+            ],
         ];
     }
 
@@ -58,6 +80,7 @@ class RemoveRepeatedSemicolonsTest extends TestCase
     {
         $styler = new Styler(
             new DeclarationFormat(rules: [
+                ExpandGroupedImports::class,
                 RemoveRepeatedSemicolons::class,
                 RemoveTrailingBlankLines::class,
             ]),
