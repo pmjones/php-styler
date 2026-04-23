@@ -5,10 +5,80 @@
 - **Added `init` command.** Copies the default `php-styler.php` config file to
   the current directory. Will not overwrite an existing config file.
 
+- **Added `debug` command.** Prints source context around parse failures for
+  diagnostics.
+
+- **Added `clear-cache` command; caching re-enabled.** Cache validity is now
+  determined by a content hash of each source file instead of config filemtime.
+  Replaces the removed `--force` option on `apply`.
+
 - **Backported to PHP 8.1.** The minimum PHP version is now 8.1 (was 8.4).
 
-- **Fixed `array` not recognized as a type.** The `array` keyword is now
-  correctly classified as a type in union/intersection type declarations.
+- **Per-file error collection.** `apply`, `check`, and `diff` now collect
+  styling errors per file instead of halting on the first failure. All
+  throwables are caught. `var_export` removed from exception messages.
+
+- **Bitwise `|` and `&` splittable.** Long lines split at bitwise operators;
+  `&` is disambiguated from type intersection in non-type contexts.
+
+- **`instanceof` splittable at `COMPARISON` priority.**
+
+- **Splitting skipped inside `<?= ?>` blocks** to preserve inline output
+  context.
+
+- **Column-aware line length for mixed PHP/HTML.** `TInlineHtml` no longer
+  inflates PHP line length measurements.
+
+- **Continuation PHP tag tokens** (`TPhpOpeningTagContinuation`,
+  `TPhpEchoOpeningTagContinuation`, `TPhpClosingTagContinuation`) for mixed
+  PHP/HTML files, plus a `RemoveLeadingWhitespace` rule stripping
+  whitespace-only `TInlineHtml` from file start.
+
+- **Fluent chain split tracked at parse time** via `chainIndex`/`chainPosition`,
+  preventing the splitter from orphaning chain-start variables. Also fixes a
+  fluent chain regression.
+
+- **`NormalizeImports` now recognizes function/const imports that are actually
+  used,** and no longer removes them as unused.
+
+- **Fixes:**
+  - `array` now correctly classified as a type in union/intersection
+    declarations.
+  - Latent ternary bug fixed by adding `TStaticVar` to `AStatementNesting`.
+  - Stacked statement-level nesting now pops after ternary/elvis end-semicolon
+    via `AStatementNesting` interface.
+  - Array brackets no longer expanded inside string interpolation.
+  - Bare braces now push onto the nesting stack, preventing them from stealing
+    enclosing structure nesting.
+  - `TPhpClosingTag` pops ternary and `TEcho` nesting on `?>`; `TElseif`/`TElse`
+    no longer pop colon nesting after a continuation brace.
+  - Braceless bodies now close after brace-closed statements.
+  - `NormalizeMemberOrder` no longer treats instance methods containing
+    `static fn` as static.
+  - Trailing commas no longer inserted inside `empty()` or `eval()`.
+  - Single-line comments no longer absorb subsequent code when the splitter
+    places them mid-line.
+  - Nested ternary parsing fixed by popping completed inner ternary/elvis
+    nesting.
+  - Broader recognition of keywords as function names.
+
+- **Parser refactoring:**
+  - Extracted `Source` collaborator from `Parser`; call sites use
+    `$parser->source` directly.
+  - Unified backward-scan-through-parsed via a shared generator; renamed
+    `parsedBackward` → `prevContentTokens`.
+  - `$nestingStack` exposed publicly; single-caller wrappers removed.
+  - Added `ALineBreaking` marker; collapsed two instanceof chains.
+  - Deleted dead `parenDepth` tracking and `Parser` shadow counters.
+  - Hoisted `splitBefore`/`splitAfter` into abstracts (`AComparison`,
+    `ASplittableComma`, arithmetic operators).
+  - `expandPriority()` moved to `EXPAND_PRIORITY` class constant.
+  - Unified `reclassifyNext*` methods on a shared primitive.
+  - Unified `hasPrevStatic` and `hasPrevStaticBefore`.
+  - Deduplicated `TObjectOperator` / `TNullsafeObjectOperator` and
+    opener/closer pair walks.
+  - Promoted `AnOpeningStructure` to an abstract class.
+  - Moved `BRACELESS` maps onto nesting-token constants.
 
 ## 0.20.0
 
