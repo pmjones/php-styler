@@ -6,6 +6,12 @@ namespace PhpStyler\Rule\TokenRule;
 use PhpStyler\Rule\LineRule\RemoveTrailingBlankLines;
 use PhpStyler\Styler;
 use PhpStyler\TestFormat;
+use PhpStyler\Token\AToken;
+use PhpStyler\Token\TLineBreak;
+use PhpStyler\Token\TNew;
+use PhpStyler\Token\TSpace;
+use PhpStyler\Token\TUnqualifiedName;
+use PhpStyler\Token\TUse;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
@@ -553,5 +559,43 @@ class NormalizeImportsTest extends TestCase
 
         $actual = $styler($code);
         $this->assertSame($expect, $actual);
+    }
+
+    /**
+     * Defense-in-depth: if a use statement is missing its TUseEndSemicolon
+     * (e.g., an earlier rule mangled the stream), the collector must not
+     * silently consume the rest of the file. The malformed use should be
+     * passed through as-is, preserving downstream tokens.
+     */
+    public function testMalformedUseDoesNotConsumeFollowingTokens() : void
+    {
+        $tokens = [
+            new TUse(AToken::SYNTHETIC, 'use'),
+            new TSpace(AToken::SYNTHETIC, ' '),
+            new TUnqualifiedName(AToken::SYNTHETIC, 'Foo'),
+
+            // NO TUseEndSemicolon here — simulates a malformed stream
+            new TLineBreak(AToken::SYNTHETIC, "\n"),
+            new TNew(AToken::SYNTHETIC, 'new'),
+            new TSpace(AToken::SYNTHETIC, ' '),
+            new TUnqualifiedName(AToken::SYNTHETIC, 'Bar'),
+        ];
+
+        $rule = new NormalizeImports();
+        $result = $rule->apply($tokens);
+
+        $hasNew = false;
+
+        foreach ($result as $token) {
+            if ($token instanceof TNew) {
+                $hasNew = true;
+                break;
+            }
+        }
+
+        $this->assertTrue(
+            $hasNew,
+            'TNew token must survive a malformed use statement',
+        );
     }
 }

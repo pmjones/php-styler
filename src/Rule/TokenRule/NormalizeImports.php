@@ -3,20 +3,28 @@ declare(strict_types=1);
 
 namespace PhpStyler\Rule\TokenRule;
 
+use PhpStyler\Token\AComment;
 use PhpStyler\Token\ADocblock;
 use PhpStyler\Token\ALineBreaking;
 use PhpStyler\Token\AToken;
+use PhpStyler\Token\AUseGroupCloser;
+use PhpStyler\Token\AUseGroupOpener;
 use PhpStyler\Token\TBlankLine;
 use PhpStyler\Token\TConstName;
+use PhpStyler\Token\TFullyQualifiedName;
 use PhpStyler\Token\TFunctionCallName;
 use PhpStyler\Token\TFunctionCallQualified;
 use PhpStyler\Token\TFunctionName;
 use PhpStyler\Token\TLineBreak;
+use PhpStyler\Token\TNamespaceSeparator;
 use PhpStyler\Token\TQualifiedName;
+use PhpStyler\Token\TSpace;
 use PhpStyler\Token\TUnknownString;
 use PhpStyler\Token\TUnqualifiedName;
 use PhpStyler\Token\TUse;
 use PhpStyler\Token\TUseAlias;
+use PhpStyler\Token\TUseAs;
+use PhpStyler\Token\TUseComma;
 use PhpStyler\Token\TUseConst;
 use PhpStyler\Token\TUseEndSemicolon;
 use PhpStyler\Token\TUseFunction;
@@ -42,8 +50,16 @@ class NormalizeImports extends ATokenRule
                 continue;
             }
 
-            [$block, $i] = $this->collectBlock($tokens, $i, $count);
+            [$block, $nextI] = $this->collectBlock($tokens, $i, $count);
 
+            // malformed stream: collector refused to consume past $i
+            if ($block === []) {
+                $result[] = $token;
+                $i ++;
+                continue;
+            }
+
+            $i = $nextI;
             $remainingTokens = array_slice($tokens, $i);
             $usedNames = $this->collectUsedNames($remainingTokens);
             $this->emitBlock($block, $usedNames, $result);
@@ -53,17 +69,21 @@ class NormalizeImports extends ATokenRule
     }
 
     /**
-     * Collect a contiguous block of use statements starting at $i.
-     * Returns [block, newOffset].
+     * Collect a contiguous block of use statements starting at $startIdx.
+     * Returns [block, newOffset]. If the stream is malformed (a use
+     * statement that never terminates, or contains a token that can't
+     * appear inside a use), returns [[], $startIdx] so the caller can
+     * pass the use keyword through as-is without swallowing downstream
+     * tokens.
      *
      * @param AToken[] $tokens
      * @return array{0: AToken[][], 1: int}
      */
-    private function collectBlock(array $tokens, int $i, int $count) : array
+    private function collectBlock(array $tokens, int $startIdx, int $count) : array
     {
         $block = [];
-        $currentStatement = [$tokens[$i]];
-        $i ++;
+        $currentStatement = [$tokens[$startIdx]];
+        $i = $startIdx + 1;
 
         while ($i < $count) {
             $token = $tokens[$i];
@@ -89,13 +109,17 @@ class NormalizeImports extends ATokenRule
                 break;
             }
 
+            if (! $this->isUseStatementContent($token)) {
+                return [[], $startIdx];
+            }
+
             $currentStatement[] = $token;
             $i ++;
         }
 
-        // handle edge case: unclosed statement at end of tokens
+        // unterminated statement at end of tokens — malformed
         if ($currentStatement !== []) {
-            $block[] = $currentStatement;
+            return [[], $startIdx];
         }
 
         return [$block, $i];
@@ -252,6 +276,34 @@ class NormalizeImports extends ATokenRule
     private function isSeparator(AToken $token) : bool
     {
         return $token instanceof ALineBreaking;
+    }
+
+    /**
+     * Tokens that can legitimately appear inside a use statement.
+     * Used as a guardrail: if collectBlock encounters anything outside
+     * this set before finding a TUseEndSemicolon, the stream is
+     * malformed and the collector rolls back to avoid eating code.
+     */
+    private function isUseStatementContent(AToken $token) : bool
+    {
+        return $token instanceof TUse
+            || $token instanceof TUseConst
+            || $token instanceof TUseFunction
+            || $token instanceof TUseAs
+            || $token instanceof TUseAlias
+            || $token instanceof TUseComma
+            || $token instanceof AUseGroupOpener
+            || $token instanceof AUseGroupCloser
+            || $token instanceof TNamespaceSeparator
+            || $token instanceof TQualifiedName
+            || $token instanceof TUnqualifiedName
+            || $token instanceof TFullyQualifiedName
+            || $token instanceof TConstName
+            || $token instanceof TFunctionName
+            || $token instanceof TSpace
+            || $token instanceof ALineBreaking
+            || $token instanceof AComment
+            || $token instanceof ADocblock;
     }
 
     /**
