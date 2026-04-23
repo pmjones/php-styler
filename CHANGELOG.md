@@ -1,6 +1,6 @@
 # Change Log
 
-## NEXT
+## 0.21.0
 
 - **Added `init` command.** Copies the default `php-styler.php` config file to
   the current directory. Will not overwrite an existing config file.
