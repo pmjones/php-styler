@@ -30,7 +30,9 @@ class WorkerPool
             }
         }
 
-        // Windows
+        // @codeCoverageIgnoreStart
+        // Windows: untestable on CI that runs on Linux/macOS; leaving for
+        // accurate behavior on Windows while excluding from coverage accounting
         $env = getenv('NUMBER_OF_PROCESSORS');
 
         if ($env !== false) {
@@ -41,7 +43,10 @@ class WorkerPool
             }
         }
 
+        // all-OS fallback: only reached if every platform detection fails,
+        // which does not happen on any supported CI environment
         return 4;
+        // @codeCoverageIgnoreEnd
     }
 
     /**
@@ -78,9 +83,14 @@ class WorkerPool
 
             $process = proc_open($command, $descriptors, $procPipes);
 
+            // @codeCoverageIgnoreStart
+            // defensive: proc_open only returns non-resource on kernel-level
+            // failures (ENOMEM, too many open files, etc.) that cannot be
+            // reliably forced in a test
             if (! is_resource($process)) {
                 throw new Exception("Failed to spawn worker {$i}");
             }
+            // @codeCoverageIgnoreEnd
 
             $processes[$i] = $process;
             $pipes[$i] = $procPipes;

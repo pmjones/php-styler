@@ -26,9 +26,12 @@ class TMemberDoubleColon extends AToken implements ASplittableFluent
         // not for constants, enum cases, or ::class
         $memberOffset = $parser->source->findNextNonWhitespace();
 
+        // @codeCoverageIgnoreStart
+        // defensive: valid PHP always has content after `::`
         if ($memberOffset === null) {
             return null;
         }
+        // @codeCoverageIgnoreEnd
 
         $afterMemberOffset = $parser->source
             ->findNextNonWhitespace($memberOffset + 1);

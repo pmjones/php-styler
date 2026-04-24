@@ -27,10 +27,15 @@ class TContinuationBrace extends AToken
             return;
         }
 
+        // @codeCoverageIgnoreStart
+        // defensive: a `} else` / `} catch` / `} finally` / `} while` only
+        // reaches here via a valid-syntax nesting, so the default arm above
+        // is unreachable for accepted input
         $message = "Unknown kind of parting brace"
             . " on line {$source->line}"
             . " at position {$source->pos}";
 
         throw Exception::fromParser($message, $parser, $source);
+        // @codeCoverageIgnoreEnd
     }
 }

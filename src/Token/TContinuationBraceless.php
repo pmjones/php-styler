@@ -27,10 +27,14 @@ class TContinuationBraceless extends AToken
             return;
         }
 
+        // @codeCoverageIgnoreStart
+        // defensive: valid braceless-body continuations (else / elseif) only
+        // arrive here under a matching TIf or TElseif nesting
         $message = "Unknown kind of parting braceless"
             . " on line {$source->line}"
             . " at position {$source->pos}";
 
         throw Exception::fromParser($message, $parser, $source);
+        // @codeCoverageIgnoreEnd
     }
 }

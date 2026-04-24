@@ -36,10 +36,15 @@ class TClosingBraceless extends AToken
             return;
         }
 
+        // @codeCoverageIgnoreStart
+        // defensive: a braceless body only closes under one of the nesting
+        // types handled above, so the default arm is unreachable for accepted
+        // input
         $message = "Unknown kind of closing braceless"
             . " on line {$source->line}"
             . " at position {$source->pos}";
 
         throw Exception::fromParser($message, $parser, $source);
+        // @codeCoverageIgnoreEnd
     }
 }

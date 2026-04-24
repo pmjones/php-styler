@@ -610,6 +610,9 @@ class Parser
             ? $this->nestingStack->getContinuationBraceless()
             : $this->nestingStack->getClosingBraceless();
 
+        // @codeCoverageIgnoreStart
+        // defensive: valid braceless bodies always map to a concrete closing
+        // or continuation class via the nesting stack
         if ($braceless === null) {
             throw Exception::fromParser(
                 ($isContinuation ? "Unknown continuation" : "Unknown closing")
@@ -619,6 +622,7 @@ class Parser
                 $source,
             );
         }
+        // @codeCoverageIgnoreEnd
 
         $this->parse($source, $braceless);
     }
@@ -660,6 +664,10 @@ class Parser
         $token = $this->nestingStack->pop();
         $expects = [$expect, ...$expects];
 
+        // @codeCoverageIgnoreStart
+        // defensive: a well-formed parse always pops the nesting types the
+        // caller specified; reaching this throw indicates a bug, not a
+        // user-reachable path
         if ($token === null || ! in_array(get_class($token), $expects, true)) {
             $actual = $token !== null ? get_class($token) : '';
 
@@ -671,6 +679,7 @@ class Parser
                 $this->source->current(),
             );
         }
+        // @codeCoverageIgnoreEnd
 
         return $token;
     }

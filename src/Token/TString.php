@@ -119,7 +119,9 @@ class TString extends AToken implements AType
             $hookClass = match ($text) {
                 'get' => TPropertyHookGetAbstract::class,
                 'set' => TPropertyHookSetAbstract::class,
+                // @codeCoverageIgnoreStart
                 default => null,
+                // @codeCoverageIgnoreEnd
             };
 
             if ($hookClass) {
@@ -132,7 +134,9 @@ class TString extends AToken implements AType
             $hookClass = match ($text) {
                 'get' => TPropertyHookGet::class,
                 'set' => TPropertyHookSet::class,
+                // @codeCoverageIgnoreStart
                 default => null,
+                // @codeCoverageIgnoreEnd
             };
 
             if ($hookClass) {

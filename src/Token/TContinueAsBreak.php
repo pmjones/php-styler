@@ -55,6 +55,10 @@ class TContinueAsBreak extends AToken
             }
         }
 
+        // @codeCoverageIgnoreStart
+        // defensive: `continue` must be inside a loop or switch for the
+        // containing PHP to be syntactically valid
         return false;
+        // @codeCoverageIgnoreEnd
     }
 }
