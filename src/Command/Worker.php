@@ -15,14 +15,16 @@ class Worker extends ACommand
         $configFile = $options->configFile;
 
         if ($configFile === null) {
-            fwrite(STDERR, "Worker requires --config" . PHP_EOL);
+            $this->writeStderr("Worker requires --config" . PHP_EOL);
             return 1;
         }
 
         $mode = $options->mode;
 
         if ($mode === null || ! in_array($mode, ['apply', 'check', 'diff'])) {
-            fwrite(STDERR, "Worker requires --mode=apply|check|diff" . PHP_EOL);
+            $this->writeStderr(
+                "Worker requires --mode=apply|check|diff" . PHP_EOL,
+            );
             return 1;
         }
 
@@ -40,7 +42,9 @@ class Worker extends ACommand
                 $result = $this->diffFile($styler, $file);
             }
 
-            fwrite(STDOUT, json_encode($result, JSON_UNESCAPED_SLASHES) . "\n");
+            $this->writeStdout(
+                json_encode($result, JSON_UNESCAPED_SLASHES) . "\n",
+            );
 
             if (isset($result['ok']) && ! $result['ok']) {
                 $hasError = true;
@@ -48,6 +52,16 @@ class Worker extends ACommand
         }
 
         return (int) $hasError;
+    }
+
+    protected function writeStdout(string $message) : void
+    {
+        fwrite(STDOUT, $message);
+    }
+
+    protected function writeStderr(string $message) : void
+    {
+        fwrite(STDERR, $message);
     }
 
     /**
