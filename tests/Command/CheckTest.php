@@ -28,9 +28,10 @@ class CheckTest extends CommandTestCase
 
     public function testExitsOneWhenFilesNeedStyling() : void
     {
-        mkdir($this->tmpDir . '/src');
-        $configFile = $this->writeConfig($this->tmpDir . '/src');
-        $unstyled = $this->tmpDir . '/src/u.php';
+        $srcDir = $this->tmpDir . DIRECTORY_SEPARATOR . 'src';
+        mkdir($srcDir);
+        $configFile = $this->writeConfig($srcDir);
+        $unstyled = $srcDir . DIRECTORY_SEPARATOR . 'u.php';
         file_put_contents($unstyled, "<?php if(\$x){echo 1;}");
 
         $cmd = new Check();
