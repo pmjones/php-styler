@@ -1,5 +1,36 @@
 # Change Log
 
+## Unreleased
+
+- **Reached 100% line coverage.** Added several rounds of tests (resilience
+  tests for invalid input, invariant tests for pathological parser state,
+  member-spacing tests for abstract magic methods and property hooks,
+  vendor-format tests for Symfony, etc.). Converted several `@codeCoverageIgnore`
+  annotations into real tests where a test could meaningfully pin the
+  invariant being protected; kept annotations where the guarded path is
+  genuinely unreachable (platform-specific branches, I/O wrappers, kernel-level
+  failures, or double-guards behind upstream rewrites).
+
+- **Internal cleanup.** Extracted `src/Token/DocblockParsing` trait to
+  consolidate the duplicated `getDocblock()` method across 16 comment-token
+  classes. Removed dead `parse()` methods from tokens that are only produced
+  via `$parser->add()` / `$parser->addNesting()` rather than dispatched through
+  `Parser::parse()` (e.g., `TUnion`, `TIntersection`, `TUnaryMinus`/`Plus`,
+  `TSpread`/`VariadicEllipsis`, `TFunctionName`, `TDynamicMember`/`VariableOpeningBrace`,
+  `TEncapsedArrayElementOpeningBracket`, `TCaseFallthroughColon`, and all
+  `TUse*Brace` variants). Removed dead helpers: `Line::findBestPair()`,
+  `TSplit::shouldSkipFirst()`, `NestingStack::isEmpty()`, `Styler::fromConfig()`.
+  Removed dead branches in `TClass::parse()` (the `::class` case, superseded
+  by `TDoubleColon::reclassifyNextAsName()`), `TNew::parse()`, and
+  `TPrint::parse()` (the `function new()` / `function print()` method-name
+  cases, likewise handled upstream).
+
+- **`PlainFormat` setter signatures tightened.** `setClassBracePosition`,
+  `setFunctionBracePosition`, `setControlBracePosition`, `setKeywordCase`,
+  `setConcatenationSpacing`, `setReturnTypeColonSpacing`, and
+  `setBlankLineAfterBlock` are no longer nullable — every caller was passing
+  non-null values, and the defensive null-return branches were dead.
+
 ## 0.21.0
 
 - **Added `init` command.** Copies the default `php-styler.php` config file to

@@ -124,7 +124,7 @@ Parser (src/Parser.php)
     │  applies Styles (spacing, line breaks, casing) from Format
     │  faithfully represents source — no opinionated transforms
     ▼
-Array of AToken objects (527 classes in src/Token/)
+Array of AToken objects (519 concrete `T*` classes in src/Token/)
     │
     ▼
 Token Rules (src/Rule/TokenRule/ implementations)
@@ -164,7 +164,7 @@ Rendered output
 | Class | Responsibility |
 |---|---|
 | `Parser` | Maps PhpTokens to AToken subclasses; applies styles; injects synthetic tokens |
-| `AToken` | Abstract base for all 507 token classes; extends `PhpToken`; carries its `Style` instance |
+| `AToken` | Abstract base for all 519 concrete token classes; extends `PhpToken`; carries its `Style` instance |
 | `Style` | Per-token spacing, line breaks, blank lines, casing (`readonly`) |
 | `AFormat` (interface) | Declares `eol`, `lineLen`, `indentLen`, `indentTab`, `parseAs`, `styles`, `rules` |
 | `PlainFormat` | Base format with styles for all token types |
@@ -178,7 +178,7 @@ Rendered output
 | `Nesting` | Tracks nesting context for a single token (class name, opening/closing brace, end semicolon) |
 | `Docblock` / `DocblockTag` | Docblock structure parsing |
 
-### Token System (527 classes)
+### Token System (519 concrete classes)
 
 Each PHP token and synthetic construct has a dedicated `AToken` subclass.
 
@@ -266,8 +266,11 @@ The Parser (`src/Parser.php`) is the most complex class. Key mechanics:
    to another, the substitute class is used instead (e.g., `TArray` →
    `TArrayAsShort` converts `array()` to `[]`).
 
-3. **Token parsing.** Each `AToken` subclass implements a static `parse()` method
-   that receives the Parser instance. The parse method can:
+3. **Token parsing.** The parser dispatches by calling `AToken::parse()` statically.
+   Subclasses override `parse()` only when they have contextual dispatch logic
+   beyond the default (which just emits the token and applies space-after per
+   its style) — many simpler tokens inherit `AToken::parse()` unchanged. An
+   overriding `parse()` can:
    - Call `$parser->add()` to emit the token with its style
    - Call `$parser->addSplit()` to emit a split marker
    - Call `$parser->indentIncr()` / `indentDecr()` to manage indentation
@@ -291,7 +294,7 @@ The `AFormat` interface defines:
 - `$styles` — token-class → style-args map (spacing, line breaks, casing)
 - `$rules` — rule-class → constructor-args map
 
-**`PlainFormat`** defines styles for all 507 token types with sensible defaults.
+**`PlainFormat`** defines styles for all 519 concrete token types with sensible defaults.
 Constructor parameters expose common adjustments: `classBracePosition`,
 `functionBracePosition`, `controlBracePosition`, `keywordCase`,
 `concatenationSpacing`, `returnTypeColonSpacing`, `blankLineAfterBlock`.
@@ -386,7 +389,7 @@ unified priority-ordered strategy system:
 | Aspect | Old (0.16.0) | New (current) |
 |---|---|---|
 | **Input parsing** | nikic/php-parser → AST nodes | PhpToken::tokenize() → token stream |
-| **Core model** | 89 Printable classes (AST constructs) | 507 AToken classes (lexical tokens) |
+| **Core model** | 89 Printable classes (AST constructs) | 519 AToken classes (lexical tokens) |
 | **Transformation** | Visitor pattern on AST; Printer flattening | Token `parse()` callbacks; synthetic token injection |
 | **Styling** | Imperative `s*()` method overrides on Styler | Declarative `styles` array on AFormat |
 | **Splitting** | Integrated in Styler | Separate Splitter stage with priority-ordered TSplit tokens |
