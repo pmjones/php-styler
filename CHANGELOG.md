@@ -1,6 +1,6 @@
 # Change Log
 
-## Unreleased
+## 0.22.0
 
 - **Reached 100% line coverage.** Added several rounds of tests (resilience
   tests for invalid input, invariant tests for pathological parser state,
@@ -18,18 +18,26 @@
   `Parser::parse()` (e.g., `TUnion`, `TIntersection`, `TUnaryMinus`/`Plus`,
   `TSpread`/`VariadicEllipsis`, `TFunctionName`, `TDynamicMember`/`VariableOpeningBrace`,
   `TEncapsedArrayElementOpeningBracket`, `TCaseFallthroughColon`, and all
-  `TUse*Brace` variants). Removed dead helpers: `Line::findBestPair()`,
-  `TSplit::shouldSkipFirst()`, `NestingStack::isEmpty()`, `Styler::fromConfig()`.
-  Removed dead branches in `TClass::parse()` (the `::class` case, superseded
-  by `TDoubleColon::reclassifyNextAsName()`), `TNew::parse()`, and
-  `TPrint::parse()` (the `function new()` / `function print()` method-name
-  cases, likewise handled upstream).
+  `TUse*Brace` variants). Removed dead branches in `TClass::parse()` (the
+  `::class` case, superseded by `TDoubleColon::reclassifyNextAsName()`),
+  `TNew::parse()`, and `TPrint::parse()` (the `function new()` /
+  `function print()` method-name cases, likewise handled upstream).
 
-- **`PlainFormat` setter signatures tightened.** `setClassBracePosition`,
+### Removed (potentially breaking for library extenders)
+
+- `Styler::fromConfig()` (public static)
+- `Line::findBestPair()` (public)
+- `TSplit::shouldSkipFirst()` (public, inherited by every `TSplit*` subclass)
+- `NestingStack::isEmpty()` (public)
+- `parse()` overrides on internally-dispatched tokens (listed above); these
+  now inherit `AToken::parse()`, which applies `spaceAfter` per style if the
+  style does not set `spaceAfter: false`
+- `PlainFormat::set*` setters (`setClassBracePosition`,
   `setFunctionBracePosition`, `setControlBracePosition`, `setKeywordCase`,
-  `setConcatenationSpacing`, `setReturnTypeColonSpacing`, and
-  `setBlankLineAfterBlock` are no longer nullable — every caller was passing
-  non-null values, and the defensive null-return branches were dead.
+  `setConcatenationSpacing`, `setReturnTypeColonSpacing`,
+  `setBlankLineAfterBlock`): nullable `?string`/`?bool` parameters narrowed
+  to `string`/`bool`. Every caller passed non-null values; the null-return
+  branches were dead.
 
 ## 0.21.0
 
