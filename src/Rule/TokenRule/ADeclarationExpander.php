@@ -28,10 +28,16 @@ abstract class ADeclarationExpander extends ATokenRule
 
             $prefix = $this->collectPrefix($result);
 
+            // @codeCoverageIgnoreStart
+            // defensive: isComma() concrete subclasses match only commas
+            // that appear in a declaration (property/const), where a marker
+            // is always already in the result stream
             if ($prefix === null) {
                 $result[] = $token;
                 continue;
             }
+
+            // @codeCoverageIgnoreEnd
 
             $this->emitSplit($result, $tokens, $i, $count, $prefix);
 
@@ -70,9 +76,14 @@ abstract class ADeclarationExpander extends ATokenRule
             }
         }
 
+        // @codeCoverageIgnoreStart
+        // defensive: callers reach collectPrefix only after seeing a
+        // declaration comma, which implies a marker is already emitted
         if ($markerIdx === null) {
             return null;
         }
+
+        // @codeCoverageIgnoreEnd
 
         $prefix = [];
 

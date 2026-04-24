@@ -24,7 +24,11 @@ class TAs extends AToken
 
             TUseTraitOpeningBrace::class => TUseTraitAs::class,
 
+            // @codeCoverageIgnoreStart
+            // defensive: T_AS only appears in foreach / use-import /
+            // use-trait contexts
             default => self::class,
+            // @codeCoverageIgnoreEnd
         };
 
         $parser->add($source, $parseClass);

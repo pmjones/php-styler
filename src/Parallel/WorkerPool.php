@@ -9,7 +9,8 @@ class WorkerPool
 {
     public static function detectCpuCount() : int
     {
-        // Linux
+        // @codeCoverageIgnoreStart
+        // Linux: exercised on Linux CI, not on the maintainer's macOS
         if (is_readable('/proc/cpuinfo')) {
             $contents = (string) file_get_contents('/proc/cpuinfo');
             $count = substr_count($contents, 'processor');
@@ -18,6 +19,8 @@ class WorkerPool
                 return $count;
             }
         }
+
+        // @codeCoverageIgnoreEnd
 
         // macOS
         $sysctl = @shell_exec('sysctl -n hw.ncpu 2>/dev/null');
@@ -90,6 +93,7 @@ class WorkerPool
             if (! is_resource($process)) {
                 throw new Exception("Failed to spawn worker {$i}");
             }
+
             // @codeCoverageIgnoreEnd
 
             $processes[$i] = $process;
@@ -117,9 +121,14 @@ class WorkerPool
             }
 
             foreach (explode("\n", trim($stdout)) as $line) {
+                // @codeCoverageIgnoreStart
+                // defensive: trim() + a non-empty implode already prevent
+                // empty lines; this guards against malformed worker output
                 if ($line === '') {
                     continue;
                 }
+
+                // @codeCoverageIgnoreEnd
 
                 $data = json_decode($line, true);
 

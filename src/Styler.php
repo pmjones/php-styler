@@ -11,11 +11,6 @@ use PhpStyler\Token\AToken;
 
 class Styler
 {
-    public static function fromConfig(Config $config) : self
-    {
-        return new self($config->format);
-    }
-
     private Parser $parser;
 
     private Assembler $assembler;

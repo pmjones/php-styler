@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-use PhpStyler\Docblock;
 use PhpStyler\Line;
 use PhpStyler\Parser;
 use PhpToken;
@@ -17,6 +16,8 @@ use PhpToken;
  */
 class TDocComment extends AToken implements ADocblock
 {
+    use DocblockParsing;
+
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         if (
@@ -32,13 +33,6 @@ class TDocComment extends AToken implements ADocblock
         }
 
         $parser->add($source, self::class);
-    }
-
-    protected ?Docblock $docblock = null;
-
-    public function getDocblock() : Docblock
-    {
-        return $this->docblock ??= Docblock::parse($this->text);
     }
 
     public function render(Line $line) : string

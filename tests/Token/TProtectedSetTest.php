@@ -35,6 +35,25 @@ class TProtectedSetTest extends TTestCase
                     TClassClosingBrace::class,
                 ],
             ],
+            'first-modifier' => [
+                <<<'CODE'
+                <?php
+                class Foo {
+                    protected(set) string $bar;
+                }
+                CODE,
+                [
+                    TPhpOpeningTag::class,
+                    TClass::class,
+                    TClassName::class,
+                    TClassOpeningBrace::class,
+                    TProtectedSet::class,
+                    TString::class,
+                    TVariable::class,
+                    TPropertyEndSemicolon::class,
+                    TClassClosingBrace::class,
+                ],
+            ],
         ];
     }
 }

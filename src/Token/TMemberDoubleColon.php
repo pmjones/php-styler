@@ -31,6 +31,7 @@ class TMemberDoubleColon extends AToken implements ASplittableFluent
         if ($memberOffset === null) {
             return null;
         }
+
         // @codeCoverageIgnoreEnd
 
         $afterMemberOffset = $parser->source

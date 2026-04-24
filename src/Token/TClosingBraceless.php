@@ -19,32 +19,27 @@ class TClosingBraceless extends AToken
         $parser->add($source, TSemicolon::class);
         $parser->popNesting(TOpeningBraceless::class);
 
-        $nesting = $parser->getNesting();
-
-        $closingBraceless = match ($nesting) {
+        // The default arm enforces the invariant that TOpeningBraceless
+        // only sits atop one of the six control nestings listed here; it
+        // is unreachable via valid PHP source but is exercised by a
+        // synthetic-stack test that manufactures a pathological nesting.
+        $closingBraceless = match ($parser->getNesting()) {
             TIf::class => TIfClosingBraceless::class,
             TElse::class => TElseClosingBraceless::class,
             TElseif::class => TElseifClosingBraceless::class,
             TWhile::class => TWhileClosingBraceless::class,
             TFor::class => TForClosingBraceless::class,
             TForeach::class => TForeachClosingBraceless::class,
-            default => null,
+
+            default
+                => throw Exception::fromParser(
+                    "Unknown kind of closing braceless on line {$source->line}"
+                        . " at position {$source->pos}",
+                    $parser,
+                    $source,
+                ),
         };
 
-        if ($closingBraceless) {
-            $parser->parse($source, $closingBraceless);
-            return;
-        }
-
-        // @codeCoverageIgnoreStart
-        // defensive: a braceless body only closes under one of the nesting
-        // types handled above, so the default arm is unreachable for accepted
-        // input
-        $message = "Unknown kind of closing braceless"
-            . " on line {$source->line}"
-            . " at position {$source->pos}";
-
-        throw Exception::fromParser($message, $parser, $source);
-        // @codeCoverageIgnoreEnd
+        $parser->parse($source, $closingBraceless);
     }
 }

@@ -25,6 +25,7 @@ class Worker extends ACommand
             $this->writeStderr(
                 "Worker requires --mode=apply|check|diff" . PHP_EOL,
             );
+
             return 1;
         }
 
@@ -54,6 +55,9 @@ class Worker extends ACommand
         return (int) $hasError;
     }
 
+    // @codeCoverageIgnoreStart
+    // thin STDIN/STDOUT/STDERR wrappers exist for test overrides; exercising
+    // them in-process would require redirecting real FDs
     protected function writeStdout(string $message) : void
     {
         fwrite(STDOUT, $message);
@@ -74,6 +78,8 @@ class Worker extends ACommand
 
         return array_filter($lines, fn (string $line) => $line !== '');
     }
+
+    // @codeCoverageIgnoreEnd
 
     /**
      * @return array<string, mixed>

@@ -19,5 +19,6 @@ abstract class AMemberClosing extends AToken
 
     public bool $closesStaticMember = false;
 
+    /** @codeCoverageIgnore */
     abstract public function memberType() : string;
 }

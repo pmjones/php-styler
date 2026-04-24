@@ -450,6 +450,10 @@ class Parser
 
     public function space() : void
     {
+        // Safety net: space() is called from within parsing which
+        // always has at least one already-parsed token (the PHP opening
+        // tag); calling on a fresh parser is a bug in the caller, not a
+        // user-reachable path. Pinned by ParserInvariantsTest.
         if (count($this->parsed) === 0) {
             return;
         }
@@ -610,9 +614,10 @@ class Parser
             ? $this->nestingStack->getContinuationBraceless()
             : $this->nestingStack->getClosingBraceless();
 
-        // @codeCoverageIgnoreStart
-        // defensive: valid braceless bodies always map to a concrete closing
-        // or continuation class via the nesting stack
+        // Enforces the invariant that a braceless body always lands on a
+        // nesting with a concrete closing or continuation class; reached
+        // only when the caller fed malformed source (e.g. `switch (...)
+        // echo 1;`). Pinned by ParserResilienceTest.
         if ($braceless === null) {
             throw Exception::fromParser(
                 ($isContinuation ? "Unknown continuation" : "Unknown closing")
@@ -622,7 +627,6 @@ class Parser
                 $source,
             );
         }
-        // @codeCoverageIgnoreEnd
 
         $this->parse($source, $braceless);
     }
@@ -664,10 +668,11 @@ class Parser
         $token = $this->nestingStack->pop();
         $expects = [$expect, ...$expects];
 
-        // @codeCoverageIgnoreStart
-        // defensive: a well-formed parse always pops the nesting types the
-        // caller specified; reaching this throw indicates a bug, not a
-        // user-reachable path
+        // Safety net for parser bugs: a well-formed parse always pops
+        // one of the expected nesting types. Reaching this throw means
+        // the parser's internal invariants are violated — fail loud
+        // with a diagnosable message instead of silently producing
+        // misaligned output. Pinned by ParserInvariantsTest.
         if ($token === null || ! in_array(get_class($token), $expects, true)) {
             $actual = $token !== null ? get_class($token) : '';
 
@@ -679,7 +684,6 @@ class Parser
                 $this->source->current(),
             );
         }
-        // @codeCoverageIgnoreEnd
 
         return $token;
     }
@@ -801,7 +805,14 @@ class Parser
             }
         }
 
+        // @codeCoverageIgnoreStart
+        // Reachable only by constructing a parser state where $before was
+        // pushNesting'd but never added to $parsed; in practice every
+        // AMemberClosing opener goes through addNesting. A test would just
+        // assert "false stays false" which does not exercise useful
+        // behavior.
         return false;
+        // @codeCoverageIgnoreEnd
     }
 
     private function hasPrevStaticFrom(int $fromIndex) : bool

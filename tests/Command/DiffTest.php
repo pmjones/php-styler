@@ -183,4 +183,55 @@ class DiffTest extends CommandTestCase
 
         $this->assertSame(0, $exit);
     }
+
+    public function testCachedFilesAreSkipped() : void
+    {
+        mkdir($this->tmpDir . '/src');
+        $configFile = $this->writeConfig($this->tmpDir . '/src');
+        file_put_contents($this->tmpDir . '/src/a.php', "<?php\necho 1;\n");
+
+        // prime the cache via Apply
+        $apply = new Apply();
+        ob_start();
+        $apply(new ApplyOptions(configFile: $configFile, workers: null));
+        ob_end_clean();
+
+        // now run Diff — file is cached, so inner loop `continue` fires
+        $cmd = new Diff();
+        $options = new DiffOptions(configFile: $configFile, workers: null);
+
+        ob_start();
+        $exit = $cmd($options);
+        $out = (string) ob_get_clean();
+
+        $this->assertSame(0, $exit);
+        $this->assertStringNotContainsString('@@', $out);
+    }
+
+    public function testExceptionFromDiffStyleIsCaught() : void
+    {
+        mkdir($this->tmpDir . '/src');
+        $configFile = $this->writeConfig($this->tmpDir . '/src');
+
+        $cmd = new class extends Diff {
+            protected function diffStyle(
+                \PhpStyler\Config $config,
+                string $configFile,
+                array $paths,
+                int $workerCount,
+                \PhpStyler\Cache $cache,
+            ) : void {
+                throw new \PhpStyler\Exception('forced failure');
+            }
+        };
+
+        $options = new DiffOptions(configFile: $configFile, workers: null);
+
+        ob_start();
+        $exit = $cmd($options);
+        $out = (string) ob_get_clean();
+
+        $this->assertSame(1, $exit);
+        $this->assertStringContainsString('forced failure', $out);
+    }
 }

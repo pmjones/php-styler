@@ -28,11 +28,6 @@ class TClass extends AToken
             return;
         }
 
-        if ($prev?->is('::')) {
-            $parser->parse($source, TString::class);
-            return;
-        }
-
         $parser->addNesting($source, self::class);
     }
 }

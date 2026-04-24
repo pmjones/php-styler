@@ -78,9 +78,13 @@ class Assembler
 
     private function addLine(Line $line) : void
     {
+        // @codeCoverageIgnoreStart
+        // defensive: the first assembled line always contains a PHP open tag
         if ($line->isBlank() && $this->lines === []) {
             return;
         }
+
+        // @codeCoverageIgnoreEnd
 
         $this->lines[] = $line;
     }

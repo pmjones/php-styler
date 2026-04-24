@@ -55,6 +55,8 @@ class NormalizeTrailingCommas extends ALineRule
     {
         $lastItemLineIndex = $closerLineIndex - 1;
 
+        // @codeCoverageIgnoreStart
+        // defensive: splits don't produce all-blank ranges before a closer
         while ($lastItemLineIndex >= 0 && $lines[$lastItemLineIndex]->isBlank()) {
             $lastItemLineIndex --;
         }
@@ -62,6 +64,8 @@ class NormalizeTrailingCommas extends ALineRule
         if ($lastItemLineIndex < 0) {
             return;
         }
+
+        // @codeCoverageIgnoreEnd
 
         $tokens = $lines[$lastItemLineIndex]->getTokens();
         $insertPos = $this->findLastNonComment($tokens);
@@ -96,16 +100,26 @@ class NormalizeTrailingCommas extends ALineRule
         AToken $opener,
     ) : void
     {
+        // @codeCoverageIgnoreStart
+        // defensive: a ACommaListOpener always has a paired closer by the
+        // time this rule runs
         if ($opener->closingToken === null) {
             return;
         }
 
+        // @codeCoverageIgnoreEnd
+
         $line = $lines[$lineIndex];
         $closerPos = $line->findTokenIndex($opener->closingToken);
 
+        // @codeCoverageIgnoreStart
+        // defensive: eachOpener yields the line where the closer lives, so
+        // findTokenIndex always succeeds
         if ($closerPos === null) {
             return;
         }
+
+        // @codeCoverageIgnoreEnd
 
         $tokens = $line->getTokens();
         $commaPos = null;
@@ -144,6 +158,9 @@ class NormalizeTrailingCommas extends ALineRule
             }
         }
 
+        // @codeCoverageIgnoreStart
+        // defensive: content lines always contain at least one non-comment
         return null;
+        // @codeCoverageIgnoreEnd
     }
 }

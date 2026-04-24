@@ -118,7 +118,11 @@ class Source
             }
         }
 
+        // @codeCoverageIgnoreStart
+        // defensive: callers look for identifiers following a keyword that
+        // is guaranteed by valid PHP to be followed by content
         return null;
+        // @codeCoverageIgnoreEnd
     }
 
     public function matchingCloseParen(int $openOffset) : ?int
@@ -171,9 +175,14 @@ class Source
     {
         $keywordOffset = $this->findNextNonIgnorable($this->offset + 1);
 
+        // @codeCoverageIgnoreStart
+        // defensive: callers only invoke this when an identifier is
+        // guaranteed to follow the current token in valid PHP
         if ($keywordOffset === null) {
             return;
         }
+
+        // @codeCoverageIgnoreEnd
 
         $keyword = $this->tokens[$keywordOffset];
 
@@ -233,6 +242,10 @@ class Source
                 continue;
             }
 
+            // An AToken here means replaceCommentAt() has already rewritten
+            // the source stream in place (converting a raw comment into a
+            // *BlankLine/*LineBreak variant); in that case the comment
+            // is no longer "upcoming" from this scan's perspective.
             if ($token instanceof AToken) {
                 return null;
             }

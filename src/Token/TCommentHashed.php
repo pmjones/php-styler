@@ -3,12 +3,13 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-use PhpStyler\Docblock;
 use PhpStyler\Parser;
 use PhpToken;
 
 class TCommentHashed extends AToken implements ADocblock
 {
+    use DocblockParsing;
+
     public static function parse(Parser $parser, PhpToken $source) : void
     {
         if ($parser->hasPrevLineBreak()) {
@@ -17,12 +18,5 @@ class TCommentHashed extends AToken implements ADocblock
         }
 
         $parser->add($source, TCommentHashedMidStatement::class);
-    }
-
-    protected ?Docblock $docblock = null;
-
-    public function getDocblock() : Docblock
-    {
-        return $this->docblock ??= Docblock::parse($this->text);
     }
 }

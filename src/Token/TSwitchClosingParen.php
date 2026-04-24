@@ -12,13 +12,11 @@ class TSwitchClosingParen extends AToken
     {
         $parser->closeNesting($source, self::class, TSwitchOpeningParen::class);
 
-        // @codeCoverageIgnoreStart
-        // defensive: PHP syntactically requires `{` (or `:` for alt syntax)
-        // after `switch (...)`; the braceless path is unreachable for
-        // accepted input
+        // PHP normally requires `{` or `:` after `switch (...)`; the
+        // braceless path handles malformed input so it fails loudly later
+        // rather than producing silently-broken output.
         if (! $parser->source->peek()?->is(['{', ':'])) {
             $parser->parse($source, TOpeningBraceless::class);
         }
-        // @codeCoverageIgnoreEnd
     }
 }

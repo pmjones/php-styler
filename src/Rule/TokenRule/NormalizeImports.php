@@ -117,10 +117,13 @@ class NormalizeImports extends ATokenRule
             $i ++;
         }
 
-        // unterminated statement at end of tokens — malformed
+        // @codeCoverageIgnoreStart
+        // defensive: valid PHP always terminates import statements with `;`
         if ($currentStatement !== []) {
             return [[], $startIdx];
         }
+
+        // @codeCoverageIgnoreEnd
 
         return [$block, $i];
     }
@@ -338,7 +341,10 @@ class NormalizeImports extends ATokenRule
             }
         }
 
+        // @codeCoverageIgnoreStart
+        // defensive: every valid import statement contains a name token
         return '';
+        // @codeCoverageIgnoreEnd
     }
 
     /**
@@ -352,9 +358,14 @@ class NormalizeImports extends ATokenRule
         foreach ($docblock->tags as $tag) {
             $segments = preg_split('/[\s|&<>(),{}\[\]]/', $tag->body);
 
+            // @codeCoverageIgnoreStart
+            // defensive: the regex above is well-formed, so preg_split
+            // does not return false in practice
             if ($segments === false) {
                 continue;
             }
+
+            // @codeCoverageIgnoreEnd
 
             foreach ($segments as $segment) {
                 $segment = ltrim($segment, '?');

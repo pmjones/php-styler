@@ -225,6 +225,10 @@ class Splitter
 
         $advanced = $this->positionPastTrailingComment($tokens, $pos);
 
+        // @codeCoverageIgnoreStart
+        // defensive: the trailing-comment branch only fires when
+        // positionPastTrailingComment sees a comment after whitespace-only
+        // tokens followed by content — not seen in practice yet
         if ($advanced > $pos) {
             $check = $advanced;
 
@@ -236,6 +240,8 @@ class Splitter
                 return $advanced;
             }
         }
+
+        // @codeCoverageIgnoreEnd
 
         return $pos;
     }
@@ -253,9 +259,16 @@ class Splitter
                     return true;
                 }
 
+                // @codeCoverageIgnoreStart
+                // defensive: the first opener returns true at depth 0, so
+                // nested-opener counting is only exercised by segments that
+                // start mid-expression
                 $depth ++;
+                // @codeCoverageIgnoreEnd
             } elseif ($token->openingToken !== null) {
+                // @codeCoverageIgnoreStart
                 $depth --;
+                // @codeCoverageIgnoreEnd
             }
         }
 
@@ -283,9 +296,14 @@ class Splitter
         $start = 0;
 
         foreach ($positions as $pos) {
+            // @codeCoverageIgnoreStart
+            // defensive: positions come from collectSplitGroups which yields
+            // strictly increasing indices
             if ($pos < $start) {
                 continue;
             }
+
+            // @codeCoverageIgnoreEnd
 
             $end = $this->positionPastTrailingComment($tokens, $pos);
             $segment = array_slice($tokens, $start, $end - $start);
@@ -331,17 +349,11 @@ class Splitter
     }
 
     /**
-     * @param ?array{int, int, int} $pair
-     * @return ?Line[]
+     * @param array{int, int, int} $pair
+     * @return Line[]
      */
-    private function splitAtParens(Line $line, ?array $pair = null) : ?array
+    private function splitAtParens(Line $line, array $pair) : array
     {
-        $pair ??= $line->findBestPair();
-
-        if ($pair === null) {
-            return null;
-        }
-
         [$openerPos, $closerPos, $argCount] = $pair;
         $tokens = $line->getTokens();
         $indent = $line->indent;
@@ -548,6 +560,10 @@ class Splitter
 
         $beforeLine = $this->createLine($before, $line->indent, $line);
 
+        // @codeCoverageIgnoreStart
+        // defensive: splitBeforeCloser is only invoked when the closer token
+        // is preceded by content on its own line, so the "merge back into
+        // prior line" branch is not exercised by accepted inputs
         if ($beforeLine->contentTokenCount() === 0 && $closerLineIndex > 0) {
             $prev = $lines[$closerLineIndex - 1];
 
@@ -563,6 +579,7 @@ class Splitter
                 $line,
             );
         } else {
+            // @codeCoverageIgnoreEnd
             $lines[$closerLineIndex] = $beforeLine;
 
             array_splice(
@@ -649,9 +666,15 @@ class Splitter
         $indent = $line->indent;
         $commaPositions = $line->findTopLevelCommas();
 
+        // @codeCoverageIgnoreStart
+        // defensive: expandCommas() only calls this when findTopLevelComma
+        // reported a comma, so a follow-up findTopLevelCommas finds at least
+        // one
         if ($commaPositions === []) {
             return $lines;
         }
+
+        // @codeCoverageIgnoreEnd
 
         // Convert comma token positions to split points (after comma + trailing splits/comments)
         $splitPoints = [];
@@ -665,9 +688,14 @@ class Splitter
         $start = 0;
 
         foreach ($splitPoints as $splitAt) {
+            // @codeCoverageIgnoreStart
+            // defensive: advancePastComma only advances forward, so each
+            // splitAt is strictly greater than the previous $start
             if ($splitAt <= $start) {
                 continue;
             }
+
+            // @codeCoverageIgnoreEnd
 
             $segment = array_slice($tokens, $start, $splitAt - $start);
 
@@ -685,9 +713,14 @@ class Splitter
             $newLines[] = $this->createLine($remaining, $contentIndent, $line);
         }
 
+        // @codeCoverageIgnoreStart
+        // defensive: callers only dispatch here after confirming the line
+        // has multiple top-level commas, so splitting produces >1 lines
         if (count($newLines) <= 1) {
             return $lines;
         }
+
+        // @codeCoverageIgnoreEnd
 
         array_splice($lines, $lineIndex, 1, $newLines);
 

@@ -23,6 +23,36 @@ class Percs30FormatTest extends TestCase
         $this->assertSame($expect, $actual);
     }
 
+    public function testStylesOverrideMergesWithPercsDefaults() : void
+    {
+        $styler = new Styler(new Percs30Format(
+            styles: [
+                \PhpStyler\Token\TReturn::class => ['blankLineBefore' => false],
+            ],
+        ));
+
+        $code = <<<'CODE'
+            <?php
+            function foo()
+            {
+                $x = 1;
+                return $x;
+            }
+            CODE;
+
+        $expect = <<<'EXPECT'
+            <?php
+            function foo()
+            {
+                $x = 1;
+                return $x;
+            }
+
+            EXPECT;
+
+        $this->assertSame($expect, $styler($code));
+    }
+
     /** @return array<string, array{0: string, 1: string}> */
     public static function provide() : array
     {
@@ -178,6 +208,21 @@ class Percs30FormatTest extends TestCase
                 <<<'EXPECT'
                 <?php
                 $x = 1;
+
+                EXPECT,
+            ],
+            'closing-tag-retained-when-trailing-content-present' => [
+                <<<'CODE'
+                <?php
+                $x = 1;
+                ?>
+                trailing html
+                CODE,
+                <<<'EXPECT'
+                <?php
+                $x = 1;
+                ?>
+                trailing html
 
                 EXPECT,
             ],

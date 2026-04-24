@@ -77,6 +77,9 @@ abstract class AToken extends PhpToken
 
     public ?Style $style = null;
 
+    // @codeCoverageIgnoreStart
+    // __debugInfo is only invoked by var_dump / print_r during interactive
+    // debugging; the production pipeline never calls it
     public function __debugInfo() : array
     {
         $vars = ['CLASS' => get_class($this), 'TOKEN' => $this->getTokenName()];
@@ -92,6 +95,8 @@ abstract class AToken extends PhpToken
 
         return $info;
     }
+
+    // @codeCoverageIgnoreEnd
 
     public function isIgnorable() : bool
     {

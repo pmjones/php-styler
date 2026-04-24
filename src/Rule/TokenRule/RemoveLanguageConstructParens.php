@@ -51,6 +51,12 @@ class RemoveLanguageConstructParens extends ATokenRule
             // find matching closer via link
             $closer = $tokens[$openerIdx]->closingToken;
 
+            // Resilience guards: a correctly-paired TExpressionOpeningParen
+            // has a TExpressionClosingParen `closingToken` whose object ID
+            // is present in indexMap. If an upstream rule has produced a
+            // malformed stream (wrong-typed closer, or closer absent from
+            // this tokens array), pass the construct through unchanged.
+            // Pinned by testMalformedClosingToken* in this test file.
             if (! ($closer instanceof TExpressionClosingParen)) {
                 $result[] = $token;
                 continue;

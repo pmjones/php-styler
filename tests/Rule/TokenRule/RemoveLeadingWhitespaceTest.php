@@ -15,14 +15,8 @@ class RemoveLeadingWhitespaceTest extends TestCase
     public static function provide() : array
     {
         return [
-            'leading-spaces' => [
-                "   <?php\necho 1;\n",
-                "<?php\n echo 1;\n",
-            ],
-            'leading-newlines' => [
-                "\n\n<?php\necho 2;\n",
-                "<?php\n echo 2;\n",
-            ],
+            'leading-spaces' => ["   <?php\necho 1;\n", "<?php\n echo 1;\n"],
+            'leading-newlines' => ["\n\n<?php\necho 2;\n", "<?php\n echo 2;\n"],
             'leading-mixed-whitespace' => [
                 " \t\n \t <?php\necho 3;\n",
                 "<?php\n echo 3;\n",
@@ -31,14 +25,8 @@ class RemoveLeadingWhitespaceTest extends TestCase
                 "html<?php\necho 4;\n",
                 "html<?php\n echo 4;\n",
             ],
-            'no-leading-content' => [
-                "<?php\necho 5;\n",
-                "<?php\necho 5;\n",
-            ],
-            'empty-input' => [
-                '',
-                "\n",
-            ],
+            'no-leading-content' => ["<?php\necho 5;\n", "<?php\necho 5;\n"],
+            'empty-input' => ['', "\n"],
         ];
     }
 

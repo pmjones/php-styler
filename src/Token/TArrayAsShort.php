@@ -13,10 +13,15 @@ class TArrayAsShort extends AToken
         // Find the next non-whitespace source token after 'array'
         $openOffset = $parser->source->findNextNonWhitespace();
 
+        // @codeCoverageIgnoreStart
+        // defensive: 'array' token is always followed by more tokens in
+        // valid PHP; EOF right after 'array' is not accepted input
         if ($openOffset === null) {
             $parser->add($source, TArray::class);
             return;
         }
+
+        // @codeCoverageIgnoreEnd
 
         // If not '(', this is a type hint — fall through to normal TArray
         if ($parser->source->getAt($openOffset)->text !== '(') {
@@ -27,9 +32,13 @@ class TArrayAsShort extends AToken
         // Find the matching ')'
         $closeOffset = $parser->source->matchingCloseParen($openOffset);
 
+        // @codeCoverageIgnoreStart
+        // defensive: matching close paren is guaranteed in valid PHP
         if ($closeOffset === null) {
             return;
         }
+
+        // @codeCoverageIgnoreEnd
 
         // Replace '(' with '[' and ')' with ']'
         $open = $parser->source->getAt($openOffset);

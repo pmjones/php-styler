@@ -95,6 +95,10 @@ class ExpandGroupedImports extends ATokenRule
                 }
             }
 
+            // Resilience guard: a valid grouped `use Foo\{...};` always
+            // has both a closing brace and trailing semicolon. Malformed
+            // streams from upstream rules pass the original TUse through
+            // unchanged. Pinned by testMalformedGroupedUse*.
             if ($closeBraceIndex === null || $semicolonIndex === null) {
                 $result[] = $token;
                 continue;
@@ -107,6 +111,8 @@ class ExpandGroupedImports extends ATokenRule
                 $closeBraceIndex,
             );
 
+            // Resilience guard: malformed grouped imports with no
+            // segments between the braces pass through unchanged.
             if ($segments === []) {
                 $result[] = $token;
                 continue;

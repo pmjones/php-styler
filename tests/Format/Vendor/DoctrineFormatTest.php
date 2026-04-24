@@ -23,6 +23,28 @@ class DoctrineFormatTest extends TestCase
         $this->assertSame($expect, $actual);
     }
 
+    public function testStylesOverrideMergesWithDoctrineDefaults() : void
+    {
+        $styler = new Styler(new DoctrineFormat(
+            styles: [
+                \PhpStyler\Token\TNot::class => ['spaceAfter' => false],
+            ],
+        ));
+
+        $code = <<<'CODE'
+            <?php
+            $x = !$y;
+            CODE;
+
+        $expect = <<<'EXPECT'
+            <?php
+            $x = !$y;
+
+            EXPECT;
+
+        $this->assertSame($expect, $styler($code));
+    }
+
     /** @return array<string, array{0: string, 1: string}> */
     public static function provide() : array
     {
@@ -389,6 +411,67 @@ class DoctrineFormatTest extends TestCase
 
                     public function bar()
                     {
+                    }
+                }
+
+                EXPECT,
+            ],
+            'member-spacing-abstract-property-hooks' => [
+                <<<'CODE'
+                <?php
+                abstract class Foo
+                {
+                    public string $x = '';
+                    abstract public string $y { get; set; }
+                }
+                CODE,
+                <<<'EXPECT'
+                <?php
+                abstract class Foo
+                {
+                    public string $x = '';
+                    abstract public string $y { get; set; }
+                }
+
+                EXPECT,
+            ],
+            'member-spacing-abstract-magic-method' => [
+                <<<'CODE'
+                <?php
+                abstract class Foo
+                {
+                    public string $x = '';
+                    abstract public function __toString() : string;
+                }
+                CODE,
+                <<<'EXPECT'
+                <?php
+                abstract class Foo
+                {
+                    public string $x = '';
+
+                    abstract public function __toString(): string;
+                }
+
+                EXPECT,
+            ],
+            'member-spacing-property-hooks' => [
+                <<<'CODE'
+                <?php
+                class Foo
+                {
+                    public string $x = '';
+                    public string $y { get => $this->x; set => $this->x = $value; }
+                }
+                CODE,
+                <<<'EXPECT'
+                <?php
+                class Foo
+                {
+                    public string $x = '';
+                    public string $y {
+                        get => $this->x;
+                        set => $this->x = $value;
                     }
                 }
 

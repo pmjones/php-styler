@@ -16,9 +16,4 @@ abstract class TSplit extends AToken
     {
         return true;
     }
-
-    public function shouldSkipFirst() : bool
-    {
-        return false;
-    }
 }

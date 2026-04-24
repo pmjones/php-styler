@@ -377,6 +377,297 @@ class ParserBranchesTest extends TestCase
 
                 EXPECT,
             ],
+            'trailing-inline-comment-doc' => [
+                <<<'CODE'
+                <?php
+                if ($x) { echo 1; } /** trail */
+                $y = 2;
+                CODE,
+                <<<'EXPECT'
+                <?php
+                if ($x) {
+                    echo 1;
+                } /** trail */
+
+                $y = 2;
+
+                EXPECT,
+            ],
+            'trailing-inline-comment-slash' => [
+                <<<'CODE'
+                <?php
+                if ($x) { echo 1; } // trail
+                $y = 2;
+                CODE,
+                <<<'EXPECT'
+                <?php
+                if ($x) {
+                    echo 1;
+                } // trail
+
+                $y = 2;
+
+                EXPECT,
+            ],
+            'trailing-inline-comment-hash' => [
+                <<<'CODE'
+                <?php
+                if ($x) { echo 1; } # trail
+                $y = 2;
+                CODE,
+                <<<'EXPECT'
+                <?php
+                if ($x) {
+                    echo 1;
+                } # trail
+
+                $y = 2;
+
+                EXPECT,
+            ],
+            'class-brace-then-doc-comment' => [
+                <<<'CODE'
+                <?php
+                class Foo { /** doc */
+                public $x = 1;
+                }
+                CODE,
+                <<<'EXPECT'
+                <?php
+                class Foo{
+                    /** doc */
+                    public $x = 1;
+                }
+
+                EXPECT,
+            ],
+            'class-brace-then-slashed-comment' => [
+                <<<'CODE'
+                <?php
+                class Foo { // slash
+                public $x = 1;
+                }
+                CODE,
+                <<<'EXPECT'
+                <?php
+                class Foo{
+                    // slash
+                    public $x = 1;
+                }
+
+                EXPECT,
+            ],
+            'class-brace-then-hashed-comment' => [
+                <<<'CODE'
+                <?php
+                class Foo { # hash
+                public $x = 1;
+                }
+                CODE,
+                <<<'EXPECT'
+                <?php
+                class Foo{
+                    # hash
+                    public $x = 1;
+                }
+
+                EXPECT,
+            ],
+            'blank-line-before-doc-comment' => [
+                <<<'CODE'
+                <?php
+
+                /** doc */
+                $x = 1;
+                CODE,
+                <<<'EXPECT'
+                <?php
+
+                /** doc */
+                $x = 1;
+
+                EXPECT,
+            ],
+            'blank-line-before-slashed-comment' => [
+                <<<'CODE'
+                <?php
+
+                // comment
+                $x = 1;
+                CODE,
+                <<<'EXPECT'
+                <?php
+
+                // comment
+                $x = 1;
+
+                EXPECT,
+            ],
+            'blank-line-before-hashed-comment' => [
+                <<<'CODE'
+                <?php
+
+                # comment
+                $x = 1;
+                CODE,
+                <<<'EXPECT'
+                <?php
+
+                # comment
+                $x = 1;
+
+                EXPECT,
+            ],
+            'function-named-new' => [
+                <<<'CODE'
+                <?php
+                class Foo {
+                    public function new() : self {}
+                }
+                CODE,
+                <<<'EXPECT'
+                <?php
+                class Foo
+                {
+                    public function new() : self
+                    {
+                    }
+                }
+
+                EXPECT,
+            ],
+            'function-named-print' => [
+                <<<'CODE'
+                <?php
+                class Foo {
+                    public function print() : void {}
+                }
+                CODE,
+                <<<'EXPECT'
+                <?php
+                class Foo
+                {
+                    public function print() : void
+                    {
+                    }
+                }
+
+                EXPECT,
+            ],
+            'static-function-named-print' => [
+                <<<'CODE'
+                <?php
+                class Foo {
+                    public static function print() : void {}
+                }
+                CODE,
+                <<<'EXPECT'
+                <?php
+                class Foo
+                {
+                    public static function print() : void
+                    {
+                    }
+                }
+
+                EXPECT,
+            ],
+            'abstract-magic-method-with-member-spacing' => [
+                <<<'CODE'
+                <?php
+                abstract class Foo {
+                    public string $x = '';
+                    abstract public function __toString() : string;
+                }
+                CODE,
+                <<<'EXPECT'
+                <?php
+                abstract class Foo
+                {
+                    public string $x = '';
+
+                    abstract public function __toString() : string;
+                }
+
+                EXPECT,
+            ],
+            'property-hooks-with-member-spacing' => [
+                <<<'CODE'
+                <?php
+                class Foo {
+                    public string $x = '';
+                    public string $y { get => $this->x; set => $this->x = $value; }
+                }
+                CODE,
+                <<<'EXPECT'
+                <?php
+                class Foo
+                {
+                    public string $x = '';
+
+                    public string $y {
+                        get => $this->x;
+                        set => $this->x = $value;
+                    }
+                }
+
+                EXPECT,
+            ],
+            'abstract-property-hooks-with-member-spacing' => [
+                <<<'CODE'
+                <?php
+                abstract class Foo {
+                    public string $x = '';
+                    abstract public string $y { get; set; }
+                }
+                CODE,
+                <<<'EXPECT'
+                <?php
+                abstract class Foo
+                {
+                    public string $x = '';
+
+                    abstract public string $y { get; set; }
+                }
+
+                EXPECT,
+            ],
+            'inline-attribute-splits-to-own-lines' => [
+                <<<'CODE'
+                <?php
+                function foo(#[ReallyLongFooAttributeName, ReallyLongBarAttributeName, AnotherLongOneHere] $someReallyLongParamName) {}
+                CODE,
+                <<<'EXPECT'
+                <?php
+
+                function foo(
+                    #[ReallyLongFooAttributeName]
+                    #[ReallyLongBarAttributeName]
+                    #[AnotherLongOneHere]
+                    $someReallyLongParamName
+                )
+                {
+                }
+
+                EXPECT,
+            ],
+            'multi-inline-attribute-long-split' => [
+                <<<'CODE'
+                <?php
+                function verylongFunctionName(#[Foo, Bar] int $firstparameterVeryLong, #[Baz] string $second) {}
+                CODE,
+                <<<'EXPECT'
+                <?php
+
+                function verylongFunctionName(
+                    #[Foo] #[Bar] int $firstparameterVeryLong,
+                    #[Baz] string $second
+                )
+                {
+                }
+
+                EXPECT,
+            ],
             'trailing-comma-in-attribute-list' => [
                 <<<'CODE'
                 <?php

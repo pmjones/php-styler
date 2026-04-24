@@ -24,6 +24,11 @@ class TClosingParen extends AToken
             return;
         }
 
+        // @codeCoverageIgnoreStart
+        // defensive: TOpeningParen always dispatches to a specialized
+        // *OpeningParen nesting class, so reaching here requires a mismatch
+        // that does not occur for accepted input
         $parser->closeNesting($source, self::class, TOpeningParen::class);
+        // @codeCoverageIgnoreEnd
     }
 }

@@ -35,7 +35,11 @@ class TEllipsis extends AToken
             TArrayOpeningBracket::class,
             TArrayConstructOpeningParen::class => TSpreadEllipsis::class,
 
+            // @codeCoverageIgnoreStart
+            // defensive: ellipsis only appears in function params, argument
+            // lists, or array literals
             default => self::class,
+            // @codeCoverageIgnoreEnd
         };
 
         $parser->add($source, $parseClass);

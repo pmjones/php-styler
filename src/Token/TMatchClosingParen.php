@@ -12,12 +12,11 @@ class TMatchClosingParen extends AToken
     {
         $parser->closeNesting($source, self::class, TMatchOpeningParen::class);
 
-        // @codeCoverageIgnoreStart
-        // defensive: PHP syntactically requires `{` after `match (...)`;
-        // the braceless path is unreachable for accepted input
+        // PHP normally requires `{` after `match (...)`; the braceless
+        // path handles malformed input so it fails loudly later rather
+        // than producing silently-broken output.
         if (! $parser->source->peek()?->is(['{', ':'])) {
             $parser->parse($source, TOpeningBraceless::class);
         }
-        // @codeCoverageIgnoreEnd
     }
 }

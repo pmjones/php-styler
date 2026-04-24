@@ -186,4 +186,31 @@ class ApplyTest extends CommandTestCase
         $this->assertSame(0, $exit);
         $this->assertStringContainsString('Styled 0 files', $out);
     }
+
+    public function testExceptionFromApplyStyleIsCaught() : void
+    {
+        mkdir($this->tmpDir . '/src');
+        $configFile = $this->writeConfig($this->tmpDir . '/src');
+
+        $cmd = new class extends Apply {
+            protected function applyStyle(
+                \PhpStyler\Config $config,
+                string $configFile,
+                array $paths,
+                int $workerCount,
+                \PhpStyler\Cache $cache,
+            ) : array {
+                throw new \PhpStyler\Exception('forced failure');
+            }
+        };
+
+        $options = new ApplyOptions(configFile: $configFile, workers: null);
+
+        ob_start();
+        $exit = $cmd($options);
+        $out = (string) ob_get_clean();
+
+        $this->assertSame(1, $exit);
+        $this->assertStringContainsString('forced failure', $out);
+    }
 }

@@ -29,9 +29,14 @@ class TSemicolon extends AToken
 
             $parser->parse($source, $parseClass);
 
+            // @codeCoverageIgnoreStart
+            // defensive: a TConst inside a braceless body is a pathological
+            // nesting combination that doesn't arise from valid PHP
             if ($parser->atNesting(TOpeningBraceless::class)) {
                 $parser->endBracelessBody($source);
             }
+
+            // @codeCoverageIgnoreEnd
 
             return;
         }
@@ -47,9 +52,14 @@ class TSemicolon extends AToken
 
             $parser->parse($source, $parseClass);
 
+            // @codeCoverageIgnoreStart
+            // defensive: abstract method semicolons never close a braceless
+            // control-structure body
             if ($parser->atNesting(TOpeningBraceless::class)) {
                 $parser->endBracelessBody($source);
             }
+
+            // @codeCoverageIgnoreEnd
 
             return;
         }

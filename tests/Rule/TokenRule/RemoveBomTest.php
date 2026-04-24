@@ -25,14 +25,8 @@ class RemoveBomTest extends TestCase
                 $bom . "html<?php\necho 2;\n",
                 "html<?php\n echo 2;\n",
             ],
-            'no-bom-unchanged' => [
-                "<?php\necho 3;\n",
-                "<?php\necho 3;\n",
-            ],
-            'empty-input' => [
-                '',
-                "\n",
-            ],
+            'no-bom-unchanged' => ["<?php\necho 3;\n", "<?php\necho 3;\n"],
+            'empty-input' => ['', "\n"],
         ];
     }
 

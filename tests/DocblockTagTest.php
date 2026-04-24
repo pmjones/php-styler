@@ -190,6 +190,17 @@ class DocblockTagTest extends TestCase
         $this->assertSame('string', $tags[0]->getType());
     }
 
+    public function testGetTypeReturnsNullWhenBodyStartsWithVariable() : void
+    {
+        // body starts with `$`, no type declared — the `$char === '$'` path
+        // in getType() returns null for empty-type-before-variable
+        $text = '/** @param $foo */';
+        $tags = DocblockTag::parseAll($text);
+
+        $this->assertCount(1, $tags);
+        $this->assertNull($tags[0]->getType());
+    }
+
     public function testGetTypeForReturn() : void
     {
         $text = '/** @return int Description here */';

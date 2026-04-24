@@ -18,10 +18,14 @@ class TElseAsElseIf extends AToken
         // Find the T_IF offset in source, skipping T_WHITESPACE
         $ifOffset = $parser->source->findNextNonWhitespace();
 
+        // @codeCoverageIgnoreStart
+        // defensive: peek() above confirmed a following T_IF exists
         if ($ifOffset === null) {
             TElse::parse($parser, $source);
             return;
         }
+
+        // @codeCoverageIgnoreEnd
 
         // Replace T_IF with T_ELSEIF
         $if = $parser->source->getAt($ifOffset);

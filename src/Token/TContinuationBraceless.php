@@ -14,27 +14,23 @@ class TContinuationBraceless extends AToken
         $parser->add($source, TSemicolon::class);
         $parser->popNesting(TOpeningBraceless::class);
 
-        $nesting = $parser->getNesting();
-
-        $partingBraceless = match ($nesting) {
+        // The default arm enforces the invariant that a braceless-body
+        // continuation only arises under TIf or TElseif; it is unreachable
+        // via valid PHP source but is exercised by a synthetic-stack test
+        // that manufactures a pathological nesting.
+        $partingBraceless = match ($parser->getNesting()) {
             TIf::class => TIfContinuationBraceless::class,
             TElseif::class => TElseifContinuationBraceless::class,
-            default => null,
+
+            default
+                => throw Exception::fromParser(
+                    "Unknown kind of parting braceless on line {$source->line}"
+                        . " at position {$source->pos}",
+                    $parser,
+                    $source,
+                ),
         };
 
-        if ($partingBraceless) {
-            $parser->parse($source, $partingBraceless);
-            return;
-        }
-
-        // @codeCoverageIgnoreStart
-        // defensive: valid braceless-body continuations (else / elseif) only
-        // arrive here under a matching TIf or TElseif nesting
-        $message = "Unknown kind of parting braceless"
-            . " on line {$source->line}"
-            . " at position {$source->pos}";
-
-        throw Exception::fromParser($message, $parser, $source);
-        // @codeCoverageIgnoreEnd
+        $parser->parse($source, $partingBraceless);
     }
 }

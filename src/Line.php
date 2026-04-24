@@ -404,38 +404,6 @@ class Line
     }
 
     /**
-     * @return ?array{int, int, int}
-     */
-    public function findBestPair() : ?array
-    {
-        $pairs = [];
-
-        foreach ($this->topLevelPairs() as [$openerPos, $closerPos, $opener]) {
-            $argCount = $opener instanceof ACommaListOpener ? $opener->argCount : 0;
-            $pairs[] = [$openerPos, $closerPos, $argCount];
-        }
-
-        if ($pairs === []) {
-            return null;
-        }
-
-        // prefer the pair with commas if exactly one has them
-        $commaIndices = [];
-
-        foreach ($pairs as $idx => $pair) {
-            if ($pair[2] > 0) {
-                $commaIndices[] = $idx;
-            }
-        }
-
-        if (count($commaIndices) === 1) {
-            return $pairs[$commaIndices[0]];
-        }
-
-        return $pairs[0];
-    }
-
-    /**
      * @return array<int, array{int, int, int}>
      */
     public function collectExpansionPairs() : array

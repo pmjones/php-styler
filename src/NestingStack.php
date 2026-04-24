@@ -123,11 +123,6 @@ class NestingStack
         return array_map(fn (Nesting $n) => $n->class, $this->nesting);
     }
 
-    public function isEmpty() : bool
-    {
-        return $this->nesting === [];
-    }
-
     public function inEncapsedString() : bool
     {
         $nesting = end($this->nesting);

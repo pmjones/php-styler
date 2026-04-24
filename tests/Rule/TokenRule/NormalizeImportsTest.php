@@ -544,6 +544,25 @@ class NormalizeImportsTest extends TestCase
 
                 EXPECT,
             ],
+            'qualified-function-call-and-name-in-body' => [
+                <<<'CODE'
+                <?php
+                use Foo\Bar;
+
+                Foo\make();
+                $x = Foo\Thing::class;
+                Bar::things();
+                CODE,
+                <<<'EXPECT'
+                <?php
+                use Foo\Bar;
+
+                Foo\make();
+                $x = Foo\Thing::class;
+                Bar::things();
+
+                EXPECT,
+            ],
         ];
     }
 

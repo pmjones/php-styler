@@ -35,6 +35,25 @@ class TPrivateSetTest extends TTestCase
                     TClassClosingBrace::class,
                 ],
             ],
+            'first-modifier' => [
+                <<<'CODE'
+                <?php
+                class Foo {
+                    private(set) string $bar;
+                }
+                CODE,
+                [
+                    TPhpOpeningTag::class,
+                    TClass::class,
+                    TClassName::class,
+                    TClassOpeningBrace::class,
+                    TPrivateSet::class,
+                    TString::class,
+                    TVariable::class,
+                    TPropertyEndSemicolon::class,
+                    TClassClosingBrace::class,
+                ],
+            ],
         ];
     }
 }

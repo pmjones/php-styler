@@ -36,6 +36,12 @@ class TOpeningBraceless extends AnOpeningStructure
             return;
         }
 
+        // Fallback for callers (TSwitchClosingParen, TMatchClosingParen)
+        // whose nesting isn't in OPENING_BRACE_MAP. These callers only
+        // dispatch here for malformed input (switch/match without a `{`
+        // or `:`), so the nesting stack is already in an invalid shape —
+        // we add a stand-in nesting so a later closer can throw
+        // diagnosably rather than silently producing wrong output.
         $synthetic = new \PhpToken($source->id, '', $source->line, $source->pos);
         $parser->addNesting($synthetic, self::class);
         $parser->indentIncr();

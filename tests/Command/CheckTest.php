@@ -217,4 +217,53 @@ class CheckTest extends CommandTestCase
             ob_end_clean();
         }
     }
+
+    public function testExceptionFromCheckStyleIsCaught() : void
+    {
+        mkdir($this->tmpDir . '/src');
+        $configFile = $this->writeConfig($this->tmpDir . '/src');
+
+        $cmd = new class extends Check {
+            protected function checkStyle(
+                \PhpStyler\Config $config,
+                string $configFile,
+                int $workerCount,
+                \PhpStyler\Cache $cache,
+            ) : array {
+                throw new \PhpStyler\Exception('forced failure');
+            }
+        };
+
+        $options = new CheckOptions(configFile: $configFile, workers: null);
+
+        ob_start();
+        $exit = $cmd($options);
+        $out = (string) ob_get_clean();
+
+        $this->assertSame(1, $exit);
+        $this->assertStringContainsString('forced failure', $out);
+    }
+
+    public function testParallelWorkerErrorReported() : void
+    {
+        mkdir($this->tmpDir . '/src');
+        $configFile = $this->writeConfig($this->tmpDir . '/src');
+
+        for ($i = 0; $i < 8; $i ++) {
+            file_put_contents(
+                $this->tmpDir . "/src/f{$i}.php",
+                $i === 0 ? "<?php : echo 1;" : "<?php\necho {$i};\n",
+            );
+        }
+
+        $cmd = new Check();
+        $options = new CheckOptions(configFile: $configFile, workers: '2');
+
+        ob_start();
+        $exit = $cmd($options);
+        $out = (string) ob_get_clean();
+
+        $this->assertSame(1, $exit);
+        $this->assertStringContainsString('1 file failed', $out);
+    }
 }

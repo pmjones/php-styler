@@ -13,16 +13,24 @@ class TListAsArray extends AToken
         // Find the '(' after 'list', skipping whitespace
         $openOffset = $parser->source->findNextNonWhitespace();
 
+        // @codeCoverageIgnoreStart
+        // defensive: 'list' is always followed by '(' in valid PHP
         if ($openOffset === null) {
             return;
         }
 
+        // @codeCoverageIgnoreEnd
+
         // Find the matching ')'
         $closeOffset = $parser->source->matchingCloseParen($openOffset);
 
+        // @codeCoverageIgnoreStart
+        // defensive: matching close paren is guaranteed in valid PHP
         if ($closeOffset === null) {
             return;
         }
+
+        // @codeCoverageIgnoreEnd
 
         // Replace '(' with '[' and ')' with ']'
         $open = $parser->source->getAt($openOffset);

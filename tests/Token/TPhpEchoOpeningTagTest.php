@@ -20,6 +20,26 @@ class TPhpEchoOpeningTagTest extends TTestCase
                     TPhpClosingTag::class,
                 ],
             ],
+            'echo-with-trailing-content' => [
+                '<?= $foo ?> trailing',
+                [
+                    TPhpEchoOpeningTag::class,
+                    TVariable::class,
+                    TPhpClosingTagContinuation::class,
+                    TInlineHtml::class,
+                ],
+            ],
+            'echo-stmt-with-closing-tag' => [
+                '<?php echo $foo ?> trailing',
+                [
+                    TPhpOpeningTagInline::class,
+                    TEcho::class,
+                    TVariable::class,
+                    TEchoEndSemicolon::class,
+                    TPhpClosingTagContinuation::class,
+                    TInlineHtml::class,
+                ],
+            ],
         ];
     }
 }

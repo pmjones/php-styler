@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace PhpStyler\Rule\LineRule;
 
 use PhpStyler\Format\DeclarationFormat;
+use PhpStyler\Format\PlainFormat;
 use PhpStyler\Styler;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -156,5 +157,24 @@ class NormalizeTrailingCommasTest extends TestCase
     public function test(string $code, string $expect, int $lineLen = 44) : void
     {
         $this->assertStyled($code, $expect, $lineLen);
+    }
+
+    public function testArrayConstructCommaAddedOnSplit() : void
+    {
+        // PlainFormat preserves `array(...)` (no short-array conversion),
+        // so NormalizeTrailingCommas calls TArrayConstructOpeningParen::commaClass()
+        $styler = new Styler(
+            new PlainFormat(
+                lineLen: 40,
+                rules: [NormalizeTrailingCommas::class => []],
+            ),
+        );
+
+        $actual = $styler(
+            "<?php\n\$x = array(\$firstLongVariable, \$secondLongVariable, \$thirdLongVariable);\n",
+        );
+
+        $this->assertStringContainsString(',' . "\n" . ');', $actual);
+        $this->assertStringContainsString('array(', $actual);
     }
 }

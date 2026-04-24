@@ -56,4 +56,19 @@ class DebugTest extends CommandTestCase
         $this->assertStringContainsString('Source text before error:', $out);
         $this->assertMatchesRegularExpression('/\d+\s+>\s/', $out);
     }
+
+    public function testRenderErrorWithEmptyDebugReturnsEarly() : void
+    {
+        $cmd = new Debug();
+        $e = new \RuntimeException('plain runtime error');
+        $method = new \ReflectionMethod($cmd, 'renderError');
+
+        ob_start();
+        $method->invoke($cmd, '/some/file.php', "<?php\necho 1;\n", $e);
+        $out = (string) ob_get_clean();
+
+        $this->assertStringContainsString('plain runtime error', $out);
+        $this->assertStringNotContainsString('Current token:', $out);
+        $this->assertStringNotContainsString('Source text', $out);
+    }
 }

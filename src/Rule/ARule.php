@@ -20,7 +20,11 @@ abstract class ARule
             }
         }
 
+        // @codeCoverageIgnoreStart
+        // defensive: callers search within a balanced region, so a content
+        // token is always found before the loop exhausts
         return null;
+        // @codeCoverageIgnoreEnd
     }
 
     /**
@@ -37,6 +41,9 @@ abstract class ARule
             }
         }
 
+        // @codeCoverageIgnoreStart
+        // defensive: callers only search when content tokens are present
         return null;
+        // @codeCoverageIgnoreEnd
     }
 }

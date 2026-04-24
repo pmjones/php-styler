@@ -37,6 +37,11 @@ class TPropertyHooksOpeningBrace extends AnOpeningStructure
             }
         }
 
+        // @codeCoverageIgnoreStart
+        // defensive: property hooks only appear inside class/interface
+        // bodies, so an AnOpeningStructure is always found before the loop
+        // exhausts.
         return false;
+        // @codeCoverageIgnoreEnd
     }
 }

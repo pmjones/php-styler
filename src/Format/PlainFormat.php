@@ -1394,14 +1394,10 @@ class PlainFormat extends AFormat
     }
 
     /**
-     * @param null|'next_line'|'same_line' $spec
+     * @param 'next_line'|'same_line' $spec
      */
-    protected function setClassBracePosition(?string $spec) : void
+    protected function setClassBracePosition(string $spec) : void
     {
-        if ($spec === null) {
-            return;
-        }
-
         $args = match ($spec) {
             'same_line' => [
                 'blankLineBefore' => false,
@@ -1428,12 +1424,8 @@ class PlainFormat extends AFormat
         }
     }
 
-    protected function setConcatenationSpacing(?bool $spec) : void
+    protected function setConcatenationSpacing(bool $spec) : void
     {
-        if ($spec === null) {
-            return;
-        }
-
         $args = match ($spec) {
             false => ['spaceBefore' => false, 'spaceAfter' => false],
             true => ['spaceBefore' => null, 'spaceAfter' => null],
@@ -1445,14 +1437,10 @@ class PlainFormat extends AFormat
     }
 
     /**
-     * @param null|'next_line'|'same_line' $spec
+     * @param 'next_line'|'same_line' $spec
      */
-    protected function setControlBracePosition(?string $spec) : void
+    protected function setControlBracePosition(string $spec) : void
     {
-        if ($spec === null) {
-            return;
-        }
-
         $args = match ($spec) {
             'next_line' => ['blankLineBefore' => false, 'lineBreakBefore' => true],
             'same_line' => ['blankLineBefore' => false, 'lineBreakBefore' => null],
@@ -1493,14 +1481,10 @@ class PlainFormat extends AFormat
     }
 
     /**
-     * @param null|'next_line'|'same_line' $spec
+     * @param 'next_line'|'same_line' $spec
      */
-    protected function setFunctionBracePosition(?string $spec) : void
+    protected function setFunctionBracePosition(string $spec) : void
     {
-        if ($spec === null) {
-            return;
-        }
-
         $args = match ($spec) {
             'same_line' => [
                 'blankLineBefore' => false,
@@ -1520,14 +1504,10 @@ class PlainFormat extends AFormat
     }
 
     /**
-     * @param null|'lower'|'upper' $spec
+     * @param 'lower'|'upper' $spec
      */
-    protected function setKeywordCase(?string $spec) : void
+    protected function setKeywordCase(string $spec) : void
     {
-        if ($spec === null) {
-            return;
-        }
-
         $args = match ($spec) {
             'upper' => ['case' => 'strtoupper'],
             'lower' => ['case' => 'strtolower'],
@@ -1544,12 +1524,8 @@ class PlainFormat extends AFormat
         }
     }
 
-    protected function setReturnTypeColonSpacing(?bool $spec) : void
+    protected function setReturnTypeColonSpacing(bool $spec) : void
     {
-        if ($spec === null) {
-            return;
-        }
-
         $args = match ($spec) {
             false => ['spaceBefore' => false],
             true => ['spaceBefore' => true],
@@ -1559,12 +1535,8 @@ class PlainFormat extends AFormat
         $this->styles[$class] = array_merge($this->styles[$class], $args);
     }
 
-    protected function setBlankLineAfterBlock(?bool $spec) : void
+    protected function setBlankLineAfterBlock(bool $spec) : void
     {
-        if ($spec === null) {
-            return;
-        }
-
         $args = match ($spec) {
             false => ['blankLineAfter' => null, 'lineBreakAfter' => true],
             true => ['blankLineAfter' => true, 'lineBreakAfter' => null],
