@@ -124,6 +124,55 @@ class RemoveLanguageConstructParensTest extends TestCase
 
                 EXPECT,
             ],
+            'echo-no-parens-no-change' => [
+                <<<'CODE'
+                <?php
+                echo $x;
+                CODE,
+                <<<'EXPECT'
+                <?php
+                echo $x;
+
+                EXPECT,
+            ],
+            'echo-parens-followed-by-concat-not-removed' => [
+                <<<'CODE'
+                <?php
+                echo ($x) . $y;
+                CODE,
+                <<<'EXPECT'
+                <?php
+                echo ($x) . $y;
+
+                EXPECT,
+            ],
+            'return-parens-followed-by-arithmetic-not-removed' => [
+                <<<'CODE'
+                <?php
+                function foo() {
+                    return ($a) + $b;
+                }
+                CODE,
+                <<<'EXPECT'
+                <?php
+                function foo()
+                {
+                    return ($a) + $b;
+                }
+
+                EXPECT,
+            ],
+            'print-parens-removed-before-semicolon' => [
+                <<<'CODE'
+                <?php
+                $x = print($y);
+                CODE,
+                <<<'EXPECT'
+                <?php
+                $x = print $y;
+
+                EXPECT,
+            ],
         ];
     }
 

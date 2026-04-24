@@ -591,6 +591,61 @@ class NormalizeMemberOrderTest extends TestCase
 
                 EXPECT,
             ],
+            'trailing-comment-after-last-member' => [
+                <<<'CODE'
+                <?php
+                class Foo
+                {
+                    public function bar()
+                    {
+                    }
+
+                    public $x;
+                    // trailing comment
+                }
+                CODE,
+                <<<'EXPECT'
+                <?php
+                class Foo
+                {
+                    public $x;
+
+                    public function bar()
+                    {
+                    }
+
+                    // trailing comment
+                }
+
+                EXPECT,
+            ],
+            'leading-comment-before-first-member' => [
+                <<<'CODE'
+                <?php
+                class Foo
+                {
+                    // leading comment
+                    public function bar()
+                    {
+                    }
+
+                    public $x;
+                }
+                CODE,
+                <<<'EXPECT'
+                <?php
+                class Foo
+                {
+                    public $x;
+
+                    // leading comment
+                    public function bar()
+                    {
+                    }
+                }
+
+                EXPECT,
+            ],
             'static-fn-in-instance-method' => [
                 <<<'CODE'
                 <?php
