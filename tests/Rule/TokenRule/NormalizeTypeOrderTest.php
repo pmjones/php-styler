@@ -177,6 +177,123 @@ class NormalizeTypeOrderTest extends TestCase
 
                 EXPECT,
             ],
+            'typed-const-builtin-three-members' => [
+                <<<'CODE'
+                <?php
+                class C {
+                    public const string|int|null A = null;
+                }
+                CODE,
+                <<<'EXPECT'
+                <?php
+                class C
+                {
+                    public const null|int|string A = null;
+                }
+
+                EXPECT,
+            ],
+            'typed-const-class-name-three-members' => [
+                <<<'CODE'
+                <?php
+                class C {
+                    public const Foo|Bar|null B = null;
+                }
+                CODE,
+                <<<'EXPECT'
+                <?php
+                class C
+                {
+                    public const null|Foo|Bar B = null;
+                }
+
+                EXPECT,
+            ],
+            'typed-const-two-member-shorthand' => [
+                <<<'CODE'
+                <?php
+                class C {
+                    public const string|null D = null;
+                }
+                CODE,
+                <<<'EXPECT'
+                <?php
+                class C
+                {
+                    public const ?string D = null;
+                }
+
+                EXPECT,
+            ],
+            'typed-const-fully-qualified-three-members' => [
+                <<<'CODE'
+                <?php
+                class C {
+                    public const \Foo|string|null E = null;
+                }
+                CODE,
+                <<<'EXPECT'
+                <?php
+                class C
+                {
+                    public const null|string|\Foo E = null;
+                }
+
+                EXPECT,
+            ],
+            'property-three-members-stays-three' => [
+                <<<'CODE'
+                <?php
+                class C {
+                    public string|int|null $x;
+                }
+                CODE,
+                <<<'EXPECT'
+                <?php
+                class C
+                {
+                    public null|int|string $x;
+                }
+
+                EXPECT,
+            ],
+            'param-use-imported-non-first-position' => [
+                <<<'CODE'
+                <?php
+                use ReflectionType;
+                function f(string $a, ReflectionType|string|null $b) : void {}
+                CODE,
+                <<<'EXPECT'
+                <?php
+                use ReflectionType;
+                function f(string $a, null|string|ReflectionType $b) : void
+                {
+                }
+
+                EXPECT,
+            ],
+            'param-multiline-use-imported-non-first-position' => [
+                <<<'CODE'
+                <?php
+                use ReflectionType;
+                function quiteLongFunctionName(string $namespaceLabelArgument, ReflectionType|string|null $type) : string {
+                    return '';
+                }
+                CODE,
+                <<<'EXPECT'
+                <?php
+                use ReflectionType;
+
+                function quiteLongFunctionName(
+                    string $namespaceLabelArgument,
+                    null|string|ReflectionType $type
+                ) : string
+                {
+                    return '';
+                }
+
+                EXPECT,
+            ],
         ];
     }
 

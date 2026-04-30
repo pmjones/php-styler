@@ -777,7 +777,8 @@ class Parser
             || $prevPrev instanceof Token\TNullable
             || $prevPrev instanceof Token\AModifier
             || $prevPrev instanceof Token\TParamsOpeningParen
-            || $prevPrev instanceof Token\TParamsComma;
+            || $prevPrev instanceof Token\TParamsComma
+            || $prevPrev instanceof Token\TConst;
     }
 
     public function isPrevStaticPropertyAccess() : bool

@@ -75,6 +75,7 @@ class TString extends AToken implements AType
             || $prev instanceof TReturnColon
             || $prev instanceof TNullable
             || $prev instanceof TParamsOpeningParen
+            || $prev instanceof TParamsComma
             || $prev instanceof AModifier
             || $prev instanceof TIntersection
             || $prev instanceof TUnion
@@ -85,6 +86,22 @@ class TString extends AToken implements AType
         ) {
             $parser->add($source, TUnqualifiedName::class);
             return;
+        }
+
+        if ($prev instanceof TConst) {
+            $next = $parser->source->peek();
+
+            if (
+                $next?->is('|')
+                || $next?->is('&')
+                || $next?->is(T_STRING)
+                || $next?->is(T_NAME_QUALIFIED)
+                || $next?->is(T_NAME_FULLY_QUALIFIED)
+                || $next?->is(T_NAME_RELATIVE)
+            ) {
+                $parser->add($source, TUnqualifiedName::class);
+                return;
+            }
         }
 
         if ($prev instanceof TFunction || $prev instanceof TReference) {
