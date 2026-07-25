@@ -75,6 +75,7 @@ class TString extends AToken implements AType
             || $prev instanceof TReturnColon
             || $prev instanceof TNullable
             || $prev instanceof TParamsOpeningParen
+            || $prev instanceof TPropertyHookSetOpeningParen
             || $prev instanceof TParamsComma
             || $prev instanceof AModifier
             || $prev instanceof TIntersection

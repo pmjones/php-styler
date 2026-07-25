@@ -777,6 +777,7 @@ class Parser
             || $prevPrev instanceof Token\TNullable
             || $prevPrev instanceof Token\AModifier
             || $prevPrev instanceof Token\TParamsOpeningParen
+            || $prevPrev instanceof Token\TPropertyHookSetOpeningParen
             || $prevPrev instanceof Token\TParamsComma
             || $prevPrev instanceof Token\TConst;
     }

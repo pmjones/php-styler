@@ -8,6 +8,7 @@ use PhpStyler\Styler;
 use PhpStyler\TestFormat;
 use PhpStyler\Token\TNull;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\RequiresPhp;
 use PHPUnit\Framework\TestCase;
 
 class NormalizeTypeOrderTest extends TestCase
@@ -395,8 +396,79 @@ class NormalizeTypeOrderTest extends TestCase
         ];
     }
 
+    /** @return array<string, array{0: string, 1: string}> */
+    public static function providePropertyHook() : array
+    {
+        return [
+            'string-null-to-nullable-in-set-param' => [
+                <<<'CODE'
+                <?php
+                class Foo {
+                    public ?string $bar {
+                        set(string|null $value) {
+                            $this->bar = $value;
+                        }
+                    }
+                }
+                CODE,
+                <<<'EXPECT'
+                <?php
+                class Foo
+                {
+                    public ?string $bar {
+                        set(?string $value) {
+                            $this->bar = $value;
+                        }
+                    }
+                }
+
+                EXPECT,
+            ],
+            'reorder-string-int-in-set-param' => [
+                <<<'CODE'
+                <?php
+                class Foo {
+                    public string|int $bar {
+                        set(string|int $value) {
+                            $this->bar = $value;
+                        }
+                    }
+                }
+                CODE,
+                <<<'EXPECT'
+                <?php
+                class Foo
+                {
+                    public int|string $bar {
+                        set(int|string $value) {
+                            $this->bar = $value;
+                        }
+                    }
+                }
+
+                EXPECT,
+            ],
+        ];
+    }
+
     #[DataProvider('provide')]
     public function test(string $code, string $expect) : void
+    {
+        $styler = new Styler(
+            new TestFormat(rules: [
+                InsertPublicVisibility::class,
+                NormalizeTypeOrder::class,
+                RemoveTrailingBlankLines::class,
+            ]),
+        );
+
+        $actual = $styler($code);
+        $this->assertSame($expect, $actual);
+    }
+
+    #[RequiresPhp('>=8.4')]
+    #[DataProvider('providePropertyHook')]
+    public function testPropertyHook(string $code, string $expect) : void
     {
         $styler = new Styler(
             new TestFormat(rules: [
