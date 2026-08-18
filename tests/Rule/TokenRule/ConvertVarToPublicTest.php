@@ -32,6 +32,57 @@ class ConvertVarToPublicTest extends TestCase
 
                 EXPECT,
             ],
+            'nullable-type' => [
+                <<<'CODE'
+                <?php
+                class Foo
+                {
+                    var ?string $a = null;
+                }
+                CODE,
+                <<<'EXPECT'
+                <?php
+                class Foo
+                {
+                    public ?string $a = null;
+                }
+
+                EXPECT,
+            ],
+            'union-type' => [
+                <<<'CODE'
+                <?php
+                class Foo
+                {
+                    var Bar|Baz $a;
+                }
+                CODE,
+                <<<'EXPECT'
+                <?php
+                class Foo
+                {
+                    public Bar|Baz $a;
+                }
+
+                EXPECT,
+            ],
+            'intersection-type' => [
+                <<<'CODE'
+                <?php
+                class Foo
+                {
+                    var Bar&Baz $a;
+                }
+                CODE,
+                <<<'EXPECT'
+                <?php
+                class Foo
+                {
+                    public Bar&Baz $a;
+                }
+
+                EXPECT,
+            ],
             'non-var-unchanged' => [
                 <<<'CODE'
                 <?php
