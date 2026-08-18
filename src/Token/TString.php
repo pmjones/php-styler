@@ -182,7 +182,7 @@ class TString extends AToken implements AType
 
         if (
             $parser->source->peek()?->is(':')
-            && $parser->atNesting(TArgsOpeningParen::class)
+            && $parser->atNesting(AnArgsOpener::class)
         ) {
             $parser->add($source, TNamedArgName::class);
             return;

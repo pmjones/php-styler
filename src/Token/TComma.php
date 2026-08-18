@@ -14,7 +14,9 @@ class TComma extends AToken
 
         $parseClass = match ($parser->getNesting()) {
             TParamsOpeningParen::class => TParamsComma::class,
-            TArgsOpeningParen::class => TArgsComma::class,
+
+            TArgsOpeningParen::class,
+            TAnonymousClassArgsOpeningParen::class => TArgsComma::class,
 
             TArrayConstructOpeningParen::class,
             TArrayOpeningBracket::class => TArrayComma::class,

@@ -25,7 +25,7 @@ class TAnonymousClassArgsClosingParenTest extends TTestCase
                     TAnonymousClass::class,
                     TAnonymousClassArgsOpeningParen::class,
                     TIntegerLiteral::class,
-                    TComma::class,
+                    TArgsComma::class,
                     TIntegerLiteral::class,
                     TAnonymousClassArgsClosingParen::class,
                     TAnonymousOpeningBrace::class,

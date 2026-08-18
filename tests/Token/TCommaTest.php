@@ -28,6 +28,32 @@ class TCommaTest extends TTestCase
                     TSemicolon::class,
                 ],
             ],
+            'unclassified-nesting' => [
+                <<<'CODE'
+                <?php
+                if ($x) {
+                }
+
+                [$a, $b] = $c;
+                CODE,
+                [
+                    TPhpOpeningTag::class,
+                    TIf::class,
+                    TIfOpeningParen::class,
+                    TVariable::class,
+                    TIfClosingParen::class,
+                    TIfOpeningBrace::class,
+                    TIfClosingBrace::class,
+                    TArrayElementOpeningBracket::class,
+                    TVariable::class,
+                    TComma::class,
+                    TVariable::class,
+                    TArrayElementClosingBracket::class,
+                    TAssign::class,
+                    TVariable::class,
+                    TSemicolon::class,
+                ],
+            ],
         ];
     }
 }

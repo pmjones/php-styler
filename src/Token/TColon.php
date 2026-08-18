@@ -72,7 +72,7 @@ class TColon extends AToken
             return;
         }
 
-        if ($parser->atNesting(TArgsOpeningParen::class)) {
+        if ($parser->atNesting(AnArgsOpener::class)) {
             $parser->add($source, TNamedArgColon::class);
             return;
         }

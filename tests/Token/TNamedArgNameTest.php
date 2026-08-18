@@ -28,6 +28,44 @@ class TNamedArgNameTest extends TTestCase
                     TSemicolon::class,
                 ],
             ],
+            'named-arg-in-anonymous-class' => [
+                <<<'CODE'
+                <?php
+                new class (name: 'bar') {};
+                CODE,
+                [
+                    TPhpOpeningTag::class,
+                    TNew::class,
+                    TAnonymousClass::class,
+                    TAnonymousClassArgsOpeningParen::class,
+                    TNamedArgName::class,
+                    TNamedArgColon::class,
+                    TStringLiteral::class,
+                    TAnonymousClassArgsClosingParen::class,
+                    TAnonymousOpeningBrace::class,
+                    TAnonymousClosingBrace::class,
+                    TSemicolon::class,
+                ],
+            ],
+            'keyword-named-arg-in-anonymous-class' => [
+                <<<'CODE'
+                <?php
+                new class (array: 'bar') {};
+                CODE,
+                [
+                    TPhpOpeningTag::class,
+                    TNew::class,
+                    TAnonymousClass::class,
+                    TAnonymousClassArgsOpeningParen::class,
+                    TNamedArgName::class,
+                    TNamedArgColon::class,
+                    TStringLiteral::class,
+                    TAnonymousClassArgsClosingParen::class,
+                    TAnonymousOpeningBrace::class,
+                    TAnonymousClosingBrace::class,
+                    TSemicolon::class,
+                ],
+            ],
             'named-arg-in-attribute' => [
                 <<<'CODE'
                 <?php
