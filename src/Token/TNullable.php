@@ -6,7 +6,7 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TNullable extends AToken
+class TNullable extends AToken implements ATypeContinuation
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

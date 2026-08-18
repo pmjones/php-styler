@@ -63,7 +63,9 @@ class TString extends AToken implements AType
         }
 
         if (
-            $prev instanceof TUse
+            $prev instanceof ATypeOpener
+            || $prev instanceof ATypeContinuation
+            || $prev instanceof TUse
             || $prev instanceof TNamespace
             || $prev instanceof AnAttribute
             || $prev instanceof TUseTrait
@@ -72,14 +74,6 @@ class TString extends AToken implements AType
             || $prev instanceof TNew
             || $prev instanceof TInstanceof
             || $prev instanceof TInsteadof
-            || $prev instanceof TReturnColon
-            || $prev instanceof TNullable
-            || $prev instanceof TParamsOpeningParen
-            || $prev instanceof TPropertyHookSetOpeningParen
-            || $prev instanceof TParamsComma
-            || $prev instanceof AModifier
-            || $prev instanceof TIntersection
-            || $prev instanceof TUnion
             || $prev instanceof TImplementsComma
             || $prev instanceof TExtendsComma
             || $prev instanceof TUseTraitComma

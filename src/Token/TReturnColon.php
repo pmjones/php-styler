@@ -6,7 +6,7 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TReturnColon extends AToken
+class TReturnColon extends AToken implements ATypeOpener
 {
     public static function parse(Parser $parser, PhpToken $source) : void
     {

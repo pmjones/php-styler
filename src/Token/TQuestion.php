@@ -14,10 +14,7 @@ class TQuestion extends AToken
 
         if (
             $parser->atNesting(TReturnColon::class)
-            || $prev instanceof TParamsOpeningParen
-            || $prev instanceof TPropertyHookSetOpeningParen
-            || $prev instanceof TParamsComma
-            || $prev instanceof AModifier
+            || $prev instanceof ATypeOpener
             || $prev instanceof TConst
         ) {
             $parser->parse($source, TNullable::class);

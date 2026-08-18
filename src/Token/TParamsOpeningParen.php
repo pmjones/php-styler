@@ -6,7 +6,7 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TParamsOpeningParen extends ACommaListOpener
+class TParamsOpeningParen extends ACommaListOpener implements ATypeOpener
 {
     public const EXPAND_PRIORITY = ASplittable::OTHER_PAREN;
 

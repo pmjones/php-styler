@@ -3,6 +3,6 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-class TUnion extends AToken implements ATypeContinuation
+interface ATypeOpener
 {
 }

@@ -771,14 +771,8 @@ class Parser
     {
         $prevPrev = $this->getPrevParsed(skip: 1);
 
-        return $prevPrev instanceof Token\TReturnColon
-            || $prevPrev instanceof Token\TUnion
-            || $prevPrev instanceof Token\TIntersection
-            || $prevPrev instanceof Token\TNullable
-            || $prevPrev instanceof Token\AModifier
-            || $prevPrev instanceof Token\TParamsOpeningParen
-            || $prevPrev instanceof Token\TPropertyHookSetOpeningParen
-            || $prevPrev instanceof Token\TParamsComma
+        return $prevPrev instanceof Token\ATypeOpener
+            || $prevPrev instanceof Token\ATypeContinuation
             || $prevPrev instanceof Token\TConst;
     }
 

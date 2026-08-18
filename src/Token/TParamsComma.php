@@ -3,6 +3,6 @@ declare(strict_types=1);
 
 namespace PhpStyler\Token;
 
-class TParamsComma extends ASplittableComma
+class TParamsComma extends ASplittableComma implements ATypeOpener
 {
 }

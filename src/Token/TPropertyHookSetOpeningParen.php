@@ -6,7 +6,7 @@ namespace PhpStyler\Token;
 use PhpStyler\Parser;
 use PhpToken;
 
-class TPropertyHookSetOpeningParen extends AToken
+class TPropertyHookSetOpeningParen extends AToken implements ATypeOpener
 {
     public const EXPAND_PRIORITY = ASplittable::OTHER_PAREN;
 
