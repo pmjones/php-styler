@@ -1081,7 +1081,6 @@ class PlainFormat extends AFormat
             'spaceAfter' => false,
         ],
         Token\TStatic::class => [
-            'spaceBefore' => true,
             'spaceAfter' => true,
         ],
         Token\TStaticBinding::class => [

@@ -1,6 +1,9 @@
 <?php
 $foo = fn (array $x) => $x;
 $bar = static fn () : int => $x;
+set_error_handler(static fn () : bool => true);
+$baz = [static fn () => 1];
+$qux = (static fn () => 1)();
 
 $veryVeryVeryVeryVeryVeryLongVariableName = array_filter(
     $cookies,
